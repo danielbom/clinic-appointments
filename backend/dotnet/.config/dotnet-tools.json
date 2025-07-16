@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+    "regitlint": {
+      "version": "6.3.13",
+      "commands": [
+        "regitlint"
+      ],
+      "rollForward": false
+    },
+    "dotnet-ef": {
+      "version": "9.0.2",
+      "commands": [
+        "dotnet-ef"
+      ],
+      "rollForward": false
+    }
+  }
+}
