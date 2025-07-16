@@ -1,0 +1,54 @@
+* [x] Add
+    - [x] customers
+    - [x] specialists
+    - [x] service available
+    - [x] specialist services
+    - [x] appointments
+    - [x] specializations
+    - [x] secretaries
+
+- [ ] Update
+    - [x] customers
+    - [x] specialists
+    - [x] services
+    - [x] specialist services
+    - [x] appointments
+    - [x] specializations
+    - [x] secretaries
+
+- [ ] Delete
+    - [x] customers
+        - (*) appointments
+            - [ ] delete appointments on cascade
+    - [x] specialists
+        - (*) specialist services
+            - [ ] delete specialist services on cascade
+    - [x] services
+        - (1) specializations
+        - (N) appointments
+            - [ ] delete appointments on cascade
+    - [x] specialist services
+        - (1) specialists
+    - [x] appointments
+        - (1) services
+        - (1) customer
+        - (1) secretaries
+    - [x] specializations
+        - (+) services
+            - [ ] delete services on cascade
+    - [x] secretaries
+        - (N) appointments
+            - [ ] set admin as new owner on cascade (???)
+
+- [ ] List
+    - [x] customers
+    - [x] specialists
+    - [x] service available
+        - [ ] table
+        - [x] groups
+    - [x] specialist services
+    - [x] appointments
+        - [x] table
+        - [x] calendar
+    - [x] specializations
+    - [x] secretaries
