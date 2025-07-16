@@ -1,0 +1,45 @@
+services:
+  api:
+    build: .
+    ports:
+      - ${PORT:-8080}:8080
+    environment:
+      APPOINTMENTS_DATABASE_USER: ${APPOINTMENTS_DATABASE_USER}
+      APPOINTMENTS_DATABASE_PASSWORD: ${APPOINTMENTS_DATABASE_PASSWORD}
+      APPOINTMENTS_DATABASE_NAME: ${APPOINTMENTS_DATABASE_NAME}
+      APPOINTMENTS_DATABASE_HOST: db
+      APPOINTMENTS_DATABASE_PORT: ${APPOINTMENTS_DATABASE_PORT:-5432}
+    depends_on:
+      - db
+
+  db:
+    image: postgres:latest
+    restart: unless-stopped
+    ports:
+      - ${APPOINTMENTS_DATABASE_PORT:-5432}:5432
+    environment:
+      POSTGRES_USER: ${APPOINTMENTS_DATABASE_USER}
+      POSTGRES_PASSWORD: ${APPOINTMENTS_DATABASE_PASSWORD}
+      POSTGRES_DB: ${APPOINTMENTS_DATABASE_NAME}
+    volumes:
+      - db:/var/lib/postgresql/data
+
+  # optional
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - db
+  #   ports:
+  #     - 8081:80
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: admin@admin.com
+  #     PGADMIN_DEFAULT_PASSWORD: password
+  #   volumes:
+  #     - pgadmin:/var/lib/pgadmin
+
+volumes:
+  db:
+    driver: local
+  pgadmin:
+    driver: local
