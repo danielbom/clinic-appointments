@@ -1,0 +1,64 @@
+# @name GetCustomers
+
+GET {{$dotenv BASE_URL}}/customers
+    ?page=0
+    &pageSize=20
+    # &name=Almeida
+    # &cpf=56756592505
+    &phone=44786542319
+Authorization: Bearer {{$dotenv TOKEN}}
+Accept: application/json
+
+### 
+
+# @name GetCustomersCount
+
+GET {{$dotenv BASE_URL}}/customers/count
+Authorization: Bearer {{$dotenv TOKEN}}
+Accept: application/json
+
+### 
+
+# @name GetCustomer
+
+GET {{$dotenv BASE_URL}}/customers/116783da-b021-4ce6-a2ac-b9c39ea9b137
+Authorization: Bearer {{$dotenv TOKEN}}
+Accept: application/json
+
+### 
+
+# @name CreateCustomer
+
+POST {{$dotenv BASE_URL}}/customers
+Authorization: Bearer {{$dotenv TOKEN}}
+Content-Type: application/json
+{
+    "name": "Cliente X",
+    "email": "marcelo.abraao@domain.com",
+    "phone": "9564859321",
+    "birthdate": "1995-10-10",
+    "cpf": "98302207020"
+}
+
+### 
+
+# @name UpdateCustomer
+
+PUT {{$dotenv BASE_URL}}/customers/116783da-b021-4ce6-a2ac-b9c39ea9b137
+Authorization: Bearer {{$dotenv TOKEN}}
+Content-Type: application/json
+{
+    "name": "Marcelo Abraão",
+    "email": "marcelo.abraao@domain.com",
+    "phone": "9564879321",
+    "birthdate": "1995-10-10",
+    "cpf": "98302207020"
+}
+
+
+### 
+
+# @name DeleteCustomer
+
+DELETE {{$dotenv BASE_URL}}/customers/769312bc-2114-47b8-b786-e7f3b28a4f44
+Authorization: Bearer {{$dotenv TOKEN}}

@@ -1,0 +1,36 @@
+# @name GetServicesAvailable
+
+GET {{$dotenv BASE_URL}}/services-available
+Authorization: Bearer {{$dotenv TOKEN}}
+Accept: application/json
+
+###
+
+# @name GetServiceAvailable
+
+GET {{$dotenv BASE_URL}}/services-available/2589d984-68a4-4dd0-808a-02dd7d7771cc
+Authorization: Bearer {{$dotenv TOKEN}}
+Accept: application/json
+
+###
+
+# @name CreateServiceAvailable
+
+PUT {{$dotenv BASE_URL}}/services-available/94cf0856-6b45-46f0-a4e3-bda1b04bc4b3
+Authorization: Bearer {{$dotenv TOKEN}}
+Content-Type: application/json
+{
+    "name": "Serviço X",
+    "specialistId": "921e92a3-dc41-4c54-9dcb-7df5dd2fd3a8"
+}
+
+###
+
+# @name UpdateServiceAvailable
+
+PUT {{$dotenv BASE_URL}}/services-available/94cf0856-6b45-46f0-a4e3-bda1b04bc4b3
+Authorization: Bearer {{$dotenv TOKEN}}
+Content-Type: application/json
+{
+    "name": "Serviço Y"
+}

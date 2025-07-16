@@ -1,0 +1,87 @@
+# @name GetAppointments
+
+GET {{$dotenv BASE_URL}}/appointments
+    ?page=0
+    &pageSize=20
+    &startDate=2025-01-01
+    # &endDate=2026-01-01
+    # &customer=A
+    # &serviceName=A
+    # &specialist=A
+Authorization: Bearer {{$dotenv TOKEN}}
+Accept: application/json
+
+### 
+
+# @name GetAppointmentsCount
+
+GET {{$dotenv BASE_URL}}/appointments/count?0=0
+    &startDate=2025-01-01
+    # &endDate=2025-01-01
+    # &customer=A
+    # &serviceName=A
+    # &specialist=A
+Authorization: Bearer {{$dotenv TOKEN}}
+Accept: application/json
+
+###
+
+# @name GetAppointmentsCalendar
+
+GET {{$dotenv BASE_URL}}/appointments/calendar
+    ?startDate=2024-12-01
+    &endDate=2026-01-01
+Authorization: Bearer {{$dotenv TOKEN}}
+Accept: application/json
+
+###
+
+# @name CountAppointmentsCalendar
+
+GET {{$dotenv BASE_URL}}/appointments/calendar/count
+    ?startDate=2024-12-01
+    &endDate=2026-01-01
+Authorization: Bearer {{$dotenv TOKEN}}
+Accept: application/json
+
+###
+
+# @name GetAppointment
+
+GET {{$dotenv BASE_URL}}/appointments/5918a54d-820e-4795-b44e-df24ab03224b
+Authorization: Bearer {{$dotenv TOKEN}}
+Accept: application/json
+
+###
+
+# @name CreateAppointment
+
+POST {{$dotenv BASE_URL}}/appointments
+Authorization: Bearer {{$dotenv TOKEN}}
+Content-Type: application/json
+{
+  "date": "2025-03-22",
+  "time": "21:00:00",
+  "serviceId": "f0070e3f-666d-4a9f-ad9f-95415d3a97f4",
+  "customerId": "84f5e050-79c5-490f-9b9b-5189b25ebfb1"
+}
+
+###
+
+# @name UpdateAppointment
+
+PUT {{$dotenv BASE_URL}}/appointments/8b5a3e9c-99d4-4713-904e-dd9c862f5ca9
+Authorization: Bearer {{$dotenv TOKEN}}
+Content-Type: application/json
+{
+  "date": "2025-03-22",
+  "time": "21:00:00",
+  "status": 1
+}
+
+###
+
+# @name DeleteAppointment
+
+DELETE {{$dotenv BASE_URL}}/appointments/8b5a3e9c-99d4-4713-904e-dd9c862f5ca9
+Authorization: Bearer {{$dotenv TOKEN}}

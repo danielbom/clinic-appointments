@@ -1,0 +1,11 @@
+POST http://localhost:8080/auth/login
+{
+  "email": "admin@test.com",
+  "password": "123mudar"
+}
+
+### 
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NTI2MzM3MjcsInJvbGUiOiJhZG1pbiIsInN1YiI6IjhkYzAzMzk4LTkwNTYtNGM4Zi04MjczLTAzZGYwYmI0YmQyMiJ9.NJqDsw0AlEUtZeVR6E9EDsak-jva83aLVEPEFcLoYWw
+
+GET http://localhost:8080/specialists/56480dac-840c-4242-8061-d00433dce2db
+Authorization: Bearer {{token}}

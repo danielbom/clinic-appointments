@@ -1,0 +1,33 @@
+# @name GetSpecializations
+
+GET {{$dotenv BASE_URL}}/specializations
+Authorization: Bearer {{$dotenv TOKEN}}
+
+###
+
+# @name CreateSpecialization
+
+POST {{$dotenv BASE_URL}}/specializations
+Authorization: Bearer {{$dotenv TOKEN}}
+Content-Type: application/json
+{
+    "name": "Especialização Y"
+}
+
+###
+
+# @name UpdateSpecialization
+
+PUT {{$dotenv BASE_URL}}/specializations/5184f4e8-2265-427c-aa94-8f6a7d2574e6
+Authorization: Bearer {{$dotenv TOKEN}}
+Content-Type: application/json
+{
+    "name": "Especialização Z"
+}
+
+###
+
+# @name DeleteSpecialization
+
+DELETE {{$dotenv BASE_URL}}/specializations/921e92a3-dc41-4c54-9dcb-7df5dd2fd3a8
+Authorization: Bearer {{$dotenv TOKEN}}

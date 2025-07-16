@@ -1,0 +1,5 @@
+# @name GetServiceGroups
+
+GET {{$dotenv BASE_URL}}/service-groups
+Accept: application/json
+Authorization: Bearer {{$dotenv TOKEN}}

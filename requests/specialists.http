@@ -1,0 +1,51 @@
+# @name GetSpecialists
+
+GET {{$dotenv BASE_URL}}/specialists
+    ?page=0
+    &pageSize=20
+Authorization: Bearer {{$dotenv TOKEN}}
+Accept: application/json
+
+###
+
+# @name GetSpecialistsCount
+
+GET {{$dotenv BASE_URL}}/specialists/count
+Authorization: Bearer {{$dotenv TOKEN}}
+Accept: application/json
+
+###
+
+# @name GetSpecialist
+
+GET {{$dotenv BASE_URL}}/specialists/5c75e707-7626-4164-b594-05aca8e3fcac
+Authorization: Bearer {{$dotenv TOKEN}}
+Accept: application/json
+
+###
+
+# @name GetSpecialistAppointments
+
+GET {{$dotenv BASE_URL}}/specialists/5c75e707-7626-4164-b594-05aca8e3fcac/appointments
+Authorization: Bearer {{$dotenv TOKEN}}
+Accept: application/json
+
+###
+
+# @name GetSpecialistSpecializations
+
+GET {{$dotenv BASE_URL}}/specialists/5c75e707-7626-4164-b594-05aca8e3fcac/specializations
+Authorization: Bearer {{$dotenv TOKEN}}
+Accept: application/json
+
+###
+
+# @name GetSpecialistServices
+
+GET {{$dotenv BASE_URL}}/specialists/5c75e707-7626-4164-b594-05aca8e3fcac/services
+Authorization: Bearer {{$dotenv TOKEN}}
+Accept: application/json
+
+
+
+# TODO: Create, Update, Delete

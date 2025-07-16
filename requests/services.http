@@ -1,0 +1,63 @@
+# @name GetServices
+
+GET {{$dotenv BASE_URL}}/services
+    ?page=0
+    &pageSize=20
+    &specialist=Livia
+    # &service=X
+    # &Specialization=Fisioterapia
+Authorization: Bearer {{$dotenv TOKEN}}
+Accept: application/json
+
+###
+
+# @name CountServices
+
+GET {{$dotenv BASE_URL}}/services/count
+    ?0=0
+    # &specialist=X
+    # &service=X
+    # &Specialization=Fisioterapia
+Authorization: Bearer {{$dotenv TOKEN}}
+Accept: application/json
+
+###
+
+# @name GetService
+
+GET {{$dotenv BASE_URL}}/services/3aa65a4e-4dc8-4b1d-9d49-eb92705dc07b
+Authorization: Bearer {{$dotenv TOKEN}}
+Accept: application/json
+
+###
+
+# @name CreateService
+
+POST {{$dotenv BASE_URL}}/services
+Authorization: Bearer {{$dotenv TOKEN}}
+Content-Type: application/json
+{
+    "price": 10,
+    "duration": 10,
+    "specialistId": "ec89e593-a841-4127-9f1b-40b1bf11983c",
+    "serviceNameId": "e2587cd5-77a9-4fd8-bf07-12797aea4514"
+}
+
+###
+
+# @name UpdateService
+
+PUT {{$dotenv BASE_URL}}/services/3aa65a4e-4dc8-4b1d-9d49-eb92705dc07b
+Authorization: Bearer {{$dotenv TOKEN}}
+Content-Type: application/json
+{
+    "price": 100,
+    "duration": 100
+}
+
+###
+
+# @name DeleteService
+
+DELETE {{$dotenv BASE_URL}}/services/3aa65a4e-4dc8-4b1d-9d49-eb92705dc07b
+Authorization: Bearer {{$dotenv TOKEN}}
