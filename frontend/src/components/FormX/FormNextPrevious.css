@@ -1,0 +1,4 @@
+.form-next-previous {
+  margin-top: 2rem;
+  flex-direction: row-reverse;
+}

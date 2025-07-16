@@ -1,0 +1,53 @@
+.table-header-first {
+  display: flex;
+  justify-content: space-between;
+  padding-block: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.table-header-title {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+}
+
+.table-header-title h1 {
+  font-weight: 400;
+}
+.table-header-title span {
+  font-style: 0.875rem;
+  border-radius: 12px;
+}
+
+.table-header-buttons {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.table-header-second {
+  margin-block: 0.25rem;
+  height: 40px;
+}
+
+.table-header-selection {
+  background: #1677ff;
+  padding: 0.5rem 1rem;
+  color: white;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.table-header-selection .ant-btn {
+  padding-inline: 0.75rem;
+  border-radius: 0.75rem;
+  font-size: 0.75rem;
+  color: white;
+  border: 1px solid white;
+}
+
+.table-header-selection .ant-btn.ant-btn-text:hover {
+  color: white;
+}

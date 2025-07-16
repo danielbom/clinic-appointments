@@ -1,0 +1,11 @@
+.form-header {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-header h1 {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}

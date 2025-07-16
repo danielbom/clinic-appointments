@@ -1,0 +1,12 @@
+printWidth: 120
+semi: false
+singleQuote: true
+bracketSpacing: true
+quoteProps: consistent
+
+# avoid update changes on commits on new code are added
+arrowParens: always
+trailingComma: all
+
+# Avoid strange tag breaks
+htmlWhitespaceSensitivity: ignore

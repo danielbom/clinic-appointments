@@ -1,0 +1,33 @@
+.appointments-calendar {
+  padding: 0.5rem;
+  border-radius: 10px;
+}
+
+.appointments-calendar-header {
+  display: flex;
+  justify-content: end;
+  gap: 0.5rem;
+  padding: 12px 0;
+}
+
+.appointments-calendar-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.appointments-calendar-list .ant-badge-status {
+  width: 100%;
+  overflow: hidden;
+  font-size: 12px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.select-month {
+  width: 120px;
+}
+
+.select-year {
+  min-width: 80px;
+}

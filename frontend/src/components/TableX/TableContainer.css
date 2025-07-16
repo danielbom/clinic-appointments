@@ -1,0 +1,7 @@
+.table-container table {
+  min-width: 768px;
+}
+
+.table-container .ant-table {
+  overflow: auto;
+}

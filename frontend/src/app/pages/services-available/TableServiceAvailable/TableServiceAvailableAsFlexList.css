@@ -1,0 +1,24 @@
+.custom-list {
+  border-radius: 8px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 300px;
+  background-color: #fff;
+}
+
+.custom-list-header {
+  /* background-color: #f0f2f5; */
+  /* padding: 10px; */
+  font-weight: bold;
+  font-size: 16px;
+  /* border-bottom: 1px solid #d9d9d9; */
+}
+
+.custom-list-item {
+  padding: 10px;
+  transition: background-color 0.3s;
+}
+
+.custom-list-item:hover {
+  background-color: #e6f7ff;
+}

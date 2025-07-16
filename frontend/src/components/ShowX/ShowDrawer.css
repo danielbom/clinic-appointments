@@ -1,0 +1,29 @@
+.show-mask {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.show-content .show-title {
+  font-weight: 500;
+  margin-block: 2px;
+}
+
+.show-content .ant-form-item-control-input-content .ant-form-item {
+  margin-bottom: 0;
+}
+
+.show-content .ant-form-item-control-input-content .ant-form-item + .ant-form-item {
+  margin-top: 0.5rem;
+}
+
+.show-content .ant-input-number {
+  width: 100%;
+}
+
+.show-content .ant-picker {
+  width: 100%;
+}
+
+.show-close {
+  border-radius: 100%;
+  font-size: 0.5rem;
+}

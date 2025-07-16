@@ -1,0 +1,37 @@
+/* TODO: Apply mask to all overlays (filter drawer, delete item, delete selected) */
+.drawer-mask {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+.drawer-content .drawer-title {
+  font-weight: 500;
+  margin-block: 2px;
+}
+
+.drawer-content .ant-form-item-control-input-content .ant-form-item {
+  margin-bottom: 0;
+}
+
+.drawer-content .ant-form-item-control-input-content .ant-form-item + .ant-form-item {
+  margin-top: 0.5rem;
+}
+
+.drawer-content .ant-input-number {
+  width: 100%;
+}
+
+.drawer-content .ant-picker {
+  width: 100%;
+}
+
+.drawer-footer {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-around;
+  padding-block: 0.625rem;
+}
+
+.drawer-close {
+  border-radius: 100%;
+  font-size: 0.5rem;
+}

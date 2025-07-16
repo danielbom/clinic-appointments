@@ -1,0 +1,32 @@
+.app-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.app-logo-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.app-logo-center span:first-child {
+  margin-bottom: 8px;
+}
+
+.app-initial {
+  color: #4d70eb;
+  font-size: 1.75rem;
+  font-weight: 800;
+}
+
+.app-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.app-made-by {
+  margin-left: auto;
+}

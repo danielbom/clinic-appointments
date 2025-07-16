@@ -1,0 +1,22 @@
+.actions-menu-icon .ant-menu-submenu-title {
+  text-overflow: unset;
+  padding: 0 10px;
+  width: 34px;
+}
+
+.actions-menu {
+  background: transparent;
+  border: none !important;
+}
+
+.actions-menu-modal .ant-modal-content {
+  border-left: 6px solid #ff4d4f;
+}
+
+.actions-menu-modal .anticon.anticon-delete {
+  color: #ff4d4f;
+}
+
+.actions-column {
+  width: 60px !important;
+}
