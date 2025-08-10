@@ -71,7 +71,7 @@ func (h *api) authRefresh(w http.ResponseWriter, r *http.Request) {
 	jwtData := GetJwtData(r)
 
 	if !jwtData.IsRefreshToken() {
-		SomethingWentWrong(w, fmt.Errorf("invalid token"))
+		http.Error(w, "invalid token", http.StatusBadRequest)
 		return
 	}
 

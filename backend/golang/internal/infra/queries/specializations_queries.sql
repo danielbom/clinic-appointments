@@ -35,6 +35,6 @@ WHERE "sp"."id" IN (
 	WHERE "s"."specialist_id" = $1
 );
 
--- name: DeleteSpecializationByID :exec
+-- name: DeleteSpecializationByID :execrows
 DELETE FROM "specializations"
 WHERE "id" = $1;

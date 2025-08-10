@@ -8,14 +8,14 @@ import (
 )
 
 type SpecialistServiceInfoArgs struct {
-	ServiceNameIDStr string
-	ServiceNameID    uuid.UUID
-	SpecialistIDStr  string
-	SpecialistID     uuid.UUID
-	Price            int32
-	DurationMin      int32
-	Duration         pgtype.Interval
-	Update			 bool
+	ServiceNameIDStr  string
+	ServiceNameID     uuid.UUID
+	SpecialistIDStr   string
+	SpecialistID      uuid.UUID
+	Price             int32
+	DurationMin       int32
+	Duration          pgtype.Interval
+	RequireSpecialist bool
 }
 
 func (args *SpecialistServiceInfoArgs) Validate() *UsecaseError {
@@ -27,7 +27,7 @@ func (args *SpecialistServiceInfoArgs) Validate() *UsecaseError {
 			return NewInvalidArgumentError(ErrInvalidUuid).InField("serviceNameId")
 		}
 	}
-	if args.Update && args.SpecialistID == uuid.Nil {
+	if args.RequireSpecialist && args.SpecialistID == uuid.Nil {
 		if args.SpecialistIDStr == "" {
 			return NewInvalidArgumentError(ErrInvalidUuid).InField("specialistId")
 		}

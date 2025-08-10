@@ -5,12 +5,12 @@ import (
 )
 
 func DeleteSpecialist(state State, id uuid.UUID) *UsecaseError {
-	err := state.Queries().DeleteSpecialistByID(state.Context(), id)
-	if err == nil {
-		return nil
+	count, err := state.Queries().DeleteSpecialistByID(state.Context(), id)
+	if err != nil {
+		return NewError(ErrorKindUnexpected, err)
 	}
-	if ErrorIsNoRows(err) {
+	if count == 0 {
 		return NewNotFoundError(ErrResourceNotFound).InField("specialist")
 	}
-	return NewError(ErrorKindUnexpected, err)
+	return nil
 }

@@ -3,12 +3,12 @@ package usecase
 import "github.com/google/uuid"
 
 func DeleteSpecialistService(state State, serviceID uuid.UUID) *UsecaseError {
-	err := state.Queries().DeleteService(state.Context(), serviceID)
-	if ErrorIsNoRows(err) {
-		return NewNotFoundError(ErrResourceNotFound).InField("service")
-	}
+	count, err := state.Queries().DeleteService(state.Context(), serviceID)
 	if err != nil {
-		return NewUnexpectedError(err)
+		return NewError(ErrorKindUnexpected, err)
+	}
+	if count == 0 {
+		return NewNotFoundError(ErrResourceNotFound).InField("service")
 	}
 	return nil
 }

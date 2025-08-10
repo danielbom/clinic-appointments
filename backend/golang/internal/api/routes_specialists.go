@@ -123,9 +123,10 @@ func (h *api) createSpecialist(w http.ResponseWriter, r *http.Request) {
 	args.Services = make([]usecase.SpecialistServiceInfoArgs, 0, len(body.Services))
 	for _, s := range body.Services {
 		sArgs := usecase.SpecialistServiceInfoArgs{
-			ServiceNameIDStr: s.ServiceNameID,
-			Price:            s.Price,
-			DurationMin:      s.Duration,
+			ServiceNameIDStr:  s.ServiceNameID,
+			Price:             s.Price,
+			DurationMin:       s.Duration,
+			RequireSpecialist: false,
 		}
 		args.Services = append(args.Services, sArgs)
 	}
@@ -181,11 +182,11 @@ func (h *api) updateSpecialist(w http.ResponseWriter, r *http.Request) {
 	args.Services = make([]usecase.SpecialistServiceInfoArgs, 0, len(body.Services))
 	for _, s := range body.Services {
 		sArgs := usecase.SpecialistServiceInfoArgs{
-			SpecialistID:     specialistID,
-			ServiceNameIDStr: s.ServiceNameID,
-			Price:            s.Price,
-			DurationMin:      s.Duration,
-			Update:           true,
+			SpecialistID:      specialistID,
+			ServiceNameIDStr:  s.ServiceNameID,
+			Price:             s.Price,
+			DurationMin:       s.Duration,
+			RequireSpecialist: true,
 		}
 		args.Services = append(args.Services, sArgs)
 	}

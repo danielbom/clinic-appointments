@@ -25,6 +25,6 @@ SELECT "id", "name", "specialization_id"
 FROM "service_names"
 ORDER BY "name";
 
--- name: DeleteServiceNameByID :exec
+-- name: DeleteServiceNameByID :execrows
 DELETE FROM "service_names"
 WHERE "id" = $1;

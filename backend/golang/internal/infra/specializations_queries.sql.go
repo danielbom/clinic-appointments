@@ -24,14 +24,17 @@ func (q *Queries) CreateSpecialization(ctx context.Context, name string) (uuid.U
 	return id, err
 }
 
-const deleteSpecializationByID = `-- name: DeleteSpecializationByID :exec
+const deleteSpecializationByID = `-- name: DeleteSpecializationByID :execrows
 DELETE FROM "specializations"
 WHERE "id" = $1
 `
 
-func (q *Queries) DeleteSpecializationByID(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.Exec(ctx, deleteSpecializationByID, id)
-	return err
+func (q *Queries) DeleteSpecializationByID(ctx context.Context, id uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteSpecializationByID, id)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
 }
 
 const getSpecializationByID = `-- name: GetSpecializationByID :one

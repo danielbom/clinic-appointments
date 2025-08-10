@@ -1,0 +1,27 @@
+{
+  "name": "tests2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest appointments.test.ts",
+    "test:dev": "jest --watchAll appointments.test.ts",
+    "test:coverage": "jest appointments.test.ts --coverage"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/lodash": "^4.17.20",
+    "jest": "^30.0.4",
+    "ts-jest": "^29.4.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "axios": "^1.10.0",
+    "dotenv": "^17.2.0",
+    "lodash": "^4.17.21",
+    "zod": "^4.0.5"
+  }
+}

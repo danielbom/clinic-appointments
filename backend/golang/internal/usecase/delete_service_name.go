@@ -5,12 +5,12 @@ import (
 )
 
 func DeleteServiceName(state State, id uuid.UUID) *UsecaseError {
-	err := state.Queries().DeleteServiceNameByID(state.Context(), id)
-	if err == nil {
-		return nil
+	count, err := state.Queries().DeleteServiceNameByID(state.Context(), id)
+	if err != nil {
+		return NewError(ErrorKindUnexpected, err)
 	}
-	if ErrorIsNoRows(err) {
+	if count == 0 {
 		return NewNotFoundError(ErrResourceNotFound).InField("service_name")
 	}
-	return NewUnexpectedError(err)
+	return nil
 }

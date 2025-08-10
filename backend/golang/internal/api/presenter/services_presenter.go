@@ -23,8 +23,8 @@ func GetServices(services []infra.ListServicesEnrichedRow) []dtos.Service {
 	return response
 }
 
-func GetService(s infra.Service) dtos.Service {
-	return dtos.Service{
+func GetService(s infra.Service) dtos.ServiceBase {
+	return dtos.ServiceBase{
 		ID:               s.ID.String(),
 		ServiceNameID:    s.ServiceNameID.String(),
 		SpecialistID:     s.SpecialistID.String(),

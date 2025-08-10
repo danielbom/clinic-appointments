@@ -5,12 +5,12 @@ import (
 )
 
 func DeleteSecretary(state State, id uuid.UUID) *UsecaseError {
-	err := state.Queries().DeleteSecretaryByID(state.Context(), id)
-	if err == nil {
-		return nil
+	count, err := state.Queries().DeleteSecretaryByID(state.Context(), id)
+	if err != nil {
+		return NewError(ErrorKindUnexpected, err)
 	}
-	if ErrorIsNoRows(err) {
+	if count == 0 {
 		return NewNotFoundError(ErrResourceNotFound).InField("secretary")
 	}
-	return NewUnexpectedError(err)
+	return nil
 }

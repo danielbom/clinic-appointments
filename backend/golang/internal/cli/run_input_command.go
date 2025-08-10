@@ -487,10 +487,11 @@ func (r *RunInputCommand) runCreateSpecialistService(s *State, scanner *bufio.Sc
 	}
 
 	args := usecase.SpecialistServiceInfoArgs{
-		SpecialistID:  specialist.ID,
-		ServiceNameID: service.ID,
-		Price:         priceInt,
-		DurationMin:   int32(durationMin),
+		SpecialistID:      specialist.ID,
+		ServiceNameID:     service.ID,
+		Price:             priceInt,
+		DurationMin:       int32(durationMin),
+		RequireSpecialist: true,
 	}
 
 	if err := args.Validate(); err != nil {

@@ -18,3 +18,11 @@ type ServiceInfoBody struct {
 	Price         int32  `json:"price"`
 	Duration      int32  `json:"duration"` // in minutes
 }
+
+type ServiceBase struct {
+	ID            string `json:"id"`
+	SpecialistID  string `json:"specialistId"`
+	ServiceNameID string `json:"serviceNameId"`
+	Price         int32  `json:"price"`
+	Duration      int32  `json:"duration"` // in minutes
+}

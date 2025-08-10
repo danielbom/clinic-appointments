@@ -5,12 +5,12 @@ import (
 )
 
 func DeleteSpecialization(state State, id uuid.UUID) *UsecaseError {
-	err := state.Queries().DeleteSpecializationByID(state.Context(), id)
-	if err == nil {
-		return nil
+	count, err := state.Queries().DeleteSpecializationByID(state.Context(), id)
+	if err != nil {
+		return NewError(ErrorKindUnexpected, err)
 	}
-	if ErrorIsNoRows(err) {
+	if count == 0 {
 		return NewNotFoundError(ErrResourceNotFound).InField("specialization")
 	}
-	return NewUnexpectedError(err)
+	return nil
 }

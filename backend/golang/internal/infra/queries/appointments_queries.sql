@@ -107,6 +107,6 @@ WHERE "date" = $1
   )
 LIMIT 1;
 
--- name: DeleteAppointment :exec
+-- name: DeleteAppointment :execrows
 DELETE FROM "appointments"
 WHERE "id" = $1;

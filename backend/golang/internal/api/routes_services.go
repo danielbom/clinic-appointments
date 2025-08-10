@@ -149,10 +149,11 @@ func (h *api) createService(w http.ResponseWriter, r *http.Request) {
 
 	// Validate e execute the usecase
 	args := usecase.SpecialistServiceInfoArgs{
-		ServiceNameIDStr: body.ServiceNameID,
-		SpecialistIDStr:  body.SpecialistID,
-		Price:            body.Price,
-		DurationMin:      body.Duration,
+		ServiceNameIDStr:  body.ServiceNameID,
+		SpecialistIDStr:   body.SpecialistID,
+		Price:             body.Price,
+		DurationMin:       body.Duration,
+		RequireSpecialist: true,
 	}
 	if err := args.Validate(); err != nil {
 		presenter.UsecaseError(w, err)
@@ -195,10 +196,10 @@ func (h *api) updateService(w http.ResponseWriter, r *http.Request) {
 
 	// Validate e execute the usecase
 	args := usecase.SpecialistServiceInfoArgs{
-		ServiceNameIDStr: body.ServiceNameID,
-		SpecialistIDStr:  body.SpecialistID,
-		Price:            body.Price,
-		DurationMin:      body.Duration,
+		ServiceNameIDStr:  body.ServiceNameID,
+		Price:             body.Price,
+		DurationMin:       body.Duration,
+		RequireSpecialist: false,
 	}
 	if err := args.Validate(); err != nil {
 		presenter.UsecaseError(w, err)

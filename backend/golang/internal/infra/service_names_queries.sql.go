@@ -29,14 +29,17 @@ func (q *Queries) CreateServiceName(ctx context.Context, arg CreateServiceNamePa
 	return id, err
 }
 
-const deleteServiceNameByID = `-- name: DeleteServiceNameByID :exec
+const deleteServiceNameByID = `-- name: DeleteServiceNameByID :execrows
 DELETE FROM "service_names"
 WHERE "id" = $1
 `
 
-func (q *Queries) DeleteServiceNameByID(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.Exec(ctx, deleteServiceNameByID, id)
-	return err
+func (q *Queries) DeleteServiceNameByID(ctx context.Context, id uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteServiceNameByID, id)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
 }
 
 const getServiceNameByID = `-- name: GetServiceNameByID :one

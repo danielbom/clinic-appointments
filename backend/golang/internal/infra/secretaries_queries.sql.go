@@ -74,14 +74,17 @@ func (q *Queries) CreateSecretary(ctx context.Context, arg CreateSecretaryParams
 	return i, err
 }
 
-const deleteSecretaryByID = `-- name: DeleteSecretaryByID :exec
+const deleteSecretaryByID = `-- name: DeleteSecretaryByID :execrows
 DELETE FROM "secretaries"
 WHERE "id" = $1
 `
 
-func (q *Queries) DeleteSecretaryByID(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.Exec(ctx, deleteSecretaryByID, id)
-	return err
+func (q *Queries) DeleteSecretaryByID(ctx context.Context, id uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteSecretaryByID, id)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
 }
 
 const getSecretaryByEmail = `-- name: GetSecretaryByEmail :one

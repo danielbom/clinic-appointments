@@ -53,14 +53,17 @@ func (q *Queries) CreateSpecialist(ctx context.Context, arg CreateSpecialistPara
 	return id, err
 }
 
-const deleteSpecialistByID = `-- name: DeleteSpecialistByID :exec
+const deleteSpecialistByID = `-- name: DeleteSpecialistByID :execrows
 DELETE FROM "specialists"
 WHERE "id" = $1
 `
 
-func (q *Queries) DeleteSpecialistByID(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.Exec(ctx, deleteSpecialistByID, id)
-	return err
+func (q *Queries) DeleteSpecialistByID(ctx context.Context, id uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteSpecialistByID, id)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
 }
 
 const getSpecialistByEmail = `-- name: GetSpecialistByEmail :one

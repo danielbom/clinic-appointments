@@ -114,14 +114,17 @@ func (q *Queries) CreateAppointment(ctx context.Context, arg CreateAppointmentPa
 	return id, err
 }
 
-const deleteAppointment = `-- name: DeleteAppointment :exec
+const deleteAppointment = `-- name: DeleteAppointment :execrows
 DELETE FROM "appointments"
 WHERE "id" = $1
 `
 
-func (q *Queries) DeleteAppointment(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.Exec(ctx, deleteAppointment, id)
-	return err
+func (q *Queries) DeleteAppointment(ctx context.Context, id uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteAppointment, id)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
 }
 
 const getAppointmentByID = `-- name: GetAppointmentByID :one

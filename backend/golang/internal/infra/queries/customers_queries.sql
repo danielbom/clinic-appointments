@@ -44,6 +44,6 @@ WHERE true
   AND ($2::text = '' OR "cpf" = $2)
   AND ($3::text = '' OR "phone" = $3);
 
--- name: DeleteCustomerByID :exec
+-- name: DeleteCustomerByID :execrows
 DELETE FROM "customers"
 WHERE "id" = $1;

@@ -42,7 +42,7 @@ SELECT "id", "name", "email", "phone", "birthdate", "cpf", "cnpj"
 FROM "specialists"
 WHERE "name" ILIKE '%' || $1 || '%';
 
--- name: DeleteSpecialistByID :exec
+-- name: DeleteSpecialistByID :execrows
 DELETE FROM "specialists"
 WHERE "id" = $1;
 

@@ -21,6 +21,6 @@ SELECT "id", "service_name_id", "specialist_id", "price", "duration"
 FROM services
 WHERE "id" = $1;
 
--- name: DeleteService :exec
+-- name: DeleteService :execrows
 DELETE FROM "services"
 WHERE "id" = $1;
