@@ -45,7 +45,7 @@ export function ApiProvider({ children }: { children: React.ReactNode }) {
       if (!url) return
       const status = response.status
       console.groupCollapsed(`=> ${method} ${url} ${status}`)
-      console.dir(JSON.parse(JSON.stringify(response)))
+      console.dir(response.data)
       console.groupEnd()
     }
     const id = api._config.instance.interceptors.response.use(
