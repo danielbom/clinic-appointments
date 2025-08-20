@@ -1,8 +1,6 @@
 package presenter
 
 import (
-	"time"
-
 	"backend/internal/api/dtos"
 	"backend/internal/infra"
 	"backend/internal/usecase"
@@ -27,7 +25,7 @@ func GetAppointment(a infra.ListAppointmentsRow) dtos.Appointment {
 		SpecialistID:   a.SpecialistID.String(),
 		Price:          a.Price,
 		Duration:       MicrosToMinutes(a.Duration.Microseconds),
-		Date:           a.Date.Time.Format(time.RFC3339),
+		Date: 					DateToString(a.Date),
 		Time:           TimeToString(a.Time),
 		Status:         int32(a.Status),
 	}
@@ -38,7 +36,7 @@ func GetAppointmentsCalendar(appointments []infra.ListAppointmentsCalendarRow) [
 	for _, appointment := range appointments {
 		response = append(response, dtos.AppointmentCalendar{
 			ID:             appointment.ID.String(),
-			Date:           appointment.Date.Time.Format(time.RFC3339),
+			Date: 					DateToString(appointment.Date),
 			Time:           TimeToString(appointment.Time),
 			SpecialistName: appointment.SpecialistName,
 			Status:         int32(appointment.Status),

@@ -5,4 +5,5 @@ module.exports = {
   collectCoverageFrom: ['src/**/*.ts'],
   coverageReporters: ['text', 'html'],
   coverageDirectory: 'coverage',
+  setupFilesAfterEnv: ['jest-expect-message'],
 };
