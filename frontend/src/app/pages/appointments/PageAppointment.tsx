@@ -63,7 +63,7 @@ function PageAppointment({
   onUpdateAppointment,
   onDeleteAppointment,
 }: PageAppointmentProps) {
-  const showModal = useDisclosure()
+  const showModal = useDisclosure(mode !== 'edit' && !!record)
   const filterModal = useDisclosure()
   const deleteModal = useDisclosure()
   const filterServiceModal = useDisclosure()
@@ -99,6 +99,7 @@ function PageAppointment({
               switch (event) {
                 case 'show':
                   changeRecord(record)
+                  changeMode(mode, { id: record.id })
                   showModal.onOpen()
                   break
                 case 'edit':
@@ -168,7 +169,10 @@ function PageAppointment({
       />
       <ShowAppointment
         isOpen={!!record && showModal.isOpen}
-        onClose={showModal.onClose}
+        onClose={() => {
+          showModal.onClose()
+          changeMode(mode, {})
+        }}
         onClickEdit={() => {
           if (!record) return console.warn('Record is undefined')
           showModal.onClose()

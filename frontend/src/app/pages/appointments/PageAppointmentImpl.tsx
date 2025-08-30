@@ -39,11 +39,11 @@ const PARAMS_LIST: AppointmentsGetAllQuery = {
   pageSize: 20,
 }
 const PARAMS_SERVICE: ServicesGetAllQuery = {
-  page: 0,
+  page: 1,
   pageSize: 5,
 }
 const PARAMS_CUSTOMER: ServicesGetAllQuery = {
-  page: 0,
+  page: 1,
   pageSize: 5,
 }
 
@@ -60,12 +60,6 @@ function PageAppointmentImpl({ mode, changeMode, state }: PageAppointmentImplPro
     setPreviousData(queryTable.data ?? [])
     changeMode('list', newQuery)
   }
-
-  useEffect(() => {
-    if (mode === 'list') {
-      if (record) setRecord(null)
-    }
-  }, [mode, record])
 
   const recordQuery = useAppointmentQuery({
     id: paramsShow.id,
@@ -146,7 +140,7 @@ function PageAppointmentImpl({ mode, changeMode, state }: PageAppointmentImplPro
         }}
         onClickFilterService={(filters) => {
           setParamsSearchService({
-            page: 0,
+            page: 1,
             pageSize: paramsSearchService.pageSize,
             service: filters.service,
             specialization: filters.specialization,

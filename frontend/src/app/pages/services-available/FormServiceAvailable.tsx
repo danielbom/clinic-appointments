@@ -105,11 +105,11 @@ function InputSpecialization({
           required={!editing}
           style={{ marginBottom: '8px' }}
         >
-          <Input />
+          <Input placeholder='Adicionar Especialização...' />
         </Form.Item>
         {!editing && (
           <Button type="primary" icon={<UnorderedListOutlined />} onClick={() => setAddSpecialization(false)}>
-            Selecionar especialidade
+            Selecionar Especialização
           </Button>
         )}
       </div>
@@ -127,7 +127,7 @@ function InputSpecialization({
           <Select
             showSearch
             allowClear
-            placeholder="Selecione uma especialidade"
+            placeholder="Buscar Especialização"
             disabled={editing}
             filterOption={(input, option) => {
               if (!input || !option) return false
@@ -140,7 +140,7 @@ function InputSpecialization({
           />
         </Form.Item>
         <Button type="primary" icon={<PlusOutlined />} onClick={() => setAddSpecialization(true)}>
-          Adicionar nova especialidade
+          Adicionar Nova Especialização
         </Button>
       </div>
     )

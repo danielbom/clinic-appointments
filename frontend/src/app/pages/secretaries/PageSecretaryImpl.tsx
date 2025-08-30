@@ -45,12 +45,6 @@ function PageSecretaryImpl({ mode, changeMode, state }: PageSecretaryImplProps) 
     changeMode('list', params)
   }
 
-  useEffect(() => {
-    if (mode === 'list') {
-      if (record) setRecord(null)
-    }
-  }, [mode, record])
-
   const recordQuery = useSecretaryQuery({
     id: paramsShow.id,
     enabled: (mode === 'show' || mode === 'edit') && !record,

@@ -16,6 +16,7 @@ export function useServiceAvailableCreate() {
     },
     onSuccess() {
       message.success('Serviço registrado!')
+      invalidateQueries(queryClient, '#specializations')
       invalidateQueries(queryClient, '#services-available')
     },
   })
@@ -52,6 +53,7 @@ export function useServiceAvailableDelete() {
     },
     onSuccess() {
       message.success('Serviço deletado!')
+      invalidateQueries(queryClient, '#specializations')
       invalidateQueries(queryClient, '#services-available')
     },
     onError: (error) => {
@@ -70,6 +72,7 @@ export function useServiceAvailableDeleteAll() {
       return results
     },
     onSuccess() {
+      invalidateQueries(queryClient, '#specializations')
       invalidateQueries(queryClient, '#services-available')
     },
   })

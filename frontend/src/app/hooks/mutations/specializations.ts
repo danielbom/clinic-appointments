@@ -33,6 +33,7 @@ export function useSpecializationUpdate() {
     onSuccess: () => {
       message.success('Especialização atualizado!')
       invalidateQueries(queryClient, '#specializations')
+      invalidateQueries(queryClient, '#services-available')
     },
     onError: (error) => {
       message.error('Falha durante a atualização')
@@ -53,6 +54,7 @@ export function useSpecializationDelete() {
     onSuccess: () => {
       message.success('Especialização deletado!')
       invalidateQueries(queryClient, '#specializations')
+      invalidateQueries(queryClient, '#services-available')
     },
     onError: (error) => {
       message.error('Falha durante a remoção')
@@ -72,6 +74,7 @@ export function useSpecializationDeleteAll() {
     },
     onSuccess: () => {
       invalidateQueries(queryClient, '#specializations')
+      invalidateQueries(queryClient, '#services-available')
     },
   })
 }

@@ -49,13 +49,6 @@ function PageSpecialistImpl({ mode, changeMode, state }: PageSpecialistImplProps
     changeMode('list', params)
   }
 
-  useEffect(() => {
-    if (mode === 'list') {
-      if (record) setRecord(null)
-      if (specializations) setSpecializations(null)
-    }
-  }, [mode, record, specializations])
-
   const recordQuery = useSpecialistQuery({
     id: paramsShow.id,
     enabled: (mode === 'show' || mode === 'edit') && !record,

@@ -42,12 +42,6 @@ function PageServiceImpl({ mode, changeMode, state }: PageServiceImplProps) {
     changeMode('list', params)
   }
 
-  useEffect(() => {
-    if (mode === 'list') {
-      if (record) setRecord(null)
-    }
-  }, [mode, record])
-
   const recordQuery = useServiceQuery({
     id: paramsShow.id,
     enabled: (mode === 'show' || mode === 'edit') && !record,
@@ -116,7 +110,7 @@ function PageServiceImpl({ mode, changeMode, state }: PageServiceImplProps) {
         }}
         onClickFilter={(filters) => {
           setListQuery({
-            page: 0,
+            page: 1,
             pageSize: paramsList.pageSize,
             service: filters.service,
             specialization: filters.specialization,
@@ -156,7 +150,7 @@ function PageServiceImpl({ mode, changeMode, state }: PageServiceImplProps) {
 }
 
 const PARAMS_LIST: ParamsList = {
-  page: 0,
+  page: 1,
   pageSize: 20,
   service: '',
   specialist: '',
@@ -181,7 +175,7 @@ function loadParamsShow(state: Record<string, string> = {}): ParamsShow {
 
 function useSpecialists(mode: PageMode, record: Service | null) {
   const querySpecialistsOnCreate = useSpecialistListQuery({
-    params: { page: 0, pageSize: 100 },
+    params: { page: 1, pageSize: 100 },
     enabled: mode === 'create',
   })
   const querySpecialistsOnUpdate = useSpecialistQuery({

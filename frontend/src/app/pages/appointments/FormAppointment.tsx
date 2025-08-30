@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { SearchOutlined } from '@ant-design/icons'
-import { Form, Select, DatePicker, TimePicker, Button, Input } from 'antd'
+import { Form, Select, DatePicker, TimePicker, Button, Input, Descriptions } from 'antd'
 import dayjs, { Dayjs } from 'dayjs'
 
 import FormX from '../../../components/FormX'
@@ -9,6 +9,7 @@ import normalizeCPF from '../../../lib/normalizers/normalizeCPF'
 import { appointmentDateIsRequired, appointmentDateIsInvalid } from '../../../lib/rules/appointmentDate'
 import { appointmentTimeIsRequired } from '../../../lib/rules/appointmentTime'
 import { Appointment, AppointmentStatus } from '../../../lib/api'
+import renderDuration from '../../../lib/renders/renderDuration'
 
 const OPTIONS_STATUS = [
   { label: 'Pendente', value: AppointmentStatus.Pending },
@@ -21,6 +22,7 @@ type FormAppointmentService = {
   specialization: string
   serviceName: string
   specialistName: string
+  duration: number
 }
 
 type FormAppointmentCustomer = {
@@ -67,11 +69,21 @@ function FormAppointment({
   const [form] = Form.useForm<FormAppointmentValues>()
   const editing = !!record
 
+  const serviceId = Form.useWatch('serviceId', form)
+  const time = Form.useWatch('time', form)
+
   useEffect(() => {
     if (services.length === 1) {
       form.setFieldValue('serviceId', services[0].id)
     }
   }, [form, services])
+
+  const endTime = () => {
+    if (!time) return null
+    const service: FormAppointmentService | undefined = services.find((it) => it.id === serviceId)
+    if (!service) return null
+    return time.add(service.duration, 'minutes').format('hh:mm A')
+  }
 
   return (
     <div>
@@ -85,7 +97,12 @@ function FormAppointment({
           validateTrigger={['onBlur', 'onSubmit']}
         >
           <SelectCustomer record={record} customers={customers} onClickSearchCustomer={onClickSearchCustomer} />
-          <SelectService record={record} services={services} onClickSearchService={onClickSearchService} />
+          <SelectService
+            record={record}
+            serviceId={serviceId}
+            services={services}
+            onClickSearchService={onClickSearchService}
+          />
 
           <Form.Item<FormAppointmentValues>
             label="Data"
@@ -95,12 +112,22 @@ function FormAppointment({
           >
             <DatePicker format="DD-MM-YYYY" />
           </Form.Item>
-          <Form.Item<FormAppointmentValues> label="Hora" name="time" required rules={[appointmentTimeIsRequired]}>
+
+          <Form.Item<FormAppointmentValues>
+            label="Hora"
+            name="time"
+            required
+            rules={[appointmentTimeIsRequired]}
+            style={{ marginBottom: 0 }}
+          >
             <TimePicker minuteStep={5} format="hh:mm A" />
           </Form.Item>
+          <Descriptions>
+            <Descriptions.Item label="Hora de Término">{endTime()}</Descriptions.Item>
+          </Descriptions>
 
           <Form.Item<FormAppointmentValues> label="Status" name="status" required>
-            <Select options={OPTIONS_STATUS} />
+            <Select options={OPTIONS_STATUS} aria-readonly disabled={!editing} />
           </Form.Item>
 
           <FormX.Save
@@ -155,12 +182,14 @@ function SelectCustomer({ record, customers, onClickSearchCustomer }: SelectCust
 
 type SelectServiceProps = {
   record?: Appointment
+  serviceId?: string
   services: FormAppointmentService[]
   onClickSearchService: () => void
 }
 
-function SelectService({ record, services, onClickSearchService }: SelectServiceProps) {
+function SelectService({ record, serviceId, services, onClickSearchService }: SelectServiceProps) {
   const editing = !!record
+  const service = serviceId && services.find((it) => it.id === serviceId)
   if (editing) {
     return (
       <Form.Item label="Serviço">
@@ -170,7 +199,7 @@ function SelectService({ record, services, onClickSearchService }: SelectService
   } else {
     return (
       <div style={{ paddingBottom: '24px' }}>
-        <Form.Item<FormAppointmentValues> label="Serviço" name="serviceId" required style={{ marginBottom: '8px' }}>
+        <Form.Item<FormAppointmentValues> label="Serviço" name="serviceId" required style={{ marginBottom: 0 }}>
           <Select
             disabled={editing}
             showSearch
@@ -182,6 +211,12 @@ function SelectService({ record, services, onClickSearchService }: SelectService
             }))}
           />
         </Form.Item>
+        <Descriptions>
+          <Descriptions.Item style={{ paddingBottom: '8px' }} label="Duração">
+            {service && renderDuration(service.duration)}
+          </Descriptions.Item>
+        </Descriptions>
+
         <Button disabled={editing} type="primary" icon={<SearchOutlined />} onClick={onClickSearchService}>
           Procurar serviço
         </Button>

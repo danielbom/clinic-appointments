@@ -379,7 +379,7 @@ function Step3({ editing, values, show, onClickSave, onClickPrevious }: Step3Pro
       <Divider />
 
       <Descriptions title="Serviços" layout="vertical" size="small" column={1}>
-        {values[1]?.services.map((it) => (
+        {values[1]?.services?.map((it) => (
           <Descriptions.Item key={it.key}>
             <Descriptions layout="vertical" size="small" column={3}>
               <Descriptions.Item key={it.key} label="Serviço">
@@ -456,11 +456,13 @@ function FormSpecialist({ record, specializations, services: groups, onSubmit, o
             if (values[0] && values[1]) {
               onSubmit({
                 ...values[0],
-                services: values[1].services.map((it) => ({
-                  serviceId: it.key,
-                  price: it.price,
-                  duration: it.duration,
-                })),
+                services: !values[1]?.services
+                  ? []
+                  : values[1].services.map((it) => ({
+                      serviceId: it.key,
+                      price: it.price,
+                      duration: it.duration,
+                    })),
               })
             }
           }}

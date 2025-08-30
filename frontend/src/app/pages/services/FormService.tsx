@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { AutoComplete, Form, Input, InputNumber, Select } from 'antd'
+import { AutoComplete, Form, FormInstance, Input, InputNumber, Select } from 'antd'
 
 import FormX from '../../../components/FormX'
 import renderMoney from '../../../lib/renders/renderMoney'
@@ -61,7 +61,7 @@ function FormService({ record, specialists, services, onSubmit, onClose }: FormS
           validateTrigger={['onBlur', 'onSubmit']}
         >
           <SelectSpecialist record={record} specialists={specialists} />
-          <AutocompleteService record={record} services={services} />
+          <AutocompleteService form={form} record={record} services={services} />
 
           <Form.Item<FormServiceValues> label="Preço" name="price" required>
             <InputNumber<number>
@@ -133,11 +133,11 @@ function SelectSpecialist({ record, specialists }: SelectSpecialistProps) {
 }
 
 type AutocompleteServiceProps = {
+  form: FormInstance<FormServiceValues>
   record?: Service
   services: ServicesGroup[]
 }
-function AutocompleteService({ record, services }: AutocompleteServiceProps) {
-  const [form] = Form.useForm<FormServiceValues>()
+function AutocompleteService({ form, record, services }: AutocompleteServiceProps) {
   const [autocompleteValue, setAutocompleteValue] = useState<string>('')
   const options = useMemo(() => {
     return services
@@ -170,7 +170,10 @@ function AutocompleteService({ record, services }: AutocompleteServiceProps) {
         <Form.Item<FormServiceValues> label="Serviço" required>
           <AutoComplete
             options={options}
-            onChange={setAutocompleteValue}
+            onChange={(value) => {
+              setAutocompleteValue(value)
+              form.setFieldValue('serviceId', null)
+            }}
             value={autocompleteValue}
             filterOption={(inputValue, option) => {
               if (!inputValue || !option) return true

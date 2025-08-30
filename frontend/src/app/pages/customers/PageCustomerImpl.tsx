@@ -45,15 +45,9 @@ function PageCustomerImpl({ mode, changeMode, state }: PageCustomerImplProps) {
     changeMode('list', params)
   }
 
-  useEffect(() => {
-    if (mode === 'list') {
-      if (record) setRecord(null)
-    }
-  }, [mode, record])
-
   const recordQuery = useCustomerQuery({
     id: paramsShow.id,
-    enabled: (mode === 'show' || mode === 'edit') && !record,
+    enabled: !record,
   })
   useEffect(() => {
     if (!record) {

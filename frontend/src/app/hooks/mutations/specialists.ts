@@ -17,6 +17,7 @@ export function useSpecialistCreate() {
     onSuccess() {
       message.success('Especialista registrado!')
       invalidateQueries(queryClient, '#specialists')
+      invalidateQueries(queryClient, '#services')
     },
   })
 }
@@ -33,6 +34,7 @@ export function useSpecialistUpdate() {
     onSuccess() {
       message.success('Especialista atualizado!')
       invalidateQueries(queryClient, '#specialists')
+      invalidateQueries(queryClient, '#services')
     },
     onError: (error) => {
       message.error('Falha durante a atualização')
@@ -53,6 +55,7 @@ export function useSpecialistDelete() {
     onSuccess() {
       message.success('Especialista deletado!')
       invalidateQueries(queryClient, '#specialists')
+      invalidateQueries(queryClient, '#services')
     },
     onError: (error) => {
       message.error('Falha durante a remoção')
@@ -73,6 +76,7 @@ export function useSpecialistDeleteAll() {
     onSuccess() {
       message.success('Especialistas deletado!')
       invalidateQueries(queryClient, '#specialists')
+      invalidateQueries(queryClient, '#services')
     },
   })
 }

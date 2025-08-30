@@ -46,7 +46,7 @@ function PageServiceAvailable({
   onUpdateServiceAvailable,
   onDeleteServiceAvailable,
 }: PageServiceAvailableProps) {
-  const showModal = useDisclosure()
+  const showModal = useDisclosure(mode !== 'edit' && !!record)
   const deleteModal = useDisclosure()
 
   function deleteRecord(record: ServiceAvailable) {
@@ -75,6 +75,7 @@ function PageServiceAvailable({
               switch (event) {
                 case 'show':
                   changeRecord(record)
+                  changeMode(mode, { id: record.id })
                   showModal.onOpen()
                   break
                 case 'edit':
@@ -125,7 +126,10 @@ function PageServiceAvailable({
       />
       <ShowServiceAvailable
         isOpen={!!record && showModal.isOpen}
-        onClose={showModal.onClose}
+        onClose={() => {
+          showModal.onClose()
+          changeMode(mode, {})
+        }}
         onClickEdit={() => {
           if (!record) return console.warn('Record is undefined')
           showModal.onClose()

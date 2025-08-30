@@ -35,12 +35,6 @@ function PageServiceAvailableImpl({ mode, changeMode, state }: PageServiceAvaila
   const [selectedItems, setSelectedItems] = useState<ServiceAvailable[]>([])
   const [record, setRecord] = useState<ServiceAvailable | null>(null)
 
-  useEffect(() => {
-    if (mode === 'list') {
-      if (record) setRecord(null)
-    }
-  }, [mode, record])
-
   const recordQuery = useServiceAvailableQuery({
     id: paramsShow.id,
     enabled: (mode === 'show' || mode === 'edit') && !record,

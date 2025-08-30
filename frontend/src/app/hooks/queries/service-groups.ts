@@ -8,7 +8,7 @@ type UseServiceGroups = {
 export function useServiceGroups({ enabled }: UseServiceGroups) {
   const api = useApi()
   return useQuery({
-    queryKey: ['#service-groups'],
+    queryKey: ['#services-available', 'groups'],
     staleTime: 1000 * 60 * 5,
     queryFn: async () => {
       const response = await api.serviceGroups.getAll()

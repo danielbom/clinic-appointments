@@ -50,7 +50,7 @@ function PageSecretary({
   onUpdateSecretary,
   onDeleteSecretary,
 }: PageSecretaryProps) {
-  const showModal = useDisclosure()
+  const showModal = useDisclosure(mode !== 'edit' && !!record)
   const filterModal = useDisclosure()
   const deleteModal = useDisclosure()
 
@@ -81,6 +81,7 @@ function PageSecretary({
               switch (event) {
                 case 'show':
                   changeRecord(record)
+                  changeMode(mode, { id: record.id })
                   showModal.onOpen()
                   break
                 case 'edit':
@@ -119,7 +120,10 @@ function PageSecretary({
       />
       <ShowSecretary
         isOpen={!!record && showModal.isOpen}
-        onClose={showModal.onClose}
+        onClose={() => {
+          showModal.onClose()
+          changeMode(mode, {})
+        }}
         onClickEdit={() => {
           if (!record) return console.warn('Record is undefined')
           showModal.onClose()
