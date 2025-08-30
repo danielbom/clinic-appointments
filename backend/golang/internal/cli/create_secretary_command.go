@@ -45,11 +45,11 @@ func (c *CreateSecretaryCommand) Execute(s *State) error {
 		return err.Error
 	}
 
-	id, err := usecase.CreateSecretary(s, c.Args)
+	secretary, err := usecase.CreateSecretary(s, c.Args)
 	if err != nil {
-		return fmt.Errorf("error creating secretary: %w", err)
+		return fmt.Errorf("error creating secretary: %w", err.Error)
 	}
 
-	log.Printf("Secretary created with email: %s\n%s", c.Args.Email, id)
+	log.Printf("Secretary created with email: %s\n%s", c.Args.Email, secretary.ID)
 	return nil
 }

@@ -31,64 +31,16 @@ func (h *api) testInit(w http.ResponseWriter, r *http.Request) {
 	}
 	defer tx.Rollback(ctx)
 
-	_, err = tx.Exec(ctx, "DELETE FROM admins")
-	if err != nil {
-		http.Error(w, "failed to delete admins table", http.StatusInternalServerError)
-		return
-	}
-
-	_, err = tx.Exec(ctx, "DELETE FROM appointments")
-	if err != nil {
-		http.Error(w, "failed to delete appointments table", http.StatusInternalServerError)
-		return
-	}
-
-	_, err = tx.Exec(ctx, "DELETE FROM customers")
-	if err != nil {
-		http.Error(w, "failed to delete customers table", http.StatusInternalServerError)
-		return
-	}
-
-	_, err = tx.Exec(ctx, "DELETE FROM secretaries")
-	if err != nil {
-		http.Error(w, "failed to delete secretaries table", http.StatusInternalServerError)
-		return
-	}
-
-	_, err = tx.Exec(ctx, "DELETE FROM services")
-	if err != nil {
-		http.Error(w, "failed to delete services table", http.StatusInternalServerError)
-		return
-	}
-
-	_, err = tx.Exec(ctx, "DELETE FROM service_names")
-	if err != nil {
-		http.Error(w, "failed to delete service_names table", http.StatusInternalServerError)
-		return
-	}
-
-	_, err = tx.Exec(ctx, "DELETE FROM specialists")
-	if err != nil {
-		http.Error(w, "failed to delete specialists table", http.StatusInternalServerError)
-		return
-	}
-
-	_, err = tx.Exec(ctx, "DELETE FROM specialist_hours")
-	if err != nil {
-		http.Error(w, "failed to delete specialist_hours table", http.StatusInternalServerError)
-		return
-	}
-
-	_, err = tx.Exec(ctx, "DELETE FROM specializations")
-	if err != nil {
-		http.Error(w, "failed to delete specializations table", http.StatusInternalServerError)
-		return
-	}
-
 	qTx := h.q.WithTx(tx)
 	rs := NewRequestState(qTx, r)
 
-	_, ucErr := usecase.CreateAdmin(rs, usecase.CreateAdminArgs{
+	ucErr := usecase.ResetDb(rs)
+	if ucErr != nil {
+		presenter.UsecaseError(w, ucErr)
+		return
+	}
+
+	_, ucErr = usecase.CreateAdmin(rs, usecase.CreateAdminArgs{
 		Name:     "Admin Test",
 		Email:    "admin@test.com",
 		Password: "123mudar",

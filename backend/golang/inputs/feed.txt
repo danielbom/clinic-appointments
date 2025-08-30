@@ -9,32 +9,32 @@ Brenda Araujo Azevedo
 BrendaAraujoAzevedo@teleworm.us
 123mudar
 (94) 4019-9572
-March 16, 1954
+16-03-1954
 900.394.636-13
--
+20.573.002/0001-87
 
 Command: create secretary
 Kauan Ferreira Dias
 KauanFerreiraDias@armyspy.com
 123mudar
 (11) 8538-6773
-September 29, 1963
+29-09-1963
 165.204.243-15
--
+55.308.735/0001-79
 
 
 Command: create customer
 Tiago Almeida Pinto
 TiagoAlmeidaPinto@dayrep.com
 (11) 2176-2378
-August 6, 1952
+06-08-1952
 604.746.442-43
 
 Command: create customer
 Gabrielle Sousa Martins
 -
 (17) 5655-6668
-April 29, 1977
+29-04-1977
 567.565.925-05
 
 
@@ -42,15 +42,15 @@ Command: create specialist
 Letícia Martins Barbosa
 LeticiaMartinsBarbosa@jourrapide.com
 (11) 4257-5991
-January 2, 2002
+02-01-2002
 156.463.463-98
--
+85.431.927/0001-39
 
 Command: create specialist
 Livia Sousa Ferreira
 LiviaSousaFerreira@rhyta.com
 (92) 6951-7890
-January 14, 1960
+14-01-1960
 619.822.991-26
 81.036.140/0001-11
 

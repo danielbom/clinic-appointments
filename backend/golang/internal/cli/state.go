@@ -8,12 +8,14 @@ import (
 	"backend/internal/infra"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type State struct {
 	pool *pgxpool.Pool
+	tx   pgx.Tx
 	ctx  context.Context
 	q    *infra.Queries
 }
@@ -34,7 +36,14 @@ func NewState() *State {
 	}
 
 	q := infra.New(pool)
-	return &State{pool, ctx, q}
+
+	tx, err := pool.Begin(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	q = q.WithTx(tx)
+	return &State{pool, tx, ctx, q}
 }
 
 func (s *State) Queries() *infra.Queries {

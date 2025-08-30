@@ -43,11 +43,11 @@ func (c *CreateCustomerCommand) Execute(s *State) error {
 		return err.Error
 	}
 
-	id, err := usecase.CreateCustomer(s, c.Args)
+	customer, err := usecase.CreateCustomer(s, c.Args)
 	if err != nil {
-		return err.Error
+		return fmt.Errorf("error creating customer: %w", err.Error)
 	}
 
-	log.Printf("Customer created with email: %s\n%s", c.Args.Email, id)
+	log.Printf("Customer created with email: %s\n%s", c.Args.Email, customer.ID)
 	return nil
 }

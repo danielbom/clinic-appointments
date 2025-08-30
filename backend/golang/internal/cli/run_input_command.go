@@ -27,7 +27,19 @@ func optionalValue(value string) string {
 	return value
 }
 
-func parseDate(date string) (string, bool) {
+func parseBrDate(date string) (string, bool) {
+	// input: <Day>-<Month>-<FullYear>
+	// output: <FullYear>-<Month>-<Day>
+	var month int
+	var day, fullYear int
+	_, err := fmt.Sscanf(date, "%d-%d-%d", &day, &month, &fullYear)
+	if err != nil {
+		return "", false
+	}
+	return fmt.Sprintf("%d-%02d-%02d", fullYear, month, day), true
+}
+
+func parseLongDate(date string) (string, bool) {
 	// input: <LongMonth> <Day>, <FullYear>
 	// output: <FullYear>-<Month>-<Day>
 	var longMonth string
@@ -66,6 +78,16 @@ func parseDate(date string) (string, bool) {
 	}
 
 	return fmt.Sprintf("%d-%s-%02d", fullYear, month, day), true
+}
+
+func parseDate(date string) (string, bool) {
+	if result, ok := parseBrDate(date); ok {
+		return result, ok
+	}
+	if result, ok := parseLongDate(date); ok {
+		return result, ok
+	}
+	return "", false
 }
 
 func parseWeekday(weekday string) (int32, bool) {
@@ -251,7 +273,7 @@ func (r *RunInputCommand) runCreateCustomer(s *State, scanner *bufio.Scanner) er
 
 	args.Email = optionalValue(args.Email)
 	args.Phone = extractOnlyDigits(args.Phone)
-	args.Birthdate, found = parseDate(args.Birthdate)
+	args.Birthdate, found = parseLongDate(args.Birthdate)
 	if !found {
 		return fmt.Errorf("invalid birthdate format")
 	}
@@ -298,7 +320,7 @@ func (r *RunInputCommand) runCreateSpecialist(s *State, scanner *bufio.Scanner) 
 	}
 
 	args.Phone = extractOnlyDigits(args.Phone)
-	args.Birthdate, found = parseDate(args.Birthdate)
+	args.Birthdate, found = parseLongDate(args.Birthdate)
 	if !found {
 		return fmt.Errorf("invalid birthdate format")
 	}
@@ -532,7 +554,7 @@ func (r *RunInputCommand) runCreateAppointment(s *State, scanner *bufio.Scanner)
 	if !ok {
 		return fmt.Errorf("invalid time")
 	}
-	date, ok = parseDate(date)
+	date, ok = parseLongDate(date)
 	if !ok {
 		return fmt.Errorf("invalid date")
 	}

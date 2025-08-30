@@ -76,6 +76,8 @@ go run ./cmd/cli/main.go create-specialization -name "Specialization"
 go run ./cmd/cli/main.go create-service -name "Service" -specialization "Specialization"
 
 go run ./cmd/cli/main.go list-appointments --date=2020-10-10
+
+go run ./cmd/cli/main.go reset-db
 ```
 
 ### Air Tool
@@ -134,5 +136,6 @@ go mod tidy
 * [flag docs #2](https://pkg.go.dev/flag)
 * [Optimizing Docker image](https://www.youtube.com/watch?v=cGYfMIKHC30)
 * [Fake generator](https://www.fakenamegenerator.com/gen-random-br-br.php)
+* [CNPJ generator](https://www.4devs.com.br/gerador_de_cnpj)
 * [HTTP Yac](https://httpyac.github.io/)
 * [Github - Gopportunities](https://github.com/arthur404dev/gopportunities)

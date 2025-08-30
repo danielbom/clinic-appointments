@@ -22,6 +22,7 @@ func NewCli(programName string) *Cli {
 		&ListAppointmentsCommand{},
 		&ListSpecializationsCommand{},
 		&RunInputCommand{},
+		&ResetDbCommand{},
 		&help,
 	}
 
@@ -46,11 +47,19 @@ func (c *Cli) Run(args []string) {
 		if c.Name() == args[0] {
 			s := NewState()
 			defer s.Close()
+			defer s.tx.Rollback(s.ctx)
 
 			c.Parse(args[1:])
 			err := c.Execute(s)
+
 			if err != nil {
 				fmt.Printf("ERROR: %s", err.Error())
+				return
+			}
+
+			if err := s.tx.Commit(s.ctx); err != nil {
+				fmt.Printf("ERROR: %s", err.Error())
+				return
 			}
 			return
 		}
