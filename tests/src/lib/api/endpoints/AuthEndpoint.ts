@@ -1,24 +1,35 @@
 import { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { Config } from '../Config'
-import { AuthToken, AuthMe } from '../validation'
 
 export class AuthEndpoint {
-  constructor(public config: Config) {}
+  constructor(public _config: Config) {}
 
-  login(data: LoginBody): Promise<AxiosResponse<AuthToken>> {
-    return this.config.instance.post(`/auth/login`, data)
+  login(data: AuthLoginBody): Promise<AxiosResponse<AuthLoginResponse>> {
+    return this._config.instance.post(`/auth/login`, data)
   }
 
-  refresh(config: AxiosRequestConfig): Promise<AxiosResponse<AuthToken>> {
-    return this.config.instance.post(`/auth/refresh`, null, config)
+  refresh(config: AxiosRequestConfig): Promise<AxiosResponse<AuthLoginResponse>> {
+    return this._config.instance.post(`/auth/refresh`, null, config)
   }
 
-  me(): Promise<AxiosResponse<AuthMe>> {
-    return this.config.instance.get(`/auth/me`)
+  me(): Promise<AxiosResponse<Identity>> {
+    return this._config.instance.get(`/auth/me`)
   }
 }
 
-export type LoginBody = {
+export type AuthLoginBody = {
   email: string
   password: string
+}
+
+export type AuthLoginResponse = {
+  accessToken: string
+  refreshToken: string
+}
+
+export type Identity = {
+  id: number
+  email: string
+  name: string
+  role: string
 }

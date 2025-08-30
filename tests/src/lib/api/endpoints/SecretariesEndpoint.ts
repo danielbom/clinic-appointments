@@ -1,57 +1,73 @@
 import { AxiosResponse } from 'axios'
 import { Config } from '../Config'
-import { Secretary } from '../validation'
 
 export class SecretariesEndpoint {
-  constructor(public config: Config) {}
+  constructor(public _config: Config) {}
 
-  list(query?: SecretaryListQuery): Promise<AxiosResponse<Secretary[]>> {
-    return this.config.instance.get(`/secretaries`, { params: query })
+  getAll(query: SecretariesGetAllQuery = {}): Promise<AxiosResponse<Secretary[]>> {
+    return this._config.instance.get(`/secretaries`, { params: query })
   }
 
-  create(data: UpsertSecretaryBody): Promise<AxiosResponse<{ id: string }>> {
-    return this.config.instance.post(`/secretaries`, data)
+  count(query: SecretariesCountAllQuery = {}): Promise<AxiosResponse<number>> {
+    return this._config.instance.get(`/secretaries/count`, { params: query })
   }
 
-  count(query?: SecretaryCountQuery): Promise<AxiosResponse<number>> {
-    return this.config.instance.get(`/secretaries/count`, { params: query })
+  getById(id: string): Promise<AxiosResponse<Secretary>> {
+    return this._config.instance.get(`/secretaries/${id}`)
   }
 
-  get(secretaryId: string): Promise<AxiosResponse<Secretary>> {
-    return this.config.instance.get(`/secretaries/${secretaryId}`)
+  create(data: SecretariesCreateBody): Promise<AxiosResponse<Secretary>> {
+    return this._config.instance.post(`/secretaries`, data)
   }
 
-  update(secretaryId: string, data: UpsertSecretaryBody): Promise<AxiosResponse<any>> {
-    return this.config.instance.put(`/secretaries/${secretaryId}`, data)
+  update(id: string, data: SecretariesUpdateBody): Promise<AxiosResponse<any>> {
+    return this._config.instance.put(`/secretaries/${id}`, data)
   }
 
-  remove(secretaryId: string): Promise<AxiosResponse<void>> {
-    return this.config.instance.delete(`/secretaries/${secretaryId}`)
+  delete(id: string): Promise<AxiosResponse<void>> {
+    return this._config.instance.delete(`/secretaries/${id}`)
   }
 }
 
-export type SecretaryListQuery = Partial<{
-  page: number
-  pageSize: number
-  name: string
-  cpf: string
-  cnpj: string
-  phone: string
-}>
-
-export type SecretaryCountQuery = Partial<{
-  name: string
-  cpf: string
-  cnpj: string
-  phone: string
-}>
-
-export type UpsertSecretaryBody = {
+export type Secretary = {
+  id: string
   name: string
   email: string
   phone: string
   birthdate: string
-  password: string | undefined
+  cpf: string
+  cnpj: string
+}
+
+export type SecretariesCountAllQuery = {
+  name?: string
+  phone?: string
+  // email?: string
+  cpf?: string
+  cnpj?: string
+}
+
+export type SecretariesGetAllQuery = SecretariesCountAllQuery & {
+  page?: number
+  pageSize?: number
+}
+
+export type SecretariesCreateBody = {
+  name: string
+  email: string
+  phone: string
+  birthdate: string
+  password: string
+  cpf: string
+  cnpj: string
+}
+
+export type SecretariesUpdateBody = {
+  name: string
+  email: string
+  phone: string
+  birthdate: string
+  password?: string
   cpf: string
   cnpj: string
 }

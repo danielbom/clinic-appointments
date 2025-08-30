@@ -2,73 +2,107 @@ import { AxiosResponse } from 'axios'
 import { Config } from '../Config'
 
 export class AppointmentsEndpoint {
-  constructor(public config: Config) {}
+  constructor(public _config: Config) {}
 
-  list(params?: AppointmentsListQuery): Promise<AxiosResponse<any>> {
-    return this.config.instance.get('/appointments', { params })
+  getAll(query: AppointmentsGetAllQuery = {}): Promise<AxiosResponse<Appointment[]>> {
+    return this._config.instance.get(`/appointments`, { params: query })
   }
 
-  create(data: CreateAppointmentBody): Promise<AxiosResponse<any>> {
-    return this.config.instance.post('/appointments', data)
+  count(query: AppointmentsCountAllQuery = {}): Promise<AxiosResponse<number>> {
+    return this._config.instance.get(`/appointments/count`, { params: query })
   }
 
-  count(params?: AppointmentsQuery): Promise<AxiosResponse<any>> {
-    return this.config.instance.get('/appointments/count', { params })
+  getCalendar(query: AppointmentsGetCalendarQuery): Promise<AxiosResponse<AppointmentCalendar[]>> {
+    return this._config.instance.get(`/appointments/calendar`, { params: query })
   }
 
-  calendar(params?: AppointmentsCalendarQuery): Promise<AxiosResponse<any>> {
-    return this.config.instance.get('/appointments/calendar', { params })
+  getCalendarCount(query: AppointmentsGetCalendarQuery): Promise<AxiosResponse<AppointmentCalendarCount[]>> {
+    return this._config.instance.get(`/appointments/calendar/count`, { params: query })
   }
 
-  countCalendar(params?: AppointmentsCalendarQuery): Promise<AxiosResponse<any>> {
-    return this.config.instance.get('/appointments/calendar/count', { params })
+  getById(id: string): Promise<AxiosResponse<Appointment>> {
+    return this._config.instance.get(`/appointments/${id}`)
   }
 
-  get(appointmentId: string): Promise<AxiosResponse<any>> {
-    return this.config.instance.get(`/appointments/${appointmentId}`)
+  create(data: AppointmentsCreateBody): Promise<AxiosResponse<string>> {
+    return this._config.instance.post(`/appointments`, data)
   }
 
-  update(appointmentId: string, data: UpdateAppointmentBody): Promise<AxiosResponse<any>> {
-    return this.config.instance.put(`/appointments/${appointmentId}`, data)
+  update(id: string, data: AppointmentsUpdateBody): Promise<AxiosResponse<any>> {
+    return this._config.instance.put(`/appointments/${id}`, data)
   }
 
-  remove(appointmentId: string): Promise<AxiosResponse<any>> {
-    return this.config.instance.delete(`/appointments/${appointmentId}`)
+  delete(id: string): Promise<AxiosResponse<void>> {
+    return this._config.instance.delete(`/appointments/${id}`)
   }
 }
 
-export type AppointmentsQuery = Partial<{
+export const AppointmentStatus = {
+  None: 0,
+  Pending: 1,
+  Realized: 2,
+  Canceled: 3,
+  Count: 4,
+} as const
+
+export type Appointment = {
+  id: string
+  customerName: string
+  customerId: string
   serviceName: string
-  specialist: string
-  customer: string
-  startDate: string
-  endDate: string
-}>
-
-export type AppointmentsListQuery = Partial<{
-  page: number
-  pageSize: number
-  serviceName: string
-  specialist: string
-  customer: string
-  startDate: string
-  endDate: string
-}>
-
-export type AppointmentsCalendarQuery = Partial<{
-  startDate: string
-  endDate: string
-}>
-
-export type UpdateAppointmentBody = {
+  serviceNameId: string
+  specialistName: string
+  specialistId: string
+  price: number
+  duration: number
   date: string
   time: string
   status: number
 }
 
-export type CreateAppointmentBody = {
+export type AppointmentsCountAllQuery = {
+  startDate?: string
+  endDate?: string
+  serviceName?: string
+  specialist?: string
+  customer?: string
+  status?: number
+}
+
+export type AppointmentsGetAllQuery = AppointmentsCountAllQuery & {
+  page?: number
+  pageSize?: number
+}
+
+export type AppointmentsGetCalendarQuery = {
+  startDate: string
+  endDate: string
+}
+
+export type AppointmentCalendar = {
+  id: string
+  date: string
+  time: string
+  specialistName: string
+  status: number
+}
+
+export type AppointmentCalendarCount = {
+  month: number
+  pendingCount: number
+  realizedCount: number
+  canceledCount: number
+}
+
+export type AppointmentsCreateBody = {
   customerId: string
   serviceId: string
   date: string
   time: string
+}
+
+export type AppointmentsUpdateBody = {
+  date: string
+  time: string
+  status: number
 }

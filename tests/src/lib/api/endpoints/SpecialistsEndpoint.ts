@@ -1,64 +1,122 @@
-import { AxiosResponse } from "axios"
-import { Config } from "../Config"
-import { SpecialistService, Specialist } from "../validation"
+import { AxiosResponse } from 'axios'
+import { Config } from '../Config'
 
 export class SpecialistsEndpoint {
-  constructor(public config: Config) {}
+  constructor(public _config: Config) {}
 
-  list(params: SpecialistListParams = {}): Promise<AxiosResponse<Specialist[]>> {
-    return this.config.instance.get(`/specialists`, { params })
+  getById(id: string): Promise<AxiosResponse<Specialist>> {
+    return this._config.instance.get(`/specialists/${id}`)
   }
 
-  create(data: UpsertSpecialistBody): Promise<AxiosResponse<string>> {
-    return this.config.instance.post(`/specialists`, data)
+  getAll(query: SpecialistsGetAllQuery = {}): Promise<AxiosResponse<Specialist[]>> {
+    return this._config.instance.get(`/specialists`, { params: query })
   }
 
-  count(): Promise<AxiosResponse<number>> {
-    return this.config.instance.get(`/specialists/count`)
+  count(query: SpecialistsCountAllQuery = {}): Promise<AxiosResponse<number>> {
+    return this._config.instance.get(`/specialists/count`, { params: query })
   }
 
-  get(specialistId: string): Promise<AxiosResponse<Specialist>> {
-    return this.config.instance.get(`/specialists/${specialistId}`)
+  getAppointments(
+    id: string,
+    query: GetSpecialistAppointmentQuery = {},
+  ): Promise<AxiosResponse<SpecialistAppointment[]>> {
+    return this._config.instance.get(`/specialists/${id}/appointments`, { params: query })
   }
 
-  update(specialistId: string, data: UpsertSpecialistBody): Promise<AxiosResponse<any>> {
-    return this.config.instance.put(`/specialists/${specialistId}`, data)
+  getSpecializations(id: string): Promise<AxiosResponse<Specialization[]>> {
+    return this._config.instance.get(`/specialists/${id}/specializations`)
   }
 
-  remove(specialistId: string): Promise<AxiosResponse<void>> {
-    return this.config.instance.delete(`/specialists/${specialistId}`)
+  getServices(id: string): Promise<AxiosResponse<SpecialistService[]>> {
+    return this._config.instance.get(`/specialists/${id}/services`)
   }
 
-  listAppointments(specialistId: string): Promise<AxiosResponse<any>> {
-    return this.config.instance.get(`/specialists/${specialistId}/appointments`)
+  create(data: SpecialistsCreateBody): Promise<AxiosResponse<string>> {
+    return this._config.instance.post(`/specialists`, data)
   }
 
-  listSpecializations(specialistId: string): Promise<AxiosResponse<any>> {
-    return this.config.instance.get(`/specialists/${specialistId}/specializations`)
+  update(id: string, data: SpecialistsUpdateBody): Promise<AxiosResponse<any>> {
+    return this._config.instance.put(`/specialists/${id}`, data)
   }
 
-  listServices(specialistId: string): Promise<AxiosResponse<SpecialistService[]>> {
-    return this.config.instance.get(`/specialists/${specialistId}/services`)
+  delete(id: string): Promise<AxiosResponse<void>> {
+    return this._config.instance.delete(`/specialists/${id}`)
   }
 }
 
-export type SpecialistListParams = Partial<{
-  page: number
-  pageSize: number
-}>
+export type Specialist = {
+  id: string
+  name: string
+  email: string
+  phone: string
+  birthdate: string
+  cpf: string
+  cnpj: string
+}
 
-export type SpecialistServiceInfoBody = {
+export type SpecialistsCountAllQuery = {
+  name?: string
+  phone?: string
+  cpf?: string
+}
+export type SpecialistsGetAllQuery = SpecialistsCountAllQuery & {
+  page?: number
+  pageSize?: number
+}
+
+export type GetSpecialistAppointmentQuery = {
+  date?: string
+}
+
+export type SpecialistsCreateBodyService = {
+  serviceNameId: string
+  price: number
+  duration: number // minutes
+}
+
+export type SpecialistsCreateBody = {
+  name: string
+  email: string
+  phone: string
+  birthdate: string
+  cpf: string
+  cnpj: string
+  services: SpecialistsCreateBodyService[]
+}
+
+export type SpecialistsUpdateBody = {
+  name: string
+  email: string
+  phone: string
+  birthdate: string
+  cpf: string
+  cnpj: string
+  services: SpecialistsCreateBodyService[]
+}
+
+export type SpecialistAppointment = {
+  id: string
+  customerName: string
+  customerId: string
+  serviceName: string
+  serviceId: string
+  price: number
+  duration: number
+  date: string
+  time: string
+}
+
+export type SpecialistService = {
+  id: string
+  serviceId: string
+  specializationId: string
+  serviceName: string
   serviceNameId: string
   price: number
   duration: number
 }
 
-export type UpsertSpecialistBody = {
-  name: string,
-  email: string,
-  phone: string,
-  birthdate: string,
-  cpf: string,
-  cnpj: string,
-  services: Array<SpecialistServiceInfoBody>
+export type Specialization = {
+  id: string
+  name: string
 }

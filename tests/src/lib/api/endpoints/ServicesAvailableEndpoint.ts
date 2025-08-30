@@ -1,38 +1,54 @@
 import { AxiosResponse } from 'axios'
 import { Config } from '../Config'
-import { ServiceAvailable } from '../validation'
-import { ServiceAvailableList } from '../validation/ServiceAvailableList'
 
 export class ServicesAvailableEndpoint {
-  constructor(public config: Config) {}
+  constructor(public _config: Config) {}
 
-  list(): Promise<AxiosResponse<ServiceAvailableList>> {
-    return this.config.instance.get(`/services-available`)
+  getAll(): Promise<AxiosResponse<ServiceAvailableGroup[]>> {
+    return this._config.instance.get(`/services-available`)
   }
 
-  create(data: CreateServiceAvailableBody): Promise<AxiosResponse<string>> {
-    return this.config.instance.post(`/services-available`, data)
+  getById(id: string): Promise<AxiosResponse<ServiceAvailable>> {
+    return this._config.instance.get(`/services-available/${id}`)
   }
 
-  get(serviceId: string): Promise<AxiosResponse<ServiceAvailable>> {
-    return this.config.instance.get(`/services-available/${serviceId}`)
+  create(data: ServiceAvailableCreateBody): Promise<AxiosResponse<string>> {
+    return this._config.instance.post(`/services-available`, data)
   }
 
-  update(serviceId: string, data: UpdateServiceAvailableBody): Promise<AxiosResponse<any>> {
-    return this.config.instance.put(`/services-available/${serviceId}`, data)
+  update(id: string, data: ServiceAvailableUpdateBody): Promise<AxiosResponse<string>> {
+    return this._config.instance.put(`/services-available/${id}`, data)
   }
 
-  remove(serviceId: string): Promise<AxiosResponse<any>> {
-    return this.config.instance.delete(`/services-available/${serviceId}`)
+  delete(id: string): Promise<AxiosResponse<void>> {
+    return this._config.instance.delete(`/services-available/${id}`)
   }
 }
 
-export type CreateServiceAvailableBody = {
+export type ServiceAvailable = {
+  serviceName: string
+  serviceNameId: string
+  specialization: string
+  specializationId: string
+}
+
+export type ServiceAvailableGroupItem = {
+  id: string
+  name: string
+}
+
+export type ServiceAvailableGroup = {
+  id: string
+  name: string
+  items: ServiceAvailableGroupItem[]
+}
+
+export type ServiceAvailableCreateBody = {
   name: string
   specialization?: string
   specializationId?: string
 }
 
-export type UpdateServiceAvailableBody = {
+export type ServiceAvailableUpdateBody = {
   name: string
 }

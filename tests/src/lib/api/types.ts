@@ -1,8 +1,9 @@
-export type * from "./endpoints/AppointmentsEndpoint"
-export type * from "./endpoints/AuthEndpoint"
-export type * from "./endpoints/CustomersEndpoint"
-export type * from "./endpoints/SecretariesEndpoint"
-export type * from "./endpoints/ServicesAvailableEndpoint"
-export type * from "./endpoints/ServicesEndpoint"
-export type * from "./endpoints/SpecialistsEndpoint"
-export type * from "./endpoints/SpecializationsEndpoint"
+export type * from './endpoints/AppointmentsEndpoint'
+export type * from './endpoints/AuthEndpoint'
+export type * from './endpoints/CustomersEndpoint'
+export type * from './endpoints/SecretariesEndpoint'
+export type * from './endpoints/ServiceGroupsEndpoint'
+export type * from './endpoints/ServicesAvailableEndpoint'
+export type * from './endpoints/ServicesEndpoint'
+export type * from './endpoints/SpecialistsEndpoint'
+export type * from './endpoints/SpecializationsEndpoint'

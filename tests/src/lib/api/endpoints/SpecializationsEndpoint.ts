@@ -1,27 +1,35 @@
-import { AxiosResponse } from "axios"
-import { Config } from "../Config"
-import { Specialization } from "../validation/Specialization"
+import { type AxiosResponse } from 'axios'
+import { type Config } from '../Config'
 
 export class SpecializationsEndpoint {
-  constructor(public config: Config) {}
+  constructor(public _config: Config) {}
 
-  list(): Promise<AxiosResponse<Specialization[]>> {
-    return this.config.instance.get(`/specializations`)
+  getAll(): Promise<AxiosResponse<Specialization[]>> {
+    return this._config.instance.get(`/specializations`)
   }
 
-  create(data: UpsertSpecializationBody): Promise<AxiosResponse<string>> {
-    return this.config.instance.post(`/specializations`, data)
+  create(data: SpecializationsCreateBody): Promise<AxiosResponse<string>> {
+    return this._config.instance.post(`/specializations`, data)
   }
 
-  update(specializationId: string, data: UpsertSpecializationBody): Promise<AxiosResponse<any>> {
-    return this.config.instance.put(`/specializations/${specializationId}`, data)
+  update(id: string, data: SpecializationsUpdateBody): Promise<AxiosResponse<any>> {
+    return this._config.instance.put(`/specializations/${id}`, data)
   }
 
-  remove(specializationId: string): Promise<AxiosResponse<void>> {
-    return this.config.instance.delete(`/specializations/${specializationId}`)
+  delete(id: string): Promise<AxiosResponse<void>> {
+    return this._config.instance.delete(`/specializations/${id}`)
   }
 }
 
-export type UpsertSpecializationBody = {
+type Specialization = {
+  id: string
+  name: string
+}
+
+export type SpecializationsCreateBody = {
+  name: string
+}
+
+export type SpecializationsUpdateBody = {
   name: string
 }

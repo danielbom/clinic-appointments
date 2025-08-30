@@ -114,7 +114,7 @@ expect.extend({
 })
 
 function apiLogin(accessToken: string) {
-  api.config.instance.defaults.headers['Authorization'] = `Bearer ${accessToken}`
+  api._config.instance.defaults.headers['Authorization'] = `Bearer ${accessToken}`
 }
 
 describe('clinic-appointments', () => {
@@ -238,19 +238,19 @@ describe('clinic-appointments', () => {
       })
     })
 
-    describe('secretaries.get', () => {
+    describe('secretaries.getById', () => {
       it('should work', async () => {
         expect(loggedIn).toBe('admin')
         depends(['secretaries.create'])
-        const res = await api.secretaries.get(ks.get('secretary')!)
+        const res = await api.secretaries.getById(ks.get('secretary')!)
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).toParseZod(SecretarySchema)
         expect(res.data).toLossyBe(secretaryData, fields)
-        features.push('secretaries.get')
+        features.push('secretaries.getById')
       })
       it('should fail', async () => {
         expect(loggedIn).toBe('admin')
-        const res = await api.secretaries.get('0000-0000-0000-0000')
+        const res = await api.secretaries.getById('0000-0000-0000-0000')
         expect(res.status).toBe(400)
       })
     })
@@ -258,22 +258,22 @@ describe('clinic-appointments', () => {
     describe('secretaries.create', () => {
       it('should save correctly', async () => {
         expect(loggedIn).toBe('admin')
-        depends(['secretaries.create', 'secretaries.get'])
-        const res = await api.secretaries.get(ks.get('secretary')!)
+        depends(['secretaries.create', 'secretaries.getById'])
+        const res = await api.secretaries.getById(ks.get('secretary')!)
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).toLossyBe(secretaryData, fields)
       })
     })
 
-    describe('secretaries.list', () => {
+    describe('secretaries.getAll', () => {
       it('should work', async () => {
         expect(loggedIn).toBe('admin')
         depends(['secretaries.create'])
-        const res = await api.secretaries.list({ page: 0, pageSize: 20 })
+        const res = await api.secretaries.getAll({ page: 0, pageSize: 20 })
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         const data = _.map(res.data, (it) => _.omit(it, 'id'))
         expect(data).toEqual([_.omit(secretaryData, 'password')])
-        features.push('secretaries.list')
+        features.push('secretaries.getAll')
       })
     })
 
@@ -295,8 +295,8 @@ describe('clinic-appointments', () => {
 
       it('should save correctly', async () => {
         expect(loggedIn).toBe('admin')
-        depends(['secretaries.create', 'secretaries.get'])
-        const res = await api.secretaries.get(ks.get('secretary')!)
+        depends(['secretaries.create', 'secretaries.getById'])
+        const res = await api.secretaries.getById(ks.get('secretary')!)
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).not.toLossyBe(secretaryData, ['name', 'phone'])
         expect(res.data).toLossyBe(secretaryData, _.difference(fields, ['name', 'phone']))
@@ -304,14 +304,14 @@ describe('clinic-appointments', () => {
       })
     })
 
-    describe('secretaries.remove', () => {
+    describe('secretaries.delete', () => {
       it('should work', async () => {
         expect(loggedIn).toBe('admin')
         depends(['secretaries.create', 'secretaries.count'])
-        const res = await api.secretaries.remove(ks.get('secretary')!)
+        const res = await api.secretaries.delete(ks.get('secretary')!)
         expect(res.status).toBe(204)
         expect((await api.secretaries.count()).data).toBe(0)
-        features.push('secretaries.remove')
+        features.push('secretaries.delete')
       })
     })
 
@@ -340,10 +340,10 @@ describe('clinic-appointments', () => {
   })
 
   describe('secretary.specializations', () => {
-    describe('specializations.list', () => {
+    describe('specializations.getAll', () => {
       it('should work (0)', async () => {
         expect(loggedIn).toBe('secretary')
-        const res = await api.specializations.list()
+        const res = await api.specializations.getAll()
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).toEqual([])
       })
@@ -380,11 +380,11 @@ describe('clinic-appointments', () => {
       })
     })
 
-    describe('specializations.list', () => {
+    describe('specializations.getAll', () => {
       it('should work', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['specializations.create'])
-        const res = await api.specializations.list()
+        const res = await api.specializations.getAll()
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).toParseZod(z.array(SpecializationSchema))
         expect(res.data).toEqual([
@@ -411,18 +411,18 @@ describe('clinic-appointments', () => {
       })
     })
 
-    describe('specializations.remove', () => {
+    describe('specializations.delete', () => {
       it('should work A', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['specializations.create'])
-        const res = await api.specializations.remove(ks.get('specialization-a')!)
+        const res = await api.specializations.delete(ks.get('specialization-a')!)
         expect(res.status).toBe(204)
-        features.push('specializations.remove')
+        features.push('specializations.delete')
       })
       it('should work B', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['specializations.create'])
-        const res = await api.specializations.remove(ks.get('specialization-b')!)
+        const res = await api.specializations.delete(ks.get('specialization-b')!)
         expect(res.status).toBe(204)
       })
     })
@@ -440,16 +440,16 @@ describe('clinic-appointments', () => {
   })
 
   describe('secretary.servicesAvailable', () => {
-    describe('servicesAvailable.list', () => {
+    describe('servicesAvailable.getAll', () => {
       it('should work (2-0)', async () => {
         expect(loggedIn).toBe('secretary')
-        const res = await api.servicesAvailable.list()
+        const res = await api.servicesAvailable.getAll()
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data.length).toBe(2)
         _.forEach(res.data, (it) => {
           expect(it.items.length).toBe(0)
         })
-        features.push('servicesAvailable.list')
+        features.push('servicesAvailable.getAll')
       })
     })
 
@@ -491,26 +491,26 @@ describe('clinic-appointments', () => {
       })
     })
 
-    describe('servicesAvailable.list', () => {
+    describe('servicesAvailable.getAll', () => {
       it('should work (2-4)', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['servicesAvailable.create'])
-        const res = await api.servicesAvailable.list()
+        const res = await api.servicesAvailable.getAll()
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).toParseZod(ServiceAvailableListSchema)
         expect(res.data.length).toBe(2)
         _.forEach(res.data, (it) => {
           expect(it.items.length).toBe(2)
         })
-        features.push('servicesAvailable.list')
+        features.push('servicesAvailable.getAll')
       })
     })
 
-    describe('servicesAvailable.get', () => {
+    describe('servicesAvailable.getById', () => {
       it('should work (Created)', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['servicesAvailable.create'])
-        const res = await api.servicesAvailable.get(ids[0])
+        const res = await api.servicesAvailable.getById(ids[0])
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).toParseZod(ServiceAvailableSchema)
         expect(res.data.serviceName).toEqual('Service Available A')
@@ -538,24 +538,24 @@ describe('clinic-appointments', () => {
       })
     })
 
-    describe('servicesAvailable.get', () => {
+    describe('servicesAvailable.getById', () => {
       it('should work (Updated)', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['servicesAvailable.update'])
-        const res = await api.servicesAvailable.get(ids[0])
+        const res = await api.servicesAvailable.getById(ids[0])
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data.serviceName).toEqual('Updated')
       })
     })
 
-    describe('servicesAvailable.remove', () => {
+    describe('servicesAvailable.delete', () => {
       it('should work', async () => {
         for await (const id of ids) {
-          const res = await api.servicesAvailable.remove(id)
+          const res = await api.servicesAvailable.delete(id)
           expect(res.status).toBe(204)
         }
         ids.length = 0
-        features.push('servicesAvailable.remove')
+        features.push('servicesAvailable.delete')
       })
     })
 
@@ -581,11 +581,11 @@ describe('clinic-appointments', () => {
   })
 
   describe('secretary.serviceGroups', () => {
-    describe('serviceGroups.list', () => {
+    describe('serviceGroups.getAll', () => {
       it('should work', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['specializations.create'])
-        const res = await api.serviceGroups.list()
+        const res = await api.serviceGroups.getAll()
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).toParseZod(ServiceGroupsSchema)
         expect(res.data.length).toBe(2)
@@ -608,10 +608,10 @@ describe('clinic-appointments', () => {
       services: [],
     }
 
-    describe('specialists.list', () => {
+    describe('specialists.getAll', () => {
       it('should work (0)', async () => {
         expect(loggedIn).toBe('secretary')
-        const res = await api.specialists.list({ page: 0, pageSize: 20 })
+        const res = await api.specialists.getAll({ page: 0, pageSize: 20 })
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).toEqual([])
       })
@@ -637,11 +637,11 @@ describe('clinic-appointments', () => {
       })
     })
 
-    describe('specialists.list', () => {
+    describe('specialists.getAll', () => {
       it('should work (1)', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['specialists.create'])
-        const res = await api.specialists.list({ page: 0, pageSize: 20 })
+        const res = await api.specialists.getAll({ page: 0, pageSize: 20 })
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data.length).toEqual(1)
         expect(res.data).toParseZod(z.array(SpecialistSchema))
@@ -659,23 +659,23 @@ describe('clinic-appointments', () => {
       })
     })
 
-    describe('specialists.get', () => {
+    describe('specialists.getById', () => {
       it('should work (Created)', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['specialists.create'])
-        const res = await api.specialists.get(ids[0])
+        const res = await api.specialists.getById(ids[0])
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).toParseZod(SpecialistSchema)
         expect(res.data).toLossyBe(specialistData, fields)
-        features.push('specialists.get')
+        features.push('specialists.getById')
       })
     })
 
-    describe('specialists.listServices', () => {
+    describe('specialists.getServices', () => {
       it('should work (0)', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['specialists.create'])
-        const res = await api.specialists.listServices(ids[0])
+        const res = await api.specialists.getServices(ids[0])
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).toEqual([])
       })
@@ -699,23 +699,23 @@ describe('clinic-appointments', () => {
       })
     })
 
-    describe('specialists.get', () => {
+    describe('specialists.getById', () => {
       it('should work (Updated)', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['specialists.update'])
-        const res = await api.specialists.get(ids[0])
+        const res = await api.specialists.getById(ids[0])
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).not.toLossyBe(specialistData, ['name', 'phone', 'birthdate'])
       })
     })
 
-    describe('specialists.remove', () => {
+    describe('specialists.delete', () => {
       it('should work', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['specialists.create'])
-        const res = await api.specialists.remove(ids[0])
+        const res = await api.specialists.delete(ids[0])
         expect(res.status).toBe(204)
-        features.push('specialists.remove')
+        features.push('specialists.delete')
         ids.length = 0
       })
     })
@@ -723,7 +723,7 @@ describe('clinic-appointments', () => {
     describe('specialists.count', () => {
       it('should work (Removed)', async () => {
         expect(loggedIn).toBe('secretary')
-        depends(['specialists.remove'])
+        depends(['specialists.delete'])
         const res = await api.specialists.count()
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).toEqual(0)
@@ -748,33 +748,33 @@ describe('clinic-appointments', () => {
       })
     })
 
-    describe('specialists.listServices', () => {
+    describe('specialists.getServices', () => {
       it('should work (+services)', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['specialists.create'])
-        const res = await api.specialists.listServices(ids[0])
+        const res = await api.specialists.getServices(ids[0])
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).toParseZod(z.array(SpecialistServiceSchema))
         expect(res.data.length).toBe(2)
       })
     })
 
-    describe('specialists.listSpecializations', () => {
+    describe('specialists.getSpecializations', () => {
       it('should work (+services)', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['specialists.create'])
-        const res = await api.specialists.listSpecializations(ids[0])
+        const res = await api.specialists.getSpecializations(ids[0])
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).toParseZod(z.array(SpecializationSchema))
         expect(res.data.length).toBe(1)
       })
     })
 
-    describe('specialists.remove', () => {
+    describe('specialists.delete', () => {
       it('should work (+services)', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['specialists.create'])
-        const res = await api.specialists.remove(ids[0])
+        const res = await api.specialists.delete(ids[0])
         expect(res.status).toBe(204)
         ids.length = 0
       })
@@ -797,10 +797,10 @@ describe('clinic-appointments', () => {
   })
 
   describe('secretary.services', () => {
-    describe('services.list', () => {
+    describe('services.getAll', () => {
       it('should work (2)', async () => {
         expect(loggedIn).toBe('secretary')
-        const res = await api.services.list()
+        const res = await api.services.getAll()
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data.length).toEqual(2)
         expect(res.data).toParseZod(z.array(ServiceSchema))
@@ -838,11 +838,11 @@ describe('clinic-appointments', () => {
         expect(res.data).toBe(3)
       })
     })
-    describe('services.get', () => {
+    describe('services.getById', () => {
       it('should work (Created)', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['services.create'])
-        const res = await api.services.get(ids[0])
+        const res = await api.services.getById(ids[0])
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).toParseZod(ServiceBaseSchema)
       })
@@ -860,21 +860,21 @@ describe('clinic-appointments', () => {
         features.push('services.update')
       })
     })
-    describe('services.get', () => {
+    describe('services.getById', () => {
       it('should work (Updated)', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['services.update'])
-        const res = await api.services.get(ids[0])
+        const res = await api.services.getById(ids[0])
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).toParseZod(ServiceBaseSchema)
         expect(res.data).toLossyBe({ duration: 30, price: 500 }, ['duration', 'price'])
       })
     })
-    describe('services.remove', () => {
+    describe('services.delete', () => {
       it('should work', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['services.update'])
-        const res = await api.services.remove(ids[0])
+        const res = await api.services.delete(ids[0])
         expect(res.status).toBe(204)
       })
     })
@@ -905,10 +905,10 @@ describe('clinic-appointments', () => {
       phone: '21987654321',
     }
 
-    describe('customers.list', () => {
+    describe('customers.getAll', () => {
       it('should work (0)', async () => {
         expect(loggedIn).toBe('secretary')
-        const res = await api.customers.list()
+        const res = await api.customers.getAll()
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).toEqual([])
       })
@@ -934,11 +934,11 @@ describe('clinic-appointments', () => {
       })
     })
 
-    describe('customers.list', () => {
+    describe('customers.getAll', () => {
       it('should work (1)', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['customers.create'])
-        const res = await api.customers.list({ page: 0, pageSize: 20 })
+        const res = await api.customers.getAll({ page: 0, pageSize: 20 })
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data.length).toEqual(1)
         expect(res.data).toParseZod(z.array(CustomerSchema))
@@ -956,15 +956,15 @@ describe('clinic-appointments', () => {
       })
     })
 
-    describe('customers.get', () => {
+    describe('customers.getById', () => {
       it('should work (Created)', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['customers.create'])
-        const res = await api.customers.get(ids[0])
+        const res = await api.customers.getById(ids[0])
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).toParseZod(CustomerSchema)
         expect(res.data).toLossyBe(customerData, fields)
-        features.push('customers.get')
+        features.push('customers.getById')
       })
     })
 
@@ -984,23 +984,23 @@ describe('clinic-appointments', () => {
       })
     })
 
-    describe('customers.get', () => {
+    describe('customers.getById', () => {
       it('should work (Updated)', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['customers.update'])
-        const res = await api.customers.get(ids[0])
+        const res = await api.customers.getById(ids[0])
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).not.toLossyBe(customerData, ['name', 'phone', 'birthdate'])
       })
     })
 
-    describe('customers.remove', () => {
+    describe('customers.delete', () => {
       it('should work', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['customers.create'])
-        const res = await api.customers.remove(ids[0])
+        const res = await api.customers.delete(ids[0])
         expect(res.status).toBe(204)
-        features.push('customers.remove')
+        features.push('customers.delete')
         ids.length = 0
       })
     })
@@ -1008,7 +1008,7 @@ describe('clinic-appointments', () => {
     describe('customers.count', () => {
       it('should work (Removed)', async () => {
         expect(loggedIn).toBe('secretary')
-        depends(['customers.remove'])
+        depends(['customers.delete'])
         const res = await api.customers.count()
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).toEqual(0)
@@ -1039,10 +1039,10 @@ describe('clinic-appointments', () => {
       time: createDateIso.slice(11, 11 + 8),
     }
 
-    describe('appointments.list', () => {
+    describe('appointments.getAll', () => {
       it('should work (0)', async () => {
         expect(loggedIn).toBe('secretary')
-        const res = await api.appointments.list({})
+        const res = await api.appointments.getAll({})
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).toEqual([])
       })
@@ -1074,11 +1074,11 @@ describe('clinic-appointments', () => {
       })
     })
 
-    describe('appointments.list', () => {
+    describe('appointments.getAll', () => {
       it('should work (1)', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['appointments.create'])
-        const res = await api.appointments.list({ page: 0, pageSize: 20 })
+        const res = await api.appointments.getAll({ page: 0, pageSize: 20 })
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data.length).toEqual(1)
         expect(res.data).toParseZod(z.array(AppointmentSchema))
@@ -1096,15 +1096,15 @@ describe('clinic-appointments', () => {
       })
     })
 
-    describe('appointments.get', () => {
+    describe('appointments.getById', () => {
       it('should work (Created)', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['specialists.create'])
-        const res = await api.appointments.get(ids[0])
+        const res = await api.appointments.getById(ids[0])
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).toParseZod(AppointmentSchema)
         expect(res.data).toLossyBe(appointmentData, fields)
-        features.push('appointments.get')
+        features.push('appointments.getById')
       })
     })
 
@@ -1122,23 +1122,23 @@ describe('clinic-appointments', () => {
       })
     })
 
-    describe('appointments.get', () => {
+    describe('appointments.getById', () => {
       it('should work (Updated)', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['appointments.update'])
-        const res = await api.appointments.get(ids[0])
+        const res = await api.appointments.getById(ids[0])
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).not.toLossyBe(appointmentData, ['date', 'time'])
       })
     })
 
-    describe('appointments.remove', () => {
+    describe('appointments.delete', () => {
       it('should work', async () => {
         expect(loggedIn).toBe('secretary')
         depends(['appointments.create'])
-        const res = await api.appointments.remove(ids[0])
+        const res = await api.appointments.delete(ids[0])
         expect(res.status).toBe(204)
-        features.push('appointments.remove')
+        features.push('appointments.delete')
         ids.length = 0
       })
     })
@@ -1146,7 +1146,7 @@ describe('clinic-appointments', () => {
     describe('appointments.count', () => {
       it('should work (Removed)', async () => {
         expect(loggedIn).toBe('secretary')
-        depends(['appointments.remove'])
+        depends(['appointments.delete'])
         const res = await api.appointments.count()
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data).toEqual(0)

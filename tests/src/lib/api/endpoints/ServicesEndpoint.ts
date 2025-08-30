@@ -1,51 +1,69 @@
 import { AxiosResponse } from 'axios'
 import { Config } from '../Config'
-import { Service, ServiceBase } from '../validation'
 
 export class ServicesEndpoint {
-  constructor(public config: Config) {}
+  constructor(public _config: Config) {}
 
-  list(params?: ServiceListParams): Promise<AxiosResponse<Service[]>> {
-    return this.config.instance.get(`/services`, { params })
+  getAll(query: ServicesGetAllQuery = {}): Promise<AxiosResponse<Service[]>> {
+    return this._config.instance.get('/services', { params: query })
   }
 
-  create(data: CreateServiceBody): Promise<AxiosResponse<string>> {
-    return this.config.instance.post(`/services`, data)
+  count(query: ServicesCountQuery = {}): Promise<AxiosResponse<number>> {
+    return this._config.instance.get('/services/count', { params: query })
   }
 
-  count(params?: ServiceCountParams): Promise<AxiosResponse<number>> {
-    return this.config.instance.get(`/services/count`, { params })
+  getById(id: string): Promise<AxiosResponse<Service>> {
+    return this._config.instance.get(`/services/${id}`)
   }
 
-  get(serviceId: string): Promise<AxiosResponse<ServiceBase>> {
-    return this.config.instance.get(`/services/${serviceId}`)
+  create(data: ServicesCreateBody): Promise<AxiosResponse<string>> {
+    return this._config.instance.post('/services', data)
   }
 
-  update(serviceId: string, data: UpdateServiceBody): Promise<AxiosResponse<string>> {
-    return this.config.instance.put(`/services/${serviceId}`, data)
+  update(id: string, data: ServicesUpdateBody): Promise<AxiosResponse<any>> {
+    return this._config.instance.put(`/services/${id}`, data)
   }
 
-  remove(serviceId: string): Promise<AxiosResponse<void>> {
-    return this.config.instance.delete(`/services/${serviceId}`)
+  delete(id: string): Promise<AxiosResponse<void>> {
+    return this._config.instance.delete(`/services/${id}`)
   }
 }
 
-export type UpdateServiceBody = {
+export type Service = {
+  id: string
+  serviceName: string
+  serviceNameId: string
+  specialistName: string
+  specialistId: string
+  specialization: string
+  specializationId: string
   price: number
   duration: number
-  serviceNameId: string
 }
 
-export type CreateServiceBody = UpdateServiceBody & {
-  specialistId: string
-}
-
-export type ServiceCountParams = {
-  specialist?: string
+export type ServicesCountQuery = {
   service?: string
+  specialist?: string
   specialization?: string
 }
-export type ServiceListParams = ServiceCountParams & {
+
+export type ServicesGetAllQuery = {
   page?: number
   pageSize?: number
+  service?: string
+  specialization?: string
+  specialist?: string
+}
+
+export type ServicesCreateBody = {
+  specialistId: string
+  serviceNameId: string
+  price: number
+  duration: number
+}
+
+export type ServicesUpdateBody = {
+  serviceNameId: string
+  price: number
+  duration: number
 }
