@@ -46,6 +46,12 @@ GET {{$dotenv BASE_URL}}/specialists/5c75e707-7626-4164-b594-05aca8e3fcac/servic
 Authorization: Bearer {{$dotenv TOKEN}}
 Accept: application/json
 
+###
 
+# @name GetSpecialistServices
+
+GET {{$dotenv BASE_URL}}/specialists/2662c98d-0816-4258-b853-e94402a469ef/services/d38701e3-87ef-4926-b4ab-9beaeccfc79b
+Authorization: Bearer {{$dotenv TOKEN}}
+Accept: application/json
 
 # TODO: Create, Update, Delete

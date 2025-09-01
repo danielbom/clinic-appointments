@@ -18,6 +18,7 @@ func (h *api) getSpecialist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Validate e execute the usecase
 	rs := NewRequestState(h.q, r)
 
 	specialist, err := usecase.GetSpecialist(rs, specialistID)
@@ -26,6 +27,7 @@ func (h *api) getSpecialist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Format the response
 	response := presenter.GetSpecialist(specialist)
 	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
@@ -318,6 +320,32 @@ func (h *api) getSpecialistServices(w http.ResponseWriter, r *http.Request) {
 
 	// Format the response
 	response := presenter.GetSpecialistServices(services)
+	render.JSON(w, r, response)
+	render.Status(r, http.StatusOK)
+}
+
+func (h *api) getSpecialistService(w http.ResponseWriter, r *http.Request) {
+	// Collect query parameters, path parameters, and request body
+	specialistID, ok := GetAndParseUuidParam(w, r, "specialist_id")
+	if !ok {
+		return
+	}
+	serviceNameId, ok := GetAndParseUuidParam(w, r, "service_id")
+	if !ok {
+		return
+	}
+
+	// Validate e execute the usecase
+	rs := NewRequestState(h.q, r)
+
+	service, err := usecase.GetSpecialistService(rs, specialistID, serviceNameId)
+	if err != nil {
+		presenter.UsecaseError(w, err)
+		return
+	}
+
+	// Format the response
+	response := presenter.GetService(service)
 	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
 }

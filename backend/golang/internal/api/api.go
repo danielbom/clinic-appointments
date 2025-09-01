@@ -88,6 +88,7 @@ func NewApi(pool *pgxpool.Pool, auth *jwtauth.JWTAuth) http.Handler {
 	r.With(h.JWT).Get("/specialists/{specialist_id}/appointments", h.getSpecialistAppointments)
 	r.With(h.JWT).Get("/specialists/{specialist_id}/specializations", h.getSpecialistSpecializations)
 	r.With(h.JWT).Get("/specialists/{specialist_id}/services", h.getSpecialistServices)
+	r.With(h.JWT).Get("/specialists/{specialist_id}/services/{service_id}", h.getSpecialistService)
 	r.With(h.JWT).Post("/specialists", h.createSpecialist)
 	r.With(h.JWT).Put("/specialists/{specialist_id}", h.updateSpecialist)
 	r.With(h.JWT).Delete("/specialists/{specialist_id}", h.deleteSpecialist)
