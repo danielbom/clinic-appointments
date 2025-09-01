@@ -3,6 +3,7 @@ import { SearchOutlined } from '@ant-design/icons'
 import { Form, Select, DatePicker, TimePicker, Button, Input, Descriptions } from 'antd'
 import dayjs, { Dayjs } from 'dayjs'
 
+import { CREATE_APPOINTMENTS_DATA_KEY } from '../../../lib/keys'
 import FormX from '../../../components/FormX'
 
 import normalizeCPF from '../../../lib/normalizers/normalizeCPF'
@@ -20,7 +21,9 @@ const OPTIONS_STATUS = [
 type FormAppointmentService = {
   id: string
   specialization: string
+  serviceNameId: string
   serviceName: string
+  specialistId: string
   specialistName: string
   duration: number
 }
@@ -225,8 +228,45 @@ function SelectService({ record, serviceId, services, onClickSearchService }: Se
   }
 }
 
+// TODO: Find a better way to handle this hack:
+// - hack way to avoid form data startup
+let id: NodeJS.Timeout | undefined
+
+function getExternalValues(): Partial<FormAppointmentValues> {
+  const values: Partial<FormAppointmentValues> = {}
+  try {
+    const text = sessionStorage.getItem(CREATE_APPOINTMENTS_DATA_KEY)
+    if (text) {
+      clearTimeout(id)
+      id = setTimeout(() => {
+        sessionStorage.removeItem(CREATE_APPOINTMENTS_DATA_KEY)
+      }, 1000)
+
+      const data = JSON.parse(text!)
+      if (typeof data.serviceId === 'string') {
+        // From ShowAppointment() component
+        // From ShowService() component
+        values.serviceId = data.serviceId
+      }
+      if (typeof data.customerId === 'string') {
+        // From ShowAppointment() component
+        // From ShowCustomer() component
+        values.customerId = data.customerId
+      }
+      if (typeof data.time === 'string') {
+        // From ShowAppointment() component
+        values.time = dayjs(data.time, 'HH:mm:ss')
+      }
+    }
+  } catch (error) {}
+  return values
+}
+
 function prepareInitialValues(record?: Appointment): FormAppointmentValues {
-  if (!record) return INITIAL_VALUES
+  if (!record) {
+    const externalValues = getExternalValues()
+    return { ...INITIAL_VALUES, ...externalValues }
+  }
   return {
     serviceId: record.serviceNameId,
     customerId: record.customerId,

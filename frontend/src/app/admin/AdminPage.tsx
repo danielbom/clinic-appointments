@@ -3,8 +3,8 @@ import {
   createBrowserRouter,
   Outlet,
   RouterProvider,
+  useLocation,
   useNavigate,
-  useNavigation,
   useSearchParams,
 } from 'react-router-dom'
 import { CalendarOutlined, UserOutlined, ProfileOutlined, ApartmentOutlined } from '@ant-design/icons'
@@ -56,7 +56,7 @@ function AdminPageRoutesLayout() {
   const { state, dispatch } = useAdmin()
   const [_, mode, changeMode] = usePageStateMode()
   const navigate = useNavigate()
-  const navigation = useNavigation()
+  const location = useLocation()
   const { items, pageKey } = state
   const title = items.find((item) => item.key === pageKey)?.label ?? ''
   const [search] = useSearchParams()
@@ -73,7 +73,7 @@ function AdminPageRoutesLayout() {
       navigate('/' + items[0].key)
       dispatch({ type: 'SET_PAGE_KEY', payload: items[0].key })
     }
-  }, [navigate, dispatch, items, navigation.location?.pathname])
+  }, [navigate, dispatch, items, location?.pathname])
 
   useEffect(() => {
     const searchParams = new URLSearchParams(search)
@@ -140,6 +140,20 @@ function AdminPageRoutesLayout() {
   )
 }
 
+function MovePage() {
+  const [search] = useSearchParams()
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(search)
+    const key = searchParams.get('key') ?? ''
+    searchParams.delete('key')
+    navigate(`/${key}?${searchParams}`)
+  }, [navigate, search])
+
+  return null
+}
+
 function withMode(Component: React.ComponentType<any>): React.FC {
   return function (props: any) {
     const [state, mode, changeMode] = usePageStateMode()
@@ -191,6 +205,10 @@ const router = createBrowserRouter([
       {
         path: 'services-available',
         element: <PageServiceAvailable />,
+      },
+      {
+        path: '_move',
+        element: <MovePage />,
       },
     ],
   },

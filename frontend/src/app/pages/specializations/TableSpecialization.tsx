@@ -42,7 +42,7 @@ const TableSpecialization = ({
   return (
     <>
       <TableX.Header
-        title="Clientes"
+        title="Especializações"
         count={total}
         selectedCount={selectedItems.length}
         onClickCreate={onClickCreate}

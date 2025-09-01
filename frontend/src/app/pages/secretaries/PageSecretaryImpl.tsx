@@ -50,8 +50,8 @@ function PageSecretaryImpl({ mode, changeMode, state }: PageSecretaryImplProps) 
     enabled: (mode === 'show' || mode === 'edit') && !record,
   })
   useEffect(() => {
-    if (!record) {
-      setRecord(recordQuery.data ?? null)
+    if (!record && recordQuery.data) {
+      setRecord(recordQuery.data)
     }
   }, [recordQuery.data, record])
 

@@ -50,8 +50,8 @@ function PageCustomerImpl({ mode, changeMode, state }: PageCustomerImplProps) {
     enabled: !record,
   })
   useEffect(() => {
-    if (!record) {
-      setRecord(recordQuery.data ?? null)
+    if (!record && recordQuery.data) {
+      setRecord(recordQuery.data)
     }
   }, [recordQuery.data, record])
 

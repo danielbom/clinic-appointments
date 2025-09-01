@@ -1,5 +1,6 @@
 import { AxiosResponse } from 'axios'
 import { Config } from '../Config'
+import { Service } from './ServicesEndpoint'
 
 export class SpecialistsEndpoint {
   constructor(public _config: Config) {}
@@ -29,6 +30,10 @@ export class SpecialistsEndpoint {
 
   getServices(id: string): Promise<AxiosResponse<SpecialistService[]>> {
     return this._config.instance.get(`/specialists/${id}/services`)
+  }
+
+  getService(id: string, serviceId: string): Promise<AxiosResponse<Service>> {
+    return this._config.instance.get(`/specialists/${id}/services/${serviceId}`)
   }
 
   create(data: SpecialistsCreateBody): Promise<AxiosResponse<string>> {
