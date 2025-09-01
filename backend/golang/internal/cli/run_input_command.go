@@ -2,11 +2,13 @@ package cli
 
 import (
 	"bufio"
+	"flag"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 
+	"backend/internal/infra"
 	"backend/internal/usecase"
 )
 
@@ -143,23 +145,38 @@ func parsePrice(price string) (int32, bool) {
 	return value*100 + cents, true
 }
 
+type RunInputCommandArgs struct {
+	InputFile string
+}
+
 type RunInputCommand struct {
+	Args       RunInputCommandArgs
 	lineNumber int
 	wait       bool
+	scanner    *bufio.Scanner
+	fs         *flag.FlagSet
+	file       *os.File
 }
 
 func (c *RunInputCommand) Name() string {
 	return "run-input"
 }
 
-func (c *RunInputCommand) Init() {}
+func (c *RunInputCommand) Init() {
+	c.fs = flag.NewFlagSet(c.Name(), flag.ExitOnError)
+	c.fs.StringVar(&c.Args.InputFile, "input", "", "Input file")
+}
 
-func (c *RunInputCommand) Parse(args []string) {}
+func (c *RunInputCommand) Parse(args []string) {
+	c.fs.Parse(args)
+}
 
-func (c *RunInputCommand) Usage() {}
+func (c *RunInputCommand) Usage() {
+	c.fs.Usage()
+}
 
 func (c *RunInputCommand) Help() {
-	fmt.Println("run-input")
+	fmt.Println("run-input -input <inputfile>")
 }
 
 func (c *RunInputCommand) nextLine(scanner *bufio.Scanner) (string, bool) {
@@ -171,18 +188,18 @@ func (c *RunInputCommand) nextLine(scanner *bufio.Scanner) (string, bool) {
 	return strings.TrimSpace(scanner.Text()), true
 }
 
-func (r *RunInputCommand) runCreateAdmin(s *State, scanner *bufio.Scanner) error {
+func (c *RunInputCommand) runCreateAdmin(s *State, scanner *bufio.Scanner) error {
 	args := usecase.CreateAdminArgs{}
 	var found bool
-	args.Name, found = r.nextLine(scanner)
+	args.Name, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing name")
 	}
-	args.Email, found = r.nextLine(scanner)
+	args.Email, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing email")
 	}
-	args.Password, found = r.nextLine(scanner)
+	args.Password, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing password")
 	}
@@ -190,39 +207,39 @@ func (r *RunInputCommand) runCreateAdmin(s *State, scanner *bufio.Scanner) error
 	if _, err := usecase.CreateAdmin(s, args); err != nil {
 		return err.Error
 	} else {
-		log.Printf("Admin created with name: %s", args.Name)
+		c.log("Admin created with name: %s", args.Name)
 		return nil
 	}
 }
 
-func (r *RunInputCommand) runCreateSecretary(s *State, scanner *bufio.Scanner) error {
+func (c *RunInputCommand) runCreateSecretary(s *State, scanner *bufio.Scanner) error {
 	args := usecase.SecretaryInfoArgs{}
 	var found bool
-	args.Name, found = r.nextLine(scanner)
+	args.Name, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing name")
 	}
-	args.Email, found = r.nextLine(scanner)
+	args.Email, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing email")
 	}
-	args.Password, found = r.nextLine(scanner)
+	args.Password, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing password")
 	}
-	args.Phone, found = r.nextLine(scanner)
+	args.Phone, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing phone")
 	}
-	args.Birthdate, found = r.nextLine(scanner)
+	args.Birthdate, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing birthdate")
 	}
-	args.Cpf, found = r.nextLine(scanner)
+	args.Cpf, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing cpf")
 	}
-	args.Cnpj, found = r.nextLine(scanner)
+	args.Cnpj, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing cnpj")
 	}
@@ -242,38 +259,38 @@ func (r *RunInputCommand) runCreateSecretary(s *State, scanner *bufio.Scanner) e
 	if _, err := usecase.CreateSecretary(s, args); err != nil {
 		return err.Error
 	} else {
-		log.Printf("Secretary created with name: %s", args.Name)
+		c.log("Secretary created with name: %s", args.Name)
 		return nil
 	}
 }
 
-func (r *RunInputCommand) runCreateCustomer(s *State, scanner *bufio.Scanner) error {
+func (c *RunInputCommand) runCreateCustomer(s *State, scanner *bufio.Scanner) error {
 	var args usecase.CustomerInfoArgs
 	var found bool
-	args.Name, found = r.nextLine(scanner)
+	args.Name, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing name")
 	}
-	args.Email, found = r.nextLine(scanner)
+	args.Email, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing email")
 	}
-	args.Phone, found = r.nextLine(scanner)
+	args.Phone, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing phone")
 	}
-	args.Birthdate, found = r.nextLine(scanner)
+	args.Birthdate, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing birthdate")
 	}
-	args.Cpf, found = r.nextLine(scanner)
+	args.Cpf, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing cpf")
 	}
 
 	args.Email = optionalValue(args.Email)
 	args.Phone = extractOnlyDigits(args.Phone)
-	args.Birthdate, found = parseLongDate(args.Birthdate)
+	args.Birthdate, found = parseDate(args.Birthdate)
 	if !found {
 		return fmt.Errorf("invalid birthdate format")
 	}
@@ -286,41 +303,41 @@ func (r *RunInputCommand) runCreateCustomer(s *State, scanner *bufio.Scanner) er
 	if _, err := usecase.CreateCustomer(s, args); err != nil {
 		return err.Error
 	} else {
-		log.Printf("Customer created with name: %s", args.Name)
+		c.log("Customer created with name: %s", args.Name)
 		return nil
 	}
 }
 
-func (r *RunInputCommand) runCreateSpecialist(s *State, scanner *bufio.Scanner) error {
+func (c *RunInputCommand) runCreateSpecialist(s *State, scanner *bufio.Scanner) error {
 	var args usecase.SpecialistInfoArgs
 	var found bool
-	args.Name, found = r.nextLine(scanner)
+	args.Name, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing name")
 	}
-	args.Email, found = r.nextLine(scanner)
+	args.Email, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing email")
 	}
-	args.Phone, found = r.nextLine(scanner)
+	args.Phone, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing phone")
 	}
-	args.Birthdate, found = r.nextLine(scanner)
+	args.Birthdate, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing birthdate")
 	}
-	args.Cpf, found = r.nextLine(scanner)
+	args.Cpf, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing cpf")
 	}
-	args.Cnpj, found = r.nextLine(scanner)
+	args.Cnpj, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing cnpj")
 	}
 
 	args.Phone = extractOnlyDigits(args.Phone)
-	args.Birthdate, found = parseLongDate(args.Birthdate)
+	args.Birthdate, found = parseDate(args.Birthdate)
 	if !found {
 		return fmt.Errorf("invalid birthdate format")
 	}
@@ -334,15 +351,15 @@ func (r *RunInputCommand) runCreateSpecialist(s *State, scanner *bufio.Scanner) 
 	if _, err := usecase.CreateSpecialist(s, args); err != nil {
 		return err.Error
 	} else {
-		log.Printf("Specialist created with name: %s", args.Name)
+		c.log("Specialist created with name: %s", args.Name)
 		return nil
 	}
 }
 
-func (r *RunInputCommand) runCreateSpecialization(s *State, scanner *bufio.Scanner) error {
+func (c *RunInputCommand) runCreateSpecialization(s *State, scanner *bufio.Scanner) error {
 	var args usecase.SpecializationInfoArgs
 	var found bool
-	args.Name, found = r.nextLine(scanner)
+	args.Name, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing name")
 	}
@@ -354,19 +371,19 @@ func (r *RunInputCommand) runCreateSpecialization(s *State, scanner *bufio.Scann
 	if _, err := usecase.CreateSpecialization(s, args); err != nil {
 		return err.Error
 	} else {
-		log.Printf("Specialization created with name: %s", args.Name)
+		c.log("Specialization created with name: %s", args.Name)
 		return nil
 	}
 }
 
-func (r *RunInputCommand) runCreateService(s *State, scanner *bufio.Scanner) error {
+func (c *RunInputCommand) runCreateService(s *State, scanner *bufio.Scanner) error {
 	args := usecase.CreateServiceNameArgs{}
 	var found bool
-	specializationName, found := r.nextLine(scanner)
+	specializationName, found := c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing specialization id")
 	}
-	args.Name, found = r.nextLine(scanner)
+	args.Name, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing name")
 	}
@@ -385,30 +402,85 @@ func (r *RunInputCommand) runCreateService(s *State, scanner *bufio.Scanner) err
 	if _, err := usecase.CreateServiceName(s, args); err != nil {
 		return err.Error
 	} else {
-		log.Printf("Service created with name: %s", args.Name)
+		c.log("Service created with name: %s", args.Name)
 		return nil
 	}
 }
 
-func (r *RunInputCommand) runCreateSpecialistHours(s *State, scanner *bufio.Scanner) error {
+func (c *RunInputCommand) runCreateServices(s *State, scanner *bufio.Scanner) error {
+	var specialization infra.Specialization
+	var err error
+	for {
+		argsService := usecase.CreateServiceNameArgs{}
+		line, found := c.nextLine(scanner)
+		if !found {
+			break
+		}
+		parts := strings.SplitN(line, ":", 2)
+		if len(parts) == 0 {
+			break
+		}
+		if len(parts) != 2 {
+			break
+		}
+		specializationName := strings.TrimSpace(parts[0])
+		if specialization.Name == specializationName {
+			argsService.SpecializationID = specialization.ID
+		} else {
+			specialization, err = s.q.GetSpecializationByName(s.ctx, specializationName)
+			if err != nil {
+				var argsSpecialization usecase.SpecializationInfoArgs
+				argsSpecialization.Name = specializationName
+
+				if err := argsSpecialization.Validate(); err != nil {
+					return err.Error
+				}
+
+				id, err := usecase.CreateSpecialization(s, argsSpecialization)
+				if err != nil {
+					return err.Error
+				} else {
+					c.log("Specialization created with name: %s", argsSpecialization.Name)
+				}
+				argsService.SpecializationID = id
+			} else {
+				argsService.SpecializationID = specialization.ID
+			}
+		}
+		argsService.Name = strings.TrimSpace(parts[1])
+
+		if err := argsService.Validate(); err != nil {
+			return err.Error
+		}
+
+		if _, err := usecase.CreateServiceName(s, argsService); err != nil {
+			c.log("Fail to create service '%s': %v", argsService.Name, err)
+		} else {
+			c.log("Service created with name: %s", argsService.Name)
+		}
+	}
+	return nil
+}
+
+func (c *RunInputCommand) runCreateSpecialistHours(s *State, scanner *bufio.Scanner) error {
 	args := usecase.CreateSpecialistHoursArgs{}
-	specialistEmail, found := r.nextLine(scanner)
+	specialistEmail, found := c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing specialist email")
 	}
-	startWeekday, found := r.nextLine(scanner)
+	startWeekday, found := c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing start weekday")
 	}
-	endWeekday, found := r.nextLine(scanner)
+	endWeekday, found := c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing end weekday")
 	}
-	startTime, found := r.nextLine(scanner)
+	startTime, found := c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing start time")
 	}
-	endTime, found := r.nextLine(scanner)
+	endTime, found := c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing end time")
 	}
@@ -465,24 +537,24 @@ func (r *RunInputCommand) runCreateSpecialistHours(s *State, scanner *bufio.Scan
 		}
 	}
 
-	log.Printf("Specialist hours created: %d, updated: %d, noop: %d, error: %d", createdCount, updatedCount, noopCount, errorCount)
+	c.log("Specialist hours created: %d, updated: %d, noop: %d, error: %d", createdCount, updatedCount, noopCount, errorCount)
 	return nil
 }
 
-func (r *RunInputCommand) runCreateSpecialistService(s *State, scanner *bufio.Scanner) error {
-	specialistEmail, found := r.nextLine(scanner)
+func (c *RunInputCommand) runCreateSpecialistService(s *State, scanner *bufio.Scanner) error {
+	specialistEmail, found := c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing specialist email")
 	}
-	serviceName, found := r.nextLine(scanner)
+	serviceName, found := c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing service name")
 	}
-	price, found := r.nextLine(scanner)
+	price, found := c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing price")
 	}
-	duration, found := r.nextLine(scanner)
+	duration, found := c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing duration")
 	}
@@ -523,29 +595,29 @@ func (r *RunInputCommand) runCreateSpecialistService(s *State, scanner *bufio.Sc
 	if _, err := usecase.CreateSpecialistService(s, args); err != nil {
 		return err.Error
 	} else {
-		log.Printf("Specialist service created with name: %s, duration: %s", serviceName, duration)
+		c.log("Specialist service created with name: %s, duration: %s", serviceName, duration)
 		return nil
 	}
 }
 
-func (r *RunInputCommand) runCreateAppointment(s *State, scanner *bufio.Scanner) error {
-	customerPhone, found := r.nextLine(scanner)
+func (c *RunInputCommand) runCreateAppointment(s *State, scanner *bufio.Scanner) error {
+	customerPhone, found := c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing customer phone")
 	}
-	specialistEmail, found := r.nextLine(scanner)
+	specialistEmail, found := c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing specialist email")
 	}
-	serviceName, found := r.nextLine(scanner)
+	serviceName, found := c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing service name")
 	}
-	date, found := r.nextLine(scanner)
+	date, found := c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing date")
 	}
-	time, found := r.nextLine(scanner)
+	time, found := c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing time")
 	}
@@ -554,7 +626,7 @@ func (r *RunInputCommand) runCreateAppointment(s *State, scanner *bufio.Scanner)
 	if !ok {
 		return fmt.Errorf("invalid time")
 	}
-	date, ok = parseLongDate(date)
+	date, ok = parseDate(date)
 	if !ok {
 		return fmt.Errorf("invalid date")
 	}
@@ -592,24 +664,50 @@ func (r *RunInputCommand) runCreateAppointment(s *State, scanner *bufio.Scanner)
 	if _, err := usecase.CreateAppointment(s, args); err != nil {
 		return err.Error
 	} else {
-		log.Printf("Appointment created with date: %s, time: %s", date, time)
+		c.log("Appointment created with date: %s, time: %s", date, time)
 		return nil
 	}
 }
 
-func (c *RunInputCommand) Execute(s *State) error {
-	scanner := bufio.NewScanner(os.Stdin)
+func (c *RunInputCommand) log(format string, v ...any) {
+	filename := c.Args.InputFile
+	log.Printf("%s:%d: %s", filename, c.lineNumber, fmt.Sprintf(format, v...))
+}
 
+func (c *RunInputCommand) close() {
+	if c.file != nil {
+		c.file.Close()
+	}
+}
+
+func (c *RunInputCommand) Execute(s *State) error {
 	prefix := "Command: "
 	c.lineNumber = 0
 	commandsCount := 6
-	commandLine := 0
-	for c.wait || scanner.Scan() {
+
+	if len(c.Args.InputFile) > 0 {
+		file, err := os.Open(c.Args.InputFile)
+		if err != nil {
+			return err
+		}
+		c.file = file
+		c.scanner = bufio.NewScanner(file)
+	} else {
+		c.scanner = bufio.NewScanner(os.Stdin)
+	}
+	defer c.close()
+
+	for c.wait || c.scanner.Scan() {
 		c.wait = false
-		line := strings.TrimSpace(scanner.Text())
+		line := strings.TrimSpace(c.scanner.Text())
 
 		c.lineNumber++
 		if line == "" {
+			continue
+		}
+
+		// comments
+		if strings.HasSuffix(line, "-") {
 			continue
 		}
 
@@ -619,55 +717,58 @@ func (c *RunInputCommand) Execute(s *State) error {
 			fmt.Println()
 			continue
 		}
-		commandLine = c.lineNumber
 		commandsCount++
-		log.Printf("Line (%d) Command [%d]: %s", c.lineNumber, commandsCount, command)
+		c.log("Command [%d]: %s", commandsCount, command)
 
 		switch command {
 		case "create admin":
-			if err := c.runCreateAdmin(s, scanner); err != nil {
-				log.Printf("Line (%d) %v", commandLine, err)
+			if err := c.runCreateAdmin(s, c.scanner); err != nil {
+				c.log("%v", err)
 			}
 		case "create secretary":
-			if err := c.runCreateSecretary(s, scanner); err != nil {
-				log.Printf("Line (%d) %v", commandLine, err)
+			if err := c.runCreateSecretary(s, c.scanner); err != nil {
+				c.log("%v", err)
 			}
 		case "create customer":
-			if err := c.runCreateCustomer(s, scanner); err != nil {
-				log.Printf("Line (%d) %v", commandLine, err)
+			if err := c.runCreateCustomer(s, c.scanner); err != nil {
+				c.log("%v", err)
 			}
 		case "create specialist":
-			if err := c.runCreateSpecialist(s, scanner); err != nil {
-				log.Printf("Line (%d) %v", commandLine, err)
+			if err := c.runCreateSpecialist(s, c.scanner); err != nil {
+				c.log("%v", err)
 			}
 		case "create specialization":
-			if err := c.runCreateSpecialization(s, scanner); err != nil {
-				log.Printf("Line (%d) %v", commandLine, err)
+			if err := c.runCreateSpecialization(s, c.scanner); err != nil {
+				c.log("%v", err)
 			}
 		case "create service":
-			if err := c.runCreateService(s, scanner); err != nil {
-				log.Printf("Line (%d) %v", commandLine, err)
+			if err := c.runCreateService(s, c.scanner); err != nil {
+				c.log("%v", err)
+			}
+		case "create services":
+			if err := c.runCreateServices(s, c.scanner); err != nil {
+				c.log("%v", err)
 			}
 		case "create specialist hours":
-			if err := c.runCreateSpecialistHours(s, scanner); err != nil {
-				log.Printf("Line (%d) %v", commandLine, err)
+			if err := c.runCreateSpecialistHours(s, c.scanner); err != nil {
+				c.log("%v", err)
 			}
 		case "create specialist service":
-			if err := c.runCreateSpecialistService(s, scanner); err != nil {
-				log.Printf("Line (%d) %v", commandLine, err)
+			if err := c.runCreateSpecialistService(s, c.scanner); err != nil {
+				c.log("%v", err)
 			}
 		case "create appointment":
-			if err := c.runCreateAppointment(s, scanner); err != nil {
-				log.Printf("Line (%d) %v", commandLine, err)
+			if err := c.runCreateAppointment(s, c.scanner); err != nil {
+				c.log("%v", err)
 			}
 		default:
-			log.Printf("Line (%d) Invalid command: %s", commandLine, command)
+			c.log("Invalid command: %s", command)
 		}
 
 		fmt.Println()
 	}
 
-	if err := scanner.Err(); err != nil {
+	if err := c.scanner.Err(); err != nil {
 		return err
 	}
 	return nil

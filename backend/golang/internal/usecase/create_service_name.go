@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"backend/internal/infra"
+	"strings"
 
 	"github.com/google/uuid"
 )
@@ -14,6 +15,7 @@ type CreateServiceNameArgs struct {
 }
 
 func (args *CreateServiceNameArgs) Validate() *UsecaseError {
+	args.Name = strings.TrimSpace(args.Name)
 	if args.Specialization == "" && args.SpecializationID == uuid.Nil {
 		if err := args.SpecializationID.Scan(args.SpecializationIDRaw); err != nil {
 			return NewInvalidArgumentError(ErrInvalidUuid).InField("specializationId")

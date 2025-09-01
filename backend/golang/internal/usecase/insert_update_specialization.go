@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"backend/internal/infra"
+	"strings"
 
 	"github.com/google/uuid"
 )
@@ -11,6 +12,7 @@ type SpecializationInfoArgs struct {
 }
 
 func (args *SpecializationInfoArgs) Validate() *UsecaseError {
+	args.Name = strings.TrimSpace(args.Name)
 	if args.Name == "" {
 		return NewInvalidArgumentError(ErrFieldIsRequired).InField("name")
 	}

@@ -24,7 +24,8 @@ docker build --tag appointments-api .
 docker-compose --project-name appointments up --detach
 
 # (Optional) Feed with fake data
-cat ./inputs/feed.txt | go run ./cmd/cli/main.go run-input
+go run ./cmd/cli/main.go run-input -input ./inputs/feed.txt
+go run ./cmd/cli/main.go run-input -input ./inputs/feed-extended.txt
 ```
 
 Or up the API locally:
@@ -139,3 +140,17 @@ go mod tidy
 * [CNPJ generator](https://www.4devs.com.br/gerador_de_cnpj)
 * [HTTP Yac](https://httpyac.github.io/)
 * [Github - Gopportunities](https://github.com/arthur404dev/gopportunities)
+
+## Scripts
+
+```js
+// https://www.fakenamegenerator.com/gen-random-br-br.php
+console.log([
+    "Command: create customer",
+    document.querySelector(".content .address").childNodes[1].textContent,
+    document.querySelectorAll(".content .extra .dl-horizontal")[8].childNodes[3].textContent.split(' ', 1),
+    document.querySelectorAll(".content .extra .dl-horizontal")[3].childNodes[3].textContent,
+    document.querySelectorAll(".content .extra .dl-horizontal")[5].childNodes[3].textContent,
+    document.querySelectorAll(".content .extra .dl-horizontal")[1].childNodes[1].textContent,
+].join('\n'))
+```
