@@ -72,7 +72,7 @@ function PageCustomerImpl({ mode, changeMode, state }: PageCustomerImplProps) {
       current: paramsList.page,
       total: total,
       onChange: (page, pageSize) => {
-        setListQuery({ ...paramsList, page: page - 1, pageSize })
+        setListQuery({ ...paramsList, page, pageSize })
       },
     } as TableCustomerProps['pagination']
   }, [paramsList.page, paramsList.pageSize, total])

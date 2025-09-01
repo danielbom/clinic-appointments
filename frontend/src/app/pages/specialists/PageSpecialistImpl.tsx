@@ -86,7 +86,7 @@ function PageSpecialistImpl({ mode, changeMode, state }: PageSpecialistImplProps
       current: (paramsList.page ?? 0) + 1,
       total: total,
       onChange: (page, pageSize) => {
-        setListQuery({ ...paramsList, page: page - 1, pageSize })
+        setListQuery({ ...paramsList, page, pageSize })
       },
     } as TableSpecialistProps['pagination']
   }, [paramsList.page, paramsList.pageSize, total])

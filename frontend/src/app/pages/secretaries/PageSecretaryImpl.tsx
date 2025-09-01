@@ -72,7 +72,7 @@ function PageSecretaryImpl({ mode, changeMode, state }: PageSecretaryImplProps) 
       current: paramsList.page,
       total: total,
       onChange: (page, pageSize) => {
-        setListQuery({ ...paramsList, page: page - 1, pageSize })
+        setListQuery({ ...paramsList, page, pageSize })
       },
     } as TableSecretaryProps['pagination']
   }, [paramsList.page, paramsList.pageSize, total])

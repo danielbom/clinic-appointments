@@ -71,7 +71,7 @@ function PageServiceImpl({ mode, changeMode, state }: PageServiceImplProps) {
       pageSizeOptions: [10, 20, 50, 100],
       showSizeChanger: true,
       onChange: (page, pageSize) => {
-        setListQuery({ ...paramsList, page: page - 1, pageSize })
+        setListQuery({ ...paramsList, page, pageSize })
       },
     } as TableServiceProps['pagination']
   }, [paramsList.page, paramsList.pageSize, total])
