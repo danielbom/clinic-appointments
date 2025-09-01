@@ -31,6 +31,8 @@ type PageCustomerProps = {
 
   onDeleteCustomer: (record: Customer) => void
   onClickDeleteAll: DeleteCustomerProps['onClickDelete']
+
+  onReceateAppointment: () => void
 }
 
 function PageCustomer({
@@ -49,6 +51,7 @@ function PageCustomer({
   onCreateCustomer,
   onUpdateCustomer,
   onDeleteCustomer,
+  onReceateAppointment,
 }: PageCustomerProps) {
   const showModal = useDisclosure(mode !== 'edit' && !!record)
   const filterModal = useDisclosure()
@@ -134,6 +137,7 @@ function PageCustomer({
           deleteRecord(record)
         }}
         record={record}
+        onReceateAppointment={onReceateAppointment}
       />
     </>
   )

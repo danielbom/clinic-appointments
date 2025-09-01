@@ -33,6 +33,8 @@ type PageServiceProps = {
 
   onDeleteService: (record: Service) => void
   onClickDeleteAll: DeleteCustomerProps['onClickDelete']
+
+  onReceateAppointment: () => void
 }
 
 function PageService({
@@ -53,6 +55,7 @@ function PageService({
   onCreateService,
   onUpdateService,
   onDeleteService,
+  onReceateAppointment,
 }: PageServiceProps) {
   const showModal = useDisclosure(mode !== 'edit' && !!record)
   const filterModal = useDisclosure()
@@ -153,6 +156,7 @@ function PageService({
           deleteRecord(record)
         }}
         record={record}
+        onReceateAppointment={onReceateAppointment}
       />
     </>
   )

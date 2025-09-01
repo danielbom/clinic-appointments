@@ -1,11 +1,12 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
 
 import type { Customer } from './types'
+import type { TableCustomerProps } from './TableCustomer'
 
 import PageLoading from '../../../components/Loading/PageLoading'
-import type { ChangePageMode, PageMode } from '../../../components/AdminX/types'
+import type { ChangePageMode, MoveToPage, PageMode } from '../../../components/AdminX/types'
 import type { CustomersGetAllQuery } from '../../../lib/api'
-import type { TableCustomerProps } from './TableCustomer'
+import { CREATE_APPOINTMENTS_DATA_KEY } from '../../../lib/keys'
 
 import { useCustomerQuery, useCustomersCountQuery, useCustomersListQuery } from '../../hooks/queries/customers'
 import {
@@ -21,6 +22,7 @@ type PageCustomerImplProps = {
   mode: PageMode
   changeMode: ChangePageMode
   state?: Record<string, string>
+  moveTo: MoveToPage
 }
 
 type ParamsShow = {
@@ -33,7 +35,7 @@ const PARAMS_LIST: ParamsList = {
   pageSize: 20,
 }
 
-function PageCustomerImpl({ mode, changeMode, state }: PageCustomerImplProps) {
+function PageCustomerImpl({ mode, changeMode, moveTo, state }: PageCustomerImplProps) {
   const paramsList = useMemo<ParamsList>(() => loadParamsList(state), [state])
   const paramsShow = useMemo<ParamsShow>(() => loadParamsShow(state), [state])
   const [previousData, setPreviousData] = useState<Customer[]>([])
@@ -136,6 +138,12 @@ function PageCustomerImpl({ mode, changeMode, state }: PageCustomerImplProps) {
         }}
         onDeleteCustomer={(record) => {
           mutationDelete.mutate(record.id)
+        }}
+        onReceateAppointment={() => {
+          if (record?.id) {
+            sessionStorage.setItem(CREATE_APPOINTMENTS_DATA_KEY, JSON.stringify({ customerId: record.id }))
+            moveTo('appointments', { mode: 'create' })
+          }
         }}
       />
     </Suspense>

@@ -40,6 +40,8 @@ type PageAppointmentProps = {
 
   onDeleteAppointment: (record: Appointment) => void
   onClickDeleteAll: () => void
+
+  onRecreateAppointment: () => void
 }
 
 function PageAppointment({
@@ -62,6 +64,7 @@ function PageAppointment({
   onCreateAppointment,
   onUpdateAppointment,
   onDeleteAppointment,
+  onRecreateAppointment,
 }: PageAppointmentProps) {
   const showModal = useDisclosure(mode !== 'edit' && !!record)
   const filterModal = useDisclosure()
@@ -182,6 +185,7 @@ function PageAppointment({
           if (!record) return console.warn('Record is undefined')
           deleteRecord(record)
         }}
+        onRecreateAppointment={onRecreateAppointment}
         record={record}
       />
     </>

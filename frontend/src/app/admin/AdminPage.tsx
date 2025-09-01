@@ -9,7 +9,7 @@ import {
 } from 'react-router-dom'
 import { CalendarOutlined, UserOutlined, ProfileOutlined, ApartmentOutlined } from '@ant-design/icons'
 
-import { ChangePageMode, PageMode } from '../../components/AdminX/types'
+import { ChangePageMode, MoveToPage, PageMode } from '../../components/AdminX/types'
 import AdminBreadcrumb from '../../components/AdminX/AdminBreadcrumb'
 import AdminLayout from '../../components/AdminX/AdminLayout'
 import PageLoading from '../../components/Loading/PageLoading'
@@ -31,6 +31,7 @@ import { RedirectTo } from '../../components/RedirectTo'
 const usePageStateMode = () => {
   const { state } = useAdmin()
   const [_, setSearch] = useSearchParams()
+  const navigate = useNavigate()
 
   const changeMode: ChangePageMode = (pageMode, pageState) => {
     const searchParams = new URLSearchParams()
@@ -45,7 +46,13 @@ const usePageStateMode = () => {
     setSearch(searchParams.toString())
   }
 
-  return [state.state, state.mode, changeMode] as const
+  const moveTo: MoveToPage = (key, state) => {
+    const searchParams = new URLSearchParams(state)
+    searchParams.set('key', key)
+    navigate(`/_move?${searchParams}`)
+  }
+
+  return [state.state, state.mode, changeMode, moveTo] as const
 }
 
 const RE_PATH = /^\/([\w-]+)/
@@ -145,19 +152,28 @@ function MovePage() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(search)
-    const key = searchParams.get('key') ?? ''
-    searchParams.delete('key')
-    navigate(`/${key}?${searchParams}`)
+    setTimeout(() => {
+      const searchParams = new URLSearchParams(search)
+      const key = searchParams.get('key') ?? ''
+      searchParams.delete('key')
+      navigate(`/${key}?${searchParams}`)
+    }, 100)
   }, [navigate, search])
 
-  return null
+  return <PageLoading />
 }
 
-function withMode(Component: React.ComponentType<any>): React.FC {
+function withMode<
+  T extends {
+    mode?: PageMode
+    changeMode?: ChangePageMode
+    state?: Record<string, string>
+    moveTo?: MoveToPage
+  },
+>(Component: React.ComponentType<T>): React.FC {
   return function (props: any) {
-    const [state, mode, changeMode] = usePageStateMode()
-    return <Component {...props} state={state} mode={mode} changeMode={changeMode} />
+    const [state, mode, changeMode, moveTo] = usePageStateMode()
+    return <Component {...props} state={state} mode={mode} changeMode={changeMode} moveTo={moveTo} />
   }
 }
 
@@ -206,11 +222,11 @@ const router = createBrowserRouter([
         path: 'services-available',
         element: <PageServiceAvailable />,
       },
-      {
-        path: '_move',
-        element: <MovePage />,
-      },
     ],
+  },
+  {
+    path: '_move',
+    element: <MovePage />,
   },
 ])
 

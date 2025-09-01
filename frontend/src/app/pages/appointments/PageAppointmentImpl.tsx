@@ -1,11 +1,13 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
+import { message } from 'antd'
 
 import type { Appointment } from './types'
+import type { TableAppointmentProps } from './TableAppointment'
 
 import PageLoading from '../../../components/Loading/PageLoading'
-import type { ChangePageMode, PageMode } from '../../../components/AdminX/types'
+import type { ChangePageMode, MoveToPage, PageMode } from '../../../components/AdminX/types'
 import type { AppointmentsGetAllQuery, CustomersGetAllQuery, ServicesGetAllQuery } from '../../../lib/api'
-import type { TableAppointmentProps } from './TableAppointment'
+import { CREATE_APPOINTMENTS_DATA_KEY } from '../../../lib/keys'
 
 import {
   useAppointmentQuery,
@@ -20,6 +22,7 @@ import {
 } from '../../hooks/mutations/appointments'
 import { useCustomersListQuery } from '../../hooks/queries/customers'
 import { useServicesListQuery } from '../../hooks/queries/services'
+import { useApi } from '../../../context/ApiContext'
 
 const PageAppointment = lazy(() => import('./PageAppointment'))
 
@@ -27,6 +30,7 @@ type PageAppointmentImplProps = {
   mode: PageMode
   changeMode: ChangePageMode
   state: Record<string, string>
+  moveTo: MoveToPage
 }
 
 type ParamsShow = {
@@ -47,7 +51,8 @@ const PARAMS_CUSTOMER: ServicesGetAllQuery = {
   pageSize: 5,
 }
 
-function PageAppointmentImpl({ mode, changeMode, state }: PageAppointmentImplProps) {
+function PageAppointmentImpl({ mode, changeMode, moveTo, state }: PageAppointmentImplProps) {
+  const api = useApi()
   const paramsList = useMemo<ParamsList>(() => loadParamsList(state), [state])
   const paramsShow = useMemo<ParamsShow>(() => loadParamsShow(state), [state])
   const [previousData, setPreviousData] = useState<Appointment[]>([])
@@ -192,6 +197,22 @@ function PageAppointmentImpl({ mode, changeMode, state }: PageAppointmentImplPro
         }}
         onDeleteAppointment={(record) => {
           mutationDelete.mutate(record.id)
+        }}
+        onRecreateAppointment={async () => {
+          if (record?.id) {
+            try {
+              const service = await api.specialists.getService(record.specialistId, record.serviceNameId)
+              const data = JSON.stringify({
+                customerId: record.customerId,
+                time: record.time,
+                serviceId: service.data.id,
+              })
+              sessionStorage.setItem(CREATE_APPOINTMENTS_DATA_KEY, data)
+              moveTo('appointments', { mode: 'create' })
+            } catch (error) {
+              message.error('Serviço deste especialista está indisponível')
+            }
+          }
         }}
       />
     </Suspense>

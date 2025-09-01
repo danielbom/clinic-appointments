@@ -1,9 +1,6 @@
-import { useNavigate } from 'react-router-dom'
-import { Button, Descriptions, message } from 'antd'
+import { Button, Descriptions } from 'antd'
 import { CalendarOutlined } from '@ant-design/icons'
 
-import { useApi } from '../../../context/ApiContext'
-import { CREATE_APPOINTMENTS_DATA_KEY } from '../../../lib/keys'
 import ShowX from '../../../components/ShowX'
 
 import type { Appointment } from './types'
@@ -16,30 +13,11 @@ export type ShowAppointmentProps = {
   onClose: () => void
   onClickEdit: () => void
   onClickDelete: () => void
+  onRecreateAppointment: () => void
   record: Appointment | null
 }
 
-function ShowAppointment({ isOpen, onClose, onClickDelete, onClickEdit, record }: ShowAppointmentProps) {
-  const api = useApi()
-  const navigate = useNavigate()
-
-  async function onCreateAppointment() {
-    if (record?.id) {
-      try {
-        const service = await api.specialists.getService(record.specialistId, record.serviceNameId)
-        const data = JSON.stringify({
-          customerId: record.customerId,
-          time: record.time,
-          serviceId: service.data.id,
-        })
-        sessionStorage.setItem(CREATE_APPOINTMENTS_DATA_KEY, data)
-        navigate('/_move?key=appointments&mode=create')
-      } catch (error) {
-        message.error('Serviço deste especialista está indisponível')
-      }
-    }
-  }
-
+function ShowAppointment({ isOpen, onClose, onClickDelete, onClickEdit, onRecreateAppointment, record }: ShowAppointmentProps) {
   return (
     <ShowX.Drawer isOpen={isOpen} onClose={onClose} onClickDelete={onClickDelete} onClickEdit={onClickEdit}>
       {record && (
@@ -53,7 +31,7 @@ function ShowAppointment({ isOpen, onClose, onClickDelete, onClickEdit, record }
           <Descriptions.Item label="Duração">{renderDuration(record.duration)}</Descriptions.Item>
         </Descriptions>
       )}
-      <Button icon={<CalendarOutlined />} onClick={onCreateAppointment} type="primary" style={{ marginTop: '8px' }}>
+      <Button icon={<CalendarOutlined />} onClick={onRecreateAppointment} type="primary" style={{ marginTop: '8px' }}>
         Recriar Agendamento
       </Button>
     </ShowX.Drawer>

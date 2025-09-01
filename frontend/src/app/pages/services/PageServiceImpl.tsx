@@ -4,8 +4,9 @@ import type { Service } from './types'
 import type { TableServiceProps } from './TableService'
 
 import PageLoading from '../../../components/Loading/PageLoading'
-import type { PageMode, ChangePageMode } from '../../../components/AdminX/types'
+import type { PageMode, ChangePageMode, MoveToPage } from '../../../components/AdminX/types'
 import type { ServicesGetAllQuery } from '../../../lib/api'
+import { CREATE_APPOINTMENTS_DATA_KEY } from '../../../lib/keys'
 
 import { useServiceQuery, useServicesCountQuery, useServicesListQuery } from '../../hooks/queries/services'
 import {
@@ -23,6 +24,7 @@ type PageServiceImplProps = {
   mode: PageMode
   changeMode: ChangePageMode
   state?: Record<string, string>
+  moveTo: MoveToPage
 }
 
 type ParamsShow = {
@@ -30,7 +32,7 @@ type ParamsShow = {
 }
 type ParamsList = ServicesGetAllQuery
 
-function PageServiceImpl({ mode, changeMode, state }: PageServiceImplProps) {
+function PageServiceImpl({ mode, changeMode, moveTo, state }: PageServiceImplProps) {
   const paramsList = useMemo<ParamsList>(() => loadParamsList(state), [state])
   const paramsShow = useMemo<ParamsShow>(() => loadParamsShow(state), [state])
   const [selectedItems, setSelectedItems] = useState<Service[]>([])
@@ -143,6 +145,12 @@ function PageServiceImpl({ mode, changeMode, state }: PageServiceImplProps) {
         }}
         onDeleteService={(record) => {
           mutationDelete.mutate(record.id)
+        }}
+        onReceateAppointment={() => {
+          if (record?.id) {
+            sessionStorage.setItem(CREATE_APPOINTMENTS_DATA_KEY, JSON.stringify({ serviceId: record.id }))
+            moveTo('appointments', { mode: 'create' })
+          }
         }}
       />
     </Suspense>
