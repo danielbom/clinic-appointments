@@ -4,18 +4,18 @@ import dayjs, { Dayjs } from 'dayjs'
 
 import { Secretary } from './types'
 
-import FormX from '../../../components/FormX'
-import normalizeCPF from '../../../lib/normalizers/normalizeCPF'
-import normalizeCNPJ from '../../../lib/normalizers/normalizeCNPJ'
-import normalizePhone from '../../../lib/normalizers/normalizePhone'
+import FormX from '../../../FormX'
+import normalizeCPF from '../../../../lib/normalizers/normalizeCPF'
+import normalizeCNPJ from '../../../../lib/normalizers/normalizeCNPJ'
+import normalizePhone from '../../../../lib/normalizers/normalizePhone'
 
-import { birthdateIsRequired, birthdateIsInvalid } from '../../../lib/rules/birthdate'
-import { cnpjIsInvalid, cnpjIsRequired } from '../../../lib/rules/cnpj'
-import { cpfIsRequired, cpfIsInvalid } from '../../../lib/rules/cpf'
-import { emailIsInvalid } from '../../../lib/rules/email'
-import { nameIsRequired } from '../../../lib/rules/name'
-import { passwordIsInvalid, passwordIsRequired } from '../../../lib/rules/password'
-import { phoneIsRequired, phoneIsInvalid } from '../../../lib/rules/phone'
+import { birthdateIsRequired, birthdateIsInvalid } from '../../../../lib/rules/birthdate'
+import { cnpjIsInvalid, cnpjIsRequired } from '../../../../lib/rules/cnpj'
+import { cpfIsRequired, cpfIsInvalid } from '../../../../lib/rules/cpf'
+import { emailIsInvalid } from '../../../../lib/rules/email'
+import { nameIsRequired } from '../../../../lib/rules/name'
+import { passwordIsInvalid, passwordIsRequired } from '../../../../lib/rules/password'
+import { phoneIsRequired, phoneIsInvalid } from '../../../../lib/rules/phone'
 
 type FormSecretaryValues = {
   name: string

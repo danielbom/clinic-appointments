@@ -1,6 +1,6 @@
 import type { Secretary } from './types'
 
-import DeleteX from '../../../components/DeleteX'
+import DeleteX from '../../../DeleteX'
 
 export type DeleteSecretaryProps = {
   records: Secretary[]

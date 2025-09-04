@@ -1,13 +1,13 @@
 import { Descriptions } from 'antd'
 
-import ShowX from '../../../components/ShowX'
+import ShowX from '../../../ShowX'
 
 import type { Secretary } from './types'
 
-import normalizePhone from '../../../lib/normalizers/normalizePhone'
-import renderDate from '../../../lib/renders/renderDate'
-import normalizeCPF from '../../../lib/normalizers/normalizeCPF'
-import renderAge from '../../../lib/renders/rendertAge'
+import normalizePhone from '../../../../lib/normalizers/normalizePhone'
+import renderDate from '../../../../lib/renders/renderDate'
+import normalizeCPF from '../../../../lib/normalizers/normalizeCPF'
+import renderAge from '../../../../lib/renders/rendertAge'
 
 export type ShowSecretaryProps = {
   isOpen: boolean

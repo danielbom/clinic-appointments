@@ -1,16 +1,16 @@
 import { Table, TableColumnType, TableProps } from 'antd'
 
-import type { OptionsEvent } from '../../../components/TableX/TableOptions'
-import TableX from '../../../components/TableX'
+import type { OptionsEvent } from '../../../TableX/TableOptions'
+import TableX from '../../../TableX'
 
 import type { Secretary } from './types'
 
-import normalizeCNPJ from '../../../lib/normalizers/normalizeCNPJ'
-import normalizeCPF from '../../../lib/normalizers/normalizeCPF'
-import normalizePhone from '../../../lib/normalizers/normalizePhone'
+import normalizeCNPJ from '../../../../lib/normalizers/normalizeCNPJ'
+import normalizeCPF from '../../../../lib/normalizers/normalizeCPF'
+import normalizePhone from '../../../../lib/normalizers/normalizePhone'
 
-import renderDate from '../../../lib/renders/renderDate'
-import renderAge from '../../../lib/renders/rendertAge'
+import renderDate from '../../../../lib/renders/renderDate'
+import renderAge from '../../../../lib/renders/rendertAge'
 
 const columns: TableColumnType<Secretary>[] = [
   {

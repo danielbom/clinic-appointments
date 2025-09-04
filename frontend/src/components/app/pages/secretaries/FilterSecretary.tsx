@@ -1,11 +1,11 @@
 import { Form, Input } from 'antd'
 
-import FilterX from '../../../components/FilterX'
+import FilterX from '../../../FilterX'
 
-import normalizeCPF from '../../../lib/normalizers/normalizeCPF'
-import normalizePhone from '../../../lib/normalizers/normalizePhone'
-import { phoneIsInvalid } from '../../../lib/rules/phone'
-import { cpfIsInvalid } from '../../../lib/rules/cpf'
+import normalizeCPF from '../../../../lib/normalizers/normalizeCPF'
+import normalizePhone from '../../../../lib/normalizers/normalizePhone'
+import { phoneIsInvalid } from '../../../../lib/rules/phone'
+import { cpfIsInvalid } from '../../../../lib/rules/cpf'
 
 export type FilterSecretaryValues = {
   name?: string
