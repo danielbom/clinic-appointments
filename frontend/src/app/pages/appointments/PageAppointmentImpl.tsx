@@ -1,8 +1,8 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
 import { message } from 'antd'
 
-import type { Appointment } from './types'
-import type { TableAppointmentProps } from './TableAppointment'
+import type { Appointment } from '../../../components/app/pages/appointments/types'
+import type { TableAppointmentProps } from '../../../components/app/pages/appointments/TableAppointment'
 
 import PageLoading from '../../../components/Loading/PageLoading'
 import type { ChangePageMode, MoveToPage, PageMode } from '../../../components/AdminX/types'
@@ -13,15 +13,15 @@ import {
   useAppointmentQuery,
   useAppointmentsCountQuery,
   useAppointmentsListQuery,
-} from '../../hooks/queries/appointments'
+} from '../../../hooks/api/queries/appointments'
 import {
   useAppointmentsCreate,
   useAppointmentsDeleteAll,
   useAppointmentsDelete,
   useAppointmentsUpdate,
-} from '../../hooks/mutations/appointments'
-import { useCustomersListQuery } from '../../hooks/queries/customers'
-import { useServicesListQuery } from '../../hooks/queries/services'
+} from '../../../hooks/api/mutations/appointments'
+import { useCustomersListQuery } from '../../../hooks/api/queries/customers'
+import { useServicesListQuery } from '../../../hooks/api/queries/services'
 import { useApi } from '../../../context/ApiContext'
 
 const PageAppointment = lazy(() => import('./PageAppointment'))

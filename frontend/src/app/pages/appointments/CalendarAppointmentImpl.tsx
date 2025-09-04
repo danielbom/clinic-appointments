@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import dayjs from 'dayjs'
 
-import CalendarAppointment from './CalendarAppointment/CalendarAppointment'
+import CalendarAppointment from '../../../components/app/pages/appointments/CalendarAppointment/CalendarAppointment'
 
 import renderStatus from '../../../lib/renders/renderStatus'
 import renderHour from '../../../lib/renders/renderHour'
@@ -10,7 +10,7 @@ import {
   useAppointmentsCalendarCountQuery,
   useAppointmentsCalendarQuery,
   useAppointmentsCountQuery,
-} from '../../hooks/queries/appointments'
+} from '../../../hooks/api/queries/appointments'
 
 type CalendarAppointmentProps = {
   onClickTable: () => void

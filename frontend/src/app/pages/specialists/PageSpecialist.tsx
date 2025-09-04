@@ -1,14 +1,14 @@
 import type { ChangePageMode, PageMode } from '../../../components/AdminX/types'
-import useDisclosure from '../../../hooks/useDisclosure'
 import ConfirmDeleteModal from '../../../components/ConfirmDeleteModal'
+import useDisclosure from '../../../hooks/useDisclosure'
 
-import type { Specialist } from './types'
+import type { Specialist } from '../../../components/app/pages/specialists/types'
 
-import DeleteSpecialist, { DeleteSpecialistProps } from './DeleteSpecialist'
-import FilterSpecialist, { FilterSpecialistProps } from './FilterSpecialist'
-import TableSpecialist, { TableSpecialistProps } from './TableSpecialist'
-import FormSpecialist, { FormSpecialistProps } from './FormSpecialist'
-import ShowSpecialist, { ShowSpecialistProps } from './ShowSpecialist'
+import DeleteSpecialist, { DeleteSpecialistProps } from '../../../components/app/pages/specialists/DeleteSpecialist'
+import FilterSpecialist, { FilterSpecialistProps } from '../../../components/app/pages/specialists/FilterSpecialist'
+import TableSpecialist, { TableSpecialistProps } from '../../../components/app/pages/specialists/TableSpecialist'
+import FormSpecialist, { FormSpecialistProps } from '../../../components/app/pages/specialists/FormSpecialist'
+import ShowSpecialist, { ShowSpecialistProps } from '../../../components/app/pages/specialists/ShowSpecialist'
 
 type PageSpecialistProps = {
   mode: PageMode

@@ -1,20 +1,21 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
 
-import type { Customer } from './types'
-import type { TableCustomerProps } from './TableCustomer'
+import type { Customer } from '../../../components/app/pages/customers/types'
+import type { TableCustomerProps } from '../../../components/app/pages/customers/TableCustomer'
 
 import PageLoading from '../../../components/Loading/PageLoading'
 import type { ChangePageMode, MoveToPage, PageMode } from '../../../components/AdminX/types'
+
 import type { CustomersGetAllQuery } from '../../../lib/api'
 import { CREATE_APPOINTMENTS_DATA_KEY } from '../../../lib/keys'
 
-import { useCustomerQuery, useCustomersCountQuery, useCustomersListQuery } from '../../hooks/queries/customers'
+import { useCustomerQuery, useCustomersCountQuery, useCustomersListQuery } from '../../../hooks/api/queries/customers'
 import {
   useCustomerCreate,
   useCustomerDeleteAll,
   useCustomerDelete,
   useCustomerUpdate,
-} from '../../hooks/mutations/customers'
+} from '../../../hooks/api/mutations/customers'
 
 const PageCustomer = lazy(() => import('./PageCustomer'))
 

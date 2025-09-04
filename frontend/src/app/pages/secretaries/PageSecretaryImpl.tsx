@@ -1,19 +1,20 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
 
-import type { Secretary } from './types'
+import type { Secretary } from '../../../components/app/pages/secretaries/types'
 
 import PageLoading from '../../../components/Loading/PageLoading'
+import type { TableSecretaryProps } from '../../../components/app/pages/secretaries/TableSecretary'
+
 import type { ChangePageMode, PageMode } from '../../../components/AdminX/types'
 import type { SecretariesGetAllQuery } from '../../../lib/api'
-import type { TableSecretaryProps } from './TableSecretary'
 
-import { useSecretaryQuery, useSecretariesCountQuery, useSecretariesListQuery } from '../../hooks/queries/secretaries'
+import { useSecretaryQuery, useSecretariesCountQuery, useSecretariesListQuery } from '../../../hooks/api/queries/secretaries'
 import {
   useSecretaryCreate,
   useSecretaryDeleteAll,
   useSecretaryDelete,
   useSecretaryUpdate,
-} from '../../hooks/mutations/secretaries'
+} from '../../../hooks/api/mutations/secretaries'
 
 const PageSecretary = lazy(() => import('./PageSecretary'))
 

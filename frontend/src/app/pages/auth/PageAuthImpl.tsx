@@ -2,13 +2,14 @@ import { lazy, Suspense, useState } from 'react'
 
 import PageLoading from '../../../components/Loading/PageLoading'
 import isAxiosError from '../../../lib/axios/isAxiosError'
-import type { PageAuthValues } from './PageAuth'
 import { RedirectTo } from '../../../components/RedirectTo'
 import { useApi } from '../../../context/ApiContext'
 import { useAuth } from '../../../context/AuthContext'
 import useLoading from '../../../hooks/useLoading'
 
-const PageAuth = lazy(() => import('./PageAuth'))
+import type { PageAuthValues } from '../../../components/app/pages/auth/PageAuth'
+
+const PageAuth = lazy(() => import('../../../components/app/pages/auth/PageAuth'))
 
 function PageAuthImpl() {
   const api = useApi()

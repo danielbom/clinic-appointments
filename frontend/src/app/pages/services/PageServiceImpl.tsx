@@ -1,22 +1,22 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
 
-import type { Service } from './types'
-import type { TableServiceProps } from './TableService'
+import type { Service } from '../../../components/app/pages/services/types'
+import type { TableServiceProps } from '../../../components/app/pages/services/TableService'
 
 import PageLoading from '../../../components/Loading/PageLoading'
 import type { PageMode, ChangePageMode, MoveToPage } from '../../../components/AdminX/types'
 import type { ServicesGetAllQuery } from '../../../lib/api'
 import { CREATE_APPOINTMENTS_DATA_KEY } from '../../../lib/keys'
 
-import { useServiceQuery, useServicesCountQuery, useServicesListQuery } from '../../hooks/queries/services'
+import { useServiceQuery, useServicesCountQuery, useServicesListQuery } from '../../../hooks/api/queries/services'
 import {
   useServiceCreate,
   useServiceDeleteAll,
   useServiceDelete,
   useServiceUpdate,
-} from '../../hooks/mutations/services'
-import { useServiceGroups } from '../../hooks/queries/service-groups'
-import { useSpecialistListQuery, useSpecialistQuery } from '../../hooks/queries/specialists'
+} from '../../../hooks/api/mutations/services'
+import { useServiceGroups } from '../../../hooks/api/queries/service-groups'
+import { useSpecialistListQuery, useSpecialistQuery } from '../../../hooks/api/queries/specialists'
 
 const PageService = lazy(() => import('./PageService'))
 

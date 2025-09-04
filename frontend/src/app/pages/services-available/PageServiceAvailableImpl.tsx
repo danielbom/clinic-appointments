@@ -1,19 +1,20 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
 
+import type { ServiceAvailable } from '../../../components/app/pages/services-available/types'
+import type { TableServiceAvailableProps } from '../../../components/app/pages/services-available/TableServiceAvailable'
+
 import PageLoading from '../../../components/Loading/PageLoading'
-import type { ServiceAvailable } from './types'
 import type { ChangePageMode, PageMode } from '../../../components/AdminX/types'
-import type { TableServiceAvailableProps } from './TableServiceAvailable'
 
 import { ServiceAvailableGroup, ServiceAvailableGroupItem } from '../../../lib/api'
-import { useServiceAvailableQuery, useServicesAvailableGroupQuery } from '../../hooks/queries/services-available'
+import { useServiceAvailableQuery, useServicesAvailableGroupQuery } from '../../../hooks/api/queries/services-available'
 import {
   useServiceAvailableCreate,
   useServiceAvailableDelete,
   useServiceAvailableDeleteAll,
   useServiceAvailableUpdate,
-} from '../../hooks/mutations/services-available'
-import { useSpecializationListQuery } from '../../hooks/queries/specializations'
+} from '../../../hooks/api/mutations/services-available'
+import { useSpecializationListQuery } from '../../../hooks/api/queries/specializations'
 
 const PageServiceAvailable = lazy(() => import('./PageServiceAvailable'))
 

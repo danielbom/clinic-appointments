@@ -1,14 +1,14 @@
 import type { PageMode, ChangePageMode } from '../../../components/AdminX/types'
-import useDisclosure from '../../../hooks/useDisclosure'
 import ConfirmDeleteModal from '../../../components/ConfirmDeleteModal'
+import useDisclosure from '../../../hooks/useDisclosure'
 
-import type { Secretary } from './types'
+import type { Secretary } from '../../../components/app/pages/secretaries/types'
 
-import DeleteSecretary, { DeleteSecretaryProps } from './DeleteSecretary'
-import FilterSecretary, { FilterSecretaryProps } from './FilterSecretary'
-import TableSecretary, { TableSecretaryProps } from './TableSecretary'
-import FormSecretary, { FormSecretaryProps } from './FormSecretary'
-import ShowSecretary, { ShowSecretaryProps } from './ShowSecretary'
+import DeleteSecretary, { DeleteSecretaryProps } from '../../../components/app/pages/secretaries/DeleteSecretary'
+import FilterSecretary, { FilterSecretaryProps } from '../../../components/app/pages/secretaries/FilterSecretary'
+import TableSecretary, { TableSecretaryProps } from '../../../components/app/pages/secretaries/TableSecretary'
+import FormSecretary, { FormSecretaryProps } from '../../../components/app/pages/secretaries/FormSecretary'
+import ShowSecretary, { ShowSecretaryProps } from '../../../components/app/pages/secretaries/ShowSecretary'
 
 type PageSecretaryProps = {
   mode: PageMode

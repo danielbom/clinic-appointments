@@ -1,10 +1,11 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
 
+import type { Specialist, SpecialistSpecialization } from '../../../components/app/pages/specialists/types'
+import type { TableSpecialistProps } from '../../../components/app/pages/specialists/TableSpecialist'
+
 import PageLoading from '../../../components/Loading/PageLoading'
 import type { ChangePageMode, PageMode } from '../../../components/AdminX/types'
 import type { SpecialistsGetAllQuery } from '../../../lib/api'
-import type { Specialist, SpecialistSpecialization } from './types'
-import type { TableSpecialistProps } from './TableSpecialist'
 
 import {
   useSpecialistAppointments,
@@ -12,14 +13,14 @@ import {
   useSpecialistListQuery,
   useSpecialistQuery,
   useSpecialistServicesQuery,
-} from '../../hooks/queries/specialists'
+} from '../../../hooks/api/queries/specialists'
 import {
   useSpecialistCreate,
   useSpecialistDeleteAll,
   useSpecialistDelete,
   useSpecialistUpdate,
-} from '../../hooks/mutations/specialists'
-import { useServiceGroups } from '../../hooks/queries/service-groups'
+} from '../../../hooks/api/mutations/specialists'
+import { useServiceGroups } from '../../../hooks/api/queries/service-groups'
 
 const PageSpecialist = lazy(() => import('./PageSpecialist'))
 
@@ -83,7 +84,7 @@ function PageSpecialistImpl({ mode, changeMode, state }: PageSpecialistImplProps
   const pagination = useMemo(() => {
     return {
       pageSize: paramsList.pageSize,
-      current: (paramsList.page ?? 0) + 1,
+      current: paramsList.page,
       total: total,
       onChange: (page, pageSize) => {
         setListQuery({ ...paramsList, page, pageSize })

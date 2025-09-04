@@ -2,17 +2,20 @@ import type { PageMode, ChangePageMode } from '../../../components/AdminX/types'
 import useDisclosure from '../../../hooks/useDisclosure'
 import ConfirmDeleteModal from '../../../components/ConfirmDeleteModal'
 
-import type { Appointment } from './types'
+import type { Appointment } from '../../../components/app/pages/appointments/types'
 
-import DeleteAppointment from './DeleteAppointment'
-import FilterAppointment, { FilterAppointmentProps } from './FilterAppointment'
-import TableAppointment, { TableAppointmentProps } from './TableAppointment'
-import FormAppointment, { FormAppointmentProps } from './FormAppointment'
-import ShowAppointment, { ShowAppointmentProps } from './ShowAppointment'
 import CalendarAppointmentImpl from './CalendarAppointmentImpl'
 
-import FilterCustomer, { FilterCustomerProps } from '../customers/FilterCustomer' /* Keep sync */
-import FilterService, { FilterServiceProps } from '../services/FilterService' /* Keep sync */
+import DeleteAppointment from '../../../components/app/pages/appointments/DeleteAppointment'
+import FilterAppointment, { FilterAppointmentProps } from '../../../components/app/pages/appointments/FilterAppointment'
+import TableAppointment, { TableAppointmentProps } from '../../../components/app/pages/appointments/TableAppointment'
+import FormAppointment, { FormAppointmentProps } from '../../../components/app/pages/appointments/FormAppointment'
+import ShowAppointment, { ShowAppointmentProps } from '../../../components/app/pages/appointments/ShowAppointment'
+
+import FilterCustomer, {
+  FilterCustomerProps,
+} from '../../../components/app/pages/customers/FilterCustomer' /* Keep sync */
+import FilterService, { FilterServiceProps } from '../../../components/app/pages/services/FilterService' /* Keep sync */
 
 type PageAppointmentProps = {
   view: 'table' | 'calendar'

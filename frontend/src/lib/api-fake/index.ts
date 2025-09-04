@@ -20,7 +20,7 @@ import { AppointmentStatus } from '../api'
 import { ServicesAvailableEndpoint } from '../api/endpoints/ServicesAvailableEndpoint'
 
 function _paginate<T>(items: T[], options: { page?: number; pageSize?: number } = {}): T[] {
-  const start = (options.page ?? 0) * (options.pageSize ?? 10)
+  const start = (options.page ?? 1) * (options.pageSize ?? 10)
   const end = start + (options.pageSize ?? 10)
   return items.slice(start, end)
 }
@@ -276,6 +276,8 @@ export class ApiFake implements Api {
       _get(services.filter(filterId(id)).map((it) => ({ ...it, serviceId: it.id, name: it.serviceName }))),
     getSpecializations: async (id) =>
       _get(serviceGroups.filter(filterId(id)).map((it) => ({ id: it.id, name: it.name }))),
+    getService: async (id, serviceId) =>
+      _get(services.find((it) => it.serviceNameId === serviceId && it.specialistId == id)!),
   }
 
   public specializations: SpecializationsEndpoint = {

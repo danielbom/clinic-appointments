@@ -1,15 +1,17 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
 import { ChangePageMode, PageMode } from '../../../components/AdminX/types'
 import PageLoading from '../../../components/Loading/PageLoading'
-import { Specialization } from './types'
-import { TableSpecializationProps } from './TableSpecialization'
-import { useServicesAvailableGroupQuery } from '../../hooks/queries/services-available'
+
+import { Specialization } from '../../../components/app/pages/specializations/types'
+import { TableSpecializationProps } from '../../../components/app/pages/specializations/TableSpecialization'
+
+import { useServicesAvailableGroupQuery } from '../../../hooks/api/queries/services-available'
 import {
   useSpecializationCreate,
   useSpecializationDelete,
   useSpecializationDeleteAll,
   useSpecializationUpdate,
-} from '../../hooks/mutations/specializations'
+} from '../../../hooks/api/mutations/specializations'
 
 const PageSpecialization = lazy(() => import('./PageSpecialization'))
 

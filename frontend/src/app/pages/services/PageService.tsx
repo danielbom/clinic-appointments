@@ -1,14 +1,14 @@
 import type { ChangePageMode, PageMode } from '../../../components/AdminX/types'
-import useDisclosure from '../../../hooks/useDisclosure'
 import ConfirmDeleteModal from '../../../components/ConfirmDeleteModal'
+import useDisclosure from '../../../hooks/useDisclosure'
 
-import type { Service } from './types'
-import DeleteService from './DeleteService'
-import FilterService, { FilterServiceProps } from './FilterService'
-import TableService, { TableServiceProps } from './TableService'
-import FormService, { FormServiceProps } from './FormService'
-import ShowService, { ShowServiceProps } from './ShowService'
-import { DeleteCustomerProps } from '../customers/DeleteCustomer'
+import type { Service } from '../../../components/app/pages/services/types'
+import DeleteService from '../../../components/app/pages/services/DeleteService'
+import FilterService, { FilterServiceProps } from '../../../components/app/pages/services/FilterService'
+import TableService, { TableServiceProps } from '../../../components/app/pages/services/TableService'
+import FormService, { FormServiceProps } from '../../../components/app/pages/services/FormService'
+import ShowService, { ShowServiceProps } from '../../../components/app/pages/services/ShowService'
+import { DeleteCustomerProps } from '../../../components/app/pages/customers/DeleteCustomer'
 
 type PageServiceProps = {
   mode: PageMode

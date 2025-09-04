@@ -1,13 +1,13 @@
 import type { ChangePageMode, PageMode } from '../../../components/AdminX/types'
-import useDisclosure from '../../../hooks/useDisclosure'
 import ConfirmDeleteModal from '../../../components/ConfirmDeleteModal'
+import useDisclosure from '../../../hooks/useDisclosure'
 
-import { Specialization } from './types'
+import { Specialization } from '../../../components/app/pages/specializations/types'
 
-import DeleteSpecialization, { DeleteSpecializationProps } from './DeleteSpecialization'
-import TableSpecialization, { TableSpecializationProps } from './TableSpecialization'
-import ShowSpecialization, { ShowSpecializationProps } from './ShowSpecialization'
-import FormSpecialization, { FormSpecializationProps } from './FormSpecialization'
+import DeleteSpecialization, { DeleteSpecializationProps } from '../../../components/app/pages/specializations/DeleteSpecialization'
+import TableSpecialization, { TableSpecializationProps } from '../../../components/app/pages/specializations/TableSpecialization'
+import ShowSpecialization, { ShowSpecializationProps } from '../../../components/app/pages/specializations/ShowSpecialization'
+import FormSpecialization, { FormSpecializationProps } from '../../../components/app/pages/specializations/FormSpecialization'
 
 export type PageSpecializationProps = {
   mode: PageMode

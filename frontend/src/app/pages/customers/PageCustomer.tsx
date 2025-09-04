@@ -1,14 +1,14 @@
 import type { PageMode, ChangePageMode } from '../../../components/AdminX/types'
-import useDisclosure from '../../../hooks/useDisclosure'
 import ConfirmDeleteModal from '../../../components/ConfirmDeleteModal'
+import useDisclosure from '../../../hooks/useDisclosure'
 
-import type { Customer } from './types'
+import type { Customer } from '../../../components/app/pages/customers/types'
 
-import DeleteCustomer, { DeleteCustomerProps } from './DeleteCustomer'
-import FilterCustomer, { FilterCustomerProps } from './FilterCustomer'
-import TableCustomer, { TableCustomerProps } from './TableCustomer'
-import FormCustomer, { FormCustomerProps } from './FormCustomer'
-import ShowCustomer, { ShowCustomerProps } from './ShowCustomer'
+import DeleteCustomer, { DeleteCustomerProps } from '../../../components/app/pages/customers/DeleteCustomer'
+import FilterCustomer, { FilterCustomerProps } from '../../../components/app/pages/customers/FilterCustomer'
+import TableCustomer, { TableCustomerProps } from '../../../components/app/pages/customers/TableCustomer'
+import FormCustomer, { FormCustomerProps } from '../../../components/app/pages/customers/FormCustomer'
+import ShowCustomer, { ShowCustomerProps } from '../../../components/app/pages/customers/ShowCustomer'
 
 type PageCustomerProps = {
   mode: PageMode
