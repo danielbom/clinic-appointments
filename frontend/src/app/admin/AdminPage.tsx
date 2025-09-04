@@ -72,7 +72,9 @@ function AdminPageRoutesLayout() {
 
   useEffect(() => {
     if (items.length === 0) return
-    const path = window.location.pathname.match(RE_PATH)?.[1] ?? ''
+    if (!location?.pathname) return
+    const path = location.pathname.match(RE_PATH)?.[1] ?? ''
+    console.log({ path, pathname: location.pathname, windowPathname: window.location.pathname })
     const item = items.find((item) => item.key === path)
     if (item) {
       dispatch({ type: 'SET_PAGE_KEY', payload: item.key })
@@ -185,6 +187,7 @@ const PageServiceAvailable = withMode(PageServiceAvailableImpl)
 const PageSpecialist = withMode(PageSpecialistImpl)
 const PageSpecialization = withMode(PageSpecializationImpl)
 
+// prettier-ignore
 const router = createBrowserRouter([
   {
     path: '/auth',
@@ -225,10 +228,10 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: '_move',
+    path: '/_move',
     element: <MovePage />,
   },
-])
+], { basename: '/clinic-appointments' })
 
 function AdminPageRoutesInternal() {
   return <RouterProvider router={router} />
