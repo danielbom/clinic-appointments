@@ -17,3 +17,8 @@
 
 - [Github - start-ui-web](https://github.com/BearStudio/start-ui-web)
 - [Github - realworld-react-fsd](https://github.com/yurisldk/realworld-react-fsd/)
+
+* Try wekkly calendars
+  - [react-big-calendar](https://www.npmjs.com/package/react-big-calendar)
+  - [full-calendar](https://fullcalendar.io/docs)
+  - [antd-weekly-calendar](https://github.com/codeuniversity/antd-weekly-calendar)

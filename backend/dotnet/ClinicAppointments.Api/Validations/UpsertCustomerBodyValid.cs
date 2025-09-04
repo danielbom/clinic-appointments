@@ -39,7 +39,7 @@ record UpsertCustomerBodyValid(string Name, string Email, string Phone, DateOnly
 		else if (!ValidateCpf.IsCpfValid(body.Cpf)) errors.IsInvalid(nameof(body.Cpf));
 
 		if (!errors.HasError()) return (null, errors);
-		Console.WriteLine($"Birthdate 2: {birthdate}");
+
 		return (new UpsertCustomerBodyValid(body.Name!, body.Email!, body.Phone!, birthdate, body.Cpf!), errors);
 	}
 }
