@@ -11,7 +11,8 @@ services:
       APPOINTMENTS_DATABASE_PORT: ${APPOINTMENTS_DATABASE_PORT:-5432}
       APPOINTMENTS_JWT_SECRET: ${APPOINTMENTS_JWT_SECRET:-secret}
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     image: postgres:latest
@@ -24,6 +25,12 @@ services:
       POSTGRES_DB: ${APPOINTMENTS_DATABASE_NAME}
     volumes:
       - db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${APPOINTMENTS_DATABASE_USER} -d ${APPOINTMENTS_DATABASE_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 1s
 
   # optional
   # pgadmin:

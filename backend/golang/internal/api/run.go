@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"time"
 
 	"backend/internal/env"
 
@@ -21,16 +22,37 @@ func Run() {
 
 	ctx := context.Background()
 
-	pool, err := pgxpool.New(ctx, env.GetDatabaseConnection())
+	connectionString := env.GetDatabaseConnection()
+	var pool *pgxpool.Pool
+	var err error
+
+	maxRetries := 5
+	waitTime := 2 * time.Second
+	maxTime := 10 * time.Second
+
+	for i := 0; i < maxRetries; i++ {
+		pool, err = pgxpool.New(ctx, connectionString)
+		if err != nil {
+			log.Printf("Failed to create DB pool (attempt %d/%d): %v", i+1, maxRetries, err)
+		} else if err = pool.Ping(ctx); err != nil {
+			log.Printf("DB not ready yet (attempt %d/%d): %v", i+1, maxRetries, err)
+		} else {
+			// success
+			break
+		}
+
+		time.Sleep(waitTime)
+		if waitTime > maxTime {
+			waitTime = maxTime
+		} else {
+			waitTime *= 2 // exponential backoff
+		}
+	}
+
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Could not connect to database after retries:", err)
 	}
 	defer pool.Close()
-
-	if err := pool.Ping(ctx); err != nil {
-		log.Fatal(err)
-	}
-
 	var auth *jwtauth.JWTAuth
 	// Define a secret key for signing the JWT tokens
 	jwtSecret := env.Get(env.JWT_SECRET)

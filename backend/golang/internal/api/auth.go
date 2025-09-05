@@ -48,3 +48,17 @@ func TokenFromHeader(r *http.Request) string {
 func (j *JwtData) IsRefreshToken() bool {
 	return j.Role == ""
 }
+
+func (j *JwtData) HasAccess(roles... string) bool {
+	if j.Role == "admin" {
+		return true
+	}
+
+	for _, role := range roles {
+		if j.Role == role {
+			return true
+		}
+	}
+
+	return false
+}
