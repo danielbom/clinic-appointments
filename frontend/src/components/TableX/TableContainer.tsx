@@ -1,6 +1,6 @@
 import './TableContainer.css'
 
-type TableContainerProps = {
+interface TableContainerProps {
   children: React.ReactNode
 }
 

@@ -25,7 +25,7 @@ const INITIAL_VALUES: FormServiceAvailableValues = {
   specializationId: '',
 }
 
-export type FormServiceAvailableProps = {
+export interface FormServiceAvailableProps {
   record?: ServiceAvailable
   specializations: FormServiceAvailableSpecialization[]
   onSubmit: (values: FormServiceAvailableValues) => void
@@ -77,7 +77,7 @@ function FormServiceAvailable({ onSubmit, record, specializations, onClose }: Fo
   )
 }
 
-type InputSpecializationProps = {
+interface InputSpecializationProps {
   specializations: FormServiceAvailableSpecialization[]
   record?: ServiceAvailable
   addSpecialization: boolean

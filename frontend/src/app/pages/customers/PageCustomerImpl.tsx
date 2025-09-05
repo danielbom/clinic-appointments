@@ -19,7 +19,7 @@ import {
 
 const PageCustomer = lazy(() => import('./PageCustomer'))
 
-type PageCustomerImplProps = {
+interface PageCustomerImplProps {
   mode: PageMode
   changeMode: ChangePageMode
   state?: Record<string, string>

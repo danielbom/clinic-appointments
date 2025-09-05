@@ -17,7 +17,7 @@ const columns: TableColumnType<Specialization>[] = [
   },
 ]
 
-export type TableSpecializationProps = {
+export interface TableSpecializationProps {
   data: Specialization[]
   total: number
   loading: boolean

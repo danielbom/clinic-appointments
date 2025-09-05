@@ -10,7 +10,7 @@ import TableCustomer, { TableCustomerProps } from '../../../components/app/pages
 import FormCustomer, { FormCustomerProps } from '../../../components/app/pages/customers/FormCustomer'
 import ShowCustomer, { ShowCustomerProps } from '../../../components/app/pages/customers/ShowCustomer'
 
-type PageCustomerProps = {
+interface PageCustomerProps {
   mode: PageMode
   changeMode: ChangePageMode
 

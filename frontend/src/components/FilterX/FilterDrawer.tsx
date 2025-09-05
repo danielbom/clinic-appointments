@@ -3,7 +3,7 @@ import { CloseOutlined } from '@ant-design/icons'
 
 import './FilterDrawer.css'
 
-type FilterDrawerProps = {
+interface FilterDrawerProps {
   title?: string
   isOpen: boolean
   onClose: () => void

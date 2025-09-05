@@ -14,7 +14,7 @@ export type PageAuthValues = {
   remember: boolean
 }
 
-type PageAuthProps = {
+interface PageAuthProps {
   onSubmit: (values: PageAuthValues) => void
   error?: string
   loading?: boolean

@@ -26,7 +26,7 @@ import { useApi } from '../../../context/ApiContext'
 
 const PageAppointment = lazy(() => import('./PageAppointment'))
 
-type PageAppointmentImplProps = {
+interface PageAppointmentImplProps {
   mode: PageMode
   changeMode: ChangePageMode
   state: Record<string, string>

@@ -15,7 +15,7 @@ import {
 
 const PageSpecialization = lazy(() => import('./PageSpecialization'))
 
-type PageSpecializationImplProps = {
+interface PageSpecializationImplProps {
   mode: PageMode
   changeMode: ChangePageMode
   state?: Record<string, string>

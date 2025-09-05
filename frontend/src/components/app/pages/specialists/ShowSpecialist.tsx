@@ -17,7 +17,7 @@ import renderAge from '../../../../lib/renders/rendertAge'
 import renderDuration from '../../../../lib/renders/renderDuration'
 import renderMoney from '../../../../lib/renders/renderMoney'
 
-export type ShowSpecialistProps = {
+export interface ShowSpecialistProps {
   showTab?: string
   onChangeKey?: (key: string) => void
   onClickEdit: () => void

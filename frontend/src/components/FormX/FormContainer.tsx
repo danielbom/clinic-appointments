@@ -1,6 +1,6 @@
 import './FormContainer.css'
 
-type FormContaienrProps = {
+interface FormContaienrProps {
   children: React.ReactNode
 }
 

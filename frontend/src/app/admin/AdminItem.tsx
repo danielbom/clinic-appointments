@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 
 import { useAdmin } from './AdminContext'
 
-type AdminItemProps = {
+interface AdminItemProps {
   pageKey: string
   pageIcon: React.ReactNode
   pageLabel: string

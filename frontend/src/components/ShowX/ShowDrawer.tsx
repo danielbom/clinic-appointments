@@ -4,7 +4,7 @@ import { CloseOutlined } from '@ant-design/icons'
 import './ShowDrawer.css'
 import ShowButtons from './ShowButtons'
 
-type ShowDrawerProps = {
+interface ShowDrawerProps {
   isOpen: boolean
   onClose: () => void
   onClickEdit: () => void

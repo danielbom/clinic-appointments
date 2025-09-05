@@ -2,7 +2,7 @@ import { DeleteOutlined, EditOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import './ShowButtons.css'
 
-type ShowButtonsProps = {
+interface ShowButtonsProps {
   onClickEdit: () => void
   onClickDelete: () => void
 }

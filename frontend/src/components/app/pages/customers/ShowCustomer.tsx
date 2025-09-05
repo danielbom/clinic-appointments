@@ -10,7 +10,7 @@ import renderDate from '../../../../lib/renders/renderDate'
 import normalizeCPF from '../../../../lib/normalizers/normalizeCPF'
 import renderAge from '../../../../lib/renders/rendertAge'
 
-export type ShowCustomerProps = {
+export interface ShowCustomerProps {
   isOpen: boolean
   onClose: () => void
   onClickEdit: () => void

@@ -20,7 +20,7 @@ type MonthListItem = {
   canceledCount: number
 }
 
-type CalendarAppointmentProps = {
+interface CalendarAppointmentProps {
   total: number
   dayItems: DayListItem[]
   monthItems: MonthListItem[]
@@ -81,7 +81,7 @@ function CalendarAppointment({
   )
 }
 
-type SelectModeProps = {
+interface SelectModeProps {
   onChange: (value: 'month' | 'year') => void
   value: 'month' | 'year'
 }
@@ -100,7 +100,7 @@ function SelectMode({ onChange, value }: SelectModeProps) {
   )
 }
 
-type SelectMonthProps = {
+interface SelectMonthProps {
   value: number
   onChange: (value: number) => void
 }
@@ -131,7 +131,7 @@ function SelectMonth({ value, onChange }: SelectMonthProps) {
 
 const YearSelectOffset = 10
 const YearSelectTotal = 20
-type SelectYearProps = {
+interface SelectYearProps {
   value: number
   onChange: (value: number) => void
 }
@@ -148,7 +148,7 @@ function SelectYear({ value, onChange }: SelectYearProps) {
   )
 }
 
-type PrevNextButtonsProps = {
+interface PrevNextButtonsProps {
   children?: React.ReactNode
   onClickLeft?: () => void
   onClickRight?: () => void
@@ -210,7 +210,7 @@ function dayRender(date: dayjs.Dayjs, dayItems: DayListItem[]) {
   )
 }
 
-type MonthItemProps = {
+interface MonthItemProps {
   name: string
   count: number
   variant: 'Success' | 'Info' | 'Error'

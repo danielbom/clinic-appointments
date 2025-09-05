@@ -3,7 +3,7 @@ import AppLogo from '../AppLogo'
 
 import './AdminSidebar.css'
 
-type AdminSidebarProps = {
+interface AdminSidebarProps {
   items: MenuProps['items']
   pageKey: string
   onSelectPage: (pageKey: string) => void

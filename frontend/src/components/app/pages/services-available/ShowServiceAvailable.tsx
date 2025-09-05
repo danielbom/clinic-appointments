@@ -4,7 +4,7 @@ import ShowX from '../../../ShowX'
 
 import type { ServiceAvailable } from './types'
 
-export type ShowServiceAvailableProps = {
+export interface ShowServiceAvailableProps {
   isOpen: boolean
   onClose: () => void
   onClickEdit: () => void

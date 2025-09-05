@@ -32,7 +32,7 @@ const columns: TableColumnType<Service>[] = [
   },
 ]
 
-export type TableServiceProps = {
+export interface TableServiceProps {
   data: Service[]
   total: number
   loading: boolean

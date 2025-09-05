@@ -18,7 +18,7 @@ import { useSpecializationListQuery } from '../../../hooks/api/queries/specializ
 
 const PageServiceAvailable = lazy(() => import('./PageServiceAvailable'))
 
-type PageServiceAvailableImplProps = {
+interface PageServiceAvailableImplProps {
   mode: PageMode
   changeMode: ChangePageMode
   state?: Record<string, string>

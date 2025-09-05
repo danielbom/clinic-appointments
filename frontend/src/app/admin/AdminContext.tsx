@@ -4,13 +4,13 @@ import type { PageMode } from '../../components/AdminX/types'
 
 type PageKey = string
 
-type PageItem = {
+interface PageItem {
   key: PageKey
   label: string
   icon: React.ReactNode
 }
 
-type PageState = {
+interface PageState {
   pageKey: PageKey
   items: PageItem[]
   state: Record<string, string>

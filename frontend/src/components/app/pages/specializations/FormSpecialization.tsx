@@ -13,7 +13,7 @@ const INITIAL_VALUES: FormSpecializationValues = {
   name: '',
 }
 
-export type FormSpecializationProps = {
+export interface FormSpecializationProps {
   record?: Specialization
   onSubmit: (values: FormSpecializationValues) => void
   onClose: () => void

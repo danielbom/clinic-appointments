@@ -4,7 +4,7 @@ import { PlusOutlined, FilterOutlined, DeleteOutlined } from '@ant-design/icons'
 import './TableHeader.css'
 import React from 'react'
 
-type TableHeaderProps = {
+interface TableHeaderProps {
   title: string
   count: number
   selectedCount: number
@@ -22,7 +22,7 @@ const TableHeaderContainer = c('table-header')
 const TableHeaderFirst = c('table-header-first')
 const TableHeaderButtons = c('table-header-buttons')
 
-type TableHeaderSelectionProps = {
+interface TableHeaderSelectionProps {
   selectedCount: number
   onClickDeleteAll: () => void
 }
@@ -42,7 +42,7 @@ const TableHeaderSelection = ({ selectedCount, onClickDeleteAll }: TableHeaderSe
   )
 }
 
-type TableHeaderTitleProps = {
+interface TableHeaderTitleProps {
   title: string
   count: number
 }

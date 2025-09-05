@@ -2,7 +2,7 @@ import { Button, ButtonProps } from 'antd'
 
 import './FormSave.css'
 
-type FormSaveProps = {
+interface FormSaveProps {
   onClick?: ButtonProps['onClick']
   htmlType?: ButtonProps['htmlType']
 }

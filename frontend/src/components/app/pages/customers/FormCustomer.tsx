@@ -28,7 +28,7 @@ const INITIAL_VALUES: FormCustomerValues = {
   cpf: '',
 }
 
-export type FormCustomerProps = {
+export interface FormCustomerProps {
   record?: Customer
   onSubmit: (values: FormCustomerValues) => void
   onClose: () => void

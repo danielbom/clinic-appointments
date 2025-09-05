@@ -10,7 +10,7 @@ import TableSecretary, { TableSecretaryProps } from '../../../components/app/pag
 import FormSecretary, { FormSecretaryProps } from '../../../components/app/pages/secretaries/FormSecretary'
 import ShowSecretary, { ShowSecretaryProps } from '../../../components/app/pages/secretaries/ShowSecretary'
 
-type PageSecretaryProps = {
+interface PageSecretaryProps {
   mode: PageMode
   changeMode: ChangePageMode
 

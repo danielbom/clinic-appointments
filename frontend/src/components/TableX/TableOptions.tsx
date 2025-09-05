@@ -24,7 +24,7 @@ const items = [
   },
 ]
 
-type TableOptionsRenderProps = {
+interface TableOptionsRenderProps {
   onClick: (event: OptionsEvent) => void
 }
 

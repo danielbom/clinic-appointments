@@ -37,7 +37,7 @@ const INITIAL_VALUES: FormServiceValues = {
   price: 0,
 }
 
-export type FormServiceProps = {
+export interface FormServiceProps {
   record?: Service
   specialists: FormServiceSpecialist[]
   services: ServicesGroup[]
@@ -98,7 +98,7 @@ function FormService({ record, specialists, services, onSubmit, onClose }: FormS
   )
 }
 
-type SelectSpecialistProps = {
+interface SelectSpecialistProps {
   record?: Service
   specialists: FormServiceSpecialist[]
 }
@@ -133,7 +133,7 @@ function SelectSpecialist({ record, specialists }: SelectSpecialistProps) {
   }
 }
 
-type AutocompleteServiceProps = {
+interface AutocompleteServiceProps {
   form: FormInstance<FormServiceValues>
   record?: Service
   services: ServicesGroup[]

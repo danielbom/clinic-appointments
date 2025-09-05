@@ -48,7 +48,7 @@ const columns: TableColumnType<Secretary>[] = [
   },
 ]
 
-export type TableSecretaryProps = {
+export interface TableSecretaryProps {
   data: Secretary[]
   total: number
   loading: boolean

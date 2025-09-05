@@ -2,7 +2,7 @@ import './FormHeader.css'
 import { CloseOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 
-type FormHeaderProps = {
+interface FormHeaderProps {
   title: string
   onClose: () => void
 }

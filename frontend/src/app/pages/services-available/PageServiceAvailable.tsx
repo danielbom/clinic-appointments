@@ -9,7 +9,7 @@ import TableServiceAvailable, { TableServiceAvailableProps } from '../../../comp
 import FormServiceAvailable, { FormServiceAvailableProps } from '../../../components/app/pages/services-available/FormServiceAvailable'
 import ShowServiceAvailable, { ShowServiceAvailableProps } from '../../../components/app/pages/services-available/ShowServiceAvailable'
 
-type PageServiceAvailableProps = {
+interface PageServiceAvailableProps {
   mode: PageMode
   changeMode: ChangePageMode
 

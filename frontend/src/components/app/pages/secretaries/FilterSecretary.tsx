@@ -13,7 +13,7 @@ export type FilterSecretaryValues = {
   phone?: string
 }
 
-export type FilterSecretaryProps = {
+export interface FilterSecretaryProps {
   isSearch?: boolean
   isOpen: boolean
   onClose: () => void

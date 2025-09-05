@@ -2,7 +2,7 @@ import type { ServiceAvailable } from './types'
 
 import DeleteX from '../../../DeleteX'
 
-export type DeleteServiceAvailableProps = {
+export interface DeleteServiceAvailableProps {
   records: ServiceAvailable[]
   isOpen: boolean
   onClose: () => void

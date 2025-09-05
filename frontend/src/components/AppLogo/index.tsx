@@ -1,6 +1,6 @@
 import './index.css'
 
-type AppLogoProps = {
+interface AppLogoProps {
   madeByVisible?: boolean
 }
 

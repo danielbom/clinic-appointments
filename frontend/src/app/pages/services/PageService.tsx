@@ -10,7 +10,7 @@ import FormService, { FormServiceProps } from '../../../components/app/pages/ser
 import ShowService, { ShowServiceProps } from '../../../components/app/pages/services/ShowService'
 import { DeleteCustomerProps } from '../../../components/app/pages/customers/DeleteCustomer'
 
-type PageServiceProps = {
+interface PageServiceProps {
   mode: PageMode
   changeMode: ChangePageMode
 

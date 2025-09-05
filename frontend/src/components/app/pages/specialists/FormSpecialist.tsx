@@ -87,7 +87,7 @@ export type ServicesGroup = {
   items: ServiceItem[]
 }
 
-type Step1Props = {
+interface Step1Props {
   editing: boolean
   show: boolean
   initialValues?: Step1Values
@@ -158,7 +158,7 @@ function Step1({ initialValues, show, onClickNext }: Step1Props) {
   )
 }
 
-type Step2Props = {
+interface Step2Props {
   editing: boolean
   show: boolean
   groups: ServicesGroup[]
@@ -301,7 +301,7 @@ function Step2({ show, groups, initialValues, onClickPrevious, onClickNext }: St
   )
 }
 
-type SelectServiceProps = {
+interface SelectServiceProps {
   groups: ServicesGroup[]
   serviceIds: string[]
   onSelect: (option: { value: string; label: string }) => void
@@ -349,7 +349,7 @@ function SelectService({ groups, serviceIds, onSelect }: SelectServiceProps) {
 
 type StepsValues = [Step1Values | undefined, Step2Values | undefined]
 
-type Step3Props = {
+interface Step3Props {
   editing: boolean
   values: StepsValues
   show: boolean
@@ -402,7 +402,7 @@ function Step3({ editing, values, show, onClickSave, onClickPrevious }: Step3Pro
   )
 }
 
-export type FormSpecialistProps = {
+export interface FormSpecialistProps {
   record?: Specialist | null
   specializations?: SpecialistSpecialization[]
   services: ServicesGroup[]

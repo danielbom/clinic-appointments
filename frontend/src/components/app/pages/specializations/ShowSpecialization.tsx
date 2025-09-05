@@ -4,7 +4,7 @@ import ShowX from '../../../ShowX'
 
 import type { Specialization } from './types'
 
-export type ShowSpecializationProps = {
+export interface ShowSpecializationProps {
   isOpen: boolean
   onClose: () => void
   onClickEdit: () => void

@@ -10,7 +10,7 @@ import TableSpecialist, { TableSpecialistProps } from '../../../components/app/p
 import FormSpecialist, { FormSpecialistProps } from '../../../components/app/pages/specialists/FormSpecialist'
 import ShowSpecialist, { ShowSpecialistProps } from '../../../components/app/pages/specialists/ShowSpecialist'
 
-type PageSpecialistProps = {
+interface PageSpecialistProps {
   mode: PageMode
   changeMode: ChangePageMode
 

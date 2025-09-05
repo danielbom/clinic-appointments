@@ -17,7 +17,7 @@ import FilterCustomer, {
 } from '../../../components/app/pages/customers/FilterCustomer' /* Keep sync */
 import FilterService, { FilterServiceProps } from '../../../components/app/pages/services/FilterService' /* Keep sync */
 
-type PageAppointmentProps = {
+interface PageAppointmentProps {
   view: 'table' | 'calendar'
 
   mode: PageMode

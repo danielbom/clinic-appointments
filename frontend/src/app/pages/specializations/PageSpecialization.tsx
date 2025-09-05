@@ -9,7 +9,7 @@ import TableSpecialization, { TableSpecializationProps } from '../../../componen
 import ShowSpecialization, { ShowSpecializationProps } from '../../../components/app/pages/specializations/ShowSpecialization'
 import FormSpecialization, { FormSpecializationProps } from '../../../components/app/pages/specializations/FormSpecialization'
 
-export type PageSpecializationProps = {
+export interface PageSpecializationProps {
   mode: PageMode
   changeMode: ChangePageMode
 

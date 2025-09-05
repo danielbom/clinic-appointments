@@ -2,7 +2,7 @@ import type { Secretary } from './types'
 
 import DeleteX from '../../../DeleteX'
 
-export type DeleteSecretaryProps = {
+export interface DeleteSecretaryProps {
   records: Secretary[]
   isOpen: boolean
   onClose: () => void

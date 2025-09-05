@@ -3,7 +3,7 @@ import { CloseOutlined } from '@ant-design/icons'
 
 import './DeleteDrawer.css'
 
-type DeleteDrawerProps = {
+interface DeleteDrawerProps {
   isOpen: boolean
   onClose: () => void
   onClickDelete: () => void

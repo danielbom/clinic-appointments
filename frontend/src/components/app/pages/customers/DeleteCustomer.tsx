@@ -2,7 +2,7 @@ import type { Customer } from './types'
 
 import DeleteX from '../../../DeleteX'
 
-export type DeleteCustomerProps = {
+export interface DeleteCustomerProps {
   records: Customer[]
   isOpen: boolean
   onClose: () => void

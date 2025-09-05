@@ -14,7 +14,7 @@ export type FilterSpecialistValues = {
   phone?: string
 }
 
-export type FilterSpecialistProps = {
+export interface FilterSpecialistProps {
   isOpen: boolean
   onClose: () => void
   onSubmit: (values: FilterSpecialistValues) => void

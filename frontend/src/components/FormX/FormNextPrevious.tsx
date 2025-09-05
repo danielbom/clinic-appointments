@@ -1,7 +1,7 @@
 import { Flex, Button } from 'antd'
 import './FormNextPrevious.css'
 
-export type FormNextPreviousProps = {
+export interface FormNextPreviousProps {
   previousDisabled?: boolean
   nextDisabled?: boolean
   onClickPrevious?: () => void

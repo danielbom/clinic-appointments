@@ -3,7 +3,7 @@ import { Breadcrumb } from 'antd'
 
 import type { ChangePageMode, PageMode } from './types'
 
-type AdminBreadcrumbProps = {
+interface AdminBreadcrumbProps {
   title: React.ReactNode
   mode: PageMode
   changeMode: ChangePageMode

@@ -20,7 +20,7 @@ import { useSpecialistListQuery, useSpecialistQuery } from '../../../hooks/api/q
 
 const PageService = lazy(() => import('./PageService'))
 
-type PageServiceImplProps = {
+interface PageServiceImplProps {
   mode: PageMode
   changeMode: ChangePageMode
   state?: Record<string, string>

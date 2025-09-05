@@ -7,7 +7,7 @@ import useDisclosure from '../../hooks/useDisclosure'
 import AdminSidebar from './AdminSidebar'
 import AdminHeader, { AdminHeaderEvent } from './AdminHeader'
 
-export type AdminLayoutProps = {
+export interface AdminLayoutProps {
   items: MenuProps['items']
   pageKey: string
   onSelectPage: (pageKey: string) => void

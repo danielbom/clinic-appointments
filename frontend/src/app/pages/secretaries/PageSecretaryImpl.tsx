@@ -18,7 +18,7 @@ import {
 
 const PageSecretary = lazy(() => import('./PageSecretary'))
 
-type PageSecretaryImplProps = {
+interface PageSecretaryImplProps {
   mode: PageMode
   changeMode: ChangePageMode
   state?: Record<string, string>

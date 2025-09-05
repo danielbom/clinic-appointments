@@ -2,7 +2,7 @@ import type { Specialization } from './types'
 
 import DeleteX from '../../../DeleteX'
 
-export type DeleteSpecializationProps = {
+export interface DeleteSpecializationProps {
   records: Specialization[]
   isOpen: boolean
   onClose: () => void

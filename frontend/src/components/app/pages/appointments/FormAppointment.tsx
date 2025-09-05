@@ -50,7 +50,7 @@ const INITIAL_VALUES: FormAppointmentValues = {
   status: AppointmentStatus.Pending,
 }
 
-export type FormAppointmentProps = {
+export interface FormAppointmentProps {
   record?: Appointment
   services: FormAppointmentService[]
   customers: FormAppointmentCustomer[]
@@ -146,7 +146,7 @@ function FormAppointment({
   )
 }
 
-type SelectCustomerProps = {
+interface SelectCustomerProps {
   record?: Appointment
   customers: FormAppointmentCustomer[]
   onClickSearchCustomer: () => void
@@ -183,7 +183,7 @@ function SelectCustomer({ record, customers, onClickSearchCustomer }: SelectCust
   }
 }
 
-type SelectServiceProps = {
+interface SelectServiceProps {
   record?: Appointment
   serviceId?: string
   services: FormAppointmentService[]

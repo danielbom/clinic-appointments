@@ -8,7 +8,7 @@ import renderDate from '../../../../lib/renders/renderDate'
 import renderHour from '../../../../lib/renders/renderHour'
 import renderDuration from '../../../../lib/renders/renderDuration'
 
-export type ShowAppointmentProps = {
+export interface ShowAppointmentProps {
   isOpen: boolean
   onClose: () => void
   onClickEdit: () => void

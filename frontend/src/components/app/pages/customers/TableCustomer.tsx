@@ -42,7 +42,7 @@ const columns: TableColumnType<Customer>[] = [
   },
 ]
 
-export type TableCustomerProps = {
+export interface TableCustomerProps {
   data: Customer[]
   total: number
   loading: boolean

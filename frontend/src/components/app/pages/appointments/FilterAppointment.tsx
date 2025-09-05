@@ -12,7 +12,7 @@ export type FilterAppointmentValues = {
   status?: number
 }
 
-export type FilterAppointmentProps = {
+export interface FilterAppointmentProps {
   isOpen: boolean
   onClose: () => void
   onSubmit: (values: FilterAppointmentValues) => void

@@ -9,7 +9,7 @@ import renderDate from '../../../../lib/renders/renderDate'
 import normalizeCPF from '../../../../lib/normalizers/normalizeCPF'
 import renderAge from '../../../../lib/renders/rendertAge'
 
-export type ShowSecretaryProps = {
+export interface ShowSecretaryProps {
   isOpen: boolean
   onClose: () => void
   onClickEdit: () => void

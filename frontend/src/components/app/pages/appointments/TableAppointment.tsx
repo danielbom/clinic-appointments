@@ -50,7 +50,7 @@ const columns: TableColumnType<Appointment>[] = [
   },
 ]
 
-export type TableAppointmentProps = {
+export interface TableAppointmentProps {
   data: Appointment[]
   total: number
   pagination: TableProps<Appointment>['pagination']

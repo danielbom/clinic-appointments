@@ -4,7 +4,7 @@ import './AdminHeader.css'
 
 export type AdminHeaderEvent = 'logout'
 
-type AdminHeaderProps = {
+interface AdminHeaderProps {
   onOpenSidebar: () => void
   username: string
   onClickMenu: (event: AdminHeaderEvent) => void

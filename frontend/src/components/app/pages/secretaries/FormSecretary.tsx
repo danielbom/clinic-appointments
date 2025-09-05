@@ -37,7 +37,7 @@ const INITIAL_VALUES: FormSecretaryValues = {
   cnpj: '',
 }
 
-export type FormSecretaryProps = {
+export interface FormSecretaryProps {
   record?: Secretary
   onSubmit: (values: FormSecretaryValues) => void
   onClose: () => void

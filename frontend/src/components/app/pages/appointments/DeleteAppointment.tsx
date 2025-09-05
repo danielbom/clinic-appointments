@@ -3,7 +3,7 @@ import type { Appointment } from './types'
 import DeleteX from '../../../DeleteX'
 import renderDateHour from '../../../../lib/renders/renderDateHour'
 
-export type DeleteAppointmentProps = {
+export interface DeleteAppointmentProps {
   records: Appointment[]
   isOpen: boolean
   onClose: () => void

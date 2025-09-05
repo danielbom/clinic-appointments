@@ -47,7 +47,7 @@ const columns: TableColumnType<Specialist>[] = [
   },
 ]
 
-export type TableSpecialistProps = {
+export interface TableSpecialistProps {
   data: Specialist[]
   total: number
   loading: boolean

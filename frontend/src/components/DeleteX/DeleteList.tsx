@@ -5,7 +5,7 @@ type Record = {
   content: string
 }
 
-type DeleteListProps = {
+interface DeleteListProps {
   records: Record[]
 }
 

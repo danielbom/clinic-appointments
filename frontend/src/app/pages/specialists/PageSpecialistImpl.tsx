@@ -24,7 +24,7 @@ import { useServiceGroups } from '../../../hooks/api/queries/service-groups'
 
 const PageSpecialist = lazy(() => import('./PageSpecialist'))
 
-type PageSpecialistImplProps = {
+interface PageSpecialistImplProps {
   mode: PageMode
   changeMode: ChangePageMode
   state?: Record<string, string>

@@ -12,7 +12,7 @@ import {
   useAppointmentsCountQuery,
 } from '../../../hooks/api/queries/appointments'
 
-type CalendarAppointmentProps = {
+interface CalendarAppointmentProps {
   onClickTable: () => void
 }
 

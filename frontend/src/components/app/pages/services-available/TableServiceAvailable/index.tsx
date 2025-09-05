@@ -6,7 +6,7 @@ import type { ServiceAvailable } from '../types'
 
 import TableServiceAvailableAsFlexList from './TableServiceAvailableAsFlexList'
 
-export type TableServiceAvailableProps = {
+export interface TableServiceAvailableProps {
   data: ServiceAvailable[]
   total: number
   pagination: TableProps<ServiceAvailable>['pagination']

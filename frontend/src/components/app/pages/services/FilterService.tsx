@@ -8,7 +8,7 @@ export type FilterServiceValues = {
   specialist?: string
 }
 
-export type FilterServiceProps = {
+export interface FilterServiceProps {
   isSearch?: boolean
   isOpen: boolean
   onClose: () => void

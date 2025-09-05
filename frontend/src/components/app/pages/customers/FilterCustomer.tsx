@@ -13,7 +13,7 @@ export type FilterCustomerValues = {
   phone?: string
 }
 
-export type FilterCustomerProps = {
+export interface FilterCustomerProps {
   isSearch?: boolean
   isOpen: boolean
   onClose: () => void
