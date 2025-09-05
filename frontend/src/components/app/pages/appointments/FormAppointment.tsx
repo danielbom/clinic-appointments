@@ -11,6 +11,7 @@ import { appointmentDateIsRequired, appointmentDateIsInvalid } from '../../../..
 import { appointmentTimeIsRequired } from '../../../../lib/rules/appointmentTime'
 import { Appointment, AppointmentStatus } from '../../../../lib/api'
 import renderDuration from '../../../../lib/renders/renderDuration'
+import { getSessionStorage, removeSessionStorage } from '../../../../lib/json-storage'
 
 const OPTIONS_STATUS = [
   { label: 'Pendente', value: AppointmentStatus.Pending },
@@ -234,31 +235,27 @@ let id: NodeJS.Timeout | undefined
 
 function getExternalValues(): Partial<FormAppointmentValues> {
   const values: Partial<FormAppointmentValues> = {}
-  try {
-    const text = sessionStorage.getItem(CREATE_APPOINTMENTS_DATA_KEY)
-    if (text) {
-      clearTimeout(id)
-      id = setTimeout(() => {
-        sessionStorage.removeItem(CREATE_APPOINTMENTS_DATA_KEY)
-      }, 1000)
+  const data = getSessionStorage<any>(CREATE_APPOINTMENTS_DATA_KEY, null)
 
-      const data = JSON.parse(text!)
-      if (typeof data.serviceId === 'string') {
-        // From ShowAppointment() component
-        // From ShowService() component
-        values.serviceId = data.serviceId
-      }
-      if (typeof data.customerId === 'string') {
-        // From ShowAppointment() component
-        // From ShowCustomer() component
-        values.customerId = data.customerId
-      }
-      if (typeof data.time === 'string') {
-        // From ShowAppointment() component
-        values.time = dayjs(data.time, 'HH:mm:ss')
-      }
-    }
-  } catch (error) {}
+  clearTimeout(id)
+  id = setTimeout(() => {
+    removeSessionStorage(CREATE_APPOINTMENTS_DATA_KEY)
+  }, 1000)
+
+  if (typeof data.serviceId === 'string') {
+    // From ShowAppointment() component
+    // From ShowService() component
+    values.serviceId = data.serviceId
+  }
+  if (typeof data.customerId === 'string') {
+    // From ShowAppointment() component
+    // From ShowCustomer() component
+    values.customerId = data.customerId
+  }
+  if (typeof data.time === 'string') {
+    // From ShowAppointment() component
+    values.time = dayjs(data.time, 'HH:mm:ss')
+  }
   return values
 }
 

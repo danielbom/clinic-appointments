@@ -16,6 +16,7 @@ import {
   useCustomerDelete,
   useCustomerUpdate,
 } from '../../../hooks/api/mutations/customers'
+import { setSessionStorage } from '../../../lib/json-storage'
 
 const PageCustomer = lazy(() => import('./PageCustomer'))
 
@@ -142,7 +143,7 @@ function PageCustomerImpl({ mode, changeMode, moveTo, state }: PageCustomerImplP
         }}
         onReceateAppointment={() => {
           if (record?.id) {
-            sessionStorage.setItem(CREATE_APPOINTMENTS_DATA_KEY, JSON.stringify({ customerId: record.id }))
+            setSessionStorage(CREATE_APPOINTMENTS_DATA_KEY, { customerId: record.id })
             moveTo('appointments', { mode: 'create' })
           }
         }}

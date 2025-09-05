@@ -17,6 +17,7 @@ import {
 } from '../../../hooks/api/mutations/services'
 import { useServiceGroups } from '../../../hooks/api/queries/service-groups'
 import { useSpecialistListQuery, useSpecialistQuery } from '../../../hooks/api/queries/specialists'
+import { setSessionStorage } from '../../../lib/json-storage'
 
 const PageService = lazy(() => import('./PageService'))
 
@@ -148,7 +149,7 @@ function PageServiceImpl({ mode, changeMode, moveTo, state }: PageServiceImplPro
         }}
         onReceateAppointment={() => {
           if (record?.id) {
-            sessionStorage.setItem(CREATE_APPOINTMENTS_DATA_KEY, JSON.stringify({ serviceId: record.id }))
+            setSessionStorage(CREATE_APPOINTMENTS_DATA_KEY, { serviceId: record.id })
             moveTo('appointments', { mode: 'create' })
           }
         }}

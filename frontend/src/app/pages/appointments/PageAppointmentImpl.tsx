@@ -20,9 +20,11 @@ import {
   useAppointmentsDelete,
   useAppointmentsUpdate,
 } from '../../../hooks/api/mutations/appointments'
-import { useCustomersListQuery } from '../../../hooks/api/queries/customers'
-import { useServicesListQuery } from '../../../hooks/api/queries/services'
+import { useCustomerQuery, useCustomersListQuery } from '../../../hooks/api/queries/customers'
+import { useServiceQuery, useServicesListQuery } from '../../../hooks/api/queries/services'
 import { useApi } from '../../../context/ApiContext'
+import { getSessionStorage, setSessionStorage } from '../../../lib/json-storage'
+import { uniqIdsConcat } from '../../../lib/uniq-concat'
 
 const PageAppointment = lazy(() => import('./PageAppointment'))
 
@@ -55,6 +57,10 @@ function PageAppointmentImpl({ mode, changeMode, moveTo, state }: PageAppointmen
   const api = useApi()
   const paramsList = useMemo<ParamsList>(() => loadParamsList(state), [state])
   const paramsShow = useMemo<ParamsShow>(() => loadParamsShow(state), [state])
+  const createAppointmentData = useMemo(
+    () => getSessionStorage(CREATE_APPOINTMENTS_DATA_KEY, { customerId: '', serviceId: '' }),
+    [],
+  )
   const [previousData, setPreviousData] = useState<Appointment[]>([])
   const [paramsSearchService, setParamsSearchService] = useState<ServicesGetAllQuery>(PARAMS_SERVICE)
   const [paramsSearchCustomers, setParamsSearchCustomer] = useState<CustomersGetAllQuery>(PARAMS_CUSTOMER)
@@ -98,16 +104,24 @@ function PageAppointmentImpl({ mode, changeMode, moveTo, state }: PageAppointmen
     } as TableAppointmentProps['pagination']
   }, [paramsList.page, paramsList.pageSize, total])
 
+  const queryGetCustumer = useCustomerQuery({
+    id: createAppointmentData.customerId,
+    enabled: !!createAppointmentData.customerId,
+  })
   const querySearchServices = useServicesListQuery({
     params: paramsSearchService,
     enabled: mode === 'create',
+  })
+  const queryGetService = useServiceQuery({
+    id: createAppointmentData.serviceId,
+    enabled: !!createAppointmentData.serviceId,
   })
   const querySearchCustomers = useCustomersListQuery({
     params: paramsSearchCustomers,
     enabled: mode === 'create',
   })
-  const services = querySearchServices.data ?? []
-  const customers = querySearchCustomers.data ?? []
+  const services = uniqIdsConcat(querySearchServices.data, queryGetService.data)
+  const customers = uniqIdsConcat(querySearchCustomers.data, queryGetCustumer.data)
 
   const mutationCreate = useAppointmentsCreate()
   const mutationUpdate = useAppointmentsUpdate()
@@ -207,7 +221,7 @@ function PageAppointmentImpl({ mode, changeMode, moveTo, state }: PageAppointmen
                 time: record.time,
                 serviceId: service.data.id,
               })
-              sessionStorage.setItem(CREATE_APPOINTMENTS_DATA_KEY, data)
+              setSessionStorage(CREATE_APPOINTMENTS_DATA_KEY, data)
               moveTo('appointments', { mode: 'create' })
             } catch (error) {
               message.error('Serviço deste especialista está indisponível')
