@@ -22,13 +22,13 @@ WHERE true
 `
 
 type CountCustomersParams struct {
-	Column1 string
-	Column2 string
-	Column3 string
+	Name  string
+	Cpf   string
+	Phone string
 }
 
 func (q *Queries) CountCustomers(ctx context.Context, arg CountCustomersParams) (int64, error) {
-	row := q.db.QueryRow(ctx, countCustomers, arg.Column1, arg.Column2, arg.Column3)
+	row := q.db.QueryRow(ctx, countCustomers, arg.Name, arg.Cpf, arg.Phone)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -130,25 +130,25 @@ WHERE true
   AND ($1::text = '' OR "name" ILIKE '%' || $1 || '%')
   AND ($2::text = '' OR "cpf" = $2)
   AND ($3::text = '' OR "phone" = $3)
-LIMIT $4
-OFFSET $5
+LIMIT $5
+OFFSET $4
 `
 
 type ListCustomersParams struct {
-	Column1 string
-	Column2 string
-	Column3 string
-	Limit   int32
-	Offset  int32
+	Name   string
+	Cpf    string
+	Phone  string
+	Offset int32
+	Limit  int32
 }
 
 func (q *Queries) ListCustomers(ctx context.Context, arg ListCustomersParams) ([]Customer, error) {
 	rows, err := q.db.Query(ctx, listCustomers,
-		arg.Column1,
-		arg.Column2,
-		arg.Column3,
-		arg.Limit,
+		arg.Name,
+		arg.Cpf,
+		arg.Phone,
 		arg.Offset,
+		arg.Limit,
 	)
 	if err != nil {
 		return nil, err

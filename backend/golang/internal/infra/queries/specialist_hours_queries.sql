@@ -6,12 +6,12 @@ RETURNING "id";
 -- name: ListSpecialistHoursIntersecting :many
 SELECT "id", "specialist_id", "weekday", "start_time", "end_time"
 FROM specialist_hours
-WHERE "specialist_id" = $1
-    AND "weekday" = $2
+WHERE "specialist_id" = sqlc.arg('specialist_id')
+    AND "weekday" = sqlc.arg('weekday')
     AND (
-        $3::time BETWEEN "start_time" AND "end_time"
+        sqlc.arg('start_time')::time BETWEEN "start_time" AND "end_time"
         OR 
-        $4::time BETWEEN "start_time" AND "end_time"
+        sqlc.arg('end_time')::time BETWEEN "start_time" AND "end_time"
     )
 ORDER BY "start_time" ASC;
 

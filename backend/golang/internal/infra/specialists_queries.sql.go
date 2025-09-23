@@ -197,40 +197,6 @@ func (q *Queries) ListSpecialists(ctx context.Context, arg ListSpecialistsParams
 	return items, nil
 }
 
-const listSpecialistsByName = `-- name: ListSpecialistsByName :many
-SELECT "id", "name", "email", "phone", "birthdate", "cpf", "cnpj"
-FROM "specialists"
-WHERE "name" ILIKE '%' || $1 || '%'
-`
-
-func (q *Queries) ListSpecialistsByName(ctx context.Context, dollar_1 pgtype.Text) ([]Specialist, error) {
-	rows, err := q.db.Query(ctx, listSpecialistsByName, dollar_1)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []Specialist
-	for rows.Next() {
-		var i Specialist
-		if err := rows.Scan(
-			&i.ID,
-			&i.Name,
-			&i.Email,
-			&i.Phone,
-			&i.Birthdate,
-			&i.Cpf,
-			&i.Cnpj,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 const updateSpecialist = `-- name: UpdateSpecialist :one
 UPDATE "specialists"
 SET 

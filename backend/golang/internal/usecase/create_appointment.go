@@ -98,9 +98,9 @@ func CreateAppointment(state State, args CreateAppointmentArgs) (uuid.UUID, *Use
 	// filter correct intersect status
 	appointmentsIntersects, err := state.Queries().AppointmentsIntersects(state.Context(), infra.AppointmentsIntersectsParams{
 		Date:         args.Date,
-		Column3:      args.Time,
+		Time:         args.Time,
+		Duration:     service.Duration,
 		SpecialistID: service.SpecialistID,
-		Column4:      service.Duration,
 	})
 	if err != nil {
 		return uuid.Nil, NewUnexpectedError(err)

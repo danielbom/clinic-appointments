@@ -16,9 +16,9 @@ func (args *CountSecretariesArgs) Validate() *UsecaseError {
 
 func CountSecretaries(state State, args CountSecretariesArgs) (int64, *UsecaseError) {
 	count, err := state.Queries().CountSecretaries(state.Context(), infra.CountSecretariesParams{
-		Column1: args.Name,
-		Column2: args.Cpf,
-		Column3: args.Phone,
+		Name:  args.Name,
+		Cpf:   args.Cpf,
+		Phone: args.Phone,
 	})
 	if err == nil {
 		return count, nil

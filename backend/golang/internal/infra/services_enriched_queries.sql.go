@@ -25,13 +25,13 @@ WHERE true
 `
 
 type CountServicesEnrichedParams struct {
-	Column1 string
-	Column2 string
-	Column3 string
+	Specialist     string
+	Specialization string
+	ServiceName    string
 }
 
 func (q *Queries) CountServicesEnriched(ctx context.Context, arg CountServicesEnrichedParams) (int64, error) {
-	row := q.db.QueryRow(ctx, countServicesEnriched, arg.Column1, arg.Column2, arg.Column3)
+	row := q.db.QueryRow(ctx, countServicesEnriched, arg.Specialist, arg.Specialization, arg.ServiceName)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -47,19 +47,19 @@ JOIN "specialists" "sp" ON "s"."specialist_id" = "sp"."id"
 JOIN "service_names" "sn" ON "s"."service_name_id" = "sn"."id"
 JOIN "specializations" "sz" ON "sn"."specialization_id" = "sz"."id"
 WHERE true
-   AND ($3::text = '' OR LOWER(unaccent("sp"."name")) LIKE '%' || LOWER(unaccent($3)) || '%')
-   AND ($4::text = '' OR LOWER(unaccent("sz"."name")) LIKE '%' || LOWER(unaccent($4)) || '%')
-   AND ($5::text = '' OR LOWER(unaccent("sn"."name")) LIKE '%' || LOWER(unaccent($5)) || '%')
-LIMIT $1
-OFFSET $2
+   AND ($1::text = '' OR LOWER(unaccent("sp"."name")) LIKE '%' || LOWER(unaccent($1)) || '%')
+   AND ($2::text = '' OR LOWER(unaccent("sz"."name")) LIKE '%' || LOWER(unaccent($2)) || '%')
+   AND ($3::text = '' OR LOWER(unaccent("sn"."name")) LIKE '%' || LOWER(unaccent($3)) || '%')
+LIMIT $5
+OFFSET $4
 `
 
 type ListServicesEnrichedParams struct {
-	Limit   int32
-	Offset  int32
-	Column3 string
-	Column4 string
-	Column5 string
+	Specialist     string
+	Specialization string
+	ServiceName    string
+	Offset         int32
+	Limit          int32
 }
 
 type ListServicesEnrichedRow struct {
@@ -76,11 +76,11 @@ type ListServicesEnrichedRow struct {
 
 func (q *Queries) ListServicesEnriched(ctx context.Context, arg ListServicesEnrichedParams) ([]ListServicesEnrichedRow, error) {
 	rows, err := q.db.Query(ctx, listServicesEnriched,
-		arg.Limit,
+		arg.Specialist,
+		arg.Specialization,
+		arg.ServiceName,
 		arg.Offset,
-		arg.Column3,
-		arg.Column4,
-		arg.Column5,
+		arg.Limit,
 	)
 	if err != nil {
 		return nil, err

@@ -56,8 +56,8 @@ func CreateSpecialistHours(state State, args CreateSpecialistHoursArgs) (Usecase
 	intersectingHours, err := state.Queries().ListSpecialistHoursIntersecting(state.Context(), infra.ListSpecialistHoursIntersectingParams{
 		SpecialistID: args.SpecialistID,
 		Weekday:      args.Weekday,
-		Column3:      args.StartTimeTime,
-		Column4:      args.EndTimeTime,
+		StartTime:    args.StartTimeTime,
+		EndTime:      args.EndTimeTime,
 	})
 	if err != nil {
 		return OperationError, uuid.Nil, NewUnexpectedError(err)

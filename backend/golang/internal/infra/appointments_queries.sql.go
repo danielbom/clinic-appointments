@@ -27,16 +27,16 @@ LIMIT 1
 type AppointmentsIntersectsParams struct {
 	Date         pgtype.Date
 	SpecialistID uuid.UUID
-	Column3      pgtype.Time
-	Column4      pgtype.Interval
+	Time         pgtype.Time
+	Duration     pgtype.Interval
 }
 
 func (q *Queries) AppointmentsIntersects(ctx context.Context, arg AppointmentsIntersectsParams) (bool, error) {
 	row := q.db.QueryRow(ctx, appointmentsIntersects,
 		arg.Date,
 		arg.SpecialistID,
-		arg.Column3,
-		arg.Column4,
+		arg.Time,
+		arg.Duration,
 	)
 	var column_1 bool
 	err := row.Scan(&column_1)

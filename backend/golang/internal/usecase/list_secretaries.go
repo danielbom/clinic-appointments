@@ -23,11 +23,11 @@ func (args *ListSecretariesArgs) Validate() *UsecaseError {
 
 func ListSecretaries(state State, args ListSecretariesArgs) ([]infra.Secretary, *UsecaseError) {
 	secretaries, err := state.Queries().ListSecretaries(state.Context(), infra.ListSecretariesParams{
-		Column1: args.CountArgs.Name,
-		Column2: args.CountArgs.Cpf,
-		Column3: args.CountArgs.Phone,
-		Limit:   args.PaginationArgs.PageSize,
-		Offset:  args.PaginationArgs.Page * args.PaginationArgs.PageSize,
+		Name:   args.CountArgs.Name,
+		Cpf:    args.CountArgs.Cpf,
+		Phone:  args.CountArgs.Phone,
+		Limit:  args.PaginationArgs.PageSize,
+		Offset: args.PaginationArgs.Page * args.PaginationArgs.PageSize,
 	})
 	if err == nil {
 		return secretaries, nil

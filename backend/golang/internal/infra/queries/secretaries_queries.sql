@@ -32,19 +32,19 @@ LIMIT 1;
 SELECT "id", "name", "email", "password", "phone", "birthdate", "cpf", "cnpj"
 FROM "secretaries"
 WHERE true
-  AND ($1::text = '' OR "name" ILIKE '%' || $1 || '%')
-  AND ($2::text = '' OR "cpf" = $2)
-  AND ($3::text = '' OR "phone" = $3)
-LIMIT $4
-OFFSET $5;
+  AND (sqlc.arg('name')::text = '' OR "name" ILIKE '%' || sqlc.arg('name') || '%')
+  AND (sqlc.arg('cpf')::text = '' OR "cpf" = sqlc.arg('cpf'))
+  AND (sqlc.arg('phone')::text = '' OR "phone" = sqlc.arg('phone'))
+LIMIT sqlc.arg('limit')
+OFFSET sqlc.arg('offset');
 
 -- name: CountSecretaries :one
 SELECT COUNT(id)
 FROM "secretaries"
 WHERE true
-  AND ($1::text = '' OR "name" ILIKE '%' || $1 || '%')
-  AND ($2::text = '' OR "cpf" = $2)
-  AND ($3::text = '' OR "phone" = $3);
+  AND (sqlc.arg('name')::text = '' OR "name" ILIKE '%' || sqlc.arg('name') || '%')
+  AND (sqlc.arg('cpf')::text = '' OR "cpf" = sqlc.arg('cpf'))
+  AND (sqlc.arg('phone')::text = '' OR "phone" = sqlc.arg('phone'));
 
 -- name: DeleteSecretaryByID :execrows
 DELETE FROM "secretaries"

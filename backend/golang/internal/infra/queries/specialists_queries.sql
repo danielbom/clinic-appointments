@@ -37,11 +37,6 @@ FROM "specialists"
 LIMIT $1
 OFFSET $2;
 
--- name: ListSpecialistsByName :many
-SELECT "id", "name", "email", "phone", "birthdate", "cpf", "cnpj"
-FROM "specialists"
-WHERE "name" ILIKE '%' || $1 || '%';
-
 -- name: DeleteSpecialistByID :execrows
 DELETE FROM "specialists"
 WHERE "id" = $1;

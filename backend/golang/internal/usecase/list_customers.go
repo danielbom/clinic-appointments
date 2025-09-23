@@ -23,11 +23,11 @@ func (args *ListCustomersArgs) Validate() *UsecaseError {
 
 func ListCustomers(state State, args ListCustomersArgs) ([]infra.Customer, *UsecaseError) {
 	customers, err := state.Queries().ListCustomers(state.Context(), infra.ListCustomersParams{
-		Column1: args.CountArgs.Name,
-		Column2: args.CountArgs.Cpf,
-		Column3: args.CountArgs.Phone,
-		Limit:   args.PaginationArgs.PageSize,
-		Offset:  args.PaginationArgs.Page * args.PaginationArgs.PageSize,
+		Name:   args.CountArgs.Name,
+		Cpf:    args.CountArgs.Cpf,
+		Phone:  args.CountArgs.Phone,
+		Limit:  args.PaginationArgs.PageSize,
+		Offset: args.PaginationArgs.Page * args.PaginationArgs.PageSize,
 	})
 	if err == nil {
 		return customers, nil

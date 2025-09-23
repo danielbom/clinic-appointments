@@ -53,16 +53,16 @@ ORDER BY "start_time" ASC
 type ListSpecialistHoursIntersectingParams struct {
 	SpecialistID uuid.UUID
 	Weekday      int32
-	Column3      pgtype.Time
-	Column4      pgtype.Time
+	StartTime    pgtype.Time
+	EndTime      pgtype.Time
 }
 
 func (q *Queries) ListSpecialistHoursIntersecting(ctx context.Context, arg ListSpecialistHoursIntersectingParams) ([]SpecialistHour, error) {
 	rows, err := q.db.Query(ctx, listSpecialistHoursIntersecting,
 		arg.SpecialistID,
 		arg.Weekday,
-		arg.Column3,
-		arg.Column4,
+		arg.StartTime,
+		arg.EndTime,
 	)
 	if err != nil {
 		return nil, err

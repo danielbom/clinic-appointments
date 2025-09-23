@@ -28,11 +28,11 @@ func (args *ListServicesEnrichedArgs) Validate() *UsecaseError {
 
 func ListServicesEnriched(state State, args ListServicesEnrichedArgs) ([]infra.ListServicesEnrichedRow, *UsecaseError) {
 	services, err := state.Queries().ListServicesEnriched(state.Context(), infra.ListServicesEnrichedParams{
-		Limit:   args.PageSize,
-		Offset:  args.Page * args.PageSize,
-		Column3: args.SpecialistName,
-		Column4: args.SpecializationName,
-		Column5: args.ServiceName,
+		Limit:          args.PageSize,
+		Offset:         args.Page * args.PageSize,
+		Specialist:     args.SpecialistName,
+		Specialization: args.SpecializationName,
+		ServiceName:    args.ServiceName,
 	})
 	if err != nil {
 		return nil, NewUnexpectedError(err)
