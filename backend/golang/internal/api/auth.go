@@ -49,7 +49,7 @@ func (j *JwtData) IsRefreshToken() bool {
 	return j.Role == ""
 }
 
-func (j *JwtData) HasAccess(roles... string) bool {
+func (j *JwtData) HasAccess(roles ...string) bool {
 	if j.Role == "admin" {
 		return true
 	}

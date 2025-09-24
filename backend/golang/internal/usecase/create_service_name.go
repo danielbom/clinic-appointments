@@ -1,28 +1,27 @@
 package usecase
 
 import (
+	"backend/internal/domain"
 	"backend/internal/infra"
-	"strings"
 
 	"github.com/google/uuid"
 )
 
 type CreateServiceNameArgs struct {
-	Name                string
-	Specialization      string
+	Name                domain.String
+	Specialization      domain.String
 	SpecializationIDRaw string
-	SpecializationID    uuid.UUID
+	SpecializationID    domain.UUID
 }
 
 func (args *CreateServiceNameArgs) Validate() *UsecaseError {
-	args.Name = strings.TrimSpace(args.Name)
-	if args.Specialization == "" && args.SpecializationID == uuid.Nil {
+	if !args.Specialization.IsDefined() && !args.SpecializationID.IsDefined() {
 		if err := args.SpecializationID.Scan(args.SpecializationIDRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidUuid).InField("specializationId")
+			return NewInvalidArgumentError(err).InField("specializationId")
 		}
 	}
-	if args.Name == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("name")
+	if err := args.Name.Required(); err != nil {
+		return NewInvalidArgumentError(err).InField("name")
 	}
 	return nil
 }
@@ -42,7 +41,7 @@ func ServiceWithNameExists(state State, name string, exceptId uuid.UUID) (bool, 
 }
 
 func CreateServiceName(state State, args CreateServiceNameArgs) (uuid.UUID, *UsecaseError) {
-	exists, err := ServiceWithNameExists(state, args.Name, uuid.Nil)
+	exists, err := ServiceWithNameExists(state, args.Name.Value, uuid.Nil)
 	if err != nil {
 		return uuid.Nil, NewUnexpectedError(err)
 	}
@@ -50,17 +49,17 @@ func CreateServiceName(state State, args CreateServiceNameArgs) (uuid.UUID, *Use
 		return uuid.Nil, NewResourceAlreadyExistsError("service_name")
 	}
 
-	if args.Specialization != "" {
-		specializationId, err := state.Queries().CreateSpecialization(state.Context(), args.Specialization)
+	if args.Specialization.IsDefined() {
+		specializationId, err := state.Queries().CreateSpecialization(state.Context(), args.Specialization.Value)
 		if err != nil {
 			return uuid.Nil, NewUnexpectedError(err)
 		}
-		args.SpecializationID = specializationId
+		args.SpecializationID.Value = specializationId
 	}
 
 	params := infra.CreateServiceNameParams{
-		Name:             args.Name,
-		SpecializationID: args.SpecializationID,
+		Name:             args.Name.Value,
+		SpecializationID: args.SpecializationID.Value,
 	}
 	id, err := state.Queries().CreateServiceName(state.Context(), params)
 	if err != nil {

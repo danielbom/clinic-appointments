@@ -4,6 +4,7 @@ go fmt ./cmd/wenv/
 
 go fmt ./internal/api/
 go fmt ./internal/cli/
+go fmt ./internal/domain/
 go fmt ./internal/env/
 go fmt ./internal/usecase/
 go fmt ./internal/validate/

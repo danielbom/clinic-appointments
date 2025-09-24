@@ -26,8 +26,8 @@ func ListSecretaries(state State, args ListSecretariesArgs) ([]infra.Secretary, 
 		Name:   args.CountArgs.Name,
 		Cpf:    args.CountArgs.Cpf,
 		Phone:  args.CountArgs.Phone,
-		Limit:  args.PaginationArgs.PageSize,
-		Offset: args.PaginationArgs.Page * args.PaginationArgs.PageSize,
+		Limit:  int32(args.PaginationArgs.PageSize),
+		Offset: int32(args.PaginationArgs.Page) * int32(args.PaginationArgs.PageSize),
 	})
 	if err == nil {
 		return secretaries, nil

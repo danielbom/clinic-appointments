@@ -19,11 +19,11 @@ func (c *CreateCustomerCommand) Name() string {
 
 func (c *CreateCustomerCommand) Init() {
 	c.fs = flag.NewFlagSet(c.Name(), flag.ExitOnError)
-	c.fs.StringVar(&c.Args.Name, "name", "", "Name")
-	c.fs.StringVar(&c.Args.Email, "email", "", "Email address")
-	c.fs.StringVar(&c.Args.Phone, "phone", "", "Phone number")
-	c.fs.StringVar(&c.Args.Birthdate, "birthdate", "", "Birthdate")
-	c.fs.StringVar(&c.Args.Cpf, "cpf", "", "CPF")
+	c.fs.StringVar(&c.Args.Name.Value, "name", "", "Name")
+	c.fs.StringVar(&c.Args.Email.Value, "email", "", "Email address")
+	c.fs.StringVar(&c.Args.Phone.Value, "phone", "", "Phone number")
+	c.fs.StringVar(&c.Args.BirthdateRaw, "birthdate", "", "Birthdate")
+	c.fs.StringVar(&c.Args.Cpf.Value, "cpf", "", "CPF")
 }
 
 func (c *CreateCustomerCommand) Parse(args []string) {
@@ -48,6 +48,6 @@ func (c *CreateCustomerCommand) Execute(s *State) error {
 		return fmt.Errorf("error creating customer: %w", err.Error)
 	}
 
-	log.Printf("Customer created with email: %s\n%s", c.Args.Email, customer.ID)
+	log.Printf("Customer created with email: %s\n%s", c.Args.Email.Value, customer.ID)
 	return nil
 }

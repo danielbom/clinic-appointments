@@ -5,31 +5,23 @@ import (
 )
 
 type ListServicesEnrichedArgs struct {
-	PageSize           int32
-	Page               int32
 	SpecialistName     string
 	SpecializationName string
 	ServiceName        string
+	PaginationArgs     PaginationArgs
 }
 
 func (args *ListServicesEnrichedArgs) Validate() *UsecaseError {
-	if args.PageSize == 0 {
-		args.PageSize = 10
-	}
-
-	if args.PageSize < 0 {
-		return NewInvalidArgumentError(ErrExpectPositiveValue).InField("pageSize")
-	}
-	if args.Page < 0 {
-		return NewInvalidArgumentError(ErrExpectPositiveValue).InField("page")
+	if err := args.PaginationArgs.Validate(); err != nil {
+		return err
 	}
 	return nil
 }
 
 func ListServicesEnriched(state State, args ListServicesEnrichedArgs) ([]infra.ListServicesEnrichedRow, *UsecaseError) {
 	services, err := state.Queries().ListServicesEnriched(state.Context(), infra.ListServicesEnrichedParams{
-		Limit:          args.PageSize,
-		Offset:         args.Page * args.PageSize,
+		Limit:          int32(args.PaginationArgs.PageSize),
+		Offset:         int32(args.PaginationArgs.Page) * int32(args.PaginationArgs.PageSize),
 		Specialist:     args.SpecialistName,
 		Specialization: args.SpecializationName,
 		ServiceName:    args.ServiceName,

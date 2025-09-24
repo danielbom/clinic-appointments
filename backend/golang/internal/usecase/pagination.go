@@ -1,8 +1,17 @@
 package usecase
 
+import "backend/internal/domain"
+
 type PaginationArgs struct {
-	PageSize int32
-	Page     int32
+	PageSize domain.Int
+	Page     domain.Int
+}
+
+func PaginationArgsNew(page, pageSize int32) PaginationArgs {
+	return PaginationArgs{
+		Page:     domain.Int(page),
+		PageSize: domain.Int(pageSize),
+	}
 }
 
 func (args *PaginationArgs) Validate() *UsecaseError {
@@ -10,11 +19,11 @@ func (args *PaginationArgs) Validate() *UsecaseError {
 		args.PageSize = 10
 	}
 
-	if args.PageSize < 0 {
-		return NewInvalidArgumentError(ErrExpectPositiveValue).InField("pageSize")
+	if err := args.PageSize.Positive(); err != nil {
+		return NewInvalidArgumentError(err).InField("pageSize")
 	}
-	if args.Page < 0 {
-		return NewInvalidArgumentError(ErrExpectPositiveValue).InField("page")
+	if err := args.Page.Positive(); err != nil {
+		return NewInvalidArgumentError(err).InField("page")
 	}
 	return nil
 }

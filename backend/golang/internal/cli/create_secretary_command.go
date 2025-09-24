@@ -19,13 +19,13 @@ func (c *CreateSecretaryCommand) Name() string {
 
 func (c *CreateSecretaryCommand) Init() {
 	c.fs = flag.NewFlagSet(c.Name(), flag.ExitOnError)
-	c.fs.StringVar(&c.Args.Name, "name", "", "Name")
-	c.fs.StringVar(&c.Args.Email, "email", "", "Email address")
-	c.fs.StringVar(&c.Args.Password, "password", "", "Password")
-	c.fs.StringVar(&c.Args.Phone, "phone", "", "Phone number")
-	c.fs.StringVar(&c.Args.Birthdate, "birthdate", "", "Birthdate")
-	c.fs.StringVar(&c.Args.Cpf, "cpf", "", "CPF")
-	c.fs.StringVar(&c.Args.Cnpj, "cnpj", "", "CNPJ")
+	c.fs.StringVar(&c.Args.Name.Value, "name", "", "Name")
+	c.fs.StringVar(&c.Args.Email.Value, "email", "", "Email address")
+	c.fs.StringVar(&c.Args.Password.Value, "password", "", "Password")
+	c.fs.StringVar(&c.Args.Phone.Value, "phone", "", "Phone number")
+	c.fs.StringVar(&c.Args.BirthdateRaw, "birthdate", "", "Birthdate")
+	c.fs.StringVar(&c.Args.Cpf.Value, "cpf", "", "CPF")
+	c.fs.StringVar(&c.Args.Cnpj.Value, "cnpj", "", "CNPJ")
 }
 
 func (c *CreateSecretaryCommand) Parse(args []string) {

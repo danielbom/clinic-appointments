@@ -6,6 +6,7 @@ import (
 
 	"backend/internal/api/dtos"
 	"backend/internal/api/presenter"
+	"backend/internal/domain"
 	"backend/internal/usecase"
 
 	"github.com/go-chi/render"
@@ -63,8 +64,7 @@ func (h *api) getServices(w http.ResponseWriter, r *http.Request) {
 
 	// Validate e execute the usecase
 	args := usecase.ListServicesEnrichedArgs{
-		PageSize:           pageSize,
-		Page:               page,
+		PaginationArgs:     usecase.PaginationArgsNew(page, pageSize),
 		SpecialistName:     specialist,
 		SpecializationName: specialization,
 		ServiceName:        service,
@@ -151,8 +151,8 @@ func (h *api) createService(w http.ResponseWriter, r *http.Request) {
 	args := usecase.SpecialistServiceInfoArgs{
 		ServiceNameIDRaw:  body.ServiceNameID,
 		SpecialistIDRaw:   body.SpecialistID,
-		Price:             body.Price,
-		DurationMin:       body.Duration,
+		Price:             domain.Nat(body.Price),
+		Duration:          domain.Minutes(body.Duration),
 		RequireSpecialist: true,
 	}
 	if err := args.Validate(); err != nil {
@@ -197,8 +197,8 @@ func (h *api) updateService(w http.ResponseWriter, r *http.Request) {
 	// Validate e execute the usecase
 	args := usecase.SpecialistServiceInfoArgs{
 		ServiceNameIDRaw:  body.ServiceNameID,
-		Price:             body.Price,
-		DurationMin:       body.Duration,
+		Price:             domain.Nat(body.Price),
+		Duration:          domain.Minutes(body.Duration),
 		RequireSpecialist: false,
 	}
 	if err := args.Validate(); err != nil {

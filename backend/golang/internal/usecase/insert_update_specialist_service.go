@@ -1,56 +1,44 @@
 package usecase
 
 import (
+	"backend/internal/domain"
 	"backend/internal/infra"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type SpecialistServiceInfoArgs struct {
 	ServiceNameIDRaw  string
-	ServiceNameID     uuid.UUID
+	ServiceNameID     domain.UUID
 	SpecialistIDRaw   string
-	SpecialistID      uuid.UUID
-	Price             int32
-	DurationMin       int32
-	Duration          pgtype.Interval
+	SpecialistID      domain.UUID
+	Price             domain.Nat
+	Duration          domain.Minutes
 	RequireSpecialist bool
 }
 
 func (args *SpecialistServiceInfoArgs) Validate() *UsecaseError {
-	if args.ServiceNameID == uuid.Nil {
-		if args.ServiceNameIDRaw == "" {
-			return NewInvalidArgumentError(ErrInvalidUuid).InField("serviceNameId")
-		}
-		if err := args.ServiceNameID.Scan(args.ServiceNameIDRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidUuid).InField("serviceNameId")
-		}
+	if err := args.ServiceNameID.Scan(args.ServiceNameIDRaw); err != nil {
+		return NewInvalidArgumentError(err).InField("serviceNameId")
 	}
-	if args.RequireSpecialist && args.SpecialistID == uuid.Nil {
-		if args.SpecialistIDRaw == "" {
-			return NewInvalidArgumentError(ErrInvalidUuid).InField("specialistId")
-		}
+	if args.RequireSpecialist && !args.SpecialistID.IsDefined() {
 		if err := args.SpecialistID.Scan(args.SpecialistIDRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidUuid).InField("specialistId")
+			return NewInvalidArgumentError(err).InField("specialistId")
 		}
 	}
-	if !args.Duration.Valid {
-		if args.DurationMin <= 0 {
-			return NewInvalidArgumentError(ErrExpectPositiveValue).InField("duration")
-		}
-		args.Duration = DurationFromMinutes(args.DurationMin)
+	if err := args.Duration.Validate(); err != nil {
+		return NewInvalidArgumentError(err).InField("duration")
 	}
-	if args.Price < 0 {
-		return NewInvalidArgumentError(ErrExpectPositiveValue).InField("price")
+	if err := args.Price.Validate(); err != nil {
+		return NewInvalidArgumentError(err).InField("price")
 	}
 	return nil
 }
 
 func CreateSpecialistService(state State, args SpecialistServiceInfoArgs) (uuid.UUID, *UsecaseError) {
 	_, err := state.Queries().GetService(state.Context(), infra.GetServiceParams{
-		SpecialistID:  args.SpecialistID,
-		ServiceNameID: args.ServiceNameID,
+		SpecialistID:  args.SpecialistID.Value,
+		ServiceNameID: args.ServiceNameID.Value,
 	})
 	if err == nil {
 		return uuid.Nil, NewResourceAlreadyExistsError("service")
@@ -59,10 +47,10 @@ func CreateSpecialistService(state State, args SpecialistServiceInfoArgs) (uuid.
 	}
 
 	id, err := state.Queries().CreateService(state.Context(), infra.CreateServiceParams{
-		ServiceNameID: args.ServiceNameID,
-		SpecialistID:  args.SpecialistID,
-		Price:         args.Price,
-		Duration:      args.Duration,
+		ServiceNameID: args.ServiceNameID.Value,
+		SpecialistID:  args.SpecialistID.Value,
+		Price:         int32(args.Price),
+		Duration:      args.Duration.Interval(),
 	})
 	if err != nil {
 		return uuid.Nil, NewUnexpectedError(err)
@@ -73,8 +61,8 @@ func CreateSpecialistService(state State, args SpecialistServiceInfoArgs) (uuid.
 func UpdateSpecialistService(state State, serviceId uuid.UUID, args SpecialistServiceInfoArgs) (uuid.UUID, *UsecaseError) {
 	params := infra.UpdateServiceParams{
 		ID:       serviceId,
-		Price:    args.Price,
-		Duration: args.Duration,
+		Price:    int32(args.Price),
+		Duration: args.Duration.Interval(),
 	}
 	id, err := state.Queries().UpdateService(state.Context(), params)
 	if err != nil {

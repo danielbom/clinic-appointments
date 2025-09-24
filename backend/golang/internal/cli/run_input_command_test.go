@@ -6,9 +6,9 @@ import (
 
 func TestParseDate(t *testing.T) {
 	tests := []struct {
-		input string 
+		input    string
 		expected string
-	} {
+	}{
 		{input: "01-10-2020", expected: "2020-10-01"},
 		{input: "January 2, 2002", expected: "2002-01-02"},
 	}

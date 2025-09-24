@@ -1,37 +1,32 @@
 package usecase
 
 import (
+	"backend/internal/domain"
 	"backend/internal/infra"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type ListAppointmentsCalendarCountArgs struct {
-	Year          int
-	StartDate     string
-	StartDateDate pgtype.Date
-	EndDate       string
-	EndDateDate   pgtype.Date
+	Year         int
+	StartDateRaw string
+	StartDate    domain.Date
+	EndDateRaw   string
+	EndDate      domain.Date
 }
 
 func (args *ListAppointmentsCalendarCountArgs) Validate() *UsecaseError {
 	if args.Year > 0 {
-		if err := DateFromYear(&args.StartDateDate, args.Year); err != nil {
-			return NewInvalidArgumentError(ErrInvalidDate).InField("startDate")
+		if err := args.StartDate.FirstDateOfYear(args.Year); err != nil {
+			return NewInvalidArgumentError(err).InField("startDate")
 		}
-		if err := args.EndDateDate.Scan(args.StartDateDate.Time.AddDate(1, 0, -1)); err != nil {
-			return NewInvalidArgumentError(ErrInvalidDate).InField("endDate")
+		if err := args.EndDate.LastDateOfYear(args.Year); err != nil {
+			return NewInvalidArgumentError(err).InField("endDate")
 		}
 	} else {
-		if args.StartDate != "" {
-			if err := args.StartDateDate.Scan(args.StartDate); err != nil {
-				return NewInvalidArgumentError(ErrInvalidDate).InField("startDate")
-			}
+		if err := args.StartDate.ScanOptional(args.StartDateRaw); err != nil {
+			return NewInvalidArgumentError(err).InField("startDate")
 		}
-		if args.EndDate != "" {
-			if err := args.EndDateDate.Scan(args.EndDate); err != nil {
-				return NewInvalidArgumentError(ErrInvalidDate).InField("endDate")
-			}
+		if err := args.EndDate.ScanOptional(args.EndDateRaw); err != nil {
+			return NewInvalidArgumentError(err).InField("endDate")
 		}
 	}
 	return nil
@@ -39,8 +34,8 @@ func (args *ListAppointmentsCalendarCountArgs) Validate() *UsecaseError {
 
 func ListAppointmentsCalendarCount(state State, args ListAppointmentsCalendarCountArgs) ([]infra.ListAppointmentsCalendarCountRow, *UsecaseError) {
 	appointments, err := state.Queries().ListAppointmentsCalendarCount(state.Context(), infra.ListAppointmentsCalendarCountParams{
-		Date:   args.StartDateDate,
-		Date_2: args.EndDateDate,
+		Date:   args.StartDate.Value,
+		Date_2: args.EndDate.Value,
 	})
 	if err == nil {
 		return appointments, nil

@@ -6,7 +6,7 @@ import (
 
 type ListSpecialistsArgs struct {
 	PaginationArgs PaginationArgs
-	CountArgs 	   CountSpecialistArgs
+	CountArgs      CountSpecialistArgs
 }
 
 func (args *ListSpecialistsArgs) Validate() *UsecaseError {
@@ -21,8 +21,8 @@ func (args *ListSpecialistsArgs) Validate() *UsecaseError {
 
 func ListSpecialists(state State, args ListSpecialistsArgs) ([]infra.Specialist, *UsecaseError) {
 	specializations, err := state.Queries().ListSpecialists(state.Context(), infra.ListSpecialistsParams{
-		Limit:   args.PaginationArgs.PageSize,
-		Offset:  args.PaginationArgs.Page * args.PaginationArgs.PageSize,
+		Limit:  int32(args.PaginationArgs.PageSize),
+		Offset: int32(args.PaginationArgs.Page) * int32(args.PaginationArgs.PageSize),
 	})
 	if err != nil {
 		return nil, NewUnexpectedError(err)

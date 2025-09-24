@@ -19,7 +19,7 @@ func (c *CreateServiceCommand) Name() string {
 
 func (c *CreateServiceCommand) Init() {
 	c.fs = flag.NewFlagSet(c.Name(), flag.ExitOnError)
-	c.fs.StringVar(&c.Args.Name, "name", "", "Name")
+	c.fs.StringVar(&c.Args.Name.Value, "name", "", "Name")
 	c.fs.StringVar(&c.Args.SpecializationIDRaw, "specialization-id", "", "Specialization ID")
 }
 

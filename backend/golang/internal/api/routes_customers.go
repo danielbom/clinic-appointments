@@ -6,6 +6,7 @@ import (
 
 	"backend/internal/api/dtos"
 	"backend/internal/api/presenter"
+	"backend/internal/domain"
 	"backend/internal/usecase"
 
 	"github.com/go-chi/render"
@@ -63,10 +64,7 @@ func (h *api) getCustomers(w http.ResponseWriter, r *http.Request) {
 
 	// Validate e execute the usecase
 	args := usecase.ListCustomersArgs{
-		PaginationArgs: usecase.PaginationArgs{
-			PageSize: pageSize,
-			Page:     page,
-		},
+		PaginationArgs: usecase.PaginationArgsNew(page, pageSize),
 		CountArgs: usecase.CountCustomersArgs{
 			Cpf:   cpf,
 			Phone: phone,
@@ -151,11 +149,11 @@ func (h *api) createCustomer(w http.ResponseWriter, r *http.Request) {
 
 	// Validate e execute the usecase
 	args := usecase.CustomerInfoArgs{
-		Name:      body.Name,
-		Email:     body.Email,
-		Phone:     body.Phone,
-		Birthdate: body.Birthdate,
-		Cpf:       body.Cpf,
+		Name:         domain.StringNew(body.Name),
+		Email:        domain.StringNew(body.Email),
+		Phone:        domain.StringNew(body.Phone),
+		BirthdateRaw: body.Birthdate,
+		Cpf:          domain.StringNew(body.Cpf),
 	}
 	if err := args.Validate(); err != nil {
 		presenter.UsecaseError(w, err)
@@ -197,11 +195,11 @@ func (h *api) updateCustomer(w http.ResponseWriter, r *http.Request) {
 
 	// Validate e execute the usecase
 	args := usecase.CustomerInfoArgs{
-		Name:      body.Name,
-		Email:     body.Email,
-		Phone:     body.Phone,
-		Birthdate: body.Birthdate,
-		Cpf:       body.Cpf,
+		Name:         domain.StringNew(body.Name),
+		Email:        domain.StringNew(body.Email),
+		Phone:        domain.StringNew(body.Phone),
+		BirthdateRaw: body.Birthdate,
+		Cpf:          domain.StringNew(body.Cpf),
 	}
 	if err := args.Validate(); err != nil {
 		presenter.UsecaseError(w, err)

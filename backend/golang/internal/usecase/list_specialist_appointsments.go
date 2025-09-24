@@ -13,10 +13,8 @@ type ListSpecialistAppointmentsArgs struct {
 }
 
 func (args *ListSpecialistAppointmentsArgs) Validate() *UsecaseError {
-	if args.SpecialistID == uuid.Nil {
-		if err := args.SpecialistID.Scan(args.SpecialistIDRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidUuid).InField("specialistId")
-		}
+	if err := args.SpecialistID.Scan(args.SpecialistIDRaw); err != nil {
+		return NewInvalidArgumentError(err).InField("specialistId")
 	}
 
 	return nil

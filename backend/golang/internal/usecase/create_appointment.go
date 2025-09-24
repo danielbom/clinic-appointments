@@ -1,69 +1,52 @@
 package usecase
 
 import (
+	"backend/internal/domain"
 	"backend/internal/infra"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type CreateAppointmentArgs struct {
 	CustomerIDRaw    string
-	CustomerID       uuid.UUID
+	CustomerID       domain.UUID
 	ServiceIDRaw     string
-	ServiceID        uuid.UUID
+	ServiceID        domain.UUID
 	ServiceNameIDRaw string
-	ServiceNameID    uuid.UUID
+	ServiceNameID    domain.UUID
 	SpecialistIDRaw  string
-	SpecialistID     uuid.UUID
+	SpecialistID     domain.UUID
 	DateRaw          string
-	Date             pgtype.Date
+	Date             domain.Date
 	TimeRaw          string
-	Time             pgtype.Time
-	Status           int32
+	Time             domain.Time
+	StatusRaw        int32
+	Status           domain.AppointmentStatus
 }
 
 func (args *CreateAppointmentArgs) Validate() *UsecaseError {
-	if args.ServiceID == uuid.Nil {
-		if err := args.ServiceID.Scan(args.ServiceIDRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidUuid).InField("serviceId")
-		}
+	if err := args.ServiceID.ScanOptional(args.ServiceIDRaw); err != nil {
+		return NewInvalidArgumentError(err).InField("serviceId")
 	}
-	if args.SpecialistID == uuid.Nil {
+	if !args.ServiceID.IsDefined() {
 		if err := args.SpecialistID.Scan(args.SpecialistIDRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidUuid).InField("specialistId")
+			return NewInvalidArgumentError(err).InField("specialistId")
 		}
-	}
-	if args.ServiceNameID == uuid.Nil {
 		if err := args.ServiceNameID.Scan(args.ServiceNameIDRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidUuid).InField("serviceNameId")
+			return NewInvalidArgumentError(err).InField("serviceNameId")
 		}
 	}
-	if args.CustomerID == uuid.Nil {
-		if err := args.CustomerID.Scan(args.CustomerIDRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidUuid).InField("customerId")
-		}
+	if err := args.CustomerID.Scan(args.CustomerIDRaw); err != nil {
+		return NewInvalidArgumentError(err).InField("customerId")
 	}
-	if !args.Date.Valid {
-		if err := args.Date.Scan(args.DateRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidDate).InField("date")
-		}
+	if err := args.Date.Scan(args.DateRaw); err != nil {
+		return NewInvalidArgumentError(err).InField("date")
 	}
-	if !args.Time.Valid {
-		if err := args.Time.Scan(args.TimeRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidTime).InField("time")
-		}
+	if err := args.Time.Scan(args.TimeRaw); err != nil {
+		return NewInvalidArgumentError(err).InField("time")
 	}
-	if args.Status < 0 || args.Status >= int32(AppointmentStatusCount) {
-		return NewInvalidArgumentError(ErrInvalidAppointmentStatus).InField("status")
-	}
-	if args.ServiceNameID == uuid.Nil || args.SpecialistID == uuid.Nil {
-		if args.ServiceID == uuid.Nil {
-			return NewInvalidArgumentError(ErrFieldIsRequired).InField("serviceId")
-		}
-	}
-	if args.CustomerID == uuid.Nil {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("customerId")
+	if err := args.Status.Scan(args.StatusRaw); err != nil {
+		return NewInvalidArgumentError(err).InField("status")
 	}
 
 	return nil
@@ -72,22 +55,22 @@ func (args *CreateAppointmentArgs) Validate() *UsecaseError {
 func CreateAppointment(state State, args CreateAppointmentArgs) (uuid.UUID, *UsecaseError) {
 	var service infra.Service
 
-	if args.ServiceID == uuid.Nil {
+	if !args.ServiceID.IsDefined() {
 		maybeService, err := state.Queries().GetService(state.Context(), infra.GetServiceParams{
-			ServiceNameID: args.ServiceNameID,
-			SpecialistID:  args.SpecialistID,
+			ServiceNameID: args.ServiceNameID.Value,
+			SpecialistID:  args.SpecialistID.Value,
 		})
 		if ErrorIsNoRows(err) {
-			return uuid.Nil, NewNotFoundError(ErrResourceNotFound).InField("service")
+			return uuid.Nil, NewResourceNotFoundError("service")
 		}
 		if err != nil {
 			return uuid.Nil, NewUnexpectedError(err)
 		}
 		service = maybeService
 	} else {
-		maybeService, err := state.Queries().GetServiceByID(state.Context(), args.ServiceID)
+		maybeService, err := state.Queries().GetServiceByID(state.Context(), args.ServiceID.Value)
 		if ErrorIsNoRows(err) {
-			return uuid.Nil, NewNotFoundError(ErrResourceNotFound).InField("service")
+			return uuid.Nil, NewResourceNotFoundError("service")
 		}
 		if err != nil {
 			return uuid.Nil, NewUnexpectedError(err)
@@ -97,8 +80,8 @@ func CreateAppointment(state State, args CreateAppointmentArgs) (uuid.UUID, *Use
 
 	// filter correct intersect status
 	appointmentsIntersects, err := state.Queries().AppointmentsIntersects(state.Context(), infra.AppointmentsIntersectsParams{
-		Date:         args.Date,
-		Time:         args.Time,
+		Date:         args.Date.Value,
+		Time:         args.Time.Value,
 		Duration:     service.Duration,
 		SpecialistID: service.SpecialistID,
 	})
@@ -110,14 +93,14 @@ func CreateAppointment(state State, args CreateAppointmentArgs) (uuid.UUID, *Use
 	}
 
 	params := infra.CreateAppointmentParams{
-		CustomerID:    args.CustomerID,
+		CustomerID:    args.CustomerID.Value,
 		SpecialistID:  service.SpecialistID,
 		ServiceNameID: service.ServiceNameID,
 		Price:         service.Price,
 		Duration:      service.Duration,
-		Date:          args.Date,
-		Time:          args.Time,
-		Status:        args.Status,
+		Date:          args.Date.Value,
+		Time:          args.Time.Value,
+		Status:        int32(args.Status),
 	}
 	id, err := state.Queries().CreateAppointment(state.Context(), params)
 	if err != nil {

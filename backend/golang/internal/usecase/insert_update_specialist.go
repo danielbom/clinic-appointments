@@ -1,51 +1,44 @@
 package usecase
 
 import (
+	"backend/internal/domain"
 	"backend/internal/infra"
-	"backend/internal/validate"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type SpecialistInfoArgs struct {
-	Name          string
-	Email         string
-	Phone         string
-	Birthdate     string
-	BirthdateDate pgtype.Date
-	Cpf           string
-	Cnpj          string
-	CnpjText      pgtype.Text
+	Name         domain.String
+	Email        domain.String
+	Phone        domain.String
+	BirthdateRaw string
+	Birthdate    domain.Date
+	Cpf          domain.String
+	Cnpj         domain.String
 }
 
 func (args *SpecialistInfoArgs) Validate() *UsecaseError {
-	if !args.BirthdateDate.Valid {
-		if err := args.BirthdateDate.Scan(args.Birthdate); err != nil {
-			return NewInvalidArgumentError(ErrInvalidDate).InField("birthdate")
-		}
+	if err := args.Birthdate.Scan(args.BirthdateRaw); err != nil {
+		return NewInvalidArgumentError(err).InField("birthdate")
 	}
-	if err := args.CnpjText.Scan(args.Cnpj); err != nil {
-		return NewUnexpectedError(err).InField("cnpj")
+	if err := args.Name.Required(); err != nil {
+		return NewInvalidArgumentError(err).InField("name")
 	}
-	if args.Name == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("name")
+	if err := args.Email.Required(); err != nil {
+		return NewInvalidArgumentError(err).InField("email")
 	}
-	if args.Email == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("email")
+	if err := args.Phone.Required(); err != nil {
+		return NewInvalidArgumentError(err).InField("phone")
 	}
-	if args.Phone == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("phone")
+	if err := args.Cpf.Required(); err != nil {
+		return NewInvalidArgumentError(err).InField("cpf")
 	}
-	if args.Cpf == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("cpf")
+	if err := args.Cpf.IsCpf(); err != nil {
+		return NewInvalidArgumentError(err).InField("cpf")
 	}
-	if !validate.IsCpfValid(args.Cpf) {
-		return NewInvalidArgumentError(ErrInvalidFormat).InField("cpf")
-	}
-	if args.CnpjText.String != "" {
-		if !validate.IsCnpjValid(args.CnpjText.String) {
-			return NewInvalidArgumentError(ErrInvalidFormat).InField("cnpj")
+	if args.Cnpj.IsDefined() {
+		if err := args.Cnpj.IsCnpj(); err != nil {
+			return NewInvalidArgumentError(err).InField("cnpj")
 		}
 	}
 	return nil
@@ -66,7 +59,7 @@ func ServiceWithEmailExists(state State, email string, exceptId uuid.UUID) (bool
 }
 
 func CreateSpecialist(state State, args SpecialistInfoArgs) (uuid.UUID, *UsecaseError) {
-	exists, err := ServiceWithEmailExists(state, args.Email, uuid.Nil)
+	exists, err := ServiceWithEmailExists(state, args.Email.Value, uuid.Nil)
 	if err != nil {
 		return uuid.Nil, NewUnexpectedError(err)
 	}
@@ -75,12 +68,12 @@ func CreateSpecialist(state State, args SpecialistInfoArgs) (uuid.UUID, *Usecase
 	}
 
 	params := infra.CreateSpecialistParams{
-		Name:      args.Name,
-		Email:     args.Email,
-		Phone:     args.Phone,
-		Birthdate: args.BirthdateDate,
-		Cpf:       args.Cpf,
-		Cnpj:      args.CnpjText,
+		Name:      args.Name.Value,
+		Email:     args.Email.Value,
+		Phone:     args.Phone.Value,
+		Birthdate: args.Birthdate.Value,
+		Cpf:       args.Cpf.Value,
+		Cnpj:      args.Cnpj.Text(),
 	}
 	id, err := state.Queries().CreateSpecialist(state.Context(), params)
 	if err != nil {
@@ -91,7 +84,7 @@ func CreateSpecialist(state State, args SpecialistInfoArgs) (uuid.UUID, *Usecase
 
 func UpdateSpecialist(state State, specialistId uuid.UUID, args SpecialistInfoArgs) (infra.Specialist, *UsecaseError) {
 	var none infra.Specialist
-	exists, err := ServiceWithEmailExists(state, args.Email, specialistId)
+	exists, err := ServiceWithEmailExists(state, args.Email.Value, specialistId)
 	if err != nil {
 		return none, NewUnexpectedError(err)
 	}
@@ -100,12 +93,12 @@ func UpdateSpecialist(state State, specialistId uuid.UUID, args SpecialistInfoAr
 	}
 	params := infra.UpdateSpecialistParams{
 		ID:        specialistId,
-		Name:      args.Name,
-		Email:     args.Email,
-		Phone:     args.Phone,
-		Birthdate: args.BirthdateDate,
-		Cpf:       args.Cpf,
-		Cnpj: 	   args.CnpjText,
+		Name:      args.Name.Value,
+		Email:     args.Email.Value,
+		Phone:     args.Phone.Value,
+		Birthdate: args.Birthdate.Value,
+		Cpf:       args.Cpf.Value,
+		Cnpj:      args.Cnpj.Text(),
 	}
 	specialist, err := state.Queries().UpdateSpecialist(state.Context(), params)
 	if err != nil {

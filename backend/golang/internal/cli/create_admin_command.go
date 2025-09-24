@@ -19,9 +19,9 @@ func (c *CreateAdminCommand) Name() string {
 
 func (c *CreateAdminCommand) Init() {
 	c.fs = flag.NewFlagSet(c.Name(), flag.ExitOnError)
-	c.fs.StringVar(&c.Args.Name, "name", "", "Name")
-	c.fs.StringVar(&c.Args.Email, "email", "", "Email address")
-	c.fs.StringVar(&c.Args.Password, "password", "", "Password")
+	c.fs.StringVar(&c.Args.Name.Value, "name", "", "Name")
+	c.fs.StringVar(&c.Args.Email.Value, "email", "", "Email address")
+	c.fs.StringVar(&c.Args.Password.Value, "password", "", "Password")
 }
 
 func (c *CreateAdminCommand) Parse(args []string) {

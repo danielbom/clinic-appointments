@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"backend/internal/domain"
 	"backend/internal/infra"
 
 	"github.com/google/uuid"
@@ -36,7 +37,7 @@ func CreateSpecialistWithServices(state State, args SpecialistWithServicesInfoAr
 	}
 	{
 		for _, s := range args.Services {
-			s.SpecialistID = specialistID
+			s.SpecialistID.Value = specialistID
 			_, err := CreateSpecialistService(state, s)
 			if err != nil {
 				return specialistID, err
@@ -61,7 +62,7 @@ func UpdateSpecialistWithServices(state State, specialistID uuid.UUID, args Spec
 		for _, serviceArg := range args.Services {
 			found := false
 			for _, service := range services {
-				if service.ServiceNameID == serviceArg.ServiceNameID {
+				if service.ServiceNameID == serviceArg.ServiceNameID.Value {
 					// Update
 					// TODO: Should I run a diff check and only update when there are differences?
 					_, err := UpdateSpecialistService(state, service.ID, serviceArg)
@@ -75,10 +76,9 @@ func UpdateSpecialistWithServices(state State, specialistID uuid.UUID, args Spec
 			if !found {
 				// Create
 				_, err := CreateSpecialistService(state, SpecialistServiceInfoArgs{
-					SpecialistID:  specialist.ID,
+					SpecialistID:  domain.NewUUID(specialist.ID),
 					ServiceNameID: serviceArg.ServiceNameID,
 					Price:         serviceArg.Price,
-					DurationMin:   serviceArg.DurationMin,
 					Duration:      serviceArg.Duration,
 				})
 				if err != nil {
@@ -89,7 +89,7 @@ func UpdateSpecialistWithServices(state State, specialistID uuid.UUID, args Spec
 		for _, service := range services {
 			found := false
 			for _, serviceArg := range args.Services {
-				if service.ServiceNameID == serviceArg.ServiceNameID {
+				if service.ServiceNameID == serviceArg.ServiceNameID.Value {
 					// Update (Already done)
 					found = true
 					break

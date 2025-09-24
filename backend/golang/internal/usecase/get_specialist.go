@@ -12,7 +12,7 @@ func GetSpecialist(state State, specialistID uuid.UUID) (infra.Specialist, *Usec
 		return specialist, nil
 	}
 	if ErrorIsNoRows(err) {
-		return specialist, NewNotFoundError(ErrResourceNotFound).InField("specialist")
+		return specialist, NewResourceNotFoundError("specialist")
 	}
 	return specialist, NewUnexpectedError(err)
 }
