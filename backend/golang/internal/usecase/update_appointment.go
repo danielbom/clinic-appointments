@@ -8,21 +8,21 @@ import (
 )
 
 type UpdateAppointmentArgs struct {
-	DateRaw string
-	Date    pgtype.Date
-	TimeRaw string
-	Time    pgtype.Time
-	Status  int32
+	Date     string
+	DateDate pgtype.Date
+	Time     string
+	TimeTime pgtype.Time
+	Status   int32
 }
 
 func (args *UpdateAppointmentArgs) Validate() *UsecaseError {
-	if !args.Date.Valid {
-		if err := args.Date.Scan(args.DateRaw); err != nil {
+	if !args.DateDate.Valid {
+		if err := args.DateDate.Scan(args.Date); err != nil {
 			return NewInvalidArgumentError(ErrInvalidDate).InField("date")
 		}
 	}
-	if !args.Time.Valid {
-		if err := args.Time.Scan(args.TimeRaw); err != nil {
+	if !args.TimeTime.Valid {
+		if err := args.TimeTime.Scan(args.Time); err != nil {
 			return NewInvalidArgumentError(ErrInvalidTime).InField("time")
 		}
 	}
@@ -46,8 +46,8 @@ func UpdateAppointment(state State, appointmentId uuid.UUID, args UpdateAppointm
 
 	params := infra.UpdateAppointmentParams{
 		ID:     appointmentId,
-		Date:   args.Date,
-		Time:   args.Time,
+		Date:   args.DateDate,
+		Time:   args.TimeTime,
 		Status: args.Status,
 	}
 	appointment, err := state.Queries().UpdateAppointment(state.Context(), params)

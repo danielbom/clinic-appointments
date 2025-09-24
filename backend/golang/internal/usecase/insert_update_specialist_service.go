@@ -8,9 +8,9 @@ import (
 )
 
 type SpecialistServiceInfoArgs struct {
-	ServiceNameIDStr  string
+	ServiceNameIDRaw  string
 	ServiceNameID     uuid.UUID
-	SpecialistIDStr   string
+	SpecialistIDRaw   string
 	SpecialistID      uuid.UUID
 	Price             int32
 	DurationMin       int32
@@ -20,18 +20,18 @@ type SpecialistServiceInfoArgs struct {
 
 func (args *SpecialistServiceInfoArgs) Validate() *UsecaseError {
 	if args.ServiceNameID == uuid.Nil {
-		if args.ServiceNameIDStr == "" {
+		if args.ServiceNameIDRaw == "" {
 			return NewInvalidArgumentError(ErrInvalidUuid).InField("serviceNameId")
 		}
-		if err := args.ServiceNameID.Scan(args.ServiceNameIDStr); err != nil {
+		if err := args.ServiceNameID.Scan(args.ServiceNameIDRaw); err != nil {
 			return NewInvalidArgumentError(ErrInvalidUuid).InField("serviceNameId")
 		}
 	}
 	if args.RequireSpecialist && args.SpecialistID == uuid.Nil {
-		if args.SpecialistIDStr == "" {
+		if args.SpecialistIDRaw == "" {
 			return NewInvalidArgumentError(ErrInvalidUuid).InField("specialistId")
 		}
-		if err := args.SpecialistID.Scan(args.SpecialistIDStr); err != nil {
+		if err := args.SpecialistID.Scan(args.SpecialistIDRaw); err != nil {
 			return NewInvalidArgumentError(ErrInvalidUuid).InField("specialistId")
 		}
 	}

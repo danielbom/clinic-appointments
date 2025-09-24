@@ -8,8 +8,11 @@ import (
 
 func GetSpecialist(state State, specialistID uuid.UUID) (infra.Specialist, *UsecaseError) {
 	specialist, err := state.Queries().GetSpecialistByID(state.Context(), specialistID)
-	if err != nil {
-		return specialist, NewUnexpectedError(err)
+	if err == nil {
+		return specialist, nil
 	}
-	return specialist, nil
+	if ErrorIsNoRows(err) {
+		return specialist, NewNotFoundError(ErrResourceNotFound).InField("specialist")
+	}
+	return specialist, NewUnexpectedError(err)
 }

@@ -13,8 +13,8 @@ type SecretaryInfoArgs struct {
 	Name          string
 	Email         string
 	Phone         string
-	Birthdate     string
 	Password      string
+	Birthdate     string
 	BirthdateDate pgtype.Date
 	Cpf           string
 	Cnpj          string

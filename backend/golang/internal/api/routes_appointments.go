@@ -164,8 +164,8 @@ func (h *api) getAppointmentsCalendar(w http.ResponseWriter, r *http.Request) {
 	// Validate e execute the usecase
 	args := usecase.ListAppointmentsCalendarArgs{
 		Year:         int(year),
-		StartDateRaw: startDate,
-		EndDateRaw:   endDate,
+		StartDate: startDate,
+		EndDate:   endDate,
 	}
 
 	if err := args.Validate(); err != nil {
@@ -207,8 +207,8 @@ func (h *api) getAppointmentsCalendarCount(w http.ResponseWriter, r *http.Reques
 	// Validate e execute the usecase
 	args := usecase.ListAppointmentsCalendarCountArgs{
 		Year:         int(year),
-		StartDateRaw: startDate,
-		EndDateRaw:   endDate,
+		StartDate: startDate,
+		EndDate:   endDate,
 	}
 
 	if err := args.Validate(); err != nil {
@@ -298,8 +298,8 @@ func (h *api) updateAppointment(w http.ResponseWriter, r *http.Request) {
 
 	// Validate e execute the usecase
 	args := usecase.UpdateAppointmentArgs{
-		DateRaw: body.Date,
-		TimeRaw: body.Time,
+		Date: body.Date,
+		Time: body.Time,
 		Status:  body.Status,
 	}
 

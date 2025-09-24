@@ -149,8 +149,8 @@ func (h *api) createService(w http.ResponseWriter, r *http.Request) {
 
 	// Validate e execute the usecase
 	args := usecase.SpecialistServiceInfoArgs{
-		ServiceNameIDStr:  body.ServiceNameID,
-		SpecialistIDStr:   body.SpecialistID,
+		ServiceNameIDRaw:  body.ServiceNameID,
+		SpecialistIDRaw:   body.SpecialistID,
 		Price:             body.Price,
 		DurationMin:       body.Duration,
 		RequireSpecialist: true,
@@ -196,7 +196,7 @@ func (h *api) updateService(w http.ResponseWriter, r *http.Request) {
 
 	// Validate e execute the usecase
 	args := usecase.SpecialistServiceInfoArgs{
-		ServiceNameIDStr:  body.ServiceNameID,
+		ServiceNameIDRaw:  body.ServiceNameID,
 		Price:             body.Price,
 		DurationMin:       body.Duration,
 		RequireSpecialist: false,
