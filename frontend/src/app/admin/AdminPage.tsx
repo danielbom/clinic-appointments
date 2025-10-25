@@ -77,7 +77,7 @@ function AdminPageRoutesLayout() {
     if (item) {
       dispatch({ type: 'SET_PAGE_KEY', payload: item.key })
     } else {
-      navigate('/' + items[0].key)
+      navigate('/' + items[0].key + '?mode=create')
       dispatch({ type: 'SET_PAGE_KEY', payload: items[0].key })
     }
   }, [navigate, dispatch, items, location?.pathname])
@@ -132,8 +132,8 @@ function AdminPageRoutesLayout() {
     >
       <AdminBreadcrumb mode={mode} title={title} changeMode={changeMode} />
 
-      <AdminItem pageKey="appointments" pageLabel="Agendamentos" pageIcon={<CalendarOutlined />} />
       <AdminItem pageKey="customers" pageLabel="Clientes" pageIcon={<UserOutlined />} />
+      <AdminItem pageKey="appointments" pageLabel="Agendamentos" pageIcon={<CalendarOutlined />} />
       <AdminItem pageKey="specialists" pageLabel="Especialistas" pageIcon={<UserOutlined />} />
       {identity?.role === 'admin' && (
         <AdminItem pageKey="secretaries" pageLabel="Secretários" pageIcon={<UserOutlined />} />
