@@ -132,8 +132,8 @@ function AdminPageRoutesLayout() {
     >
       <AdminBreadcrumb mode={mode} title={title} changeMode={changeMode} />
 
-      <AdminItem pageKey="customers" pageLabel="Clientes" pageIcon={<UserOutlined />} />
       <AdminItem pageKey="appointments" pageLabel="Agendamentos" pageIcon={<CalendarOutlined />} />
+      <AdminItem pageKey="customers" pageLabel="Clientes" pageIcon={<UserOutlined />} />
       <AdminItem pageKey="specialists" pageLabel="Especialistas" pageIcon={<UserOutlined />} />
       {identity?.role === 'admin' && (
         <AdminItem pageKey="secretaries" pageLabel="Secretários" pageIcon={<UserOutlined />} />
