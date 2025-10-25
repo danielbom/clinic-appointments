@@ -77,7 +77,7 @@ function AdminPageRoutesLayout() {
     if (item) {
       dispatch({ type: 'SET_PAGE_KEY', payload: item.key })
     } else {
-      navigate('/' + items[0].key)
+      navigate('/' + items[0].key + '?mode=create')
       dispatch({ type: 'SET_PAGE_KEY', payload: items[0].key })
     }
   }, [navigate, dispatch, items, location?.pathname])

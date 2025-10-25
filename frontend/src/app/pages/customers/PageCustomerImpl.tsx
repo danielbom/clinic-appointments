@@ -75,10 +75,10 @@ function PageCustomerImpl({ mode, changeMode, moveTo, state }: PageCustomerImplP
       pageSize: paramsList.pageSize,
       current: paramsList.page,
       total: total,
-      onChange: (page, pageSize) => {
+      onChange: (page: number, pageSize: number) => {
         setListQuery({ ...paramsList, page, pageSize })
       },
-    } as TableCustomerProps['pagination']
+        } as TableCustomerProps['pagination']
   }, [paramsList.page, paramsList.pageSize, total])
 
   const mutationCreate = useCustomerCreate()

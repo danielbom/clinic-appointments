@@ -40,6 +40,15 @@ const columns: TableColumnType<Customer>[] = [
     dataIndex: 'birthdate',
     render: renderAge,
   },
+  {
+    title: 'Endereço Principal',
+    dataIndex: 'addresses',
+    render: (addresses: Customer['addresses']) => {
+      const mainAddress = addresses?.[0]
+      if (!mainAddress) return '-'
+      return `${mainAddress.street}, ${mainAddress.number} - ${mainAddress.city}/${mainAddress.state}`
+    },
+  },
 ]
 
 export interface TableCustomerProps {
@@ -81,12 +90,12 @@ const TableCustomer = ({
           rowSelection={{
             type: 'checkbox',
             selectedRowKeys: selectedItems.map((item) => item.id),
-            onChange: (_selectedRowKeys, selectedRows) => {
+            onChange: (_selectedRowKeys: any, selectedRows: Customer[]) => {
               changeSelectedItems(selectedRows)
             },
           }}
           size="small"
-          rowKey={(record) => record.id}
+          rowKey={(record: { id: any }) => record.id}
           columns={[...columns, TableX.Options(onClickOptions)]}
           dataSource={data}
           pagination={pagination}
