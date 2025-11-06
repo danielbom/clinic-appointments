@@ -1,0 +1,4 @@
+{
+  "uri": "postgresql://localhost:5432/appointments?user=postgres&password=123456789",
+  "out": "src/db/schemas-true-pg"
+}
