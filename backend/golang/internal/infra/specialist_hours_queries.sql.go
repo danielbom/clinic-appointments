@@ -14,12 +14,16 @@ import (
 
 const createSpecialistHour = `-- name: CreateSpecialistHour :one
 INSERT INTO specialist_hours ("specialist_id", "weekday", "start_time", "end_time")
-VALUES ($1, $2, $3, $4)
+VALUES ( $1
+       , $2
+       , $3
+       , $4
+       )
 RETURNING "id"
 `
 
 type CreateSpecialistHourParams struct {
-	SpecialistID uuid.UUID
+	SpecialistId uuid.UUID
 	Weekday      int32
 	StartTime    pgtype.Time
 	EndTime      pgtype.Time
@@ -27,7 +31,7 @@ type CreateSpecialistHourParams struct {
 
 func (q *Queries) CreateSpecialistHour(ctx context.Context, arg CreateSpecialistHourParams) (uuid.UUID, error) {
 	row := q.db.QueryRow(ctx, createSpecialistHour,
-		arg.SpecialistID,
+		arg.SpecialistId,
 		arg.Weekday,
 		arg.StartTime,
 		arg.EndTime,
@@ -51,7 +55,7 @@ ORDER BY "start_time" ASC
 `
 
 type ListSpecialistHoursIntersectingParams struct {
-	SpecialistID uuid.UUID
+	SpecialistId uuid.UUID
 	Weekday      int32
 	StartTime    pgtype.Time
 	EndTime      pgtype.Time
@@ -59,7 +63,7 @@ type ListSpecialistHoursIntersectingParams struct {
 
 func (q *Queries) ListSpecialistHoursIntersecting(ctx context.Context, arg ListSpecialistHoursIntersectingParams) ([]SpecialistHour, error) {
 	rows, err := q.db.Query(ctx, listSpecialistHoursIntersecting,
-		arg.SpecialistID,
+		arg.SpecialistId,
 		arg.Weekday,
 		arg.StartTime,
 		arg.EndTime,
@@ -90,17 +94,18 @@ func (q *Queries) ListSpecialistHoursIntersecting(ctx context.Context, arg ListS
 
 const updateSpecialistHourStartAndEndTime = `-- name: UpdateSpecialistHourStartAndEndTime :exec
 UPDATE specialist_hours
-SET "start_time" = $2, "end_time" = $3
-WHERE "id" = $1
+SET "start_time" = $1::time
+  , "end_time"   = $2::time
+WHERE "id" = $3
 `
 
 type UpdateSpecialistHourStartAndEndTimeParams struct {
-	ID        uuid.UUID
-	StartTime pgtype.Time
-	EndTime   pgtype.Time
+	StartTime         pgtype.Time
+	EndTime           pgtype.Time
+	SpecialistHoursId uuid.UUID
 }
 
 func (q *Queries) UpdateSpecialistHourStartAndEndTime(ctx context.Context, arg UpdateSpecialistHourStartAndEndTimeParams) error {
-	_, err := q.db.Exec(ctx, updateSpecialistHourStartAndEndTime, arg.ID, arg.StartTime, arg.EndTime)
+	_, err := q.db.Exec(ctx, updateSpecialistHourStartAndEndTime, arg.StartTime, arg.EndTime, arg.SpecialistHoursId)
 	return err
 }

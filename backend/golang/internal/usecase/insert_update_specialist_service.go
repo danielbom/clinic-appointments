@@ -49,8 +49,8 @@ func (args *SpecialistServiceInfoArgs) Validate() *UsecaseError {
 
 func CreateSpecialistService(state State, args SpecialistServiceInfoArgs) (uuid.UUID, *UsecaseError) {
 	_, err := state.Queries().GetService(state.Context(), infra.GetServiceParams{
-		SpecialistID:  args.SpecialistID,
-		ServiceNameID: args.ServiceNameID,
+		SpecialistId:  args.SpecialistID,
+		ServiceNameId: args.ServiceNameID,
 	})
 	if err == nil {
 		return uuid.Nil, NewResourceAlreadyExistsError("service")
@@ -59,8 +59,8 @@ func CreateSpecialistService(state State, args SpecialistServiceInfoArgs) (uuid.
 	}
 
 	id, err := state.Queries().CreateService(state.Context(), infra.CreateServiceParams{
-		ServiceNameID: args.ServiceNameID,
-		SpecialistID:  args.SpecialistID,
+		ServiceNameId: args.ServiceNameID,
+		SpecialistId:  args.SpecialistID,
 		Price:         args.Price,
 		Duration:      args.Duration,
 	})

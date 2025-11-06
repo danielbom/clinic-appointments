@@ -1,11 +1,9 @@
 /** Types generated for queries found in "generated/queries/services_queries.sql" */
 import { PreparedQuery } from '@pgtyped/runtime';
 
-export type DateOrString = Date | string;
-
 /** 'CreateService' parameters type */
 export interface ICreateServiceParams {
-  duration?: DateOrString | null | void;
+  duration?: number | null | void;
   price?: number | null | void;
   serviceNameId?: string | null | void;
   specialistId?: string | null | void;
@@ -41,7 +39,7 @@ export const createService = new PreparedQuery<ICreateServiceParams,ICreateServi
 
 /** 'UpdateService' parameters type */
 export interface IUpdateServiceParams {
-  duration?: DateOrString | null | void;
+  duration?: number | null | void;
   id?: string | null | void;
   price?: number | null | void;
 }
@@ -81,7 +79,7 @@ export interface IGetServiceParams {
 
 /** 'GetService' return type */
 export interface IGetServiceResult {
-  duration: string;
+  duration: number;
   id: string;
   price: number;
   service_name_id: string;
@@ -114,7 +112,7 @@ export interface IGetServiceByIdParams {
 
 /** 'GetServiceById' return type */
 export interface IGetServiceByIdResult {
-  duration: string;
+  duration: number;
   id: string;
   price: number;
   service_name_id: string;

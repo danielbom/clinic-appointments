@@ -74,8 +74,8 @@ func CreateAppointment(state State, args CreateAppointmentArgs) (uuid.UUID, *Use
 
 	if args.ServiceID == uuid.Nil {
 		maybeService, err := state.Queries().GetService(state.Context(), infra.GetServiceParams{
-			ServiceNameID: args.ServiceNameID,
-			SpecialistID:  args.SpecialistID,
+			ServiceNameId: args.ServiceNameID,
+			SpecialistId:  args.SpecialistID,
 		})
 		if ErrorIsNoRows(err) {
 			return uuid.Nil, NewNotFoundError(ErrResourceNotFound).InField("service")
@@ -100,7 +100,7 @@ func CreateAppointment(state State, args CreateAppointmentArgs) (uuid.UUID, *Use
 		Date:         args.Date,
 		Time:         args.Time,
 		Duration:     service.Duration,
-		SpecialistID: service.SpecialistID,
+		SpecialistId: service.SpecialistID,
 	})
 	if err != nil {
 		return uuid.Nil, NewUnexpectedError(err)
@@ -110,9 +110,9 @@ func CreateAppointment(state State, args CreateAppointmentArgs) (uuid.UUID, *Use
 	}
 
 	params := infra.CreateAppointmentParams{
-		CustomerID:    args.CustomerID,
-		SpecialistID:  service.SpecialistID,
-		ServiceNameID: service.ServiceNameID,
+		CustomerId:    args.CustomerID,
+		SpecialistId:  service.SpecialistID,
+		ServiceNameId: service.ServiceNameID,
 		Price:         service.Price,
 		Duration:      service.Duration,
 		Date:          args.Date,

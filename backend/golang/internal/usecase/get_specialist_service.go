@@ -8,8 +8,8 @@ import (
 
 func GetSpecialistService(state State, specialistId, serviceNameId uuid.UUID) (infra.Service, *UsecaseError) {
 	service, err := state.Queries().GetService(state.Context(), infra.GetServiceParams{
-		SpecialistID:  specialistId,
-		ServiceNameID: serviceNameId,
+		SpecialistId:  specialistId,
+		ServiceNameId: serviceNameId,
 	})
 	if err == nil {
 		return service, nil

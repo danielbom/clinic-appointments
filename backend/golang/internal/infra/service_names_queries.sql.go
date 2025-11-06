@@ -13,17 +13,19 @@ import (
 
 const createServiceName = `-- name: CreateServiceName :one
 INSERT INTO "service_names" ("name", "specialization_id")
-VALUES ($1, $2)
+VALUES ( $1
+       , $2
+       )
 RETURNING "id"
 `
 
 type CreateServiceNameParams struct {
 	Name             string
-	SpecializationID uuid.UUID
+	SpecializationId uuid.UUID
 }
 
 func (q *Queries) CreateServiceName(ctx context.Context, arg CreateServiceNameParams) (uuid.UUID, error) {
-	row := q.db.QueryRow(ctx, createServiceName, arg.Name, arg.SpecializationID)
+	row := q.db.QueryRow(ctx, createServiceName, arg.Name, arg.SpecializationId)
 	var id uuid.UUID
 	err := row.Scan(&id)
 	return id, err
@@ -34,8 +36,8 @@ DELETE FROM "service_names"
 WHERE "id" = $1
 `
 
-func (q *Queries) DeleteServiceNameByID(ctx context.Context, id uuid.UUID) (int64, error) {
-	result, err := q.db.Exec(ctx, deleteServiceNameByID, id)
+func (q *Queries) DeleteServiceNameByID(ctx context.Context, servicenameid uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteServiceNameByID, servicenameid)
 	if err != nil {
 		return 0, err
 	}
@@ -48,8 +50,8 @@ FROM "service_names"
 WHERE "id" = $1
 `
 
-func (q *Queries) GetServiceNameByID(ctx context.Context, id uuid.UUID) (ServiceName, error) {
-	row := q.db.QueryRow(ctx, getServiceNameByID, id)
+func (q *Queries) GetServiceNameByID(ctx context.Context, servicenameid uuid.UUID) (ServiceName, error) {
+	row := q.db.QueryRow(ctx, getServiceNameByID, servicenameid)
 	var i ServiceName
 	err := row.Scan(&i.ID, &i.Name, &i.SpecializationID)
 	return i, err
@@ -61,8 +63,8 @@ FROM "service_names"
 WHERE "name" = $1
 `
 
-func (q *Queries) GetServiceNameByName(ctx context.Context, name string) (ServiceName, error) {
-	row := q.db.QueryRow(ctx, getServiceNameByName, name)
+func (q *Queries) GetServiceNameByName(ctx context.Context, servicename string) (ServiceName, error) {
+	row := q.db.QueryRow(ctx, getServiceNameByName, servicename)
 	var i ServiceName
 	err := row.Scan(&i.ID, &i.Name, &i.SpecializationID)
 	return i, err

@@ -257,7 +257,7 @@ export interface IListServicesBySpecialistIdParams {
 
 /** 'ListServicesBySpecialistId' return type */
 export interface IListServicesBySpecialistIdResult {
-  duration: string;
+  duration: number;
   id: string;
   price: number;
   service_name: string;

@@ -26,7 +26,13 @@ func (q *Queries) CountSpecialists(ctx context.Context) (int64, error) {
 
 const createSpecialist = `-- name: CreateSpecialist :one
 INSERT INTO specialists ("name", "email", "phone", "birthdate", "cpf", "cnpj")
-VALUES ($1, $2, $3, $4, $5, $6)
+VALUES ( $1
+       , $2
+       , $3
+       , $4
+       , $5
+       , $6
+       )
 RETURNING "id"
 `
 
@@ -58,8 +64,8 @@ DELETE FROM "specialists"
 WHERE "id" = $1
 `
 
-func (q *Queries) DeleteSpecialistByID(ctx context.Context, id uuid.UUID) (int64, error) {
-	result, err := q.db.Exec(ctx, deleteSpecialistByID, id)
+func (q *Queries) DeleteSpecialistByID(ctx context.Context, specialistid uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteSpecialistByID, specialistid)
 	if err != nil {
 		return 0, err
 	}
@@ -73,8 +79,8 @@ WHERE "email" = $1
 LIMIT 1
 `
 
-func (q *Queries) GetSpecialistByEmail(ctx context.Context, email string) (Specialist, error) {
-	row := q.db.QueryRow(ctx, getSpecialistByEmail, email)
+func (q *Queries) GetSpecialistByEmail(ctx context.Context, specialistemail string) (Specialist, error) {
+	row := q.db.QueryRow(ctx, getSpecialistByEmail, specialistemail)
 	var i Specialist
 	err := row.Scan(
 		&i.ID,
@@ -95,8 +101,8 @@ WHERE "id" = $1
 LIMIT 1
 `
 
-func (q *Queries) GetSpecialistByID(ctx context.Context, id uuid.UUID) (Specialist, error) {
-	row := q.db.QueryRow(ctx, getSpecialistByID, id)
+func (q *Queries) GetSpecialistByID(ctx context.Context, specialistid uuid.UUID) (Specialist, error) {
+	row := q.db.QueryRow(ctx, getSpecialistByID, specialistid)
 	var i Specialist
 	err := row.Scan(
 		&i.ID,
@@ -130,8 +136,8 @@ type ListServicesBySpecialistIDRow struct {
 	Duration         pgtype.Interval
 }
 
-func (q *Queries) ListServicesBySpecialistID(ctx context.Context, specialistID uuid.UUID) ([]ListServicesBySpecialistIDRow, error) {
-	rows, err := q.db.Query(ctx, listServicesBySpecialistID, specialistID)
+func (q *Queries) ListServicesBySpecialistID(ctx context.Context, specialistid uuid.UUID) ([]ListServicesBySpecialistIDRow, error) {
+	rows, err := q.db.Query(ctx, listServicesBySpecialistID, specialistid)
 	if err != nil {
 		return nil, err
 	}
@@ -160,17 +166,17 @@ func (q *Queries) ListServicesBySpecialistID(ctx context.Context, specialistID u
 const listSpecialists = `-- name: ListSpecialists :many
 SELECT "id", "name", "email", "phone", "birthdate", "cpf", "cnpj"
 FROM "specialists"
-LIMIT $1
-OFFSET $2
+LIMIT $2::integer
+OFFSET $1::integer
 `
 
 type ListSpecialistsParams struct {
-	Limit  int32
 	Offset int32
+	Limit  int32
 }
 
 func (q *Queries) ListSpecialists(ctx context.Context, arg ListSpecialistsParams) ([]Specialist, error) {
-	rows, err := q.db.Query(ctx, listSpecialists, arg.Limit, arg.Offset)
+	rows, err := q.db.Query(ctx, listSpecialists, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -200,12 +206,12 @@ func (q *Queries) ListSpecialists(ctx context.Context, arg ListSpecialistsParams
 const updateSpecialist = `-- name: UpdateSpecialist :one
 UPDATE "specialists"
 SET 
-  "name" = $1,
-  "email" = $2,
-  "phone" = $3,
+  "name"      = $1,
+  "email"     = $2,
+  "phone"     = $3,
   "birthdate" = $4,
-  "cpf" = $5,
-  "cnpj" = $6
+  "cpf"       = $5,
+  "cnpj"      = $6
 WHERE "id" = $7
 RETURNING "id", "name", "email", "phone", "birthdate", "cpf", "cnpj"
 `

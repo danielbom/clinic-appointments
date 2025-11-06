@@ -80,12 +80,12 @@ JOIN "customers" "c" ON "a"."customer_id" = "c"."id"
 JOIN "specialists" "s" ON "a"."specialist_id" = "s"."id"
 JOIN "service_names" "sn" ON "a"."service_name_id" = "sn"."id"
 WHERE true
-  AND (sqlc.arg('startDate')::date IS NULL OR "a"."date" >= sqlc.arg('startDate')::date) 
-  AND (sqlc.arg('endDate')::date IS NULL   OR "a"."date" <= sqlc.arg('endDate')::date)
-  AND (sqlc.arg('customerName') = ''       OR "c"."name" ILIKE '%' || sqlc.arg('customerName') || '%')
-  AND (sqlc.arg('specialistName') = ''     OR "s"."name" ILIKE '%' || sqlc.arg('specialistName') || '%')
-  AND (sqlc.arg('serviceName') = ''        OR "sn"."name" ILIKE '%' || sqlc.arg('serviceName') || '%')
-  AND (sqlc.arg('status') = 0              OR "a"."status" = sqlc.arg('status'));
+  AND (sqlc.arg('startDate')::date IS NULL   OR "a"."date" >= sqlc.arg('startDate')) 
+  AND (sqlc.arg('endDate')::date IS NULL     OR "a"."date" <= sqlc.arg('endDate'))
+  AND (sqlc.arg('customerName')::text = ''   OR "c"."name" ILIKE '%' || sqlc.arg('customerName') || '%')
+  AND (sqlc.arg('specialistName')::text = '' OR "s"."name" ILIKE '%' || sqlc.arg('specialistName') || '%')
+  AND (sqlc.arg('serviceName')::text = ''    OR "sn"."name" ILIKE '%' || sqlc.arg('serviceName') || '%')
+  AND (sqlc.arg('status')::integer = 0       OR "a"."status" = sqlc.arg('status'));
 
 -- name: ListAppointmentsCalendar :many
 SELECT "a"."id", "a"."date", "a"."time", "a"."status", "s"."name" as "specialist_name"

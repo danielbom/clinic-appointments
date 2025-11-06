@@ -7,7 +7,7 @@ export type DateOrString = Date | string;
 export interface ICreateAppointmentParams {
   customerId?: string | null | void;
   date?: string | null | void;
-  duration?: DateOrString | null | void;
+  duration?: number | null | void;
   price?: number | null | void;
   serviceNameId?: string | null | void;
   specialistId?: string | null | void;
@@ -59,7 +59,7 @@ export interface IUpdateAppointmentParams {
 export interface IUpdateAppointmentResult {
   customer_id: string;
   date: string;
-  duration: string;
+  duration: number;
   id: string;
   notified_at: Date | null;
   notified_by: string | null;
@@ -104,7 +104,7 @@ export interface IListAppointmentsBySpecialistIdResult {
   customer_id: string;
   customer_name: string;
   date: string;
-  duration: string;
+  duration: number;
   id: string;
   notified_at: Date | null;
   notified_by: string | null;
@@ -149,7 +149,7 @@ export interface IGetAppointmentByIdParams {
 export interface IGetAppointmentByIdResult {
   customer_id: string;
   date: string;
-  duration: string;
+  duration: number;
   id: string;
   notified_at: Date | null;
   notified_by: string | null;
@@ -189,7 +189,7 @@ export interface IGetAppointmentEnrichedByIdResult {
   customer_id: string;
   customer_name: string;
   date: string;
-  duration: string;
+  duration: number;
   id: string;
   notified_at: Date | null;
   notified_by: string | null;
@@ -236,7 +236,7 @@ export interface IListAppointmentsByDateParams {
 export interface IListAppointmentsByDateResult {
   customer_id: string;
   date: string;
-  duration: string;
+  duration: number;
   id: string;
   notified_at: Date | null;
   notified_by: string | null;
@@ -284,7 +284,7 @@ export interface IListAppointmentsResult {
   customer_id: string;
   customer_name: string;
   date: string;
-  duration: string;
+  duration: number;
   id: string;
   notified_at: Date | null;
   notified_by: string | null;
@@ -352,7 +352,7 @@ export interface ICountAppointmentsQuery {
   result: ICountAppointmentsResult;
 }
 
-const countAppointmentsIR: any = {"usedParamSet":{"startDate":true,"endDate":true,"customerName":true,"specialistName":true,"serviceName":true,"status":true},"params":[{"name":"startDate","required":false,"transform":{"type":"scalar"},"locs":[{"a":238,"b":247},{"a":280,"b":289}]},{"name":"endDate","required":false,"transform":{"type":"scalar"},"locs":[{"a":306,"b":313},{"a":348,"b":355}]},{"name":"customerName","required":false,"transform":{"type":"scalar"},"locs":[{"a":371,"b":383},{"a":423,"b":435}]},{"name":"specialistName","required":false,"transform":{"type":"scalar"},"locs":[{"a":452,"b":466},{"a":504,"b":518}]},{"name":"serviceName","required":false,"transform":{"type":"scalar"},"locs":[{"a":535,"b":546},{"a":588,"b":599}]},{"name":"status","required":false,"transform":{"type":"scalar"},"locs":[{"a":616,"b":622},{"a":659,"b":665}]}],"statement":"SELECT COUNT(\"a\".\"id\")\nFROM \"appointments\" \"a\"\nJOIN \"customers\" \"c\" ON \"a\".\"customer_id\" = \"c\".\"id\"\nJOIN \"specialists\" \"s\" ON \"a\".\"specialist_id\" = \"s\".\"id\"\nJOIN \"service_names\" \"sn\" ON \"a\".\"service_name_id\" = \"sn\".\"id\"\nWHERE true\n  AND (:startDate::date IS NULL OR \"a\".\"date\" >= :startDate::date) \n  AND (:endDate::date IS NULL   OR \"a\".\"date\" <= :endDate::date)\n  AND (:customerName = ''       OR \"c\".\"name\" ILIKE '%' || :customerName || '%')\n  AND (:specialistName = ''     OR \"s\".\"name\" ILIKE '%' || :specialistName || '%')\n  AND (:serviceName = ''        OR \"sn\".\"name\" ILIKE '%' || :serviceName || '%')\n  AND (:status = 0              OR \"a\".\"status\" = :status)"};
+const countAppointmentsIR: any = {"usedParamSet":{"startDate":true,"endDate":true,"customerName":true,"specialistName":true,"serviceName":true,"status":true},"params":[{"name":"startDate","required":false,"transform":{"type":"scalar"},"locs":[{"a":238,"b":247},{"a":282,"b":291}]},{"name":"endDate","required":false,"transform":{"type":"scalar"},"locs":[{"a":302,"b":309},{"a":346,"b":353}]},{"name":"customerName","required":false,"transform":{"type":"scalar"},"locs":[{"a":363,"b":375},{"a":417,"b":429}]},{"name":"specialistName","required":false,"transform":{"type":"scalar"},"locs":[{"a":446,"b":460},{"a":500,"b":514}]},{"name":"serviceName","required":false,"transform":{"type":"scalar"},"locs":[{"a":531,"b":542},{"a":586,"b":597}]},{"name":"status","required":false,"transform":{"type":"scalar"},"locs":[{"a":614,"b":620},{"a":659,"b":665}]}],"statement":"SELECT COUNT(\"a\".\"id\")\nFROM \"appointments\" \"a\"\nJOIN \"customers\" \"c\" ON \"a\".\"customer_id\" = \"c\".\"id\"\nJOIN \"specialists\" \"s\" ON \"a\".\"specialist_id\" = \"s\".\"id\"\nJOIN \"service_names\" \"sn\" ON \"a\".\"service_name_id\" = \"sn\".\"id\"\nWHERE true\n  AND (:startDate::date IS NULL   OR \"a\".\"date\" >= :startDate) \n  AND (:endDate::date IS NULL     OR \"a\".\"date\" <= :endDate)\n  AND (:customerName::text = ''   OR \"c\".\"name\" ILIKE '%' || :customerName || '%')\n  AND (:specialistName::text = '' OR \"s\".\"name\" ILIKE '%' || :specialistName || '%')\n  AND (:serviceName::text = ''    OR \"sn\".\"name\" ILIKE '%' || :serviceName || '%')\n  AND (:status::integer = 0       OR \"a\".\"status\" = :status)"};
 
 /**
  * Query generated from SQL:
@@ -363,12 +363,12 @@ const countAppointmentsIR: any = {"usedParamSet":{"startDate":true,"endDate":tru
  * JOIN "specialists" "s" ON "a"."specialist_id" = "s"."id"
  * JOIN "service_names" "sn" ON "a"."service_name_id" = "sn"."id"
  * WHERE true
- *   AND (:startDate::date IS NULL OR "a"."date" >= :startDate::date) 
- *   AND (:endDate::date IS NULL   OR "a"."date" <= :endDate::date)
- *   AND (:customerName = ''       OR "c"."name" ILIKE '%' || :customerName || '%')
- *   AND (:specialistName = ''     OR "s"."name" ILIKE '%' || :specialistName || '%')
- *   AND (:serviceName = ''        OR "sn"."name" ILIKE '%' || :serviceName || '%')
- *   AND (:status = 0              OR "a"."status" = :status)
+ *   AND (:startDate::date IS NULL   OR "a"."date" >= :startDate) 
+ *   AND (:endDate::date IS NULL     OR "a"."date" <= :endDate)
+ *   AND (:customerName::text = ''   OR "c"."name" ILIKE '%' || :customerName || '%')
+ *   AND (:specialistName::text = '' OR "s"."name" ILIKE '%' || :specialistName || '%')
+ *   AND (:serviceName::text = ''    OR "sn"."name" ILIKE '%' || :serviceName || '%')
+ *   AND (:status::integer = 0       OR "a"."status" = :status)
  * ```
  */
 export const countAppointments = new PreparedQuery<ICountAppointmentsParams,ICountAppointmentsResult>(countAppointmentsIR);
@@ -450,7 +450,7 @@ export const listAppointmentsCalendarCount = new PreparedQuery<IListAppointments
 /** 'AppointmentsIntersects' parameters type */
 export interface IAppointmentsIntersectsParams {
   date?: string | null | void;
-  duration?: DateOrString | null | void;
+  duration?: number | null | void;
   specialistId?: string | null | void;
   time?: DateOrString | null | void;
 }

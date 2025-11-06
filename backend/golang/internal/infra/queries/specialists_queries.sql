@@ -1,6 +1,12 @@
 -- name: CreateSpecialist :one
 INSERT INTO specialists ("name", "email", "phone", "birthdate", "cpf", "cnpj")
-VALUES ($1, $2, $3, $4, $5, $6)
+VALUES ( sqlc.arg('name')
+       , sqlc.arg('email')
+       , sqlc.arg('phone')
+       , sqlc.arg('birthdate')
+       , sqlc.arg('cpf')
+       , sqlc.arg('cnpj')
+       )
 RETURNING "id";
 
 -- name: CountSpecialists :one
@@ -10,36 +16,36 @@ FROM "specialists" "s";
 -- name: UpdateSpecialist :one
 UPDATE "specialists"
 SET 
-  "name" = sqlc.arg('name'),
-  "email" = sqlc.arg('email'),
-  "phone" = sqlc.arg('phone'),
+  "name"      = sqlc.arg('name'),
+  "email"     = sqlc.arg('email'),
+  "phone"     = sqlc.arg('phone'),
   "birthdate" = sqlc.arg('birthdate'),
-  "cpf" = sqlc.arg('cpf'),
-  "cnpj" = sqlc.arg('cnpj')
+  "cpf"       = sqlc.arg('cpf'),
+  "cnpj"      = sqlc.arg('cnpj')
 WHERE "id" = sqlc.arg('id')
 RETURNING "id", "name", "email", "phone", "birthdate", "cpf", "cnpj";
 
 -- name: GetSpecialistByID :one
 SELECT "id", "name", "email", "phone", "birthdate", "cpf", "cnpj"
 FROM "specialists"
-WHERE "id" = $1
+WHERE "id" = sqlc.arg('specialistId')
 LIMIT 1;
 
 -- name: GetSpecialistByEmail :one
 SELECT "id", "name", "email", "phone", "birthdate", "cpf", "cnpj"
 FROM "specialists"
-WHERE "email" = $1
+WHERE "email" = sqlc.arg('specialistEmail')
 LIMIT 1;
 
 -- name: ListSpecialists :many
 SELECT "id", "name", "email", "phone", "birthdate", "cpf", "cnpj"
 FROM "specialists"
-LIMIT $1
-OFFSET $2;
+LIMIT sqlc.arg('limit')::integer
+OFFSET sqlc.arg('offset')::integer;
 
 -- name: DeleteSpecialistByID :execrows
 DELETE FROM "specialists"
-WHERE "id" = $1;
+WHERE "id" = sqlc.arg('specialistId');
 
 -- name: ListServicesBySpecialistID :many
 SELECT "s"."id",
@@ -49,4 +55,4 @@ SELECT "s"."id",
     "s"."price", "s"."duration"
 FROM "services" "s"
 JOIN "service_names" "sn" ON "sn"."id" = "s"."service_name_id"
-WHERE "s"."specialist_id" = $1;
+WHERE "s"."specialist_id" = sqlc.arg('specialistId');

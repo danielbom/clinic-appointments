@@ -1,6 +1,8 @@
 -- name: CreateServiceName :one
 INSERT INTO "service_names" ("name", "specialization_id")
-VALUES ($1, $2)
+VALUES ( sqlc.arg('name')
+       , sqlc.arg('specializationId')
+       )
 RETURNING "id";
 
 -- name: UpdateServiceName :one
@@ -13,12 +15,12 @@ RETURNING "id";
 -- name: GetServiceNameByName :one
 SELECT "id", "name", "specialization_id"
 FROM "service_names" 
-WHERE "name" = $1;
+WHERE "name" = sqlc.arg('serviceName');
 
 -- name: GetServiceNameByID :one
 SELECT "id", "name", "specialization_id"
 FROM "service_names" 
-WHERE "id" = $1;
+WHERE "id" = sqlc.arg('serviceNameId');
 
 -- name: ListServiceNames :many
 SELECT "id", "name", "specialization_id"
@@ -27,4 +29,4 @@ ORDER BY "name";
 
 -- name: DeleteServiceNameByID :execrows
 DELETE FROM "service_names"
-WHERE "id" = $1;
+WHERE "id" = sqlc.arg('serviceNameId');

@@ -33,12 +33,12 @@ func (args *CountAppointmentsArgs) Validate() *UsecaseError {
 
 func CountAppointments(state State, args CountAppointmentsArgs) (int64, *UsecaseError) {
 	count, err := state.Queries().CountAppointments(state.Context(), infra.CountAppointmentsParams{
-		Column1: args.StartDate,
-		Column2: args.EndDate,
-		Column3: args.CustomerName,
-		Column4: args.SpecialistName,
-		Column5: args.ServiceName,
-		Column6: args.Status,
+		StartDate:      args.StartDate,
+		EndDate:        args.EndDate,
+		CustomerName:   args.CustomerName,
+		SpecialistName: args.SpecialistName,
+		ServiceName:    args.ServiceName,
+		Status:         args.Status,
 	})
 	if err == nil {
 		return count, nil

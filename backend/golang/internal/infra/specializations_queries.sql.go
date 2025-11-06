@@ -29,8 +29,8 @@ DELETE FROM "specializations"
 WHERE "id" = $1
 `
 
-func (q *Queries) DeleteSpecializationByID(ctx context.Context, id uuid.UUID) (int64, error) {
-	result, err := q.db.Exec(ctx, deleteSpecializationByID, id)
+func (q *Queries) DeleteSpecializationByID(ctx context.Context, specializationid uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteSpecializationByID, specializationid)
 	if err != nil {
 		return 0, err
 	}
@@ -43,8 +43,8 @@ FROM "specializations"
 WHERE "id" = $1
 `
 
-func (q *Queries) GetSpecializationByID(ctx context.Context, id uuid.UUID) (Specialization, error) {
-	row := q.db.QueryRow(ctx, getSpecializationByID, id)
+func (q *Queries) GetSpecializationByID(ctx context.Context, specializationid uuid.UUID) (Specialization, error) {
+	row := q.db.QueryRow(ctx, getSpecializationByID, specializationid)
 	var i Specialization
 	err := row.Scan(&i.ID, &i.Name)
 	return i, err
@@ -56,8 +56,8 @@ FROM "specializations"
 WHERE "name" = $1
 `
 
-func (q *Queries) GetSpecializationByName(ctx context.Context, name string) (Specialization, error) {
-	row := q.db.QueryRow(ctx, getSpecializationByName, name)
+func (q *Queries) GetSpecializationByName(ctx context.Context, specializationname string) (Specialization, error) {
+	row := q.db.QueryRow(ctx, getSpecializationByName, specializationname)
 	var i Specialization
 	err := row.Scan(&i.ID, &i.Name)
 	return i, err
@@ -100,8 +100,8 @@ WHERE "sp"."id" IN (
 )
 `
 
-func (q *Queries) ListSpecializationsBySpecialistID(ctx context.Context, specialistID uuid.UUID) ([]Specialization, error) {
-	rows, err := q.db.Query(ctx, listSpecializationsBySpecialistID, specialistID)
+func (q *Queries) ListSpecializationsBySpecialistID(ctx context.Context, specializationid uuid.UUID) ([]Specialization, error) {
+	rows, err := q.db.Query(ctx, listSpecializationsBySpecialistID, specializationid)
 	if err != nil {
 		return nil, err
 	}

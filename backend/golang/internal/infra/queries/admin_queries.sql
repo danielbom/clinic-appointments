@@ -1,5 +1,7 @@
 -- name: CreateAdmin :one
 INSERT INTO "admins" ("name", "email", "password")
-VALUES ($1, $2, $3)
+VALUES ( sqlc.arg('name')
+       , sqlc.arg('email')
+       , sqlc.arg('password')
+       )
 RETURNING "id";
-

@@ -14,6 +14,7 @@ Up the database using docker:
 # Up and migrate the Database
 docker-compose --project-name appointments up db --detach
 go generate
+psql -Upostgres -c "CREATE DATABASE \"appointments-test\";"
 ```
 
 Up the API using docker:

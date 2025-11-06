@@ -8,9 +8,9 @@ import (
 
 type ListAppointmentsCalendarArgs struct {
 	Year          int
-	StartDate     string
+	StartDate     string // TODO: Raw
 	StartDateDate pgtype.Date
-	EndDate       string
+	EndDate       string // TODO: Raw
 	EndDateDate   pgtype.Date
 }
 
@@ -39,8 +39,8 @@ func (args *ListAppointmentsCalendarArgs) Validate() *UsecaseError {
 
 func ListAppointmentsCalendar(state State, args ListAppointmentsCalendarArgs) ([]infra.ListAppointmentsCalendarRow, *UsecaseError) {
 	appointments, err := state.Queries().ListAppointmentsCalendar(state.Context(), infra.ListAppointmentsCalendarParams{
-		Date:   args.StartDateDate,
-		Date_2: args.EndDateDate,
+		StartDate: args.StartDateDate,
+		EndDate:   args.EndDateDate,
 	})
 	if err == nil {
 		return appointments, nil

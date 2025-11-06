@@ -12,7 +12,7 @@ export interface IListServicesEnrichedParams {
 
 /** 'ListServicesEnriched' return type */
 export interface IListServicesEnrichedResult {
-  duration: string;
+  duration: number;
   id: string;
   price: number;
   service_name: string;
