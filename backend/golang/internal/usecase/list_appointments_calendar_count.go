@@ -7,29 +7,29 @@ import (
 )
 
 type ListAppointmentsCalendarCountArgs struct {
-	Year          int
-	StartDate     string // TODO: Raw
-	StartDateDate pgtype.Date
-	EndDate       string // TODO: Raw
-	EndDateDate   pgtype.Date
+	Year         int
+	StartDateRaw string
+	StartDate    pgtype.Date
+	EndDateRaw   string
+	EndDate      pgtype.Date
 }
 
 func (args *ListAppointmentsCalendarCountArgs) Validate() *UsecaseError {
 	if args.Year > 0 {
-		if err := DateFromYear(&args.StartDateDate, args.Year); err != nil {
+		if err := DateFromYear(&args.StartDate, args.Year); err != nil {
 			return NewInvalidArgumentError(ErrInvalidDate).InField("startDate")
 		}
-		if err := args.EndDateDate.Scan(args.StartDateDate.Time.AddDate(1, 0, -1)); err != nil {
+		if err := args.EndDate.Scan(args.StartDate.Time.AddDate(1, 0, -1)); err != nil {
 			return NewInvalidArgumentError(ErrInvalidDate).InField("endDate")
 		}
 	} else {
-		if args.StartDate != "" {
-			if err := args.StartDateDate.Scan(args.StartDate); err != nil {
+		if args.StartDateRaw != "" {
+			if err := args.StartDate.Scan(args.StartDateRaw); err != nil {
 				return NewInvalidArgumentError(ErrInvalidDate).InField("startDate")
 			}
 		}
-		if args.EndDate != "" {
-			if err := args.EndDateDate.Scan(args.EndDate); err != nil {
+		if args.EndDateRaw != "" {
+			if err := args.EndDate.Scan(args.EndDateRaw); err != nil {
 				return NewInvalidArgumentError(ErrInvalidDate).InField("endDate")
 			}
 		}
@@ -39,8 +39,8 @@ func (args *ListAppointmentsCalendarCountArgs) Validate() *UsecaseError {
 
 func ListAppointmentsCalendarCount(state State, args ListAppointmentsCalendarCountArgs) ([]infra.ListAppointmentsCalendarCountRow, *UsecaseError) {
 	appointments, err := state.Queries().ListAppointmentsCalendarCount(state.Context(), infra.ListAppointmentsCalendarCountParams{
-		StartDate: args.StartDateDate,
-		EndDate:   args.EndDateDate,
+		StartDate: args.StartDate,
+		EndDate:   args.EndDate,
 	})
 	if err == nil {
 		return appointments, nil

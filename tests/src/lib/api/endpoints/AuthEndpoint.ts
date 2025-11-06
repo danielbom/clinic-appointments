@@ -5,15 +5,15 @@ export class AuthEndpoint {
   constructor(public _config: Config) {}
 
   login(data: AuthLoginBody): Promise<AxiosResponse<AuthLoginResponse>> {
-    return this._config.instance.post(`/auth/login`, data)
+    return this._config.instance.post(`/api/auth/login`, data)
   }
 
   refresh(config: AxiosRequestConfig): Promise<AxiosResponse<AuthLoginResponse>> {
-    return this._config.instance.post(`/auth/refresh`, null, config)
+    return this._config.instance.post(`/api/auth/refresh`, null, config)
   }
 
   me(): Promise<AxiosResponse<Identity>> {
-    return this._config.instance.get(`/auth/me`)
+    return this._config.instance.get(`/api/auth/me`)
   }
 }
 

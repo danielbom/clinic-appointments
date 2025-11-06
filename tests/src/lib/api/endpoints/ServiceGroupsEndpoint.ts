@@ -5,7 +5,7 @@ export class ServiceGroupsEndpoint {
   constructor(public _config: Config) {}
 
   getAll(): Promise<AxiosResponse<ServiceGroup[]>> {
-    return this._config.instance.get(`/service-groups`)
+    return this._config.instance.get(`/api/service-groups`)
   }
 }
 

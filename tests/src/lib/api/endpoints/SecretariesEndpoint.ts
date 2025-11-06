@@ -5,27 +5,27 @@ export class SecretariesEndpoint {
   constructor(public _config: Config) {}
 
   getAll(query: SecretariesGetAllQuery = {}): Promise<AxiosResponse<Secretary[]>> {
-    return this._config.instance.get(`/secretaries`, { params: query })
+    return this._config.instance.get(`/api/secretaries`, { params: query })
   }
 
   count(query: SecretariesCountAllQuery = {}): Promise<AxiosResponse<number>> {
-    return this._config.instance.get(`/secretaries/count`, { params: query })
+    return this._config.instance.get(`/api/secretaries/count`, { params: query })
   }
 
   getById(id: string): Promise<AxiosResponse<Secretary>> {
-    return this._config.instance.get(`/secretaries/${id}`)
+    return this._config.instance.get(`/api/secretaries/${id}`)
   }
 
   create(data: SecretariesCreateBody): Promise<AxiosResponse<Secretary>> {
-    return this._config.instance.post(`/secretaries`, data)
+    return this._config.instance.post(`/api/secretaries`, data)
   }
 
   update(id: string, data: SecretariesUpdateBody): Promise<AxiosResponse<any>> {
-    return this._config.instance.put(`/secretaries/${id}`, data)
+    return this._config.instance.put(`/api/secretaries/${id}`, data)
   }
 
   delete(id: string): Promise<AxiosResponse<void>> {
-    return this._config.instance.delete(`/secretaries/${id}`)
+    return this._config.instance.delete(`/api/secretaries/${id}`)
   }
 }
 

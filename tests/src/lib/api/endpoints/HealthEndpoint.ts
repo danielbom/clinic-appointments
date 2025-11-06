@@ -5,6 +5,6 @@ export class HealthEndpoint {
   constructor(public config: Config) {}
 
   healthCheck(): Promise<AxiosResponse<any>> {
-    return this.config.instance.get(`/health`)
+    return this.config.instance.get(`/api/health`)
   }
 }

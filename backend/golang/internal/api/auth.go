@@ -31,6 +31,7 @@ func (h *api) GenerateRefreshJWT(data JwtData) (string, error) {
 }
 
 func (h *api) JWT(next http.Handler) http.Handler {
+	// TODO: Check this call
 	return jwtauth.Verifier(h.auth)(jwtauth.Authenticator(next))
 }
 

@@ -5,35 +5,35 @@ export class AppointmentsEndpoint {
   constructor(public _config: Config) {}
 
   getAll(query: AppointmentsGetAllQuery = {}): Promise<AxiosResponse<Appointment[]>> {
-    return this._config.instance.get(`/appointments`, { params: query })
+    return this._config.instance.get(`/api/appointments`, { params: query })
   }
 
   count(query: AppointmentsCountAllQuery = {}): Promise<AxiosResponse<number>> {
-    return this._config.instance.get(`/appointments/count`, { params: query })
+    return this._config.instance.get(`/api/appointments/count`, { params: query })
   }
 
   getCalendar(query: AppointmentsGetCalendarQuery): Promise<AxiosResponse<AppointmentCalendar[]>> {
-    return this._config.instance.get(`/appointments/calendar`, { params: query })
+    return this._config.instance.get(`/api/appointments/calendar`, { params: query })
   }
 
   getCalendarCount(query: AppointmentsGetCalendarQuery): Promise<AxiosResponse<AppointmentCalendarCount[]>> {
-    return this._config.instance.get(`/appointments/calendar/count`, { params: query })
+    return this._config.instance.get(`/api/appointments/calendar/count`, { params: query })
   }
 
   getById(id: string): Promise<AxiosResponse<Appointment>> {
-    return this._config.instance.get(`/appointments/${id}`)
+    return this._config.instance.get(`/api/appointments/${id}`)
   }
 
   create(data: AppointmentsCreateBody): Promise<AxiosResponse<string>> {
-    return this._config.instance.post(`/appointments`, data)
+    return this._config.instance.post(`/api/appointments`, data)
   }
 
   update(id: string, data: AppointmentsUpdateBody): Promise<AxiosResponse<any>> {
-    return this._config.instance.put(`/appointments/${id}`, data)
+    return this._config.instance.put(`/api/appointments/${id}`, data)
   }
 
   delete(id: string): Promise<AxiosResponse<void>> {
-    return this._config.instance.delete(`/appointments/${id}`)
+    return this._config.instance.delete(`/api/appointments/${id}`)
   }
 }
 
