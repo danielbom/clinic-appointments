@@ -114,7 +114,7 @@ func NewApi(pool *pgxpool.Pool, auth *jwtauth.JWTAuth) http.Handler {
 	r.With(h.JWT).Put("/api/services-available/{service_id}", h.updateServiceAvailable)
 	r.With(h.JWT).Delete("/api/services-available/{service_id}", h.deleteServiceAvailable)
 
-	if env.Get(env.APP_ENVIRONMENT) == "TEST" {
+	if env.Get(env.APP_ENVIRONMENT) == "test" {
 		r.Get("/api/test/stats", h.getTestStats)
 		r.Get("/api/test/init", h.testInit)
 	}

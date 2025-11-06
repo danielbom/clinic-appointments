@@ -1,0 +1,3 @@
+# @name GetHealth
+
+GET {{$dotenv BASE_URL}}/api/health

@@ -102,7 +102,7 @@ expect.extend({
   toLossyBe(received, expected, fields: string[]) {
     const a = _.entries(_.pick(received, fields))
     const b = _.entries(_.pick(expected, fields))
-    const pass = _.some(fields, key => this.equals(expected[key], received[key]))
+    const pass = _.some(fields, (key) => this.equals(expected[key], received[key]))
     return {
       pass,
       message: () =>
@@ -119,7 +119,15 @@ function apiLogin(accessToken: string) {
 
 describe('clinic-appointments', () => {
   beforeAll(async () => {
-    await api.health.healthCheck()
+    await api.health.healthCheck().then((res) => {
+      const status = `(Status=${res.data.status}, Env=${res.data.environment}, Database=${res.data.database})`
+      if (!res.data.status) {
+        throw new Error('API is not up: ' + status)
+      }
+      if (res.data.environment !== 'test') {
+        throw new Error('API is not in test environment: ' + status)
+      }
+    })
     await api.test.stats()
     await api.test.init()
   })
