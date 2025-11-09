@@ -5,27 +5,27 @@ export class ServicesEndpoint {
   constructor(public _config: Config) {}
 
   getAll(query: ServicesGetAllQuery = {}): Promise<AxiosResponse<Service[]>> {
-    return this._config.instance.get('/services', { params: query })
+    return this._config.instance.get('/api/services', { params: query })
   }
 
   count(query: ServicesCountQuery = {}): Promise<AxiosResponse<number>> {
-    return this._config.instance.get('/services/count', { params: query })
+    return this._config.instance.get('/api/services/count', { params: query })
   }
 
   getById(id: string): Promise<AxiosResponse<Service>> {
-    return this._config.instance.get(`/services/${id}`)
+    return this._config.instance.get(`/api/services/${id}`)
   }
 
   create(data: ServicesCreateBody): Promise<AxiosResponse<string>> {
-    return this._config.instance.post('/services', data)
+    return this._config.instance.post('/api/services', data)
   }
 
   update(id: string, data: ServicesUpdateBody): Promise<AxiosResponse<any>> {
-    return this._config.instance.put(`/services/${id}`, data)
+    return this._config.instance.put(`/api/services/${id}`, data)
   }
 
   delete(id: string): Promise<AxiosResponse<void>> {
-    return this._config.instance.delete(`/services/${id}`)
+    return this._config.instance.delete(`/api/services/${id}`)
   }
 }
 
@@ -63,7 +63,6 @@ export type ServicesCreateBody = {
 }
 
 export type ServicesUpdateBody = {
-  specialistId: string
   serviceNameId: string
   price: number
   duration: number

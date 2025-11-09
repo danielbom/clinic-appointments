@@ -211,7 +211,7 @@ export interface ICountCustomersParams {
 
 /** 'CountCustomers' return type */
 export interface ICountCustomersResult {
-  count: string | null;
+  count: number | null;
 }
 
 /** 'CountCustomers' query type */
@@ -220,12 +220,12 @@ export interface ICountCustomersQuery {
   result: ICountCustomersResult;
 }
 
-const countCustomersIR: any = {"usedParamSet":{"name":true,"cpf":true,"phone":true},"params":[{"name":"name","required":false,"transform":{"type":"scalar"},"locs":[{"a":52,"b":56},{"a":93,"b":97}]},{"name":"cpf","required":false,"transform":{"type":"scalar"},"locs":[{"a":114,"b":117},{"a":143,"b":146}]},{"name":"phone","required":false,"transform":{"type":"scalar"},"locs":[{"a":156,"b":161},{"a":187,"b":192}]}],"statement":"SELECT COUNT(id)\nFROM \"customers\"\nWHERE true\n  AND (:name::text = ''  OR \"name\" ILIKE '%' || :name || '%')\n  AND (:cpf::text = ''   OR \"cpf\" = :cpf)\n  AND (:phone::text = '' OR \"phone\" = :phone)"};
+const countCustomersIR: any = {"usedParamSet":{"name":true,"cpf":true,"phone":true},"params":[{"name":"name","required":false,"transform":{"type":"scalar"},"locs":[{"a":66,"b":70},{"a":107,"b":111}]},{"name":"cpf","required":false,"transform":{"type":"scalar"},"locs":[{"a":128,"b":131},{"a":157,"b":160}]},{"name":"phone","required":false,"transform":{"type":"scalar"},"locs":[{"a":170,"b":175},{"a":201,"b":206}]}],"statement":"SELECT COUNT(id)::int as count\nFROM \"customers\"\nWHERE true\n  AND (:name::text = ''  OR \"name\" ILIKE '%' || :name || '%')\n  AND (:cpf::text = ''   OR \"cpf\" = :cpf)\n  AND (:phone::text = '' OR \"phone\" = :phone)"};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT COUNT(id)
+ * SELECT COUNT(id)::int as count
  * FROM "customers"
  * WHERE true
  *   AND (:name::text = ''  OR "name" ILIKE '%' || :name || '%')

@@ -18,6 +18,8 @@ import type {
 } from '../api'
 import { AppointmentStatus } from '../api'
 import { ServicesAvailableEndpoint } from '../api/endpoints/ServicesAvailableEndpoint'
+import { HealthEndpoint } from '../api/endpoints/HealthEndpoint';
+import { TestEndpoint } from '../api/endpoints/TestEndpoint';
 
 function _paginate<T>(items: T[], options: { page?: number; pageSize?: number } = {}): T[] {
   const start = (options.page ?? 1) * (options.pageSize ?? 10)
@@ -231,7 +233,7 @@ export class ApiFake implements Api {
   public secretaries: SecretariesEndpoint = {
     _config: this._config,
     count: async () => _get(0),
-    create: async (_data) => _post('id'),
+    create: async (_data) => _post({} as any),
     update: async (_id, _data) => _put({ id: 'id' }),
     delete: async (_id) => _delete(),
     getAll: async (_data) => _get([]),
@@ -287,4 +289,7 @@ export class ApiFake implements Api {
     delete: async (_id) => _delete(),
     update: async (_id, _data) => _put({ id: 'id' }),
   }
+
+  public health: HealthEndpoint = {} as any;
+  public test: TestEndpoint = {} as any;
 }

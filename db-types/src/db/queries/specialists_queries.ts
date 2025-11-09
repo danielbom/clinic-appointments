@@ -46,7 +46,7 @@ export type ICountSpecialistsParams = void;
 
 /** 'CountSpecialists' return type */
 export interface ICountSpecialistsResult {
-  count: string | null;
+  count: number | null;
 }
 
 /** 'CountSpecialists' query type */
@@ -55,12 +55,12 @@ export interface ICountSpecialistsQuery {
   result: ICountSpecialistsResult;
 }
 
-const countSpecialistsIR: any = {"usedParamSet":{},"params":[],"statement":"SELECT COUNT(\"s\".\"id\")\nFROM \"specialists\" \"s\""};
+const countSpecialistsIR: any = {"usedParamSet":{},"params":[],"statement":"SELECT COUNT(\"s\".\"id\")::int as count\nFROM \"specialists\" \"s\""};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT COUNT("s"."id")
+ * SELECT COUNT("s"."id")::int as count
  * FROM "specialists" "s"
  * ```
  */
@@ -189,8 +189,12 @@ export const getSpecialistByEmail = new PreparedQuery<IGetSpecialistByEmailParam
 
 /** 'ListSpecialists' parameters type */
 export interface IListSpecialistsParams {
+  cnpj?: string | null | void;
+  cpf?: string | null | void;
   limit?: number | null | void;
+  name?: string | null | void;
   offset?: number | null | void;
+  phone?: string | null | void;
 }
 
 /** 'ListSpecialists' return type */
@@ -210,13 +214,18 @@ export interface IListSpecialistsQuery {
   result: IListSpecialistsResult;
 }
 
-const listSpecialistsIR: any = {"usedParamSet":{"limit":true,"offset":true},"params":[{"name":"limit","required":false,"transform":{"type":"scalar"},"locs":[{"a":91,"b":96}]},{"name":"offset","required":false,"transform":{"type":"scalar"},"locs":[{"a":114,"b":120}]}],"statement":"SELECT \"id\", \"name\", \"email\", \"phone\", \"birthdate\", \"cpf\", \"cnpj\"\nFROM \"specialists\"\nLIMIT :limit::integer\nOFFSET :offset::integer"};
+const listSpecialistsIR: any = {"usedParamSet":{"name":true,"cpf":true,"cnpj":true,"phone":true,"limit":true,"offset":true},"params":[{"name":"name","required":false,"transform":{"type":"scalar"},"locs":[{"a":103,"b":107},{"a":144,"b":148}]},{"name":"cpf","required":false,"transform":{"type":"scalar"},"locs":[{"a":165,"b":168},{"a":194,"b":197}]},{"name":"cnpj","required":false,"transform":{"type":"scalar"},"locs":[{"a":207,"b":211},{"a":237,"b":241}]},{"name":"phone","required":false,"transform":{"type":"scalar"},"locs":[{"a":251,"b":256},{"a":282,"b":287}]},{"name":"limit","required":false,"transform":{"type":"scalar"},"locs":[{"a":296,"b":301}]},{"name":"offset","required":false,"transform":{"type":"scalar"},"locs":[{"a":319,"b":325}]}],"statement":"SELECT \"id\", \"name\", \"email\", \"phone\", \"birthdate\", \"cpf\", \"cnpj\"\nFROM \"specialists\"\nWHERE true\n  AND (:name::text = ''  OR \"name\" ILIKE '%' || :name || '%')\n  AND (:cpf::text = ''   OR \"cpf\" = :cpf)\n  AND (:cnpj::text = ''  OR \"cnpj\" = :cnpj)\n  AND (:phone::text = '' OR \"phone\" = :phone)\nLIMIT :limit::integer\nOFFSET :offset::integer"};
 
 /**
  * Query generated from SQL:
  * ```
  * SELECT "id", "name", "email", "phone", "birthdate", "cpf", "cnpj"
  * FROM "specialists"
+ * WHERE true
+ *   AND (:name::text = ''  OR "name" ILIKE '%' || :name || '%')
+ *   AND (:cpf::text = ''   OR "cpf" = :cpf)
+ *   AND (:cnpj::text = ''  OR "cnpj" = :cnpj)
+ *   AND (:phone::text = '' OR "phone" = :phone)
  * LIMIT :limit::integer
  * OFFSET :offset::integer
  * ```

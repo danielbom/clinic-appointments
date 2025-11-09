@@ -44,7 +44,7 @@ func (q *Queries) AppointmentsIntersects(ctx context.Context, arg AppointmentsIn
 }
 
 const countAppointments = `-- name: CountAppointments :one
-SELECT COUNT("a"."id")
+SELECT COUNT("a"."id")::int as count
 FROM "appointments" "a"
 JOIN "customers" "c" ON "a"."customer_id" = "c"."id"
 JOIN "specialists" "s" ON "a"."specialist_id" = "s"."id"
@@ -67,7 +67,7 @@ type CountAppointmentsParams struct {
 	Status         int32
 }
 
-func (q *Queries) CountAppointments(ctx context.Context, arg CountAppointmentsParams) (int64, error) {
+func (q *Queries) CountAppointments(ctx context.Context, arg CountAppointmentsParams) (int32, error) {
 	row := q.db.QueryRow(ctx, countAppointments,
 		arg.StartDate,
 		arg.EndDate,
@@ -76,7 +76,7 @@ func (q *Queries) CountAppointments(ctx context.Context, arg CountAppointmentsPa
 		arg.ServiceName,
 		arg.Status,
 	)
-	var count int64
+	var count int32
 	err := row.Scan(&count)
 	return count, err
 }
@@ -221,12 +221,12 @@ JOIN "customers" "c" ON "a"."customer_id" = "c"."id"
 JOIN "specialists" "s" ON "a"."specialist_id" = "s"."id"
 JOIN "service_names" "sn" ON "a"."service_name_id" = "sn"."id"
 WHERE true
-  AND ($1::date IS NULL   OR "a"."date" >= $1) 
-  AND ($2::date IS NULL     OR "a"."date" <= $2)
-  AND ($3::text = ''   OR "c"."name" ILIKE '%' || $3 || '%')
-  AND ($4::text = '' OR "s"."name" ILIKE '%' || $4 || '%')
-  AND ($5::text = ''    OR "sn"."name" ILIKE '%' || $5 || '%')
-  AND ($6::integer = 0       OR "a"."status" = $6)
+  AND ($1::date IS NULL OR "a"."date" >= $1) 
+  AND ($2::date IS NULL   OR "a"."date" <= $2)
+  AND ($3 = ''       OR "c"."name" ILIKE '%' || $3 || '%')
+  AND ($4 = ''     OR "s"."name" ILIKE '%' || $4 || '%')
+  AND ($5 = ''        OR "sn"."name" ILIKE '%' || $5 || '%')
+  AND ($6 = 0              OR "a"."status" = $6)
 ORDER BY "a"."date" DESC, "a"."time" DESC
 LIMIT $8::integer
 OFFSET $7::integer
@@ -235,10 +235,10 @@ OFFSET $7::integer
 type ListAppointmentsParams struct {
 	StartDate      pgtype.Date
 	EndDate        pgtype.Date
-	CustomerName   string
-	SpecialistName string
-	ServiceName    string
-	Status         int32
+	CustomerName   interface{}
+	SpecialistName interface{}
+	ServiceName    interface{}
+	Status         interface{}
 	Offset         int32
 	Limit          int32
 }

@@ -15,10 +15,10 @@
   "failOnError": true,
   "camelCaseColumnNames": false,
   "db": {
+    "dbName": "dev_db",
+    "user": "dev_user",
+    "password": "dev_password",
     "host": "localhost",
-    "user": "postgres",
-    "password": "123456789",
-    "port": 5432,
-    "dbName": "appointments"
+    "port": 5432
   }
 }

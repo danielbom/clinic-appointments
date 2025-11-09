@@ -62,7 +62,7 @@ export interface ICountServicesEnrichedParams {
 
 /** 'CountServicesEnriched' return type */
 export interface ICountServicesEnrichedResult {
-  count: string | null;
+  count: number | null;
 }
 
 /** 'CountServicesEnriched' query type */
@@ -71,12 +71,12 @@ export interface ICountServicesEnrichedQuery {
   result: ICountServicesEnrichedResult;
 }
 
-const countServicesEnrichedIR: any = {"usedParamSet":{"specialist":true,"specialization":true,"serviceName":true},"params":[{"name":"specialist","required":false,"transform":{"type":"scalar"},"locs":[{"a":252,"b":262},{"a":338,"b":348}]},{"name":"specialization","required":false,"transform":{"type":"scalar"},"locs":[{"a":368,"b":382},{"a":454,"b":468}]},{"name":"serviceName","required":false,"transform":{"type":"scalar"},"locs":[{"a":488,"b":499},{"a":574,"b":585}]}],"statement":"SELECT COUNT(\"s\".\"id\")\nFROM \"services\" \"s\"\nJOIN \"specialists\" \"sp\" ON \"s\".\"specialist_id\" = \"sp\".\"id\"\nJOIN \"service_names\" \"sn\" ON \"s\".\"service_name_id\" = \"sn\".\"id\"\nJOIN \"specializations\" \"sz\" ON \"sn\".\"specialization_id\" = \"sz\".\"id\"\nWHERE true\n   AND (:specialist::text = ''     OR LOWER(unaccent(\"sp\".\"name\")) LIKE '%' || LOWER(unaccent(:specialist)) || '%')\n   AND (:specialization::text = '' OR LOWER(unaccent(\"sz\".\"name\")) LIKE '%' || LOWER(unaccent(:specialization)) || '%')\n   AND (:serviceName::text = ''    OR LOWER(unaccent(\"sn\".\"name\")) LIKE '%' || LOWER(unaccent(:serviceName)) || '%')"};
+const countServicesEnrichedIR: any = {"usedParamSet":{"specialist":true,"specialization":true,"serviceName":true},"params":[{"name":"specialist","required":false,"transform":{"type":"scalar"},"locs":[{"a":266,"b":276},{"a":352,"b":362}]},{"name":"specialization","required":false,"transform":{"type":"scalar"},"locs":[{"a":382,"b":396},{"a":468,"b":482}]},{"name":"serviceName","required":false,"transform":{"type":"scalar"},"locs":[{"a":502,"b":513},{"a":588,"b":599}]}],"statement":"SELECT COUNT(\"s\".\"id\")::int as count\nFROM \"services\" \"s\"\nJOIN \"specialists\" \"sp\" ON \"s\".\"specialist_id\" = \"sp\".\"id\"\nJOIN \"service_names\" \"sn\" ON \"s\".\"service_name_id\" = \"sn\".\"id\"\nJOIN \"specializations\" \"sz\" ON \"sn\".\"specialization_id\" = \"sz\".\"id\"\nWHERE true\n   AND (:specialist::text = ''     OR LOWER(unaccent(\"sp\".\"name\")) LIKE '%' || LOWER(unaccent(:specialist)) || '%')\n   AND (:specialization::text = '' OR LOWER(unaccent(\"sz\".\"name\")) LIKE '%' || LOWER(unaccent(:specialization)) || '%')\n   AND (:serviceName::text = ''    OR LOWER(unaccent(\"sn\".\"name\")) LIKE '%' || LOWER(unaccent(:serviceName)) || '%')"};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT COUNT("s"."id")
+ * SELECT COUNT("s"."id")::int as count
  * FROM "services" "s"
  * JOIN "specialists" "sp" ON "s"."specialist_id" = "sp"."id"
  * JOIN "service_names" "sn" ON "s"."service_name_id" = "sn"."id"

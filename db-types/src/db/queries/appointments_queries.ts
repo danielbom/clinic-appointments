@@ -343,7 +343,7 @@ export interface ICountAppointmentsParams {
 
 /** 'CountAppointments' return type */
 export interface ICountAppointmentsResult {
-  count: string | null;
+  count: number | null;
 }
 
 /** 'CountAppointments' query type */
@@ -352,12 +352,12 @@ export interface ICountAppointmentsQuery {
   result: ICountAppointmentsResult;
 }
 
-const countAppointmentsIR: any = {"usedParamSet":{"startDate":true,"endDate":true,"customerName":true,"specialistName":true,"serviceName":true,"status":true},"params":[{"name":"startDate","required":false,"transform":{"type":"scalar"},"locs":[{"a":238,"b":247},{"a":282,"b":291}]},{"name":"endDate","required":false,"transform":{"type":"scalar"},"locs":[{"a":302,"b":309},{"a":346,"b":353}]},{"name":"customerName","required":false,"transform":{"type":"scalar"},"locs":[{"a":363,"b":375},{"a":417,"b":429}]},{"name":"specialistName","required":false,"transform":{"type":"scalar"},"locs":[{"a":446,"b":460},{"a":500,"b":514}]},{"name":"serviceName","required":false,"transform":{"type":"scalar"},"locs":[{"a":531,"b":542},{"a":586,"b":597}]},{"name":"status","required":false,"transform":{"type":"scalar"},"locs":[{"a":614,"b":620},{"a":659,"b":665}]}],"statement":"SELECT COUNT(\"a\".\"id\")\nFROM \"appointments\" \"a\"\nJOIN \"customers\" \"c\" ON \"a\".\"customer_id\" = \"c\".\"id\"\nJOIN \"specialists\" \"s\" ON \"a\".\"specialist_id\" = \"s\".\"id\"\nJOIN \"service_names\" \"sn\" ON \"a\".\"service_name_id\" = \"sn\".\"id\"\nWHERE true\n  AND (:startDate::date IS NULL   OR \"a\".\"date\" >= :startDate) \n  AND (:endDate::date IS NULL     OR \"a\".\"date\" <= :endDate)\n  AND (:customerName::text = ''   OR \"c\".\"name\" ILIKE '%' || :customerName || '%')\n  AND (:specialistName::text = '' OR \"s\".\"name\" ILIKE '%' || :specialistName || '%')\n  AND (:serviceName::text = ''    OR \"sn\".\"name\" ILIKE '%' || :serviceName || '%')\n  AND (:status::integer = 0       OR \"a\".\"status\" = :status)"};
+const countAppointmentsIR: any = {"usedParamSet":{"startDate":true,"endDate":true,"customerName":true,"specialistName":true,"serviceName":true,"status":true},"params":[{"name":"startDate","required":false,"transform":{"type":"scalar"},"locs":[{"a":252,"b":261},{"a":296,"b":305}]},{"name":"endDate","required":false,"transform":{"type":"scalar"},"locs":[{"a":316,"b":323},{"a":360,"b":367}]},{"name":"customerName","required":false,"transform":{"type":"scalar"},"locs":[{"a":377,"b":389},{"a":431,"b":443}]},{"name":"specialistName","required":false,"transform":{"type":"scalar"},"locs":[{"a":460,"b":474},{"a":514,"b":528}]},{"name":"serviceName","required":false,"transform":{"type":"scalar"},"locs":[{"a":545,"b":556},{"a":600,"b":611}]},{"name":"status","required":false,"transform":{"type":"scalar"},"locs":[{"a":628,"b":634},{"a":673,"b":679}]}],"statement":"SELECT COUNT(\"a\".\"id\")::int as count\nFROM \"appointments\" \"a\"\nJOIN \"customers\" \"c\" ON \"a\".\"customer_id\" = \"c\".\"id\"\nJOIN \"specialists\" \"s\" ON \"a\".\"specialist_id\" = \"s\".\"id\"\nJOIN \"service_names\" \"sn\" ON \"a\".\"service_name_id\" = \"sn\".\"id\"\nWHERE true\n  AND (:startDate::date IS NULL   OR \"a\".\"date\" >= :startDate) \n  AND (:endDate::date IS NULL     OR \"a\".\"date\" <= :endDate)\n  AND (:customerName::text = ''   OR \"c\".\"name\" ILIKE '%' || :customerName || '%')\n  AND (:specialistName::text = '' OR \"s\".\"name\" ILIKE '%' || :specialistName || '%')\n  AND (:serviceName::text = ''    OR \"sn\".\"name\" ILIKE '%' || :serviceName || '%')\n  AND (:status::integer = 0       OR \"a\".\"status\" = :status)"};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT COUNT("a"."id")
+ * SELECT COUNT("a"."id")::int as count
  * FROM "appointments" "a"
  * JOIN "customers" "c" ON "a"."customer_id" = "c"."id"
  * JOIN "specialists" "s" ON "a"."specialist_id" = "s"."id"

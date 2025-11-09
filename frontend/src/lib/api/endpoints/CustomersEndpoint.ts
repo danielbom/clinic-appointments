@@ -5,27 +5,27 @@ export class CustomersEndpoint {
   constructor(public _config: Config) {}
 
   getAll(query: CustomersGetAllQuery = {}): Promise<AxiosResponse<Customer[]>> {
-    return this._config.instance.get(`/customers`, { params: query })
+    return this._config.instance.get(`/api/customers`, { params: query })
   }
 
   count(query: CustomersCountAllQuery = {}): Promise<AxiosResponse<number>> {
-    return this._config.instance.get(`/customers/count`, { params: query })
+    return this._config.instance.get(`/api/customers/count`, { params: query })
   }
 
   getById(id: string): Promise<AxiosResponse<Customer>> {
-    return this._config.instance.get(`/customers/${id}`)
+    return this._config.instance.get(`/api/customers/${id}`)
   }
 
   create(data: CustomersCreateBody): Promise<AxiosResponse<string>> {
-    return this._config.instance.post(`/customers`, data)
+    return this._config.instance.post(`/api/customers`, data)
   }
 
   update(id: string, data: CustomersUpdateBody): Promise<AxiosResponse<any>> {
-    return this._config.instance.put(`/customers/${id}`, data)
+    return this._config.instance.put(`/api/customers/${id}`, data)
   }
 
   delete(id: string): Promise<AxiosResponse<void>> {
-    return this._config.instance.delete(`/customers/${id}`)
+    return this._config.instance.delete(`/api/customers/${id}`)
   }
 }
 

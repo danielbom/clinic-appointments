@@ -46,7 +46,7 @@ LIMIT sqlc.arg('limit')::integer
 OFFSET sqlc.arg('offset')::integer;
 
 -- name: CountSecretaries :one
-SELECT COUNT(id)
+SELECT COUNT(id)::int as count
 FROM "secretaries"
 WHERE true
   AND (sqlc.arg('name')::text = ''  OR "name" ILIKE '%' || sqlc.arg('name') || '%')

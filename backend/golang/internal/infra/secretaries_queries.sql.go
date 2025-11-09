@@ -13,7 +13,7 @@ import (
 )
 
 const countSecretaries = `-- name: CountSecretaries :one
-SELECT COUNT(id)
+SELECT COUNT(id)::int as count
 FROM "secretaries"
 WHERE true
   AND ($1::text = ''  OR "name" ILIKE '%' || $1 || '%')
@@ -27,9 +27,9 @@ type CountSecretariesParams struct {
 	Phone string
 }
 
-func (q *Queries) CountSecretaries(ctx context.Context, arg CountSecretariesParams) (int64, error) {
+func (q *Queries) CountSecretaries(ctx context.Context, arg CountSecretariesParams) (int32, error) {
 	row := q.db.QueryRow(ctx, countSecretaries, arg.Name, arg.Cpf, arg.Phone)
-	var count int64
+	var count int32
 	err := row.Scan(&count)
 	return count, err
 }

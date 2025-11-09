@@ -15,7 +15,7 @@ LIMIT sqlc.arg('limit')::integer
 OFFSET sqlc.arg('offset')::integer;
 
 -- name: CountServicesEnriched :one
-SELECT COUNT("s"."id")
+SELECT COUNT("s"."id")::int as count
 FROM "services" "s"
 JOIN "specialists" "sp" ON "s"."specialist_id" = "sp"."id"
 JOIN "service_names" "sn" ON "s"."service_name_id" = "sn"."id"

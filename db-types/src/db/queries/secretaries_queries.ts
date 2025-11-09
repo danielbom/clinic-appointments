@@ -229,7 +229,7 @@ export interface ICountSecretariesParams {
 
 /** 'CountSecretaries' return type */
 export interface ICountSecretariesResult {
-  count: string | null;
+  count: number | null;
 }
 
 /** 'CountSecretaries' query type */
@@ -238,12 +238,12 @@ export interface ICountSecretariesQuery {
   result: ICountSecretariesResult;
 }
 
-const countSecretariesIR: any = {"usedParamSet":{"name":true,"cpf":true,"phone":true},"params":[{"name":"name","required":false,"transform":{"type":"scalar"},"locs":[{"a":54,"b":58},{"a":95,"b":99}]},{"name":"cpf","required":false,"transform":{"type":"scalar"},"locs":[{"a":116,"b":119},{"a":145,"b":148}]},{"name":"phone","required":false,"transform":{"type":"scalar"},"locs":[{"a":158,"b":163},{"a":189,"b":194}]}],"statement":"SELECT COUNT(id)\nFROM \"secretaries\"\nWHERE true\n  AND (:name::text = ''  OR \"name\" ILIKE '%' || :name || '%')\n  AND (:cpf::text = ''   OR \"cpf\" = :cpf)\n  AND (:phone::text = '' OR \"phone\" = :phone)"};
+const countSecretariesIR: any = {"usedParamSet":{"name":true,"cpf":true,"phone":true},"params":[{"name":"name","required":false,"transform":{"type":"scalar"},"locs":[{"a":68,"b":72},{"a":109,"b":113}]},{"name":"cpf","required":false,"transform":{"type":"scalar"},"locs":[{"a":130,"b":133},{"a":159,"b":162}]},{"name":"phone","required":false,"transform":{"type":"scalar"},"locs":[{"a":172,"b":177},{"a":203,"b":208}]}],"statement":"SELECT COUNT(id)::int as count\nFROM \"secretaries\"\nWHERE true\n  AND (:name::text = ''  OR \"name\" ILIKE '%' || :name || '%')\n  AND (:cpf::text = ''   OR \"cpf\" = :cpf)\n  AND (:phone::text = '' OR \"phone\" = :phone)"};
 
 /**
  * Query generated from SQL:
  * ```
- * SELECT COUNT(id)
+ * SELECT COUNT(id)::int as count
  * FROM "secretaries"
  * WHERE true
  *   AND (:name::text = ''  OR "name" ILIKE '%' || :name || '%')

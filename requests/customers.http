@@ -1,11 +1,11 @@
 # @name GetCustomers
 
-GET {{$dotenv BASE_URL}}/customers
+GET {{$dotenv BASE_URL}}/api/customers
     ?page=0
     &pageSize=20
     # &name=Almeida
     # &cpf=56756592505
-    &phone=44786542319
+    # &phone=44786542319
 Authorization: Bearer {{$dotenv TOKEN}}
 Accept: application/json
 
@@ -13,7 +13,7 @@ Accept: application/json
 
 # @name GetCustomersCount
 
-GET {{$dotenv BASE_URL}}/customers/count
+GET {{$dotenv BASE_URL}}/api/customers/count
 Authorization: Bearer {{$dotenv TOKEN}}
 Accept: application/json
 
@@ -21,7 +21,7 @@ Accept: application/json
 
 # @name GetCustomer
 
-GET {{$dotenv BASE_URL}}/customers/116783da-b021-4ce6-a2ac-b9c39ea9b137
+GET {{$dotenv BASE_URL}}/api/customers/116783da-b021-4ce6-a2ac-b9c39ea9b137
 Authorization: Bearer {{$dotenv TOKEN}}
 Accept: application/json
 
@@ -29,7 +29,7 @@ Accept: application/json
 
 # @name CreateCustomer
 
-POST {{$dotenv BASE_URL}}/customers
+POST {{$dotenv BASE_URL}}/api/customers
 Authorization: Bearer {{$dotenv TOKEN}}
 Content-Type: application/json
 {
@@ -44,7 +44,7 @@ Content-Type: application/json
 
 # @name UpdateCustomer
 
-PUT {{$dotenv BASE_URL}}/customers/116783da-b021-4ce6-a2ac-b9c39ea9b137
+PUT {{$dotenv BASE_URL}}/api/customers/116783da-b021-4ce6-a2ac-b9c39ea9b137
 Authorization: Bearer {{$dotenv TOKEN}}
 Content-Type: application/json
 {
@@ -60,5 +60,5 @@ Content-Type: application/json
 
 # @name DeleteCustomer
 
-DELETE {{$dotenv BASE_URL}}/customers/769312bc-2114-47b8-b786-e7f3b28a4f44
+DELETE {{$dotenv BASE_URL}}/api/customers/769312bc-2114-47b8-b786-e7f3b28a4f44
 Authorization: Bearer {{$dotenv TOKEN}}

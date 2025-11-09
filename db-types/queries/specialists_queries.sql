@@ -10,7 +10,7 @@ VALUES ( sqlc.arg('name')
 RETURNING "id";
 
 -- name: CountSpecialists :one
-SELECT COUNT("s"."id")
+SELECT COUNT("s"."id")::int as count
 FROM "specialists" "s";
 
 -- name: UpdateSpecialist :one
@@ -40,6 +40,11 @@ LIMIT 1;
 -- name: ListSpecialists :many
 SELECT "id", "name", "email", "phone", "birthdate", "cpf", "cnpj"
 FROM "specialists"
+WHERE true
+  AND (sqlc.arg('name')::text = ''  OR "name" ILIKE '%' || sqlc.arg('name') || '%')
+  AND (sqlc.arg('cpf')::text = ''   OR "cpf" = sqlc.arg('cpf'))
+  AND (sqlc.arg('cnpj')::text = ''  OR "cnpj" = sqlc.arg('cnpj'))
+  AND (sqlc.arg('phone')::text = '' OR "phone" = sqlc.arg('phone'))
 LIMIT sqlc.arg('limit')::integer
 OFFSET sqlc.arg('offset')::integer;
 

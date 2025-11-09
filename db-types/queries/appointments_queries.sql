@@ -74,7 +74,7 @@ LIMIT sqlc.arg('limit')::integer
 OFFSET sqlc.arg('offset')::integer;
 
 -- name: CountAppointments :one
-SELECT COUNT("a"."id")
+SELECT COUNT("a"."id")::int as count
 FROM "appointments" "a"
 JOIN "customers" "c" ON "a"."customer_id" = "c"."id"
 JOIN "specialists" "s" ON "a"."specialist_id" = "s"."id"

@@ -88,7 +88,7 @@ const TableAppointment = ({
               <FilterOutlined /> Filtrar
             </Button>
             <Button type="primary" onClick={onClickCalendar}>
-              <CalendarOutlined /> Calendario
+              <CalendarOutlined /> Calendário
             </Button>
           </TableX.Header.Buttons>
         </TableX.Header.First>

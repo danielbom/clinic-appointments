@@ -13,7 +13,7 @@ import (
 )
 
 const countServicesEnriched = `-- name: CountServicesEnriched :one
-SELECT COUNT("s"."id")
+SELECT COUNT("s"."id")::int as count
 FROM "services" "s"
 JOIN "specialists" "sp" ON "s"."specialist_id" = "sp"."id"
 JOIN "service_names" "sn" ON "s"."service_name_id" = "sn"."id"
@@ -30,9 +30,9 @@ type CountServicesEnrichedParams struct {
 	ServiceName    string
 }
 
-func (q *Queries) CountServicesEnriched(ctx context.Context, arg CountServicesEnrichedParams) (int64, error) {
+func (q *Queries) CountServicesEnriched(ctx context.Context, arg CountServicesEnrichedParams) (int32, error) {
 	row := q.db.QueryRow(ctx, countServicesEnriched, arg.Specialist, arg.Specialization, arg.ServiceName)
-	var count int64
+	var count int32
 	err := row.Scan(&count)
 	return count, err
 }
