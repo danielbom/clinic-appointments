@@ -9,11 +9,8 @@ import isAxiosError from '../lib/axios/isAxiosError'
 
 export const ApiContext = createContext<Api>(null as unknown as Api)
 
-const instance = axios.create({
-  baseURL: config.api.baseURL,
-})
-
-const api = new Api(new Config(instance))
+const api = new Api(new Config(axios.create({ baseURL: config.api.baseURL })))
+// const api = new ApiFake(new Config(null as any))
 
 export function ApiProvider({ children }: { children: React.ReactNode }) {
   // TODO: Should I handle all errors here or in each api request?

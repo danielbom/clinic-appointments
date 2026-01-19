@@ -17,7 +17,7 @@ func (h *api) GenerateAccessJWT(data JwtData) (string, error) {
 	_, tokenString, err := h.auth.Encode(jwt.MapClaims{
 		"sub":  data.UserID,
 		"role": data.Role,
-		"exp":  time.Now().Add(time.Hour * 1).Unix(),
+		"exp":  time.Now().Add(time.Minute * 10).Unix(),
 	})
 	return tokenString, err
 }
