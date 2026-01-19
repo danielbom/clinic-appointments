@@ -21,17 +21,22 @@ func (h *api) health(w http.ResponseWriter, r *http.Request) {
 
 	// Validate e execute the usecase
 	rs := NewRequestState(h.q, r)
-	dbOk := usecase.GetStatus(rs)
+	dbSettings, err := usecase.GetDbSettings(rs, env.Get(env.DATABASE_NAME))
 	dbStatus := "disconnected"
-	if dbOk {
+	if err == nil {
 		dbStatus = "connected"
 	}
 
 	// Format the response
 	response := dtos.Status{
 		Environment: env.Get(env.APP_ENVIRONMENT),
-		Database:    dbStatus,
-		Status:      dbOk,
+		Status:      err != nil,
+		Database: dtos.DatabaseStatus{
+			Status:            dbStatus,
+			Version:           dbSettings.Version,
+			MaxConnections:    dbSettings.MaxConnections,
+			OpenedConnections: dbSettings.OpenedConnections,
+		},
 	}
 	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
