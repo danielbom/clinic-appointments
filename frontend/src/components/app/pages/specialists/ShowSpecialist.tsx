@@ -1,9 +1,10 @@
 import { Card, Collapse, DatePicker, Descriptions, Flex, List, Tabs, Timeline, Typography } from 'antd'
-import dayjs from 'dayjs'
+import dayjs, { Dayjs } from 'dayjs'
 
 import type {
   Specialist,
   SpecialistAppointment,
+  SpecialistAvailableTime,
   SpecialistSpecialization,
   SpecialistSpecializationService,
 } from './types'
@@ -16,6 +17,7 @@ import renderDate from '../../../../lib/renders/renderDate'
 import renderAge from '../../../../lib/renders/rendertAge'
 import renderDuration from '../../../../lib/renders/renderDuration'
 import renderMoney from '../../../../lib/renders/renderMoney'
+import WeekdayHours from '../../../WeekdayHours'
 
 export interface ShowSpecialistProps {
   showTab?: string
@@ -99,51 +101,29 @@ function ShowSpecialist({
             key: '3',
             label: 'Agenda',
             children: (
-              <Card
-                title={
-                  <Flex gap="2rem" align="center">
-                    Agenda do dia
-                    <DatePicker
-                      format="DD/MM/YYYY"
-                      value={referenceDayjs.isValid() ? referenceDayjs : undefined}
-                      onChange={(date) => {
-                        if (date) onChangeReferenceDay(date.format('YYYY-MM-DD'))
-                        else onChangeReferenceDay('')
-                      }}
-                      allowClear
-                    />
-                    ({referenceDayjs.isValid() ? referenceToCount(referenceDayjs) : 'não selecionado'})
-                  </Flex>
-                }
-              >
-                <Flex align="center" style={{ height: '100%', paddingTop: '2rem' }}>
-                  {appointments.length === 0 && <p>Nenhum agendamento para este dia</p>}
-                  <Timeline
-                    items={appointments.map((it) => {
-                      const start = dayjs(it.date.replace('00:00:00', it.time))
-                      const end = start.add(it.duration, 'seconds')
-                      const day = !referenceDay ? start.format('DD/MM/YYYY') + ', ' : ''
-                      const interval = `${start.format('HH:mm')} às ${end.format('HH:mm')}`
-                      return {
-                        color: referenceDayjs.isAfter(end)
-                          ? 'green'
-                          : referenceDayjs.isAfter(start)
-                            ? 'yellow'
-                            : 'blue',
-                        children: (
-                          <span>
-                            <span style={{ paddingRight: '1rem' }}>
-                              {day}
-                              {interval}
-                            </span>{' '}
-                            <b>{it.serviceName}</b> ao cliente <b>{it.customerName}</b>
-                          </span>
-                        ),
-                      }
-                    })}
-                  />
-                </Flex>
-              </Card>
+              <TimelineAppointments
+                appointments={appointments}
+                onChangeReferenceDay={onChangeReferenceDay}
+                referenceDay={referenceDay}
+                referenceDayjs={referenceDayjs}
+              />
+            ),
+          },
+          {
+            key: '4',
+            label: 'Horários Disponíveis',
+            children: (
+              <AgendaAppointments
+                availableTime={[
+                  { id: '1', weekday: 0, startTime: '', endTime: '' },
+                  { id: '2', weekday: 1, startTime: '', endTime: '' },
+                  { id: '3', weekday: 2, startTime: '', endTime: '' },
+                  { id: '4', weekday: 3, startTime: '', endTime: '' },
+                  { id: '5', weekday: 4, startTime: '', endTime: '' },
+                  { id: '6', weekday: 5, startTime: '', endTime: '' },
+                  { id: '7', weekday: 6, startTime: '', endTime: '' },
+                ]}
+              />
             ),
           },
         ]}
@@ -166,6 +146,73 @@ function renderServiceItem(item: SpecialistSpecializationService) {
       />
     </List.Item>
   )
+}
+
+type TimelineAppointmentsProps = {
+  referenceDay: string
+  referenceDayjs: Dayjs
+  onChangeReferenceDay: (referenceDay: string) => void
+  appointments: SpecialistAppointment[]
+}
+
+function TimelineAppointments({
+  appointments,
+  referenceDay,
+  referenceDayjs,
+  onChangeReferenceDay,
+}: TimelineAppointmentsProps) {
+  return (
+    <Card
+      title={
+        <Flex gap="2rem" align="center">
+          Agenda do dia
+          <DatePicker
+            format="DD/MM/YYYY"
+            value={referenceDayjs.isValid() ? referenceDayjs : undefined}
+            onChange={(date) => {
+              if (date) onChangeReferenceDay(date.format('YYYY-MM-DD'))
+              else onChangeReferenceDay('')
+            }}
+            allowClear
+          />
+          ({referenceDayjs.isValid() ? referenceToCount(referenceDayjs) : 'não selecionado'})
+        </Flex>
+      }
+    >
+      <Flex align="center" style={{ height: '100%', paddingTop: '2rem' }}>
+        {appointments.length === 0 && <p>Nenhum agendamento para este dia</p>}
+
+        <Timeline
+          items={appointments.map((it) => {
+            const start = dayjs(it.date.replace('00:00:00', it.time))
+            const end = start.add(it.duration, 'seconds')
+            const day = !referenceDay ? start.format('DD/MM/YYYY') + ', ' : ''
+            const interval = `${start.format('HH:mm')} às ${end.format('HH:mm')}`
+            return {
+              color: referenceDayjs.isAfter(end) ? 'green' : referenceDayjs.isAfter(start) ? 'yellow' : 'blue',
+              children: (
+                <span>
+                  <span style={{ paddingRight: '1rem' }}>
+                    {day}
+                    {interval}
+                  </span>{' '}
+                  <b>{it.serviceName}</b> ao cliente <b>{it.customerName}</b>
+                </span>
+              ),
+            }
+          })}
+        />
+      </Flex>
+    </Card>
+  )
+}
+
+type AgendaAppointmentsProps = {
+  availableTime: SpecialistAvailableTime[]
+}
+
+function AgendaAppointments(_props: AgendaAppointmentsProps) {
+  return <WeekdayHours />
 }
 
 export default ShowSpecialist

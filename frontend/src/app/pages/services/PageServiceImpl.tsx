@@ -140,7 +140,6 @@ function PageServiceImpl({ mode, changeMode, moveTo, state }: PageServiceImplPro
               duration: values.duration,
               price: values.price,
               serviceNameId: values.serviceId,
-              specialistId: values.specialistId,
             },
           })
         }}
