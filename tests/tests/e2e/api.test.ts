@@ -1,10 +1,10 @@
-import axios from 'axios'
 import _ from 'lodash'
-import z, { ZodSafeParseResult } from 'zod'
+import axios from 'axios'
+import z from 'zod'
 import { addDays, addHours } from 'date-fns'
 
 import type { DotPaths } from '../api-features'
-import { responseIsError } from '../api-extensions'
+import { formatJson, responseIsError } from '../api-extensions'
 import { BASE_URL } from '../config'
 
 import { Api, Config } from '../../src/lib/api'
@@ -56,83 +56,14 @@ function depends(dependencies: Feature[]) {
   expect(Array.from(deps)).toHaveLength(0)
 }
 
-interface ZodSafeParse<T> {
-  safeParse(value: unknown): ZodSafeParseResult<T>
-}
-
-declare global {
-  namespace jest {
-    interface Matchers<R> {
-      toLossyBe<T>(expected: T, fields: string[]): R
-      toParseZod<T>(schema: ZodSafeParse<T>): R
-    }
-  }
-}
-
-expect.extend({
-  toParseZod(received: object, schema: ZodSafeParse<any>) {
-    const result = schema.safeParse(received)
-    if (result.success) {
-      return {
-        message: () => `Expected match zod schema fail but it succeeds`,
-        pass: true,
-      }
-    } else {
-      return {
-        message: () => `Expected match zod schema but got errors: ${result.error}`,
-        pass: false,
-      }
-    }
-  },
-  members(received: object, fields: string[]) {
-    const keys = _.keys(received)
-    const diff = _.difference(keys, fields)
-    if (diff.length === 0) {
-      return {
-        message: () => `Expected ${keys} not to be ${fields}`,
-        pass: true,
-      }
-    } else {
-      return {
-        message: () => `Expected ${keys} to be ${fields}`,
-        pass: false,
-      }
-    }
-  },
-  toLossyBe(received, expected, fields: string[]) {
-    const a = _.entries(_.pick(received, fields))
-    const b = _.entries(_.pick(expected, fields))
-    const pass = _.some(fields, (key) => this.equals(expected[key], received[key]))
-    return {
-      pass,
-      message: () =>
-        pass
-          ? `Expected ${this.utils.printReceived(a)} not to ${this.utils.printExpected(b)}`
-          : `Expected ${this.utils.printReceived(a)} to ${this.utils.printExpected(b)}`,
-    }
-  },
-})
-
 function apiLogin(accessToken: string) {
   api._config.instance.defaults.headers['Authorization'] = `Bearer ${accessToken}`
-}
-
-function formatJson(obj: any): string {
-  if (!obj || typeof obj !== 'object') {
-    return String(obj)
-  }
-  const parts: string[] = []
-  for (const key in obj) {
-    const value = formatJson(obj[key])
-    parts.push(`${key}=${value}`)
-  }
-  return '(' + parts.join(', ') + ')'
 }
 
 describe('clinic-appointments', () => {
   beforeAll(async () => {
     await api.health.healthCheck().then((res) => {
-      const status = formatJson(res.data);
+      const status = formatJson(res.data)
       if (!res.data.status) {
         throw new Error('API is not up: ' + status)
       }
