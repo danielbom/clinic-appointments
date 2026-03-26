@@ -117,10 +117,22 @@ function apiLogin(accessToken: string) {
   api._config.instance.defaults.headers['Authorization'] = `Bearer ${accessToken}`
 }
 
+function formatJson(obj: any): string {
+  if (!obj || typeof obj !== 'object') {
+    return String(obj)
+  }
+  const parts: string[] = []
+  for (const key in obj) {
+    const value = formatJson(obj[key])
+    parts.push(`${key}=${value}`)
+  }
+  return '(' + parts.join(', ') + ')'
+}
+
 describe('clinic-appointments', () => {
   beforeAll(async () => {
     await api.health.healthCheck().then((res) => {
-      const status = `(Status=${res.data.status}, Env=${res.data.environment}, Database=${res.data.database})`
+      const status = formatJson(res.data);
       if (!res.data.status) {
         throw new Error('API is not up: ' + status)
       }

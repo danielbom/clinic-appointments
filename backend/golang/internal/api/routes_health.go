@@ -1,6 +1,8 @@
 package api
 
 import (
+	"time"
+
 	"net/http"
 
 	"backend/internal/api/dtos"
@@ -26,16 +28,19 @@ func (h *api) health(w http.ResponseWriter, r *http.Request) {
 	if err == nil {
 		dbStatus = "connected"
 	}
+	now := time.Now().UTC().Format(time.RFC3339)
 
 	// Format the response
 	response := dtos.Status{
 		Environment: env.Get(env.APP_ENVIRONMENT),
-		Status:      err != nil,
+		UpdatedAt:   now,
+		Status:      dbStatus == "connected",
 		Database: dtos.DatabaseStatus{
 			Status:            dbStatus,
 			Version:           dbSettings.Version,
 			MaxConnections:    dbSettings.MaxConnections,
 			OpenedConnections: dbSettings.OpenedConnections,
+			SchemaVersion:     dbSettings.SchemaVersion,
 		},
 	}
 	render.JSON(w, r, response)

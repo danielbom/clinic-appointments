@@ -12,4 +12,5 @@ type DatabaseStatus struct {
 	Version           string `json:"version"`
 	MaxConnections    int32  `json:"maxConnections"`
 	OpenedConnections int32  `json:"openedConnections"`
+	SchemaVersion     int32  `json:"schemaVersion"`
 }
