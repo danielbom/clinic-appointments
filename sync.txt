@@ -1,3 +1,4 @@
 [api]
 tests/src/lib/api
+!tests/src/lib/api/validation
 frontend/src/lib/api

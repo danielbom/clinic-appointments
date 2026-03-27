@@ -9,7 +9,7 @@ export const StatusSchema = z.strictObject({
     version: z.string(),
     maxConnections: z.number().int().min(0),
     openedConnections: z.number().int().min(0),
-  })
+  }),
 })
 
 export type Status = z.infer<typeof StatusSchema>

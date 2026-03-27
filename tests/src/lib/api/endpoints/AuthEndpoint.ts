@@ -1,4 +1,4 @@
-import { AxiosRequestConfig, AxiosResponse } from 'axios'
+import { AxiosResponse } from 'axios'
 import { Config } from '../Config'
 
 export class AuthEndpoint {

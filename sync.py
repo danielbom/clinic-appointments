@@ -4,20 +4,23 @@ from typing import NamedTuple
 class Sync(NamedTuple):
     module: str
     paths: list[Path]
+    exclude: list[Path]
 
 
 class SyncParser:
     def __init__(self):
         self.module = ""
         self.paths = []
+        self.exclude = []
         self.result = []
     
     def update_module(self, next_module: str):
         if self.paths:
             if not self.module:
                 raise Exception()
-            self.result.append(Sync(module=self.module, paths=self.paths))
+            self.result.append(Sync(module=self.module, paths=self.paths, exclude=self.exclude))
             self.paths = []
+            self.exclude = []
         self.module = next_module
     
     def parse_line(self, line: str):
@@ -26,6 +29,8 @@ class SyncParser:
             return
         if line.startswith("[") and line.endswith("]"):
             self.update_module(line)
+        elif line.startswith("!"):
+            self.exclude.append(Path(line[1:]))
         else:
             self.paths.append(Path(line))
     
@@ -41,9 +46,11 @@ class SyncChecker:
     def __init__(self, syncs: list[Sync]):
         self.syncs = syncs
 
-    def check_entries(self, paths: list[Path]):
+    def check_entries(self, paths: list[Path], exclude: list[Path]):
         reference = paths[0]
         others = paths[1:]
+        if reference in exclude:
+            return
         if reference.is_file():
             content = path.read_text(encoding="utf-8")
             for other in others:
@@ -60,6 +67,8 @@ class SyncChecker:
                     continue
         else:
             for path in reference.glob("*"):
+                if path in exclude:
+                    continue
                 if path.is_file():
                     content = path.read_text(encoding="utf-8")
                     for other in others:
@@ -85,11 +94,12 @@ class SyncChecker:
                             print(f"[ERROR] {path} != {other_path}: is a file")
                             continue
                         other_paths.append(other_path)
-                    self.check_entries(other_paths)
+                    self.check_entries(other_paths, exclude)
 
     def check_sync(self, sync: Sync):
         print('[INFO] checking dirs:', sync.module)
-        self.check_entries(sync.paths)
+        self.check_entries(sync.paths, sync.exclude)
+        print()
 
     def check(self):
         for sync in self.syncs:

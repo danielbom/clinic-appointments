@@ -13,4 +13,4 @@ export const ServiceGroupsSchema = z.array(
   }),
 )
 
-export type ServiceGroups = z.infer<typeof ServiceGroupsSchema>;
+export type ServiceGroups = z.infer<typeof ServiceGroupsSchema>

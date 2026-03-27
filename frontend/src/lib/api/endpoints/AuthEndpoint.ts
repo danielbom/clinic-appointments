@@ -1,4 +1,4 @@
-import { AxiosRequestConfig, AxiosResponse } from 'axios'
+import { AxiosResponse } from 'axios'
 import { Config } from '../Config'
 
 export class AuthEndpoint {
@@ -8,8 +8,12 @@ export class AuthEndpoint {
     return this._config.instance.post(`/api/auth/login`, data)
   }
 
-  refresh(config: AxiosRequestConfig): Promise<AxiosResponse<AuthLoginResponse>> {
-    return this._config.instance.post(`/api/auth/refresh`, null, config)
+  refresh(refreshToken: string): Promise<AxiosResponse<AuthLoginResponse>> {
+    return this._config.instance.post(`/api/auth/refresh`, null, {
+      headers: {
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    })
   }
 
   me(): Promise<AxiosResponse<Identity>> {

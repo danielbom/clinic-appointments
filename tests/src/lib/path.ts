@@ -13,7 +13,7 @@ export class Path {
 
   /**
    * Examples:
-   * 
+   *
    * const __dir__ = Path.from(import.meta.dirname)
    * const __file__ = Path.from(import.meta.filename)
    *
