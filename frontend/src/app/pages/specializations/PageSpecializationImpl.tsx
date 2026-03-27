@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
-import { ChangePageMode, PageMode } from '../../../components/AdminX/types'
+import { changeMode, getPageMode } from '../../../components/AdminX/tools'
 import PageLoading from '../../../components/Loading/PageLoading'
 
 import { Specialization } from '../../../components/app/pages/specializations/types'
@@ -12,14 +12,9 @@ import {
   useSpecializationDeleteAll,
   useSpecializationUpdate,
 } from '../../../hooks/api/mutations/specializations'
+import { useSearchParamState } from '../../../hooks/useSearchParam'
 
 const PageSpecialization = lazy(() => import('./PageSpecialization'))
-
-interface PageSpecializationImplProps {
-  mode: PageMode
-  changeMode: ChangePageMode
-  state?: Record<string, string>
-}
 
 type ParamsShow = {
   id: string
@@ -34,16 +29,18 @@ const PARAMS_LIST: ParamsList = {
   pageSize: 20,
 }
 
-function PageSpecializationImpl({ mode, changeMode, state }: PageSpecializationImplProps) {
-  const paramsList = useMemo<ParamsList>(() => loadParamsList(state), [state])
-  const paramsShow = useMemo<ParamsShow>(() => loadParamsShow(state), [state])
+function PageSpecializationImpl() {
+  const [paramsState, setParamsState] = useSearchParamState()
+  const mode = getPageMode(paramsState, 'list')
+  const paramsList = useMemo<ParamsList>(() => loadParamsList(paramsState), [paramsState])
+  const paramsShow = useMemo<ParamsShow>(() => loadParamsShow(paramsState), [paramsState])
   const [previousData, setPreviousData] = useState<Specialization[]>([])
   const [selectedItems, setSelectedItems] = useState<Specialization[]>([])
   const [record, setRecord] = useState<Specialization | null>(null)
 
   function setListQuery(params: ParamsList) {
     setPreviousData(data)
-    changeMode('list', params)
+    setParamsState(changeMode('list', params))
   }
 
   const queryTable = useServicesAvailableGroupQuery({
@@ -84,7 +81,7 @@ function PageSpecializationImpl({ mode, changeMode, state }: PageSpecializationI
         loading={queryTable.isLoading}
         total={total}
         mode={mode}
-        changeMode={changeMode}
+        changeMode={(mode, newState) => setParamsState(changeMode(mode, newState))}
         selectedItems={selectedItems}
         changeSelectedItems={setSelectedItems}
         record={record}

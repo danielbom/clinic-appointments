@@ -4,6 +4,7 @@ import { UserOutlined, LockOutlined, EyeTwoTone, EyeInvisibleOutlined, LoadingOu
 import './PageAuth.css'
 
 import AppLogo from '../../../AppLogo'
+import AppMadeBy from '../../../AppMadeBy'
 
 import { emailIsInvalid, emailIsRequired } from '../../../../lib/rules/email'
 import { passwordIsInvalid, passwordIsRequired } from '../../../../lib/rules/password'
@@ -68,6 +69,9 @@ function PageAuth({ onSubmit, error, loading }: PageAuthProps) {
           </Form.Item>
           <Form.Item>{error && <Alert message={error} type="error" />}</Form.Item>
         </Form>
+        <div className="login-made-by">
+          <AppMadeBy />
+        </div>
       </div>
     </div>
   )

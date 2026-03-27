@@ -11,15 +11,17 @@ import renderDate from '../../../../lib/renders/renderDate'
 import renderAge from '../../../../lib/renders/rendertAge'
 import normalizeCNPJ from '../../../../lib/normalizers/normalizeCNPJ'
 
+// TODO: extract textWrap: 'nowrap'
 const columns: TableColumnType<Specialist>[] = [
   {
     title: 'Nome',
     dataIndex: 'name',
+    render: (value: string) => <span style={{ textWrap: 'nowrap' }}>{value}</span>,
   },
   {
     title: 'CPF',
     dataIndex: 'cpf',
-    render: normalizeCPF,
+    render: (value: string) => <span style={{ textWrap: 'nowrap' }}>{normalizeCPF(value)}</span>,
   },
   {
     title: 'E-mail',
@@ -28,7 +30,7 @@ const columns: TableColumnType<Specialist>[] = [
   {
     title: 'Telefone',
     dataIndex: 'phone',
-    render: normalizePhone,
+    render: (value: string) => <span style={{ textWrap: 'nowrap' }}>{normalizePhone(value)}</span>,
   },
   {
     title: 'Data de Nasc.',
@@ -38,12 +40,12 @@ const columns: TableColumnType<Specialist>[] = [
   {
     title: 'Idade',
     dataIndex: 'birthdate',
-    render: renderAge,
+    render: (value: string) => <span style={{ textWrap: 'nowrap' }}>{renderAge(value)}</span>,
   },
   {
     title: 'CNPJ',
     dataIndex: 'cnpj',
-    render: normalizeCNPJ,
+    render: (value: string) => <span style={{ textWrap: 'nowrap' }}>{normalizeCNPJ(value)}</span>,
   },
 ]
 

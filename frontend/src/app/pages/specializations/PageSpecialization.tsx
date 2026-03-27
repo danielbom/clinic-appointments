@@ -4,10 +4,18 @@ import useDisclosure from '../../../hooks/useDisclosure'
 
 import { Specialization } from '../../../components/app/pages/specializations/types'
 
-import DeleteSpecialization, { DeleteSpecializationProps } from '../../../components/app/pages/specializations/DeleteSpecialization'
-import TableSpecialization, { TableSpecializationProps } from '../../../components/app/pages/specializations/TableSpecialization'
-import ShowSpecialization, { ShowSpecializationProps } from '../../../components/app/pages/specializations/ShowSpecialization'
-import FormSpecialization, { FormSpecializationProps } from '../../../components/app/pages/specializations/FormSpecialization'
+import DeleteSpecialization, {
+  DeleteSpecializationProps,
+} from '../../../components/app/pages/specializations/DeleteSpecialization'
+import TableSpecialization, {
+  TableSpecializationProps,
+} from '../../../components/app/pages/specializations/TableSpecialization'
+import ShowSpecialization, {
+  ShowSpecializationProps,
+} from '../../../components/app/pages/specializations/ShowSpecialization'
+import FormSpecialization, {
+  FormSpecializationProps,
+} from '../../../components/app/pages/specializations/FormSpecialization'
 
 export interface PageSpecializationProps {
   mode: PageMode

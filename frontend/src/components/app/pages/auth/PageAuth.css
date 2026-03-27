@@ -28,6 +28,11 @@
   width: 100%;
 }
 
+.login-made-by {
+  display: flex;
+  align-items: end;
+}
+
 @media (max-width: 576px) {
   .login-container {
     max-width: 100%;
