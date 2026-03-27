@@ -105,7 +105,7 @@ func UpdateSpecialist(state State, specialistId uuid.UUID, args SpecialistInfoAr
 		Phone:     args.Phone,
 		Birthdate: args.BirthdateDate,
 		Cpf:       args.Cpf,
-		Cnpj: 	   args.CnpjText,
+		Cnpj:      args.CnpjText,
 	}
 	specialist, err := state.Queries().UpdateSpecialist(state.Context(), params)
 	if err != nil {

@@ -98,7 +98,7 @@ func (h *api) updateSpecialization(w http.ResponseWriter, r *http.Request) {
 
 	// Validate e execute the usecase
 	args := usecase.SpecializationInfoArgs{
-		Name:      body.Name,
+		Name: body.Name,
 	}
 	if err := args.Validate(); err != nil {
 		presenter.UsecaseError(w, err)

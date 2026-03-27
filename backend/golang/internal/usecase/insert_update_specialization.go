@@ -59,7 +59,7 @@ func UpdateSpecialization(state State, specializationId uuid.UUID, args Speciali
 	}
 
 	id, err := state.Queries().UpdateSpecialization(state.Context(), infra.UpdateSpecializationParams{
-		ID: specializationId,
+		ID:   specializationId,
 		Name: args.Name,
 	})
 	if err != nil {
