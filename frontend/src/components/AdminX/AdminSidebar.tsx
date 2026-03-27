@@ -2,6 +2,7 @@ import { Menu, MenuProps } from 'antd'
 import AppLogo from '../AppLogo'
 
 import './AdminSidebar.css'
+import { Link } from 'react-router-dom'
 
 interface AdminSidebarProps {
   items: MenuProps['items']
@@ -22,7 +23,11 @@ function AdminSidebar({ items, pageKey, onSelectPage }: AdminSidebarProps) {
           defaultSelectedKeys={['1']}
           selectedKeys={[pageKey]}
           onClick={({ key }) => onSelectPage(key)}
-          items={items}
+          items={items?.map((item) =>
+            item && 'label' in item
+              ? { ...item, label: item.key ? <Link to={`/${item.key}`}>{item.label}</Link> : item.label }
+              : item,
+          )}
         />
       </section>
     </>

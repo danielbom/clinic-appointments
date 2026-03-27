@@ -11,7 +11,7 @@ import { appointmentDateIsRequired, appointmentDateIsInvalid } from '../../../..
 import { appointmentTimeIsRequired } from '../../../../lib/rules/appointmentTime'
 import { Appointment, AppointmentStatus } from '../../../../lib/api'
 import renderDuration from '../../../../lib/renders/renderDuration'
-import { getSessionStorage, removeSessionStorage } from '../../../../lib/json-storage'
+import { getSessionStorage } from '../../../../lib/json-storage'
 
 const OPTIONS_STATUS = [
   { label: 'Pendente', value: AppointmentStatus.Pending },
@@ -229,18 +229,9 @@ function SelectService({ record, serviceId, services, onClickSearchService }: Se
   }
 }
 
-// TODO: Find a better way to handle this hack:
-// - hack way to avoid form data startup
-let id: NodeJS.Timeout | undefined
-
 function getExternalValues(): Partial<FormAppointmentValues> {
   const values: Partial<FormAppointmentValues> = {}
   const data = getSessionStorage<any>(CREATE_APPOINTMENTS_DATA_KEY, null)
-
-  clearTimeout(id)
-  id = setTimeout(() => {
-    removeSessionStorage(CREATE_APPOINTMENTS_DATA_KEY)
-  }, 1000)
 
   if (!data) return values
 

@@ -4,7 +4,7 @@ import type { Customer } from '../../../components/app/pages/customers/types'
 import type { TableCustomerProps } from '../../../components/app/pages/customers/TableCustomer'
 
 import PageLoading from '../../../components/Loading/PageLoading'
-import type { ChangePageMode, MoveToPage, PageMode } from '../../../components/AdminX/types'
+import { changeMode, getPageMode } from '../../../components/AdminX/tools'
 
 import type { CustomersGetAllQuery } from '../../../lib/api'
 import { CREATE_APPOINTMENTS_DATA_KEY } from '../../../lib/keys'
@@ -16,16 +16,11 @@ import {
   useCustomerDelete,
   useCustomerUpdate,
 } from '../../../hooks/api/mutations/customers'
+import { useSearchParamState } from '../../../hooks/useSearchParam'
+import { useMoveTo } from '../../../hooks/useMoveTo'
 import { setSessionStorage } from '../../../lib/json-storage'
 
 const PageCustomer = lazy(() => import('./PageCustomer'))
-
-interface PageCustomerImplProps {
-  mode: PageMode
-  changeMode: ChangePageMode
-  state?: Record<string, string>
-  moveTo: MoveToPage
-}
 
 type ParamsShow = {
   id: string
@@ -37,16 +32,19 @@ const PARAMS_LIST: ParamsList = {
   pageSize: 20,
 }
 
-function PageCustomerImpl({ mode, changeMode, moveTo, state }: PageCustomerImplProps) {
-  const paramsList = useMemo<ParamsList>(() => loadParamsList(state), [state])
-  const paramsShow = useMemo<ParamsShow>(() => loadParamsShow(state), [state])
+function PageCustomerImpl() {
+  const [paramsState, setParamsState] = useSearchParamState()
+  const mode = getPageMode(paramsState, 'list')
+  const moveTo = useMoveTo()
+  const paramsList = useMemo<ParamsList>(() => loadParamsList(paramsState), [paramsState])
+  const paramsShow = useMemo<ParamsShow>(() => loadParamsShow(paramsState), [paramsState])
   const [previousData, setPreviousData] = useState<Customer[]>([])
   const [selectedItems, setSelectedItems] = useState<Customer[]>([])
   const [record, setRecord] = useState<Customer | null>(null)
 
   function setListQuery(params: ParamsList) {
     setPreviousData(queryTable.data ?? [])
-    changeMode('list', params)
+    setParamsState(changeMode('list', params))
   }
 
   const recordQuery = useCustomerQuery({
@@ -94,7 +92,7 @@ function PageCustomerImpl({ mode, changeMode, moveTo, state }: PageCustomerImplP
         total={total}
         pagination={pagination}
         mode={mode}
-        changeMode={changeMode}
+        changeMode={(mode, newState) => setParamsState(changeMode(mode, newState))}
         selectedItems={selectedItems}
         changeSelectedItems={setSelectedItems}
         record={record}

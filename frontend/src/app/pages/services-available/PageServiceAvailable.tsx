@@ -1,13 +1,21 @@
-import type { PageMode, ChangePageMode } from '../../../components/AdminX/types'
+import type { ChangePageMode, PageMode } from '../../../components/AdminX/types'
 import ConfirmDeleteModal from '../../../components/ConfirmDeleteModal'
 import useDisclosure from '../../../hooks/useDisclosure'
 
 import type { ServiceAvailable } from '../../../components/app/pages/services-available/types'
 
-import DeleteServiceAvailable, { DeleteServiceAvailableProps } from '../../../components/app/pages/services-available/DeleteServiceAvailable'
-import TableServiceAvailable, { TableServiceAvailableProps } from '../../../components/app/pages/services-available/TableServiceAvailable'
-import FormServiceAvailable, { FormServiceAvailableProps } from '../../../components/app/pages/services-available/FormServiceAvailable'
-import ShowServiceAvailable, { ShowServiceAvailableProps } from '../../../components/app/pages/services-available/ShowServiceAvailable'
+import DeleteServiceAvailable, {
+  DeleteServiceAvailableProps,
+} from '../../../components/app/pages/services-available/DeleteServiceAvailable'
+import TableServiceAvailable, {
+  TableServiceAvailableProps,
+} from '../../../components/app/pages/services-available/TableServiceAvailable'
+import FormServiceAvailable, {
+  FormServiceAvailableProps,
+} from '../../../components/app/pages/services-available/FormServiceAvailable'
+import ShowServiceAvailable, {
+  ShowServiceAvailableProps,
+} from '../../../components/app/pages/services-available/ShowServiceAvailable'
 
 interface PageServiceAvailableProps {
   mode: PageMode

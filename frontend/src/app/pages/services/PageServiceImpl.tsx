@@ -4,9 +4,11 @@ import type { Service } from '../../../components/app/pages/services/types'
 import type { TableServiceProps } from '../../../components/app/pages/services/TableService'
 
 import PageLoading from '../../../components/Loading/PageLoading'
-import type { PageMode, ChangePageMode, MoveToPage } from '../../../components/AdminX/types'
+import type { PageMode } from '../../../components/AdminX/types'
+import { changeMode, getPageMode } from '../../../components/AdminX/tools'
 import type { ServicesGetAllQuery } from '../../../lib/api'
 import { CREATE_APPOINTMENTS_DATA_KEY } from '../../../lib/keys'
+import { setSessionStorage } from '../../../lib/json-storage'
 
 import { useServiceQuery, useServicesCountQuery, useServicesListQuery } from '../../../hooks/api/queries/services'
 import {
@@ -17,32 +19,29 @@ import {
 } from '../../../hooks/api/mutations/services'
 import { useServiceGroups } from '../../../hooks/api/queries/service-groups'
 import { useSpecialistListQuery, useSpecialistQuery } from '../../../hooks/api/queries/specialists'
-import { setSessionStorage } from '../../../lib/json-storage'
+import { useSearchParamState } from '../../../hooks/useSearchParam'
+import { useMoveTo } from '../../../hooks/useMoveTo'
 
 const PageService = lazy(() => import('./PageService'))
-
-interface PageServiceImplProps {
-  mode: PageMode
-  changeMode: ChangePageMode
-  state?: Record<string, string>
-  moveTo: MoveToPage
-}
 
 type ParamsShow = {
   id: string
 }
 type ParamsList = ServicesGetAllQuery
 
-function PageServiceImpl({ mode, changeMode, moveTo, state }: PageServiceImplProps) {
-  const paramsList = useMemo<ParamsList>(() => loadParamsList(state), [state])
-  const paramsShow = useMemo<ParamsShow>(() => loadParamsShow(state), [state])
+function PageServiceImpl() {
+  const [paramsState, setParamsState] = useSearchParamState()
+  const mode = getPageMode(paramsState, 'list')
+  const moveTo = useMoveTo()
+  const paramsList = useMemo<ParamsList>(() => loadParamsList(paramsState), [paramsState])
+  const paramsShow = useMemo<ParamsShow>(() => loadParamsShow(paramsState), [paramsState])
   const [selectedItems, setSelectedItems] = useState<Service[]>([])
   const [previousPageData, setPreviousPageData] = useState<Service[]>([])
   const [record, setRecord] = useState<Service | null>(null)
 
   function setListQuery(params: ParamsList) {
     setPreviousPageData(queryTable.data ?? [])
-    changeMode('list', params)
+    setParamsState(changeMode('list', params))
   }
 
   const recordQuery = useServiceQuery({
@@ -101,7 +100,7 @@ function PageServiceImpl({ mode, changeMode, moveTo, state }: PageServiceImplPro
         total={total}
         pagination={pagination}
         mode={mode}
-        changeMode={changeMode}
+        changeMode={(mode, newState) => setParamsState(changeMode(mode, newState))}
         record={record}
         changeRecord={setRecord}
         selectedItems={selectedItems}

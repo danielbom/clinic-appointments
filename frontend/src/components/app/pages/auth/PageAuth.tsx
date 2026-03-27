@@ -69,7 +69,7 @@ function PageAuth({ onSubmit, error, loading }: PageAuthProps) {
           </Form.Item>
           <Form.Item>{error && <Alert message={error} type="error" />}</Form.Item>
         </Form>
-        <div className='login-made-by'>
+        <div className="login-made-by">
           <AppMadeBy />
         </div>
       </div>

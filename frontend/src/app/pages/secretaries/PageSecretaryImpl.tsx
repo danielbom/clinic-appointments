@@ -5,24 +5,23 @@ import type { Secretary } from '../../../components/app/pages/secretaries/types'
 import PageLoading from '../../../components/Loading/PageLoading'
 import type { TableSecretaryProps } from '../../../components/app/pages/secretaries/TableSecretary'
 
-import type { ChangePageMode, PageMode } from '../../../components/AdminX/types'
+import { changeMode, getPageMode } from '../../../components/AdminX/tools'
 import type { SecretariesGetAllQuery } from '../../../lib/api'
 
-import { useSecretaryQuery, useSecretariesCountQuery, useSecretariesListQuery } from '../../../hooks/api/queries/secretaries'
+import {
+  useSecretaryQuery,
+  useSecretariesCountQuery,
+  useSecretariesListQuery,
+} from '../../../hooks/api/queries/secretaries'
 import {
   useSecretaryCreate,
   useSecretaryDeleteAll,
   useSecretaryDelete,
   useSecretaryUpdate,
 } from '../../../hooks/api/mutations/secretaries'
+import { useSearchParamState } from '../../../hooks/useSearchParam'
 
 const PageSecretary = lazy(() => import('./PageSecretary'))
-
-interface PageSecretaryImplProps {
-  mode: PageMode
-  changeMode: ChangePageMode
-  state?: Record<string, string>
-}
 
 type ParamsShow = {
   id: string
@@ -34,16 +33,18 @@ const PARAMS_LIST: ParamsList = {
   pageSize: 20,
 }
 
-function PageSecretaryImpl({ mode, changeMode, state }: PageSecretaryImplProps) {
-  const paramsList = useMemo<ParamsList>(() => loadParamsList(state), [state])
-  const paramsShow = useMemo<ParamsShow>(() => loadParamsShow(state), [state])
+function PageSecretaryImpl() {
+  const [paramsState, setParamsState] = useSearchParamState()
+  const mode = getPageMode(paramsState, 'list')
+  const paramsList = useMemo<ParamsList>(() => loadParamsList(paramsState), [paramsState])
+  const paramsShow = useMemo<ParamsShow>(() => loadParamsShow(paramsState), [paramsState])
   const [previousData, setPreviousData] = useState<Secretary[]>([])
   const [selectedItems, setSelectedItems] = useState<Secretary[]>([])
   const [record, setRecord] = useState<Secretary | null>(null)
 
   function setListQuery(params: ParamsList) {
     setPreviousData(queryTable.data ?? [])
-    changeMode('list', params)
+    setParamsState(changeMode('list', params))
   }
 
   const recordQuery = useSecretaryQuery({
@@ -91,7 +92,7 @@ function PageSecretaryImpl({ mode, changeMode, state }: PageSecretaryImplProps) 
         total={total}
         pagination={pagination}
         mode={mode}
-        changeMode={changeMode}
+        changeMode={(mode, newState) => setParamsState(changeMode(mode, newState))}
         selectedItems={selectedItems}
         changeSelectedItems={setSelectedItems}
         record={record}
