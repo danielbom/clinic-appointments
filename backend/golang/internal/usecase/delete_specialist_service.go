@@ -8,7 +8,7 @@ func DeleteSpecialistService(state State, serviceID uuid.UUID) *UsecaseError {
 		return NewError(ErrorKindUnexpected, err)
 	}
 	if count == 0 {
-		return NewNotFoundError(ErrResourceNotFound).InField("service")
+		return NewResourceNotFoundError("service")
 	}
 	return nil
 }

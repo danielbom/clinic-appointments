@@ -6,6 +6,7 @@ import (
 
 	"backend/internal/api/dtos"
 	"backend/internal/api/presenter"
+	"backend/internal/domain"
 	"backend/internal/usecase"
 
 	"github.com/go-chi/render"
@@ -82,10 +83,7 @@ func (h *api) getSecretaries(w http.ResponseWriter, r *http.Request) {
 
 	// Validate e execute the usecase
 	args := usecase.ListSecretariesArgs{
-		PaginationArgs: usecase.PaginationArgs{
-			PageSize: pageSize,
-			Page:     page,
-		},
+		PaginationArgs: usecase.PaginationArgsNew(page, pageSize),
 		CountArgs: usecase.CountSecretariesArgs{
 			Cpf:   cpf,
 			Phone: phone,
@@ -184,13 +182,13 @@ func (h *api) createSecretary(w http.ResponseWriter, r *http.Request) {
 
 	// Validate e execute the usecase
 	args := usecase.SecretaryInfoArgs{
-		Name:      body.Name,
-		Email:     body.Email,
-		Phone:     body.Phone,
-		Birthdate: body.Birthdate,
-		Password:  body.Password,
-		Cpf:       body.Cpf,
-		Cnpj:      body.Cnpj,
+		Name:         domain.StringNew(body.Name),
+		Email:        domain.StringNew(body.Email),
+		Phone:        domain.StringNew(body.Phone),
+		BirthdateRaw: body.Birthdate,
+		Password:     domain.StringNew(body.Password),
+		Cpf:          domain.StringNew(body.Cpf),
+		Cnpj:         domain.StringNew(body.Cnpj),
 	}
 	if err := args.Validate(); err != nil {
 		presenter.UsecaseError(w, err)
@@ -245,14 +243,14 @@ func (h *api) updateSecretary(w http.ResponseWriter, r *http.Request) {
 
 	// Validate e execute the usecase
 	args := usecase.SecretaryInfoArgs{
-		Name:      body.Name,
-		Email:     body.Email,
-		Phone:     body.Phone,
-		Birthdate: body.Birthdate,
-		Password:  body.Password,
-		Cpf:       body.Cpf,
-		Cnpj:      body.Cnpj,
-		Update:    true,
+		Name:         domain.StringNew(body.Name),
+		Email:        domain.StringNew(body.Email),
+		Phone:        domain.StringNew(body.Phone),
+		BirthdateRaw: body.Birthdate,
+		Password:     domain.StringNew(body.Password),
+		Cpf:          domain.StringNew(body.Cpf),
+		Cnpj:         domain.StringNew(body.Cnpj),
+		Update:       true,
 	}
 	if err := args.Validate(); err != nil {
 		presenter.UsecaseError(w, err)

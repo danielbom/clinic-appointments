@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"backend/internal/api/presenter"
+	"backend/internal/domain"
 	"backend/internal/usecase"
 
 	"github.com/go-chi/render"
@@ -41,9 +42,9 @@ func (h *api) testInit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_, ucErr = usecase.CreateAdmin(rs, usecase.CreateAdminArgs{
-		Name:     "Admin Test",
-		Email:    "admin@test.com",
-		Password: "123mudar",
+		Name:     domain.StringNew("Admin Test"),
+		Email:    domain.StringNew("admin@test.com"),
+		Password: domain.StringNew("123mudar"),
 	})
 
 	if ucErr != nil {

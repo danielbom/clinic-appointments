@@ -7,6 +7,7 @@ import (
 
 	"backend/internal/api/dtos"
 	"backend/internal/api/presenter"
+	"backend/internal/domain"
 	"backend/internal/usecase"
 
 	"github.com/go-chi/render"
@@ -44,10 +45,7 @@ func (h *api) listSpecialists(w http.ResponseWriter, r *http.Request) {
 
 	// Validate e execute the usecase
 	args := usecase.ListSpecialistsArgs{
-		PaginationArgs: usecase.PaginationArgs{
-			PageSize: pageSize,
-			Page:     page,
-		},
+		PaginationArgs: usecase.PaginationArgsNew(page, pageSize),
 		CountArgs: usecase.CountSpecialistArgs{
 			Cpf:   cpf,
 			Phone: phone,
@@ -115,19 +113,19 @@ func (h *api) createSpecialist(w http.ResponseWriter, r *http.Request) {
 	// Validate e execute the usecase
 	var args usecase.SpecialistWithServicesInfoArgs
 	args.Specialist = usecase.SpecialistInfoArgs{
-		Name:      body.Name,
-		Email:     body.Email,
-		Phone:     body.Phone,
-		Birthdate: body.Birthdate,
-		Cpf:       body.Cpf,
-		Cnpj:      body.Cnpj,
+		Name:         domain.StringNew(body.Name),
+		Email:        domain.StringNew(body.Email),
+		Phone:        domain.StringNew(body.Phone),
+		BirthdateRaw: body.Birthdate,
+		Cpf:          domain.StringNew(body.Cpf),
+		Cnpj:         domain.StringNew(body.Cnpj),
 	}
 	args.Services = make([]usecase.SpecialistServiceInfoArgs, 0, len(body.Services))
 	for _, s := range body.Services {
 		sArgs := usecase.SpecialistServiceInfoArgs{
 			ServiceNameIDRaw:  s.ServiceNameID,
-			Price:             s.Price,
-			DurationMin:       s.Duration,
+			Price:             domain.Nat(s.Price),
+			Duration:          domain.Minutes(s.Duration),
 			RequireSpecialist: false,
 		}
 		args.Services = append(args.Services, sArgs)
@@ -174,20 +172,20 @@ func (h *api) updateSpecialist(w http.ResponseWriter, r *http.Request) {
 	// Validate e execute the usecase
 	var args usecase.SpecialistWithServicesInfoArgs
 	args.Specialist = usecase.SpecialistInfoArgs{
-		Name:      body.Name,
-		Email:     body.Email,
-		Phone:     body.Phone,
-		Birthdate: body.Birthdate,
-		Cpf:       body.Cpf,
-		Cnpj:      body.Cnpj,
+		Name:         domain.StringNew(body.Name),
+		Email:        domain.StringNew(body.Email),
+		Phone:        domain.StringNew(body.Phone),
+		BirthdateRaw: body.Birthdate,
+		Cpf:          domain.StringNew(body.Cpf),
+		Cnpj:         domain.StringNew(body.Cnpj),
 	}
 	args.Services = make([]usecase.SpecialistServiceInfoArgs, 0, len(body.Services))
 	for _, s := range body.Services {
 		sArgs := usecase.SpecialistServiceInfoArgs{
-			SpecialistID:      specialistID,
+			SpecialistID:      domain.NewUUID(specialistID),
 			ServiceNameIDRaw:  s.ServiceNameID,
-			Price:             s.Price,
-			DurationMin:       s.Duration,
+			Price:             domain.Nat(s.Price),
+			Duration:          domain.Minutes(s.Duration),
 			RequireSpecialist: true,
 		}
 		args.Services = append(args.Services, sArgs)

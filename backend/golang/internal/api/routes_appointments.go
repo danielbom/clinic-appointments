@@ -6,6 +6,7 @@ import (
 
 	"backend/internal/api/dtos"
 	"backend/internal/api/presenter"
+	"backend/internal/domain"
 	"backend/internal/usecase"
 
 	"github.com/go-chi/render"
@@ -64,10 +65,7 @@ func (h *api) getAppointments(w http.ResponseWriter, r *http.Request) {
 
 	// Validate e execute the usecase
 	args := usecase.ListAppointmentsArgs{
-		PaginationArgs: usecase.PaginationArgs{
-			Page:     page,
-			PageSize: pageSize,
-		},
+		PaginationArgs: usecase.PaginationArgsNew(page, pageSize),
 		CountArgs: usecase.CountAppointmentsArgs{
 			ServiceName:    serviceName,
 			SpecialistName: specialist,
@@ -254,7 +252,7 @@ func (h *api) createAppointment(w http.ResponseWriter, r *http.Request) {
 		ServiceIDRaw:  body.ServiceID,
 		DateRaw:       body.Date,
 		TimeRaw:       body.Time,
-		Status:        int32(usecase.AppointmentStatusPending),
+		Status:        domain.AppointmentStatusPending,
 	}
 
 	if err := args.Validate(); err != nil {
@@ -299,9 +297,9 @@ func (h *api) updateAppointment(w http.ResponseWriter, r *http.Request) {
 
 	// Validate e execute the usecase
 	args := usecase.UpdateAppointmentArgs{
-		Date:   body.Date,
-		Time:   body.Time,
-		Status: body.Status,
+		DateRaw:   body.Date,
+		TimeRaw:   body.Time,
+		StatusRaw: body.Status,
 	}
 
 	if err := args.Validate(); err != nil {

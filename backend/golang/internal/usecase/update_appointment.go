@@ -1,33 +1,30 @@
 package usecase
 
 import (
+	"backend/internal/domain"
 	"backend/internal/infra"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type UpdateAppointmentArgs struct {
-	Date     string
-	DateDate pgtype.Date
-	Time     string
-	TimeTime pgtype.Time
-	Status   int32
+	DateRaw   string
+	Date      domain.Date
+	TimeRaw   string
+	Time      domain.Time
+	StatusRaw int32
+	Status    domain.AppointmentStatus
 }
 
 func (args *UpdateAppointmentArgs) Validate() *UsecaseError {
-	if !args.DateDate.Valid {
-		if err := args.DateDate.Scan(args.Date); err != nil {
-			return NewInvalidArgumentError(ErrInvalidDate).InField("date")
-		}
+	if err := args.Date.Scan(args.DateRaw); err != nil {
+		return NewInvalidArgumentError(err).InField("date")
 	}
-	if !args.TimeTime.Valid {
-		if err := args.TimeTime.Scan(args.Time); err != nil {
-			return NewInvalidArgumentError(ErrInvalidTime).InField("time")
-		}
+	if err := args.Time.Scan(args.TimeRaw); err != nil {
+		return NewInvalidArgumentError(err).InField("time")
 	}
-	if args.Status < 0 || args.Status >= int32(AppointmentStatusCount) {
-		return NewInvalidArgumentError(ErrInvalidAppointmentStatus).InField("status")
+	if err := args.Status.Scan(args.StatusRaw); err != nil {
+		return NewInvalidArgumentError(err).InField("status")
 	}
 
 	return nil
@@ -37,8 +34,7 @@ func UpdateAppointment(state State, appointmentId uuid.UUID, args UpdateAppointm
 	var none infra.Appointment
 	_, err := state.Queries().GetAppointmentByID(state.Context(), appointmentId)
 	if ErrorIsNoRows(err) {
-		// TODO: Check this path
-		return none, NewNotFoundError(ErrResourceNotFound).InField("appointment")
+		return none, NewResourceNotFoundError("appointment")
 	}
 	if err != nil {
 		return none, NewUnexpectedError(err)
@@ -46,9 +42,9 @@ func UpdateAppointment(state State, appointmentId uuid.UUID, args UpdateAppointm
 
 	params := infra.UpdateAppointmentParams{
 		ID:     appointmentId,
-		Date:   args.DateDate,
-		Time:   args.TimeTime,
-		Status: args.Status,
+		Date:   args.Date.Value,
+		Time:   args.Time.Value,
+		Status: args.StatusRaw,
 	}
 	appointment, err := state.Queries().UpdateAppointment(state.Context(), params)
 	if err != nil {

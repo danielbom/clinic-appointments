@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 
+	"backend/internal/domain"
 	"backend/internal/infra"
 	"backend/internal/usecase"
 )
@@ -191,17 +192,21 @@ func (c *RunInputCommand) nextLine(scanner *bufio.Scanner) (string, bool) {
 func (c *RunInputCommand) runCreateAdmin(s *State, scanner *bufio.Scanner) error {
 	args := usecase.CreateAdminArgs{}
 	var found bool
-	args.Name, found = c.nextLine(scanner)
+	args.Name.Value, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing name")
 	}
-	args.Email, found = c.nextLine(scanner)
+	args.Email.Value, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing email")
 	}
-	args.Password, found = c.nextLine(scanner)
+	args.Password.Value, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing password")
+	}
+
+	if err := args.Validate(); err != nil {
+		return err.Error
 	}
 
 	if _, err := usecase.CreateAdmin(s, args); err != nil {
@@ -215,42 +220,42 @@ func (c *RunInputCommand) runCreateAdmin(s *State, scanner *bufio.Scanner) error
 func (c *RunInputCommand) runCreateSecretary(s *State, scanner *bufio.Scanner) error {
 	args := usecase.SecretaryInfoArgs{}
 	var found bool
-	args.Name, found = c.nextLine(scanner)
+	args.Name.Value, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing name")
 	}
-	args.Email, found = c.nextLine(scanner)
+	args.Email.Value, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing email")
 	}
-	args.Password, found = c.nextLine(scanner)
+	args.Password.Value, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing password")
 	}
-	args.Phone, found = c.nextLine(scanner)
+	args.Phone.Value, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing phone")
 	}
-	args.Birthdate, found = c.nextLine(scanner)
+	args.BirthdateRaw, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing birthdate")
 	}
-	args.Cpf, found = c.nextLine(scanner)
+	args.Cpf.Value, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing cpf")
 	}
-	args.Cnpj, found = c.nextLine(scanner)
+	args.Cnpj.Value, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing cnpj")
 	}
 
-	args.Phone = extractOnlyDigits(args.Phone)
-	args.Birthdate, found = parseDate(args.Birthdate)
+	args.Phone.Value = extractOnlyDigits(args.Phone.Value)
+	args.BirthdateRaw, found = parseDate(args.BirthdateRaw)
 	if !found {
 		return fmt.Errorf("invalid birthdate format")
 	}
-	args.Cpf = extractOnlyDigits(args.Cpf)
-	args.Cnpj = extractOnlyDigits(optionalValue(args.Cnpj))
+	args.Cpf.Value = extractOnlyDigits(args.Cpf.Value)
+	args.Cnpj.Value = extractOnlyDigits(optionalValue(args.Cnpj.Value))
 
 	if err := args.Validate(); err != nil {
 		return err.Error
@@ -267,34 +272,34 @@ func (c *RunInputCommand) runCreateSecretary(s *State, scanner *bufio.Scanner) e
 func (c *RunInputCommand) runCreateCustomer(s *State, scanner *bufio.Scanner) error {
 	var args usecase.CustomerInfoArgs
 	var found bool
-	args.Name, found = c.nextLine(scanner)
+	args.Name.Value, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing name")
 	}
-	args.Email, found = c.nextLine(scanner)
+	args.Email.Value, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing email")
 	}
-	args.Phone, found = c.nextLine(scanner)
+	args.Phone.Value, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing phone")
 	}
-	args.Birthdate, found = c.nextLine(scanner)
+	args.BirthdateRaw, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing birthdate")
 	}
-	args.Cpf, found = c.nextLine(scanner)
+	args.Cpf.Value, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing cpf")
 	}
 
-	args.Email = optionalValue(args.Email)
-	args.Phone = extractOnlyDigits(args.Phone)
-	args.Birthdate, found = parseDate(args.Birthdate)
+	args.Email.Value = optionalValue(args.Email.Value)
+	args.Phone.Value = extractOnlyDigits(args.Phone.Value)
+	args.BirthdateRaw, found = parseDate(args.BirthdateRaw)
 	if !found {
 		return fmt.Errorf("invalid birthdate format")
 	}
-	args.Cpf = extractOnlyDigits(args.Cpf)
+	args.Cpf.Value = extractOnlyDigits(args.Cpf.Value)
 
 	if err := args.Validate(); err != nil {
 		return err.Error
@@ -311,38 +316,38 @@ func (c *RunInputCommand) runCreateCustomer(s *State, scanner *bufio.Scanner) er
 func (c *RunInputCommand) runCreateSpecialist(s *State, scanner *bufio.Scanner) error {
 	var args usecase.SpecialistInfoArgs
 	var found bool
-	args.Name, found = c.nextLine(scanner)
+	args.Name.Value, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing name")
 	}
-	args.Email, found = c.nextLine(scanner)
+	args.Email.Value, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing email")
 	}
-	args.Phone, found = c.nextLine(scanner)
+	args.Phone.Value, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing phone")
 	}
-	args.Birthdate, found = c.nextLine(scanner)
+	args.BirthdateRaw, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing birthdate")
 	}
-	args.Cpf, found = c.nextLine(scanner)
+	args.Cpf.Value, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing cpf")
 	}
-	args.Cnpj, found = c.nextLine(scanner)
+	args.Cnpj.Value, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing cnpj")
 	}
 
-	args.Phone = extractOnlyDigits(args.Phone)
-	args.Birthdate, found = parseDate(args.Birthdate)
+	args.Phone.Value = extractOnlyDigits(args.Phone.Value)
+	args.BirthdateRaw, found = parseDate(args.BirthdateRaw)
 	if !found {
 		return fmt.Errorf("invalid birthdate format")
 	}
-	args.Cpf = extractOnlyDigits(args.Cpf)
-	args.Cnpj = extractOnlyDigits(optionalValue(args.Cnpj))
+	args.Cpf.Value = extractOnlyDigits(args.Cpf.Value)
+	args.Cnpj.Value = extractOnlyDigits(optionalValue(args.Cnpj.Value))
 
 	if err := args.Validate(); err != nil {
 		return err.Error
@@ -359,7 +364,7 @@ func (c *RunInputCommand) runCreateSpecialist(s *State, scanner *bufio.Scanner) 
 func (c *RunInputCommand) runCreateSpecialization(s *State, scanner *bufio.Scanner) error {
 	var args usecase.SpecializationInfoArgs
 	var found bool
-	args.Name, found = c.nextLine(scanner)
+	args.Name.Value, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing name")
 	}
@@ -383,7 +388,7 @@ func (c *RunInputCommand) runCreateService(s *State, scanner *bufio.Scanner) err
 	if !found {
 		return fmt.Errorf("missing specialization id")
 	}
-	args.Name, found = c.nextLine(scanner)
+	args.Name.Value, found = c.nextLine(scanner)
 	if !found {
 		return fmt.Errorf("missing name")
 	}
@@ -393,7 +398,7 @@ func (c *RunInputCommand) runCreateService(s *State, scanner *bufio.Scanner) err
 	if err != nil {
 		return fmt.Errorf("error getting specialization: %w", err)
 	}
-	args.SpecializationID = specialization.ID
+	args.SpecializationID.Value = specialization.ID
 
 	if err := args.Validate(); err != nil {
 		return err.Error
@@ -425,12 +430,12 @@ func (c *RunInputCommand) runCreateServices(s *State, scanner *bufio.Scanner) er
 		}
 		specializationName := strings.TrimSpace(parts[0])
 		if specialization.Name == specializationName {
-			argsService.SpecializationID = specialization.ID
+			argsService.SpecializationID.Value = specialization.ID
 		} else {
 			specialization, err = s.q.GetSpecializationByName(s.ctx, specializationName)
 			if err != nil {
 				var argsSpecialization usecase.SpecializationInfoArgs
-				argsSpecialization.Name = specializationName
+				argsSpecialization.Name.Value = specializationName
 
 				if err := argsSpecialization.Validate(); err != nil {
 					return err.Error
@@ -442,12 +447,12 @@ func (c *RunInputCommand) runCreateServices(s *State, scanner *bufio.Scanner) er
 				} else {
 					c.log("Specialization created with name: %s", argsSpecialization.Name)
 				}
-				argsService.SpecializationID = id
+				argsService.SpecializationID.Value = id
 			} else {
-				argsService.SpecializationID = specialization.ID
+				argsService.SpecializationID.Value = specialization.ID
 			}
 		}
-		argsService.Name = strings.TrimSpace(parts[1])
+		argsService.Name.Value = strings.TrimSpace(parts[1])
 
 		if err := argsService.Validate(); err != nil {
 			return err.Error
@@ -508,9 +513,9 @@ func (c *RunInputCommand) runCreateSpecialistHours(s *State, scanner *bufio.Scan
 		return fmt.Errorf("error getting specialist: %w", err)
 	}
 
-	args.SpecialistID = specialist.ID
-	args.StartTime = startTimeTime
-	args.EndTime = endTimeTime
+	args.SpecialistID.Value = specialist.ID
+	args.StartTimeRaw = startTimeTime
+	args.EndTimeRaw = endTimeTime
 
 	createdCount := 0
 	updatedCount := 0
@@ -518,7 +523,7 @@ func (c *RunInputCommand) runCreateSpecialistHours(s *State, scanner *bufio.Scan
 	errorCount := 0
 
 	for weekday := startWeekdayInt; weekday <= endWeekdayInt; weekday++ {
-		args.Weekday = weekday
+		args.Weekday.Value = weekday
 
 		if err := args.Validate(); err != nil {
 			return err.Error
@@ -581,10 +586,10 @@ func (c *RunInputCommand) runCreateSpecialistService(s *State, scanner *bufio.Sc
 	}
 
 	args := usecase.SpecialistServiceInfoArgs{
-		SpecialistID:      specialist.ID,
-		ServiceNameID:     service.ID,
-		Price:             priceInt,
-		DurationMin:       int32(durationMin),
+		SpecialistID:      domain.NewUUID(specialist.ID),
+		ServiceNameID:     domain.NewUUID(service.ID),
+		Price:             domain.Nat(priceInt),
+		Duration:          domain.Minutes(durationMin),
 		RequireSpecialist: true,
 	}
 
@@ -649,12 +654,12 @@ func (c *RunInputCommand) runCreateAppointment(s *State, scanner *bufio.Scanner)
 	}
 
 	args := usecase.CreateAppointmentArgs{
-		CustomerID:    customer.ID,
-		ServiceNameID: service.ID,
-		SpecialistID:  specialist.ID,
+		CustomerID:    domain.NewUUID(customer.ID),
+		ServiceNameID: domain.NewUUID(service.ID),
+		SpecialistID:  domain.NewUUID(specialist.ID),
 		DateRaw:       date,
 		TimeRaw:       time,
-		Status:        int32(usecase.AppointmentStatusPending),
+		Status:        domain.AppointmentStatusPending,
 	}
 
 	if err := args.Validate(); err != nil {

@@ -15,7 +15,7 @@ func GetSpecialistService(state State, specialistId, serviceNameId uuid.UUID) (i
 		return service, nil
 	}
 	if ErrorIsNoRows(err) {
-		return service, NewNotFoundError(ErrResourceNotFound).InField("service")
+		return service, NewResourceNotFoundError("service")
 	}
 	return service, NewUnexpectedError(err)
 }

@@ -6,6 +6,7 @@ import (
 
 	"backend/internal/api/dtos"
 	"backend/internal/api/presenter"
+	"backend/internal/domain"
 	"backend/internal/usecase"
 
 	"github.com/go-chi/render"
@@ -56,7 +57,7 @@ func (h *api) createSpecialization(w http.ResponseWriter, r *http.Request) {
 
 	// Validate e execute the usecase
 	args := usecase.SpecializationInfoArgs{
-		Name: body.Name,
+		Name: domain.StringNew(body.Name),
 	}
 	if err := args.Validate(); err != nil {
 		presenter.UsecaseError(w, err)
@@ -98,7 +99,7 @@ func (h *api) updateSpecialization(w http.ResponseWriter, r *http.Request) {
 
 	// Validate e execute the usecase
 	args := usecase.SpecializationInfoArgs{
-		Name:      body.Name,
+		Name: domain.StringNew(body.Name),
 	}
 	if err := args.Validate(); err != nil {
 		presenter.UsecaseError(w, err)

@@ -19,7 +19,7 @@ func (c *CreateSpecializationCommand) Name() string {
 
 func (c *CreateSpecializationCommand) Init() {
 	c.fs = flag.NewFlagSet(c.Name(), flag.ExitOnError)
-	c.fs.StringVar(&c.Args.Name, "name", "", "Name")
+	c.fs.StringVar(&c.Args.Name.Value, "name", "", "Name")
 }
 
 func (c *CreateSpecializationCommand) Parse(args []string) {

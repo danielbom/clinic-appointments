@@ -10,9 +10,9 @@ type UsecaseErrorKind int32
 
 const (
 	ErrorKindUnexpected UsecaseErrorKind = iota
+	ErrorKindInvalidArgument
 	ErrorKindNotFound
 	ErrorKindAlreadyExists
-	ErrorKindInvalidArgument
 	ErrorKindInvalidState
 	ErrorKindAuth
 )
@@ -30,24 +30,16 @@ func NewUnexpectedError(err error) *UsecaseError {
 	return NewError(ErrorKindUnexpected, err)
 }
 
-func NewNotFoundError(err error) *UsecaseError {
-	return NewError(ErrorKindNotFound, err)
-}
-
 func NewInvalidArgumentError(err error) *UsecaseError {
 	return NewError(ErrorKindInvalidArgument, err)
 }
 
-func NewAlreadyExistsError(err error) *UsecaseError {
-	return NewError(ErrorKindAlreadyExists, err)
+func NewResourceNotFoundError(resource string) *UsecaseError {
+	return NewError(ErrorKindNotFound, ErrResourceNotFound).InField(resource)
 }
 
 func NewResourceAlreadyExistsError(resource string) *UsecaseError {
-	return NewAlreadyExistsError(ErrResourceAlreadyExists).InField(resource)
-}
-
-func NewUniqueInformationDuplicated(resource string) *UsecaseError {
-	return NewAlreadyExistsError(ErrUniqueInformationDuplicated).InField(resource)
+	return NewError(ErrorKindAlreadyExists, ErrResourceAlreadyExists).InField(resource)
 }
 
 func NewInvalidStateError(err error) *UsecaseError {
@@ -66,27 +58,8 @@ func (e *UsecaseError) InField(field string) *UsecaseError {
 var (
 	ErrUnreachable = errors.New("unreachable")
 
-	ErrInvalidUuid     = errors.New("invalid uuid")
-	ErrInvalidDate     = errors.New("invalid date")
-	ErrInvalidTime     = errors.New("invalid time")
-	ErrInvalidFormat   = errors.New("invalid format")
-	ErrInvalidRange    = errors.New("invalid range")
-	ErrInvalidDuration = errors.New("invalid duration")
-
-	ErrExpectPositiveValue = errors.New("expect positive value")
-)
-
-var (
-	ErrFieldIsRequired = errors.New("field is required")
-
-	ErrInvalidAppointmentStatus = errors.New("invalid appointment status")
 	ErrAppointmentsIntersection = errors.New("appointments intersection")
 
-	ErrResourceNotFound = errors.New("resource not found")
-)
-
-var (
+	ErrResourceNotFound      = errors.New("resource not found")
 	ErrResourceAlreadyExists = errors.New("resource already exists")
-
-	ErrUniqueInformationDuplicated = errors.New("unique information duplicated")
 )

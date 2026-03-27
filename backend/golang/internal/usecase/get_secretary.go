@@ -12,7 +12,7 @@ func GetSecretary(state State, id uuid.UUID) (infra.Secretary, *UsecaseError) {
 		return secretary, nil
 	}
 	if ErrorIsNoRows(err) {
-		return secretary, NewNotFoundError(ErrResourceNotFound).InField("secretary")
+		return secretary, NewResourceNotFoundError("secretary")
 	}
 	return secretary, NewUnexpectedError(err)
 }

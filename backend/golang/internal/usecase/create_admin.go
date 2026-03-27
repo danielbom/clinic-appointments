@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"backend/internal/domain"
 	"backend/internal/infra"
 
 	"github.com/google/uuid"
@@ -11,26 +12,26 @@ const CreateAdminArgsName = "CreateAdminArgs"
 const CreateAdminUsecaseName = "CreateAdminUsecase"
 
 type CreateAdminArgs struct {
-	Name     string
-	Email    string
-	Password string
+	Name     domain.String
+	Email    domain.String
+	Password domain.String
 }
 
 func (args *CreateAdminArgs) Validate() *UsecaseError {
-	if args.Name == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("name")
+	if err := args.Name.Required(); err != nil {
+		return NewInvalidArgumentError(err).InField("name")
 	}
-	if args.Email == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("email")
+	if err := args.Email.Required(); err != nil {
+		return NewInvalidArgumentError(err).InField("email")
 	}
-	if args.Password == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("password")
+	if err := args.Password.Required(); err != nil {
+		return NewInvalidArgumentError(err).InField("password")
 	}
 	return nil
 }
 
 func CreateAdmin(state State, args CreateAdminArgs) (uuid.UUID, *UsecaseError) {
-	_, err := state.Queries().GetIdentityByEmail(state.Context(), args.Email)
+	_, err := state.Queries().GetIdentityByEmail(state.Context(), args.Email.Value)
 	if err == nil {
 		return uuid.Nil, NewResourceAlreadyExistsError("identity")
 	} else if !ErrorIsNoRows(err) {
@@ -38,9 +39,9 @@ func CreateAdmin(state State, args CreateAdminArgs) (uuid.UUID, *UsecaseError) {
 	}
 
 	params := infra.CreateAdminParams{
-		Name:     args.Name,
-		Email:    args.Email,
-		Password: args.Password,
+		Name:     args.Name.Value,
+		Email:    args.Email.Value,
+		Password: args.Password.Value,
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(params.Password), bcrypt.DefaultCost)

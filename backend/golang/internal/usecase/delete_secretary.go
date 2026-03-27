@@ -10,7 +10,7 @@ func DeleteSecretary(state State, id uuid.UUID) *UsecaseError {
 		return NewError(ErrorKindUnexpected, err)
 	}
 	if count == 0 {
-		return NewNotFoundError(ErrResourceNotFound).InField("secretary")
+		return NewResourceNotFoundError("secretary")
 	}
 	return nil
 }

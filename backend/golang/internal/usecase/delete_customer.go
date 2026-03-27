@@ -10,7 +10,7 @@ func DeleteCustomer(state State, id uuid.UUID) *UsecaseError {
 		return NewError(ErrorKindUnexpected, err)
 	}
 	if count == 0 {
-		return NewNotFoundError(ErrResourceNotFound).InField("customer")
+		return NewResourceNotFoundError("customer")
 	}
 	return nil
 }

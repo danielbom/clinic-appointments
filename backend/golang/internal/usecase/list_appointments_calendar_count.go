@@ -1,37 +1,32 @@
 package usecase
 
 import (
+	"backend/internal/domain"
 	"backend/internal/infra"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type ListAppointmentsCalendarCountArgs struct {
 	Year         int
 	StartDateRaw string
-	StartDate    pgtype.Date
+	StartDate    domain.Date
 	EndDateRaw   string
-	EndDate      pgtype.Date
+	EndDate      domain.Date
 }
 
 func (args *ListAppointmentsCalendarCountArgs) Validate() *UsecaseError {
 	if args.Year > 0 {
-		if err := DateFromYear(&args.StartDate, args.Year); err != nil {
-			return NewInvalidArgumentError(ErrInvalidDate).InField("startDate")
+		if err := args.StartDate.FirstDateOfYear(args.Year); err != nil {
+			return NewInvalidArgumentError(err).InField("startDate")
 		}
-		if err := args.EndDate.Scan(args.StartDate.Time.AddDate(1, 0, -1)); err != nil {
-			return NewInvalidArgumentError(ErrInvalidDate).InField("endDate")
+		if err := args.EndDate.LastDateOfYear(args.Year); err != nil {
+			return NewInvalidArgumentError(err).InField("endDate")
 		}
 	} else {
-		if args.StartDateRaw != "" {
-			if err := args.StartDate.Scan(args.StartDateRaw); err != nil {
-				return NewInvalidArgumentError(ErrInvalidDate).InField("startDate")
-			}
+		if err := args.StartDate.ScanOptional(args.StartDateRaw); err != nil {
+			return NewInvalidArgumentError(err).InField("startDate")
 		}
-		if args.EndDateRaw != "" {
-			if err := args.EndDate.Scan(args.EndDateRaw); err != nil {
-				return NewInvalidArgumentError(ErrInvalidDate).InField("endDate")
-			}
+		if err := args.EndDate.ScanOptional(args.EndDateRaw); err != nil {
+			return NewInvalidArgumentError(err).InField("endDate")
 		}
 	}
 	return nil
@@ -39,8 +34,8 @@ func (args *ListAppointmentsCalendarCountArgs) Validate() *UsecaseError {
 
 func ListAppointmentsCalendarCount(state State, args ListAppointmentsCalendarCountArgs) ([]infra.ListAppointmentsCalendarCountRow, *UsecaseError) {
 	appointments, err := state.Queries().ListAppointmentsCalendarCount(state.Context(), infra.ListAppointmentsCalendarCountParams{
-		StartDate: args.StartDate,
-		EndDate:   args.EndDate,
+		StartDate: args.StartDate.Value,
+		EndDate:   args.EndDate.Value,
 	})
 	if err == nil {
 		return appointments, nil

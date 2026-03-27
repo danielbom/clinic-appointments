@@ -12,7 +12,7 @@ func GetService(state State, id uuid.UUID) (infra.Service, *UsecaseError) {
 		return service, nil
 	}
 	if ErrorIsNoRows(err) {
-		return service, NewNotFoundError(ErrResourceNotFound).InField("service")
+		return service, NewResourceNotFoundError("service")
 	}
 	return service, NewUnexpectedError(err)
 }

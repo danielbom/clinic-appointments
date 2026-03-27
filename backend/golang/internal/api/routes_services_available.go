@@ -6,6 +6,7 @@ import (
 
 	"backend/internal/api/dtos"
 	"backend/internal/api/presenter"
+	"backend/internal/domain"
 	"backend/internal/usecase"
 
 	"github.com/go-chi/render"
@@ -47,8 +48,8 @@ func (h *api) createServiceAvailable(w http.ResponseWriter, r *http.Request) {
 
 	// Validate e execute the usecase
 	args := usecase.CreateServiceNameArgs{
-		Name:                body.Name,
-		Specialization:      body.Specialization,
+		Name:                domain.StringNew(body.Name),
+		Specialization:      domain.StringNew(body.Specialization),
 		SpecializationIDRaw: body.SpecializationID,
 	}
 	if err := args.Validate(); err != nil {
@@ -84,7 +85,7 @@ func (h *api) updateServiceAvailable(w http.ResponseWriter, r *http.Request) {
 
 	// Validate e execute the usecase
 	args := usecase.UpdateServiceNameArgs{
-		Name: body.Name,
+		Name: domain.StringNew(body.Name),
 	}
 	if err := args.Validate(); err != nil {
 		presenter.UsecaseError(w, err)

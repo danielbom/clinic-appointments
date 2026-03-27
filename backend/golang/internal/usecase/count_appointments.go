@@ -1,9 +1,8 @@
 package usecase
 
 import (
+	"backend/internal/domain"
 	"backend/internal/infra"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type CountAppointmentsArgs struct {
@@ -11,30 +10,26 @@ type CountAppointmentsArgs struct {
 	ServiceName    string
 	SpecialistName string
 	StartDateRaw   string
-	StartDate      pgtype.Date
+	StartDate      domain.Date
 	EndDateRaw     string
-	EndDate        pgtype.Date
+	EndDate        domain.Date
 	Status         int32
 }
 
 func (args *CountAppointmentsArgs) Validate() *UsecaseError {
-	if args.StartDateRaw != "" {
-		if err := args.StartDate.Scan(args.StartDateRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidDate).InField("startDate")
-		}
+	if err := args.StartDate.ScanOptional(args.StartDateRaw); err != nil {
+		return NewInvalidArgumentError(err).InField("startDate")
 	}
-	if args.EndDateRaw != "" {
-		if err := args.EndDate.Scan(args.EndDateRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidDate).InField("endDate")
-		}
+	if err := args.EndDate.ScanOptional(args.EndDateRaw); err != nil {
+		return NewInvalidArgumentError(err).InField("endDate")
 	}
 	return nil
 }
 
 func CountAppointments(state State, args CountAppointmentsArgs) (int32, *UsecaseError) {
 	count, err := state.Queries().CountAppointments(state.Context(), infra.CountAppointmentsParams{
-		StartDate:      args.StartDate,
-		EndDate:        args.EndDate,
+		StartDate:      args.StartDate.Value,
+		EndDate:        args.EndDate.Value,
 		CustomerName:   args.CustomerName,
 		SpecialistName: args.SpecialistName,
 		ServiceName:    args.ServiceName,

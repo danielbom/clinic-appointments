@@ -1,66 +1,63 @@
 package usecase
 
 import (
+	"backend/internal/domain"
 	"backend/internal/infra"
-	"backend/internal/validate"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type SecretaryInfoArgs struct {
-	Name          string
-	Email         string
-	Phone         string
-	Password      string
-	Birthdate     string
-	BirthdateDate pgtype.Date
-	Cpf           string
-	Cnpj          string
-	CnpjText      pgtype.Text
-	Update        bool
+	Name         domain.String
+	Email        domain.String
+	Phone        domain.String
+	Password     domain.String
+	BirthdateRaw string
+	Birthdate    domain.Date
+	Cpf          domain.String
+	Cnpj         domain.String
+	CnpjText     domain.String
+	Update       bool
 }
 
 func (args *SecretaryInfoArgs) Validate() *UsecaseError {
-	if !args.CnpjText.Valid {
-		if err := args.CnpjText.Scan(args.Cnpj); err != nil {
-			return NewUnexpectedError(err)
-		}
+	if err := args.Birthdate.Scan(args.BirthdateRaw); err != nil {
+		return NewInvalidArgumentError(err).InField("birthdate")
 	}
-	if args.Birthdate != "" {
-		if err := DateFromString(&args.BirthdateDate, args.Birthdate); err != nil {
-			return NewInvalidArgumentError(ErrInvalidDate).InField("birthdate")
-		}
+	if err := args.Name.Required(); err != nil {
+		return NewInvalidArgumentError(err).InField("name")
 	}
-	if args.Name == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("name")
+	if err := args.Phone.Required(); err != nil {
+		return NewInvalidArgumentError(err).InField("phone")
 	}
-	if args.Phone == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("phone")
+	if err := args.Cpf.Required(); err != nil {
+		return NewInvalidArgumentError(err).InField("cpf")
 	}
-	if args.Cpf == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("cpf")
+	if err := args.Cpf.IsCpf(); err != nil {
+		return NewInvalidArgumentError(err).InField("cpf")
 	}
-	if !validate.IsCpfValid(args.Cpf) {
-		return NewInvalidArgumentError(ErrInvalidFormat).InField("cpf")
+	if err := args.Cnpj.Required(); err != nil {
+		return NewInvalidArgumentError(err).InField("cnpj")
 	}
-	if args.Cnpj == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("cnpj")
+	if err := args.Cnpj.Required(); err != nil {
+		return NewInvalidArgumentError(err).InField("cnpj")
 	}
-	if !validate.IsCnpjValid(args.Cnpj) {
-		return NewInvalidArgumentError(ErrInvalidFormat).InField("cnpj")
+	if err := args.Cnpj.IsCnpj(); err != nil {
+		return NewInvalidArgumentError(err).InField("cnpj")
 	}
 	if args.Update {
-		if args.Password != "" && !validate.IsPasswordValid(args.Password) {
-			return NewInvalidArgumentError(ErrInvalidFormat).InField("password")
+		if args.Password.IsDefined() {
+			if err := args.Password.IsPassword(); err != nil {
+				return NewInvalidArgumentError(err).InField("password")
+			}
 		}
 	} else {
-		if args.Password == "" {
-			return NewInvalidArgumentError(ErrFieldIsRequired).InField("password")
+		if err := args.Password.Required(); err != nil {
+			return NewInvalidArgumentError(err).InField("password")
 		}
-		if !validate.IsPasswordValid(args.Password) {
-			return NewInvalidArgumentError(ErrInvalidFormat).InField("password")
+		if err := args.Password.IsPassword(); err != nil {
+			return NewInvalidArgumentError(err).InField("password")
 		}
 	}
 	return nil
@@ -82,7 +79,7 @@ func SecretaryWithEmailExists(state State, email string, exceptId uuid.UUID) (in
 
 func CreateSecretary(state State, args SecretaryInfoArgs) (infra.Secretary, *UsecaseError) {
 	var none infra.Secretary
-	_, exists, err := SecretaryWithEmailExists(state, args.Email, uuid.Nil)
+	_, exists, err := SecretaryWithEmailExists(state, args.Email.Value, uuid.Nil)
 	if err != nil {
 		return none, NewUnexpectedError(err)
 	}
@@ -90,20 +87,20 @@ func CreateSecretary(state State, args SecretaryInfoArgs) (infra.Secretary, *Use
 		return none, NewResourceAlreadyExistsError("secretary.email")
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(args.Password), bcrypt.DefaultCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(args.Password.Value), bcrypt.DefaultCost)
 	if err != nil {
 		return none, NewUnexpectedError(err)
 	}
-	args.Password = string(hashedPassword)
+	args.Password.Value = string(hashedPassword)
 
 	params := infra.CreateSecretaryParams{
-		Name:      args.Name,
-		Email:     args.Email,
-		Phone:     args.Phone,
-		Birthdate: args.BirthdateDate,
-		Cpf:       args.Cpf,
-		Cnpj:      args.CnpjText,
-		Password:  args.Password,
+		Name:      args.Name.Value,
+		Email:     args.Email.Value,
+		Phone:     args.Phone.Value,
+		Birthdate: args.Birthdate.Value,
+		Cpf:       args.Cpf.Value,
+		Cnpj:      args.Cnpj.Text(),
+		Password:  args.Password.Value,
 	}
 	secretary, err := state.Queries().CreateSecretary(state.Context(), params)
 	if err != nil {
@@ -114,7 +111,7 @@ func CreateSecretary(state State, args SecretaryInfoArgs) (infra.Secretary, *Use
 
 func UpdateSecretary(state State, secretaryId uuid.UUID, args SecretaryInfoArgs) (infra.Secretary, *UsecaseError) {
 	var none infra.Secretary
-	secretary0, exists, err := SecretaryWithEmailExists(state, args.Email, secretaryId)
+	secretary0, exists, err := SecretaryWithEmailExists(state, args.Email.Value, secretaryId)
 	if err != nil {
 		return none, NewUnexpectedError(err)
 	}
@@ -122,25 +119,25 @@ func UpdateSecretary(state State, secretaryId uuid.UUID, args SecretaryInfoArgs)
 		return none, NewResourceAlreadyExistsError("secretary.email")
 	}
 
-	if args.Password != "" {
-		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(args.Password), bcrypt.DefaultCost)
+	if args.Password.IsDefined() {
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(args.Password.Value), bcrypt.DefaultCost)
 		if err != nil {
 			return none, NewUnexpectedError(err)
 		}
-		args.Password = string(hashedPassword)
+		args.Password.Value = string(hashedPassword)
 	} else {
-		args.Password = secretary0.Password
+		args.Password.Value = secretary0.Password
 	}
 
 	params := infra.UpdateSecretaryParams{
 		ID:        secretaryId,
-		Name:      args.Name,
-		Email:     args.Email,
-		Phone:     args.Phone,
-		Birthdate: args.BirthdateDate,
-		Cpf:       args.Cpf,
-		Cnpj:      args.CnpjText,
-		Password:  args.Password,
+		Name:      args.Name.Value,
+		Email:     args.Email.Value,
+		Phone:     args.Phone.Value,
+		Birthdate: args.Birthdate.Value,
+		Cpf:       args.Cpf.Value,
+		Cnpj:      args.Cnpj.Text(),
+		Password:  args.Password.Value,
 	}
 	secretary, err := state.Queries().UpdateSecretary(state.Context(), params)
 	if err != nil {
