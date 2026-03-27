@@ -1,15 +1,16 @@
 import React from 'react'
 import { Breadcrumb } from 'antd'
 
-import type { ChangePageMode, PageMode } from './types'
+import type { PageMode } from './types'
+import { Link } from 'react-router-dom'
 
 interface AdminBreadcrumbProps {
   title: React.ReactNode
   mode: PageMode
-  changeMode: ChangePageMode
+  pageKey: string
 }
 
-function AdminBreadcrumb({ title, mode, changeMode }: AdminBreadcrumbProps) {
+function AdminBreadcrumb({ title, pageKey, mode }: AdminBreadcrumbProps) {
   switch (mode) {
     case 'list':
       return <Breadcrumb items={[{ title, href: '#' }]} />
@@ -17,7 +18,7 @@ function AdminBreadcrumb({ title, mode, changeMode }: AdminBreadcrumbProps) {
       return (
         <Breadcrumb
           items={[
-            { title, href: '#', onClick: () => changeMode('list') },
+            { title: <Link to={`/${pageKey}`}>#</Link> }, //
             { title: 'Ver', href: '#view' },
           ]}
         />
@@ -26,7 +27,7 @@ function AdminBreadcrumb({ title, mode, changeMode }: AdminBreadcrumbProps) {
       return (
         <Breadcrumb
           items={[
-            { title, href: '#', onClick: () => changeMode('list') },
+            { title: <Link to={`/${pageKey}`}>#</Link> }, //
             { title: 'Criar', href: '#create' },
           ]}
         />
@@ -35,7 +36,7 @@ function AdminBreadcrumb({ title, mode, changeMode }: AdminBreadcrumbProps) {
       return (
         <Breadcrumb
           items={[
-            { title, href: '#', onClick: () => changeMode('list') },
+            { title: <Link to={`/${pageKey}`}>#</Link> }, //
             { title: 'Editar', href: '#edit' },
           ]}
         />

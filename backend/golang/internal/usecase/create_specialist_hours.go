@@ -48,7 +48,7 @@ func timeInside(start1, start2, end2, end1 pgtype.Time) bool {
 
 func CreateSpecialistHours(state State, args CreateSpecialistHoursArgs) (UsecaseOperation, uuid.UUID, *UsecaseError) {
 	intersectingHours, err := state.Queries().ListSpecialistHoursIntersecting(state.Context(), infra.ListSpecialistHoursIntersectingParams{
-		SpecialistID: args.SpecialistID.Value,
+		SpecialistId: args.SpecialistID.Value,
 		Weekday:      args.Weekday.Value,
 		StartTime:    args.Interval.StartTime(),
 		EndTime:      args.Interval.EndTime(),
@@ -77,7 +77,7 @@ func CreateSpecialistHours(state State, args CreateSpecialistHoursArgs) (Usecase
 		}
 
 		params := infra.UpdateSpecialistHourStartAndEndTimeParams{
-			ID: hourToUpdate.ID,
+			SpecialistHoursId: hourToUpdate.ID,
 		}
 
 		if timeBetween(hourToUpdate.StartTime, args.Interval.StartTime(), hourToUpdate.EndTime) {
@@ -98,7 +98,7 @@ func CreateSpecialistHours(state State, args CreateSpecialistHoursArgs) (Usecase
 		return OperationUpdate, hourToUpdate.ID, nil
 	} else {
 		params := infra.CreateSpecialistHourParams{
-			SpecialistID: args.SpecialistID.Value,
+			SpecialistId: args.SpecialistID.Value,
 			Weekday:      args.Weekday.Value,
 			StartTime:    args.Interval.StartTime(),
 			EndTime:      args.Interval.EndTime(),

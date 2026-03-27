@@ -1,5 +1,6 @@
-export default function renderDuration(minutes: number) {
-  const hours = Math.floor(minutes / 60)
+export default function renderDuration(totalMinutes: number) {
+  const hours = Math.floor(totalMinutes / 60)
+  const minutes = totalMinutes % 60
   const parts = []
   if (hours > 0) {
     parts.push(`${hours}h`)

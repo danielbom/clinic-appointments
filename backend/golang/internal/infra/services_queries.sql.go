@@ -14,21 +14,25 @@ import (
 
 const createService = `-- name: CreateService :one
 INSERT INTO services ("service_name_id", "specialist_id", "price", "duration")
-VALUES ($1, $2, $3, $4)
+VALUES ( $1
+       , $2
+       , $3
+       , $4
+       )
 RETURNING "id"
 `
 
 type CreateServiceParams struct {
-	ServiceNameID uuid.UUID
-	SpecialistID  uuid.UUID
+	ServiceNameId uuid.UUID
+	SpecialistId  uuid.UUID
 	Price         int32
 	Duration      pgtype.Interval
 }
 
 func (q *Queries) CreateService(ctx context.Context, arg CreateServiceParams) (uuid.UUID, error) {
 	row := q.db.QueryRow(ctx, createService,
-		arg.ServiceNameID,
-		arg.SpecialistID,
+		arg.ServiceNameId,
+		arg.SpecialistId,
 		arg.Price,
 		arg.Duration,
 	)
@@ -42,8 +46,8 @@ DELETE FROM "services"
 WHERE "id" = $1
 `
 
-func (q *Queries) DeleteService(ctx context.Context, id uuid.UUID) (int64, error) {
-	result, err := q.db.Exec(ctx, deleteService, id)
+func (q *Queries) DeleteService(ctx context.Context, serviceid uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteService, serviceid)
 	if err != nil {
 		return 0, err
 	}
@@ -57,12 +61,12 @@ WHERE "service_name_id" = $1 AND "specialist_id" = $2
 `
 
 type GetServiceParams struct {
-	ServiceNameID uuid.UUID
-	SpecialistID  uuid.UUID
+	ServiceNameId uuid.UUID
+	SpecialistId  uuid.UUID
 }
 
 func (q *Queries) GetService(ctx context.Context, arg GetServiceParams) (Service, error) {
-	row := q.db.QueryRow(ctx, getService, arg.ServiceNameID, arg.SpecialistID)
+	row := q.db.QueryRow(ctx, getService, arg.ServiceNameId, arg.SpecialistId)
 	var i Service
 	err := row.Scan(
 		&i.ID,
@@ -80,8 +84,8 @@ FROM services
 WHERE "id" = $1
 `
 
-func (q *Queries) GetServiceByID(ctx context.Context, id uuid.UUID) (Service, error) {
-	row := q.db.QueryRow(ctx, getServiceByID, id)
+func (q *Queries) GetServiceByID(ctx context.Context, serviceid uuid.UUID) (Service, error) {
+	row := q.db.QueryRow(ctx, getServiceByID, serviceid)
 	var i Service
 	err := row.Scan(
 		&i.ID,
@@ -96,7 +100,7 @@ func (q *Queries) GetServiceByID(ctx context.Context, id uuid.UUID) (Service, er
 const updateService = `-- name: UpdateService :one
 UPDATE "services" 
 SET
-    "price" = $1,
+    "price"    = $1,
     "duration" = $2
 WHERE "id" = $3
 RETURNING "id"

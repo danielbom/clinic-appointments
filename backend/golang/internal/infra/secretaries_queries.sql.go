@@ -13,11 +13,11 @@ import (
 )
 
 const countSecretaries = `-- name: CountSecretaries :one
-SELECT COUNT(id)
+SELECT COUNT(id)::int as count
 FROM "secretaries"
 WHERE true
-  AND ($1::text = '' OR "name" ILIKE '%' || $1 || '%')
-  AND ($2::text = '' OR "cpf" = $2)
+  AND ($1::text = ''  OR "name" ILIKE '%' || $1 || '%')
+  AND ($2::text = ''   OR "cpf" = $2)
   AND ($3::text = '' OR "phone" = $3)
 `
 
@@ -27,16 +27,23 @@ type CountSecretariesParams struct {
 	Phone string
 }
 
-func (q *Queries) CountSecretaries(ctx context.Context, arg CountSecretariesParams) (int64, error) {
+func (q *Queries) CountSecretaries(ctx context.Context, arg CountSecretariesParams) (int32, error) {
 	row := q.db.QueryRow(ctx, countSecretaries, arg.Name, arg.Cpf, arg.Phone)
-	var count int64
+	var count int32
 	err := row.Scan(&count)
 	return count, err
 }
 
 const createSecretary = `-- name: CreateSecretary :one
 INSERT INTO "secretaries" ("name", "email", "password", "phone", "birthdate", "cpf", "cnpj")
-VALUES ($1, $2, $3, $4, $5, $6, $7)
+VALUES ( $1
+       , $2
+       , $3
+       , $4
+       , $5
+       , $6
+       , $7
+       )
 RETURNING "id", "name", "email", "password", "phone", "birthdate", "cpf", "cnpj"
 `
 
@@ -79,8 +86,8 @@ DELETE FROM "secretaries"
 WHERE "id" = $1
 `
 
-func (q *Queries) DeleteSecretaryByID(ctx context.Context, id uuid.UUID) (int64, error) {
-	result, err := q.db.Exec(ctx, deleteSecretaryByID, id)
+func (q *Queries) DeleteSecretaryByID(ctx context.Context, secretaryid uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteSecretaryByID, secretaryid)
 	if err != nil {
 		return 0, err
 	}
@@ -94,8 +101,8 @@ WHERE "email" = $1
 LIMIT 1
 `
 
-func (q *Queries) GetSecretaryByEmail(ctx context.Context, email string) (Secretary, error) {
-	row := q.db.QueryRow(ctx, getSecretaryByEmail, email)
+func (q *Queries) GetSecretaryByEmail(ctx context.Context, secretaryid string) (Secretary, error) {
+	row := q.db.QueryRow(ctx, getSecretaryByEmail, secretaryid)
 	var i Secretary
 	err := row.Scan(
 		&i.ID,
@@ -117,8 +124,8 @@ WHERE "id" = $1
 LIMIT 1
 `
 
-func (q *Queries) GetSecretaryByID(ctx context.Context, id uuid.UUID) (Secretary, error) {
-	row := q.db.QueryRow(ctx, getSecretaryByID, id)
+func (q *Queries) GetSecretaryByID(ctx context.Context, secretaryid uuid.UUID) (Secretary, error) {
+	row := q.db.QueryRow(ctx, getSecretaryByID, secretaryid)
 	var i Secretary
 	err := row.Scan(
 		&i.ID,
@@ -137,11 +144,11 @@ const listSecretaries = `-- name: ListSecretaries :many
 SELECT "id", "name", "email", "password", "phone", "birthdate", "cpf", "cnpj"
 FROM "secretaries"
 WHERE true
-  AND ($1::text = '' OR "name" ILIKE '%' || $1 || '%')
-  AND ($2::text = '' OR "cpf" = $2)
+  AND ($1::text = ''  OR "name" ILIKE '%' || $1 || '%')
+  AND ($2::text = ''   OR "cpf" = $2)
   AND ($3::text = '' OR "phone" = $3)
-LIMIT $5
-OFFSET $4
+LIMIT $5::integer
+OFFSET $4::integer
 `
 
 type ListSecretariesParams struct {
@@ -190,13 +197,13 @@ func (q *Queries) ListSecretaries(ctx context.Context, arg ListSecretariesParams
 const updateSecretary = `-- name: UpdateSecretary :one
 UPDATE "secretaries"
 SET
-  "name" = $1,
-  "email" = $2,
-  "password" = $3,
-  "phone" = $4,
+  "name"      = $1,
+  "email"     = $2,
+  "password"  = $3,
+  "phone"     = $4,
   "birthdate" = $5,
-  "cpf" = $6,
-  "cnpj" = $7
+  "cpf"       = $6,
+  "cnpj"      = $7
 WHERE "id" = $8
 RETURNING "id", "name", "email", "password", "phone", "birthdate", "cpf", "cnpj"
 `

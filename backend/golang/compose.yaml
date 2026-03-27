@@ -15,7 +15,7 @@ services:
         condition: service_healthy
 
   db:
-    image: postgres:latest
+    image: postgres:16
     restart: unless-stopped
     ports:
       - ${APPOINTMENTS_DATABASE_PORT:-5432}:5432
@@ -31,6 +31,22 @@ services:
       timeout: 5s
       retries: 5
       start_period: 1s
+
+  # optional
+  # environment:
+  #   DATABASE_URL: postgres://test_user:test_password@pgbouncer:6432/test_db
+  # pgbouncer:
+  #   image: edoburu/pgbouncer
+  #   environment:
+  #     DB_USER: ${APPOINTMENTS_DATABASE_USER}
+  #     DB_PASSWORD: ${APPOINTMENTS_DATABASE_PASSWORD}
+  #     DB_HOST: db
+  #     DB_NAME: ${APPOINTMENTS_DATABASE_NAME}
+  #     POOL_MODE: transaction
+  #     MAX_CLIENT_CONN: 200
+  #     DEFAULT_POOL_SIZE: 20
+  #   ports:
+  #     - "6432:6432"
 
   # optional
   # pgadmin:

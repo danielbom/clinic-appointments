@@ -1,6 +1,6 @@
 # @name GetServices
 
-GET {{$dotenv BASE_URL}}/services
+GET {{$dotenv BASE_URL}}/api/services
     ?page=0
     &pageSize=20
     &specialist=Livia
@@ -13,7 +13,7 @@ Accept: application/json
 
 # @name CountServices
 
-GET {{$dotenv BASE_URL}}/services/count
+GET {{$dotenv BASE_URL}}/api/services/count
     ?0=0
     # &specialist=X
     # &service=X
@@ -25,7 +25,7 @@ Accept: application/json
 
 # @name GetService
 
-GET {{$dotenv BASE_URL}}/services/3aa65a4e-4dc8-4b1d-9d49-eb92705dc07b
+GET {{$dotenv BASE_URL}}/api/services/3aa65a4e-4dc8-4b1d-9d49-eb92705dc07b
 Authorization: Bearer {{$dotenv TOKEN}}
 Accept: application/json
 
@@ -33,7 +33,7 @@ Accept: application/json
 
 # @name CreateService
 
-POST {{$dotenv BASE_URL}}/services
+POST {{$dotenv BASE_URL}}/api/services
 Authorization: Bearer {{$dotenv TOKEN}}
 Content-Type: application/json
 {
@@ -47,7 +47,7 @@ Content-Type: application/json
 
 # @name UpdateService
 
-PUT {{$dotenv BASE_URL}}/services/3aa65a4e-4dc8-4b1d-9d49-eb92705dc07b
+PUT {{$dotenv BASE_URL}}/api/services/3aa65a4e-4dc8-4b1d-9d49-eb92705dc07b
 Authorization: Bearer {{$dotenv TOKEN}}
 Content-Type: application/json
 {
@@ -59,5 +59,5 @@ Content-Type: application/json
 
 # @name DeleteService
 
-DELETE {{$dotenv BASE_URL}}/services/3aa65a4e-4dc8-4b1d-9d49-eb92705dc07b
+DELETE {{$dotenv BASE_URL}}/api/services/3aa65a4e-4dc8-4b1d-9d49-eb92705dc07b
 Authorization: Bearer {{$dotenv TOKEN}}

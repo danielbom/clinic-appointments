@@ -17,7 +17,7 @@ func (h *api) GenerateAccessJWT(data JwtData) (string, error) {
 	_, tokenString, err := h.auth.Encode(jwt.MapClaims{
 		"sub":  data.UserID,
 		"role": data.Role,
-		"exp":  time.Now().Add(time.Hour * 1).Unix(),
+		"exp":  time.Now().Add(time.Minute * 10).Unix(),
 	})
 	return tokenString, err
 }
@@ -31,6 +31,7 @@ func (h *api) GenerateRefreshJWT(data JwtData) (string, error) {
 }
 
 func (h *api) JWT(next http.Handler) http.Handler {
+	// TODO: Check this call
 	return jwtauth.Verifier(h.auth)(jwtauth.Authenticator(next))
 }
 

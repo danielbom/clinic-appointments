@@ -72,6 +72,7 @@ func (h *api) getAppointments(w http.ResponseWriter, r *http.Request) {
 			CustomerName:   customer,
 			StartDateRaw:   startDate,
 			EndDateRaw:     endDate,
+			Status:         0, // TODO
 		},
 	}
 

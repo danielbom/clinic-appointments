@@ -59,7 +59,7 @@ func CreateServiceName(state State, args CreateServiceNameArgs) (uuid.UUID, *Use
 
 	params := infra.CreateServiceNameParams{
 		Name:             args.Name.Value,
-		SpecializationID: args.SpecializationID.Value,
+		SpecializationId: args.SpecializationID.Value,
 	}
 	id, err := state.Queries().CreateServiceName(state.Context(), params)
 	if err != nil {

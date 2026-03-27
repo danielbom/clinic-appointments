@@ -4,7 +4,7 @@ import type { ServiceAvailable } from '../../../components/app/pages/services-av
 import type { TableServiceAvailableProps } from '../../../components/app/pages/services-available/TableServiceAvailable'
 
 import PageLoading from '../../../components/Loading/PageLoading'
-import type { ChangePageMode, PageMode } from '../../../components/AdminX/types'
+import { changeMode, getPageMode } from '../../../components/AdminX/tools'
 
 import { ServiceAvailableGroup, ServiceAvailableGroupItem } from '../../../lib/api'
 import { useServiceAvailableQuery, useServicesAvailableGroupQuery } from '../../../hooks/api/queries/services-available'
@@ -15,14 +15,9 @@ import {
   useServiceAvailableUpdate,
 } from '../../../hooks/api/mutations/services-available'
 import { useSpecializationListQuery } from '../../../hooks/api/queries/specializations'
+import { useSearchParamState } from '../../../hooks/useSearchParam'
 
 const PageServiceAvailable = lazy(() => import('./PageServiceAvailable'))
-
-interface PageServiceAvailableImplProps {
-  mode: PageMode
-  changeMode: ChangePageMode
-  state?: Record<string, string>
-}
 
 type ParamsShow = {
   id: string
@@ -30,9 +25,11 @@ type ParamsShow = {
 
 const PARAMS_LIST = { page: 1, pageSize: 20 }
 
-function PageServiceAvailableImpl({ mode, changeMode, state }: PageServiceAvailableImplProps) {
+function PageServiceAvailableImpl() {
+  const [paramsState, setParamsState] = useSearchParamState()
+  const mode = getPageMode(paramsState, 'list')
   const [paramsList, setParamsList] = useState(PARAMS_LIST)
-  const paramsShow = useMemo<ParamsShow>(() => loadParamsShowFromState(state), [state])
+  const paramsShow = useMemo<ParamsShow>(() => loadParamsShowFromState(paramsState), [paramsState])
   const [selectedItems, setSelectedItems] = useState<ServiceAvailable[]>([])
   const [record, setRecord] = useState<ServiceAvailable | null>(null)
 
@@ -92,7 +89,7 @@ function PageServiceAvailableImpl({ mode, changeMode, state }: PageServiceAvaila
         total={total}
         pagination={pagination}
         mode={mode}
-        changeMode={changeMode}
+        changeMode={(mode, newState) => setParamsState(changeMode(mode, newState))}
         record={record}
         changeRecord={setRecord}
         selectedItems={selectedItems}

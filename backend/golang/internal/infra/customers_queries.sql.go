@@ -13,11 +13,11 @@ import (
 )
 
 const countCustomers = `-- name: CountCustomers :one
-SELECT COUNT(id)
+SELECT COUNT(id)::int as count
 FROM "customers"
 WHERE true
-  AND ($1::text = '' OR "name" ILIKE '%' || $1 || '%')
-  AND ($2::text = '' OR "cpf" = $2)
+  AND ($1::text = ''  OR "name" ILIKE '%' || $1 || '%')
+  AND ($2::text = ''   OR "cpf" = $2)
   AND ($3::text = '' OR "phone" = $3)
 `
 
@@ -27,16 +27,21 @@ type CountCustomersParams struct {
 	Phone string
 }
 
-func (q *Queries) CountCustomers(ctx context.Context, arg CountCustomersParams) (int64, error) {
+func (q *Queries) CountCustomers(ctx context.Context, arg CountCustomersParams) (int32, error) {
 	row := q.db.QueryRow(ctx, countCustomers, arg.Name, arg.Cpf, arg.Phone)
-	var count int64
+	var count int32
 	err := row.Scan(&count)
 	return count, err
 }
 
 const createCustomer = `-- name: CreateCustomer :one
 INSERT INTO "customers" ("name", "email", "phone", "birthdate", "cpf")
-VALUES ($1, $2, $3, $4, $5)
+VALUES ( $1
+       , $2
+       , $3
+       , $4
+       , $5
+       )
 RETURNING "id", "name", "email", "phone", "birthdate", "cpf"
 `
 
@@ -73,8 +78,8 @@ DELETE FROM "customers"
 WHERE "id" = $1
 `
 
-func (q *Queries) DeleteCustomerByID(ctx context.Context, id uuid.UUID) (int64, error) {
-	result, err := q.db.Exec(ctx, deleteCustomerByID, id)
+func (q *Queries) DeleteCustomerByID(ctx context.Context, customerid uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteCustomerByID, customerid)
 	if err != nil {
 		return 0, err
 	}
@@ -88,8 +93,8 @@ WHERE "id" = $1
 LIMIT 1
 `
 
-func (q *Queries) GetCustomerByID(ctx context.Context, id uuid.UUID) (Customer, error) {
-	row := q.db.QueryRow(ctx, getCustomerByID, id)
+func (q *Queries) GetCustomerByID(ctx context.Context, customerid uuid.UUID) (Customer, error) {
+	row := q.db.QueryRow(ctx, getCustomerByID, customerid)
 	var i Customer
 	err := row.Scan(
 		&i.ID,
@@ -109,8 +114,8 @@ WHERE "phone" = $1
 LIMIT 1
 `
 
-func (q *Queries) GetCustomerByPhone(ctx context.Context, phone string) (Customer, error) {
-	row := q.db.QueryRow(ctx, getCustomerByPhone, phone)
+func (q *Queries) GetCustomerByPhone(ctx context.Context, customerphone string) (Customer, error) {
+	row := q.db.QueryRow(ctx, getCustomerByPhone, customerphone)
 	var i Customer
 	err := row.Scan(
 		&i.ID,
@@ -127,11 +132,11 @@ const listCustomers = `-- name: ListCustomers :many
 SELECT "id", "name", "email", "phone", "birthdate", "cpf"
 FROM "customers"
 WHERE true
-  AND ($1::text = '' OR "name" ILIKE '%' || $1 || '%')
-  AND ($2::text = '' OR "cpf" = $2)
+  AND ($1::text = ''  OR "name" ILIKE '%' || $1 || '%')
+  AND ($2::text = ''   OR "cpf" = $2)
   AND ($3::text = '' OR "phone" = $3)
-LIMIT $5
-OFFSET $4
+LIMIT $5::integer
+OFFSET $4::integer
 `
 
 type ListCustomersParams struct {
@@ -178,11 +183,11 @@ func (q *Queries) ListCustomers(ctx context.Context, arg ListCustomersParams) ([
 const updateCustomer = `-- name: UpdateCustomer :one
 UPDATE "customers"
 SET
-  "name" = $1,
-  "email" = $2,
-  "phone" = $3,
+  "name"      = $1,
+  "email"     = $2,
+  "phone"     = $3,
   "birthdate" = $4,
-  "cpf" = $5
+  "cpf"       = $5
 WHERE "id" = $6
 RETURNING "id", "name", "email", "phone", "birthdate", "cpf"
 `

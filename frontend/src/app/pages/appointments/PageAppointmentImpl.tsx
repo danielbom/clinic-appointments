@@ -5,9 +5,10 @@ import type { Appointment } from '../../../components/app/pages/appointments/typ
 import type { TableAppointmentProps } from '../../../components/app/pages/appointments/TableAppointment'
 
 import PageLoading from '../../../components/Loading/PageLoading'
-import type { ChangePageMode, MoveToPage, PageMode } from '../../../components/AdminX/types'
+import { changeMode, getPageMode } from '../../../components/AdminX/tools'
 import type { AppointmentsGetAllQuery, CustomersGetAllQuery, ServicesGetAllQuery } from '../../../lib/api'
 import { CREATE_APPOINTMENTS_DATA_KEY } from '../../../lib/keys'
+import { uniqIdsConcat } from '../../../lib/uniq-concat'
 
 import {
   useAppointmentQuery,
@@ -24,16 +25,10 @@ import { useCustomerQuery, useCustomersListQuery } from '../../../hooks/api/quer
 import { useServiceQuery, useServicesListQuery } from '../../../hooks/api/queries/services'
 import { useApi } from '../../../context/ApiContext'
 import { getSessionStorage, setSessionStorage } from '../../../lib/json-storage'
-import { uniqIdsConcat } from '../../../lib/uniq-concat'
+import { useSearchParamState } from '../../../hooks/useSearchParam'
+import { useMoveTo } from '../../../hooks/useMoveTo'
 
 const PageAppointment = lazy(() => import('./PageAppointment'))
-
-interface PageAppointmentImplProps {
-  mode: PageMode
-  changeMode: ChangePageMode
-  state: Record<string, string>
-  moveTo: MoveToPage
-}
 
 type ParamsShow = {
   id: string
@@ -53,10 +48,13 @@ const PARAMS_CUSTOMER: ServicesGetAllQuery = {
   pageSize: 5,
 }
 
-function PageAppointmentImpl({ mode, changeMode, moveTo, state }: PageAppointmentImplProps) {
+function PageAppointmentImpl() {
   const api = useApi()
-  const paramsList = useMemo<ParamsList>(() => loadParamsList(state), [state])
-  const paramsShow = useMemo<ParamsShow>(() => loadParamsShow(state), [state])
+  const [paramsState, setParamsState] = useSearchParamState()
+  const mode = getPageMode(paramsState, 'list')
+  const moveTo = useMoveTo()
+  const paramsList = useMemo<ParamsList>(() => loadParamsList(paramsState), [paramsState])
+  const paramsShow = useMemo<ParamsShow>(() => loadParamsShow(paramsState), [paramsState])
   const createAppointmentData = useMemo(
     () => getSessionStorage(CREATE_APPOINTMENTS_DATA_KEY, { customerId: '', serviceId: '' }),
     [],
@@ -69,7 +67,7 @@ function PageAppointmentImpl({ mode, changeMode, moveTo, state }: PageAppointmen
 
   function setListQuery(newQuery: ParamsList) {
     setPreviousData(queryTable.data ?? [])
-    changeMode('list', newQuery)
+    setParamsState(changeMode('list', newQuery))
   }
 
   const recordQuery = useAppointmentQuery({
@@ -131,12 +129,12 @@ function PageAppointmentImpl({ mode, changeMode, moveTo, state }: PageAppointmen
   return (
     <Suspense fallback={<PageLoading />}>
       <PageAppointment
-        view={state.view as any}
+        view={paramsState.view as any}
         data={queryTable.isLoading ? previousData : data}
         total={total}
         pagination={pagination}
         mode={mode}
-        changeMode={changeMode}
+        changeMode={(mode, newState) => setParamsState(changeMode(mode, newState))}
         record={record}
         changeRecord={setRecord}
         selectedItems={selectedItems}
@@ -216,13 +214,13 @@ function PageAppointmentImpl({ mode, changeMode, moveTo, state }: PageAppointmen
           if (record?.id) {
             try {
               const service = await api.specialists.getService(record.specialistId, record.serviceNameId)
-              const data = JSON.stringify({
+              const data = {
                 customerId: record.customerId,
                 time: record.time,
                 serviceId: service.data.id,
-              })
+              }
               setSessionStorage(CREATE_APPOINTMENTS_DATA_KEY, data)
-              moveTo('appointments', { mode: 'create' })
+              moveTo('appointments', { mode: 'create' }) // TODO: Should I pass appointmentId and load it there?
             } catch (error) {
               message.error('Serviço deste especialista está indisponível')
             }

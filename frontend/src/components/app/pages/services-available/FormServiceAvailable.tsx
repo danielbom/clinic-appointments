@@ -106,7 +106,7 @@ function InputSpecialization({
           required={!editing}
           style={{ marginBottom: '8px' }}
         >
-          <Input placeholder='Adicionar Especialização...' />
+          <Input placeholder="Adicionar Especialização..." />
         </Form.Item>
         {!editing && (
           <Button type="primary" icon={<UnorderedListOutlined />} onClick={() => setAddSpecialization(false)}>

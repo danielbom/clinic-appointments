@@ -13,9 +13,9 @@ import (
 )
 
 const appointmentsIntersects = `-- name: AppointmentsIntersects :one
-SELECT COUNT("date") > 0
+SELECT COUNT("date") > 0 as count
 FROM "appointments"
-WHERE "date" = $1 
+WHERE "date" = $1
   AND "specialist_id" = $2
   AND (
     ("time" <= $3::time AND $3::time < "time" + "duration") OR
@@ -26,7 +26,7 @@ LIMIT 1
 
 type AppointmentsIntersectsParams struct {
 	Date         pgtype.Date
-	SpecialistID uuid.UUID
+	SpecialistId uuid.UUID
 	Time         pgtype.Time
 	Duration     pgtype.Interval
 }
@@ -34,63 +34,71 @@ type AppointmentsIntersectsParams struct {
 func (q *Queries) AppointmentsIntersects(ctx context.Context, arg AppointmentsIntersectsParams) (bool, error) {
 	row := q.db.QueryRow(ctx, appointmentsIntersects,
 		arg.Date,
-		arg.SpecialistID,
+		arg.SpecialistId,
 		arg.Time,
 		arg.Duration,
 	)
-	var column_1 bool
-	err := row.Scan(&column_1)
-	return column_1, err
+	var count bool
+	err := row.Scan(&count)
+	return count, err
 }
 
 const countAppointments = `-- name: CountAppointments :one
-SELECT COUNT("a"."id")
+SELECT COUNT("a"."id")::int as count
 FROM "appointments" "a"
 JOIN "customers" "c" ON "a"."customer_id" = "c"."id"
 JOIN "specialists" "s" ON "a"."specialist_id" = "s"."id"
 JOIN "service_names" "sn" ON "a"."service_name_id" = "sn"."id"
 WHERE true
-  AND ($1::date IS NULL OR "a"."date" >= $1) 
-  AND ($2::date IS NULL OR "a"."date" <= $2)
-  AND ($3::text = '' OR "c"."name" ILIKE '%' || $3 || '%')
-  AND ($4::text = '' OR "s"."name" ILIKE '%' || $3 || '%')
-  AND ($5::text = '' OR "sn"."name" ILIKE '%' || $3 || '%')
-  AND ($6::int = 0 OR "a"."status" = $6)
+  AND ($1::date IS NULL   OR "a"."date" >= $1) 
+  AND ($2::date IS NULL     OR "a"."date" <= $2)
+  AND ($3::text = ''   OR "c"."name" ILIKE '%' || $3 || '%')
+  AND ($4::text = '' OR "s"."name" ILIKE '%' || $4 || '%')
+  AND ($5::text = ''    OR "sn"."name" ILIKE '%' || $5 || '%')
+  AND ($6::integer = 0       OR "a"."status" = $6)
 `
 
 type CountAppointmentsParams struct {
-	Column1 pgtype.Date
-	Column2 pgtype.Date
-	Column3 string
-	Column4 string
-	Column5 string
-	Column6 int32
+	StartDate      pgtype.Date
+	EndDate        pgtype.Date
+	CustomerName   string
+	SpecialistName string
+	ServiceName    string
+	Status         int32
 }
 
-func (q *Queries) CountAppointments(ctx context.Context, arg CountAppointmentsParams) (int64, error) {
+func (q *Queries) CountAppointments(ctx context.Context, arg CountAppointmentsParams) (int32, error) {
 	row := q.db.QueryRow(ctx, countAppointments,
-		arg.Column1,
-		arg.Column2,
-		arg.Column3,
-		arg.Column4,
-		arg.Column5,
-		arg.Column6,
+		arg.StartDate,
+		arg.EndDate,
+		arg.CustomerName,
+		arg.SpecialistName,
+		arg.ServiceName,
+		arg.Status,
 	)
-	var count int64
+	var count int32
 	err := row.Scan(&count)
 	return count, err
 }
 
 const createAppointment = `-- name: CreateAppointment :one
 INSERT INTO "appointments" ("customer_id", "specialist_id", "service_name_id", "price", "duration", "date", "time", "status")
-VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+VALUES ( $1
+       , $2
+       , $3
+       , $4
+       , $5
+       , $6
+       , $7
+       , $8
+       )
 RETURNING "id"
 `
 
 type CreateAppointmentParams struct {
-	CustomerID    uuid.UUID
-	SpecialistID  uuid.UUID
-	ServiceNameID uuid.UUID
+	CustomerId    uuid.UUID
+	SpecialistId  uuid.UUID
+	ServiceNameId uuid.UUID
 	Price         int32
 	Duration      pgtype.Interval
 	Date          pgtype.Date
@@ -100,9 +108,9 @@ type CreateAppointmentParams struct {
 
 func (q *Queries) CreateAppointment(ctx context.Context, arg CreateAppointmentParams) (uuid.UUID, error) {
 	row := q.db.QueryRow(ctx, createAppointment,
-		arg.CustomerID,
-		arg.SpecialistID,
-		arg.ServiceNameID,
+		arg.CustomerId,
+		arg.SpecialistId,
+		arg.ServiceNameId,
 		arg.Price,
 		arg.Duration,
 		arg.Date,
@@ -119,8 +127,8 @@ DELETE FROM "appointments"
 WHERE "id" = $1
 `
 
-func (q *Queries) DeleteAppointment(ctx context.Context, id uuid.UUID) (int64, error) {
-	result, err := q.db.Exec(ctx, deleteAppointment, id)
+func (q *Queries) DeleteAppointment(ctx context.Context, appointmentid uuid.UUID) (int64, error) {
+	result, err := q.db.Exec(ctx, deleteAppointment, appointmentid)
 	if err != nil {
 		return 0, err
 	}
@@ -214,25 +222,25 @@ JOIN "specialists" "s" ON "a"."specialist_id" = "s"."id"
 JOIN "service_names" "sn" ON "a"."service_name_id" = "sn"."id"
 WHERE true
   AND ($1::date IS NULL OR "a"."date" >= $1) 
-  AND ($2::date IS NULL OR "a"."date" <= $2)
-  AND ($3::text = '' OR "c"."name" ILIKE '%' || $3 || '%')
-  AND ($4::text = '' OR "s"."name" ILIKE '%' || $4 || '%')
-  AND ($5::text = '' OR "sn"."name" ILIKE '%' || $5 || '%')
-  AND ($6::int = 0 OR "a"."status" = $6)
+  AND ($2::date IS NULL   OR "a"."date" <= $2)
+  AND ($3 = ''       OR "c"."name" ILIKE '%' || $3 || '%')
+  AND ($4 = ''     OR "s"."name" ILIKE '%' || $4 || '%')
+  AND ($5 = ''        OR "sn"."name" ILIKE '%' || $5 || '%')
+  AND ($6 = 0              OR "a"."status" = $6)
 ORDER BY "a"."date" DESC, "a"."time" DESC
-LIMIT $7
-OFFSET $8
+LIMIT $8::integer
+OFFSET $7::integer
 `
 
 type ListAppointmentsParams struct {
-	Column1 pgtype.Date
-	Column2 pgtype.Date
-	Column3 string
-	Column4 string
-	Column5 string
-	Column6 int32
-	Limit   int32
-	Offset  int32
+	StartDate      pgtype.Date
+	EndDate        pgtype.Date
+	CustomerName   interface{}
+	SpecialistName interface{}
+	ServiceName    interface{}
+	Status         interface{}
+	Offset         int32
+	Limit          int32
 }
 
 type ListAppointmentsRow struct {
@@ -254,14 +262,14 @@ type ListAppointmentsRow struct {
 
 func (q *Queries) ListAppointments(ctx context.Context, arg ListAppointmentsParams) ([]ListAppointmentsRow, error) {
 	rows, err := q.db.Query(ctx, listAppointments,
-		arg.Column1,
-		arg.Column2,
-		arg.Column3,
-		arg.Column4,
-		arg.Column5,
-		arg.Column6,
-		arg.Limit,
+		arg.StartDate,
+		arg.EndDate,
+		arg.CustomerName,
+		arg.SpecialistName,
+		arg.ServiceName,
+		arg.Status,
 		arg.Offset,
+		arg.Limit,
 	)
 	if err != nil {
 		return nil, err
@@ -342,14 +350,14 @@ SELECT "a"."id", "a"."price", "a"."duration", "a"."date", "a"."time", "a"."statu
 FROM "appointments" "a"
 JOIN "customers" "c" ON "a"."customer_id" = "c"."id"
 JOIN "service_names" "sn" ON "a"."service_name_id" = "sn"."id"
-WHERE "a"."specialist_id" = $1 
-  AND ($2::text = '' OR "a"."date" = DATE($2))
+WHERE "a"."specialist_id" = $1
+  AND ($2::text = '' OR "a"."date" = DATE($2::text))
 ORDER BY "a"."date" DESC, "a"."time" DESC
 `
 
 type ListAppointmentsBySpecialistIDParams struct {
-	SpecialistID uuid.UUID
-	Column2      string
+	SpecialistId uuid.UUID
+	Date         string
 }
 
 type ListAppointmentsBySpecialistIDRow struct {
@@ -368,7 +376,7 @@ type ListAppointmentsBySpecialistIDRow struct {
 }
 
 func (q *Queries) ListAppointmentsBySpecialistID(ctx context.Context, arg ListAppointmentsBySpecialistIDParams) ([]ListAppointmentsBySpecialistIDRow, error) {
-	rows, err := q.db.Query(ctx, listAppointmentsBySpecialistID, arg.SpecialistID, arg.Column2)
+	rows, err := q.db.Query(ctx, listAppointmentsBySpecialistID, arg.SpecialistId, arg.Date)
 	if err != nil {
 		return nil, err
 	}
@@ -404,15 +412,14 @@ const listAppointmentsCalendar = `-- name: ListAppointmentsCalendar :many
 SELECT "a"."id", "a"."date", "a"."time", "a"."status", "s"."name" as "specialist_name"
 FROM "appointments" "a"
 JOIN "specialists" "s" ON "a"."specialist_id" = "s"."id"
-WHERE true
-  AND "a"."date" >= $1
+WHERE "a"."date" >= $1
   AND "a"."date" <= $2
 ORDER BY "a"."date" DESC, "a"."time" DESC
 `
 
 type ListAppointmentsCalendarParams struct {
-	Date   pgtype.Date
-	Date_2 pgtype.Date
+	StartDate pgtype.Date
+	EndDate   pgtype.Date
 }
 
 type ListAppointmentsCalendarRow struct {
@@ -424,7 +431,7 @@ type ListAppointmentsCalendarRow struct {
 }
 
 func (q *Queries) ListAppointmentsCalendar(ctx context.Context, arg ListAppointmentsCalendarParams) ([]ListAppointmentsCalendarRow, error) {
-	rows, err := q.db.Query(ctx, listAppointmentsCalendar, arg.Date, arg.Date_2)
+	rows, err := q.db.Query(ctx, listAppointmentsCalendar, arg.StartDate, arg.EndDate)
 	if err != nil {
 		return nil, err
 	}
@@ -450,17 +457,18 @@ func (q *Queries) ListAppointmentsCalendar(ctx context.Context, arg ListAppointm
 }
 
 const listAppointmentsCalendarCount = `-- name: ListAppointmentsCalendarCount :many
-SELECT date_part('month', "a"."date")::int as "month", "status", COUNT("a"."id")::int as "count"
+SELECT date_part('month', "a"."date")::int as "month"
+     , "status", COUNT("a"."id")::int as "count"
 FROM "appointments" "a"
-WHERE "date" >= $1
-  AND "date" <= $2
+WHERE "a"."date" >= $1
+  AND "a"."date" <= $2
 GROUP BY "month", "status"
 ORDER BY "month" ASC
 `
 
 type ListAppointmentsCalendarCountParams struct {
-	Date   pgtype.Date
-	Date_2 pgtype.Date
+	StartDate pgtype.Date
+	EndDate   pgtype.Date
 }
 
 type ListAppointmentsCalendarCountRow struct {
@@ -470,7 +478,7 @@ type ListAppointmentsCalendarCountRow struct {
 }
 
 func (q *Queries) ListAppointmentsCalendarCount(ctx context.Context, arg ListAppointmentsCalendarCountParams) ([]ListAppointmentsCalendarCountRow, error) {
-	rows, err := q.db.Query(ctx, listAppointmentsCalendarCount, arg.Date, arg.Date_2)
+	rows, err := q.db.Query(ctx, listAppointmentsCalendarCount, arg.StartDate, arg.EndDate)
 	if err != nil {
 		return nil, err
 	}

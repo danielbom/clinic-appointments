@@ -15,7 +15,8 @@ function PageAuthImpl() {
   const api = useApi()
   const [{ isAuthenticated }, authDispatch] = useAuth()
   const [isLoading, loader] = useLoading()
-  const [error, setError] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
+  const [errorCount, setErrorCount] = useState(0)
 
   function onSubmit(values: PageAuthValues) {
     loader(async () => {
@@ -26,16 +27,23 @@ function PageAuthImpl() {
         })
         authDispatch({ type: 'LOGIN', payload: response.data })
       } catch (error) {
+        let newErrorMessage = ''
         if (isAxiosError(error)) {
           if (error.status === 400) {
-            setError('E-mail ou senha inválidos')
+            newErrorMessage = 'E-mail ou senha inválidos'
           } else if (error.message === 'Network Error') {
-            setError('Sem conexão com a internet.')
+            newErrorMessage = 'Sem conexão com a internet.'
           } else {
-            setError('Erro desconhecido: ' + (error.response?.data || error.message))
+            newErrorMessage = 'Erro desconhecido: ' + (error.response?.data || error.message)
           }
         } else {
-          setError('Erro desconhecido: ' + error)
+          newErrorMessage = 'Erro desconhecido: ' + error
+        }
+        if (newErrorMessage === errorMessage) {
+          setErrorCount(errorCount + 1)
+        } else {
+          setErrorCount(0)
+          setErrorMessage(newErrorMessage)
         }
       }
     })
@@ -47,7 +55,11 @@ function PageAuthImpl() {
 
   return (
     <Suspense fallback={<PageLoading />}>
-      <PageAuth error={error} onSubmit={onSubmit} loading={isLoading} />
+      <PageAuth
+        error={errorCount > 0 ? `${errorMessage} (${errorCount})` : errorMessage}
+        onSubmit={onSubmit}
+        loading={isLoading}
+      />
     </Suspense>
   )
 }

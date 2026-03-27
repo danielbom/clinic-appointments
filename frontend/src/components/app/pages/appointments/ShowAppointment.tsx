@@ -17,7 +17,14 @@ export interface ShowAppointmentProps {
   record: Appointment | null
 }
 
-function ShowAppointment({ isOpen, onClose, onClickDelete, onClickEdit, onRecreateAppointment, record }: ShowAppointmentProps) {
+function ShowAppointment({
+  isOpen,
+  onClose,
+  onClickDelete,
+  onClickEdit,
+  onRecreateAppointment,
+  record,
+}: ShowAppointmentProps) {
   return (
     <ShowX.Drawer isOpen={isOpen} onClose={onClose} onClickDelete={onClickDelete} onClickEdit={onClickEdit}>
       {record && (
@@ -32,7 +39,7 @@ function ShowAppointment({ isOpen, onClose, onClickDelete, onClickEdit, onRecrea
         </Descriptions>
       )}
       <Button icon={<CalendarOutlined />} onClick={onRecreateAppointment} type="primary" style={{ marginTop: '8px' }}>
-        Recriar Agendamento
+        Agendar novamente
       </Button>
     </ShowX.Drawer>
   )

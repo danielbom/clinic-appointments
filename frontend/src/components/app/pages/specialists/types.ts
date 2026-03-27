@@ -33,3 +33,10 @@ export type SpecialistAppointment = {
   date: string
   time: string
 }
+
+export type SpecialistAvailableTime = {
+  id: string
+  weekday: number
+  startTime: string
+  endTime: string
+}

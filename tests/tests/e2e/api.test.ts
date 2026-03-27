@@ -1,10 +1,11 @@
-import axios from 'axios'
 import _ from 'lodash'
-import z, { ZodSafeParseResult } from 'zod'
+import axios from 'axios'
+import z from 'zod'
 import { addDays, addHours } from 'date-fns'
+import { getDatePart, getHourPart } from '../../src/lib/date-fns-ext'
 
 import type { DotPaths } from '../api-features'
-import { responseIsError } from '../api-extensions'
+import { formatJson, responseIsError } from '../api-extensions'
 import { BASE_URL } from '../config'
 
 import { Api, Config } from '../../src/lib/api'
@@ -56,70 +57,21 @@ function depends(dependencies: Feature[]) {
   expect(Array.from(deps)).toHaveLength(0)
 }
 
-interface ZodSafeParse<T> {
-  safeParse(value: unknown): ZodSafeParseResult<T>
-}
-
-declare global {
-  namespace jest {
-    interface Matchers<R> {
-      toLossyBe<T>(expected: T, fields: string[]): R
-      toParseZod<T>(schema: ZodSafeParse<T>): R
-    }
-  }
-}
-
-expect.extend({
-  toParseZod(received: object, schema: ZodSafeParse<any>) {
-    const result = schema.safeParse(received)
-    if (result.success) {
-      return {
-        message: () => `Expected match zod schema fail but it succeeds`,
-        pass: true,
-      }
-    } else {
-      return {
-        message: () => `Expected match zod schema but got errors: ${result.error}`,
-        pass: false,
-      }
-    }
-  },
-  members(received: object, fields: string[]) {
-    const keys = _.keys(received)
-    const diff = _.difference(keys, fields)
-    if (diff.length === 0) {
-      return {
-        message: () => `Expected ${keys} not to be ${fields}`,
-        pass: true,
-      }
-    } else {
-      return {
-        message: () => `Expected ${keys} to be ${fields}`,
-        pass: false,
-      }
-    }
-  },
-  toLossyBe(received, expected, fields: string[]) {
-    const a = _.entries(_.pick(received, fields))
-    const b = _.entries(_.pick(expected, fields))
-    const pass = _.some(fields, key => this.equals(expected[key], received[key]))
-    return {
-      pass,
-      message: () =>
-        pass
-          ? `Expected ${this.utils.printReceived(a)} not to ${this.utils.printExpected(b)}`
-          : `Expected ${this.utils.printReceived(a)} to ${this.utils.printExpected(b)}`,
-    }
-  },
-})
-
 function apiLogin(accessToken: string) {
   api._config.instance.defaults.headers['Authorization'] = `Bearer ${accessToken}`
 }
 
 describe('clinic-appointments', () => {
   beforeAll(async () => {
-    await api.health.healthCheck()
+    await api.health.healthCheck().then((res) => {
+      const status = formatJson(res.data)
+      if (!res.data.status) {
+        throw new Error('API is not up: ' + status)
+      }
+      if (res.data.environment !== 'test') {
+        throw new Error('API is not in test environment: ' + status)
+      }
+    })
     await api.test.stats()
     await api.test.init()
   })
@@ -164,22 +116,14 @@ describe('clinic-appointments', () => {
         // Does a non expired refresh token return the same token?
         const accessToken = ks.get('accessToken')
         const refreshToken = ks.get('refreshToken')
-        const res = await api.auth.refresh({
-          headers: {
-            Authorization: `Bearer ${refreshToken}`,
-          },
-        })
+        const res = await api.auth.refresh(refreshToken!)
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data.accessToken).toBe(accessToken)
         expect(res.data.refreshToken).toBe(refreshToken)
       })
       it('should fail', async () => {
         const accessToken = ks.get('accessToken')
-        const res = await api.auth.refresh({
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
+        const res = await api.auth.refresh(accessToken!)
         expect(res.status).toBe(400)
         if (responseIsError(res)) {
           expect(res.data.trim()).toBe('invalid token')
@@ -1062,8 +1006,8 @@ describe('clinic-appointments', () => {
         expect(loggedIn).toBe('secretary')
         depends(['customers.create'])
         const res = await api.appointments.create({
-          date: createDateIso.slice(0, 10),
-          time: createDateIso.slice(11, 11 + 8),
+          date: getDatePart(createDateIso),
+          time: getHourPart(createDateIso),
           customerId: ks.get('customer')!,
           serviceId: ks.get('service')!,
         })
@@ -1113,8 +1057,8 @@ describe('clinic-appointments', () => {
         expect(loggedIn).toBe('secretary')
         depends(['appointments.create'])
         const res = await api.appointments.update(ids[0], {
-          date: updateDateIso.slice(0, 10),
-          time: updateDateIso.slice(11, 11 + 8),
+          date: getDatePart(updateDateIso),
+          time: getHourPart(updateDateIso),
           status: 2,
         })
         expect(res.status, JSON.stringify(res.data)).toBe(200)

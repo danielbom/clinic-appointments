@@ -22,8 +22,8 @@ func (args *ListSpecialistAppointmentsArgs) Validate() *UsecaseError {
 
 func ListSpecialistAppointments(rs State, args ListSpecialistAppointmentsArgs) ([]infra.ListAppointmentsBySpecialistIDRow, *UsecaseError) {
 	appointments, err := rs.Queries().ListAppointmentsBySpecialistID(rs.Context(), infra.ListAppointmentsBySpecialistIDParams{
-		SpecialistID: args.SpecialistID,
-		Column2:      args.DateRaw,
+		SpecialistId: args.SpecialistID,
+		Date:         args.DateRaw,
 	})
 	if err != nil {
 		return nil, NewUnexpectedError(err)

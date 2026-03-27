@@ -10,7 +10,7 @@ func (args *CountSpecialistArgs) Validate() *UsecaseError {
 	return nil
 }
 
-func CountSpecialists(state State, args CountSpecialistArgs) (int64, *UsecaseError) {
+func CountSpecialists(state State, args CountSpecialistArgs) (int32, *UsecaseError) {
 	count, err := state.Queries().CountSpecialists(state.Context())
 	if err == nil {
 		return count, nil

@@ -1,0 +1,11 @@
+.strecher {
+  padding: 2px 0 2px 0;
+}
+
+.strecher hr {
+  border-top: 1px solid red;
+}
+
+.strecher:hover {
+  cursor: pointer;
+}

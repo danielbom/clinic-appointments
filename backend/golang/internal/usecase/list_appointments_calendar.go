@@ -34,8 +34,8 @@ func (args *ListAppointmentsCalendarArgs) Validate() *UsecaseError {
 
 func ListAppointmentsCalendar(state State, args ListAppointmentsCalendarArgs) ([]infra.ListAppointmentsCalendarRow, *UsecaseError) {
 	appointments, err := state.Queries().ListAppointmentsCalendar(state.Context(), infra.ListAppointmentsCalendarParams{
-		Date:   args.StartDate.Value,
-		Date_2: args.EndDate.Value,
+		StartDate: args.StartDate.Value,
+		EndDate:   args.EndDate.Value,
 	})
 	if err == nil {
 		return appointments, nil

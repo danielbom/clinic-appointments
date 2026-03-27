@@ -13,15 +13,15 @@ import (
 )
 
 const countServicesEnriched = `-- name: CountServicesEnriched :one
-SELECT COUNT("s"."id")
+SELECT COUNT("s"."id")::int as count
 FROM "services" "s"
 JOIN "specialists" "sp" ON "s"."specialist_id" = "sp"."id"
 JOIN "service_names" "sn" ON "s"."service_name_id" = "sn"."id"
 JOIN "specializations" "sz" ON "sn"."specialization_id" = "sz"."id"
 WHERE true
-   AND ($1::text = '' OR LOWER(unaccent("sp"."name")) LIKE '%' || LOWER(unaccent($1)) || '%')
+   AND ($1::text = ''     OR LOWER(unaccent("sp"."name")) LIKE '%' || LOWER(unaccent($1)) || '%')
    AND ($2::text = '' OR LOWER(unaccent("sz"."name")) LIKE '%' || LOWER(unaccent($2)) || '%')
-   AND ($3::text = '' OR LOWER(unaccent("sn"."name")) LIKE '%' || LOWER(unaccent($3)) || '%')
+   AND ($3::text = ''    OR LOWER(unaccent("sn"."name")) LIKE '%' || LOWER(unaccent($3)) || '%')
 `
 
 type CountServicesEnrichedParams struct {
@@ -30,9 +30,9 @@ type CountServicesEnrichedParams struct {
 	ServiceName    string
 }
 
-func (q *Queries) CountServicesEnriched(ctx context.Context, arg CountServicesEnrichedParams) (int64, error) {
+func (q *Queries) CountServicesEnriched(ctx context.Context, arg CountServicesEnrichedParams) (int32, error) {
 	row := q.db.QueryRow(ctx, countServicesEnriched, arg.Specialist, arg.Specialization, arg.ServiceName)
-	var count int64
+	var count int32
 	err := row.Scan(&count)
 	return count, err
 }
@@ -47,11 +47,11 @@ JOIN "specialists" "sp" ON "s"."specialist_id" = "sp"."id"
 JOIN "service_names" "sn" ON "s"."service_name_id" = "sn"."id"
 JOIN "specializations" "sz" ON "sn"."specialization_id" = "sz"."id"
 WHERE true
-   AND ($1::text = '' OR LOWER(unaccent("sp"."name")) LIKE '%' || LOWER(unaccent($1)) || '%')
+   AND ($1::text = ''     OR LOWER(unaccent("sp"."name")) LIKE '%' || LOWER(unaccent($1)) || '%')
    AND ($2::text = '' OR LOWER(unaccent("sz"."name")) LIKE '%' || LOWER(unaccent($2)) || '%')
-   AND ($3::text = '' OR LOWER(unaccent("sn"."name")) LIKE '%' || LOWER(unaccent($3)) || '%')
-LIMIT $5
-OFFSET $4
+   AND ($3::text = ''    OR LOWER(unaccent("sn"."name")) LIKE '%' || LOWER(unaccent($3)) || '%')
+LIMIT $5::integer
+OFFSET $4::integer
 `
 
 type ListServicesEnrichedParams struct {

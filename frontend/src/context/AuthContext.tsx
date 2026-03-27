@@ -46,62 +46,6 @@ function reducer(state: Auth, action: AuthAction): Auth {
   return state
 }
 
-export function useAuth() {
-  return useContext(AuthContext)
-}
-
-const login = async (api: Api) => {
-  function loginFail() {
-    localStorage.removeItem(AUTH_ACCESS_KEY)
-    localStorage.removeItem(AUTH_REFRESH_KEY)
-    return null
-  }
-
-  function loginSuccess(identity: Identity) {
-    const accessToken = localStorage.getItem(AUTH_ACCESS_KEY)
-    api._config.instance.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
-    return identity
-  }
-
-  if (!localStorage.getItem(AUTH_ACCESS_KEY)) return loginFail()
-
-  try {
-    const accessToken = localStorage.getItem(AUTH_ACCESS_KEY)
-    api._config.instance.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
-    const response = await api.auth.me()
-    if (response.data) {
-      return loginSuccess(response.data)
-    }
-  } catch (e) {
-    // ignore
-  }
-
-  if (!localStorage.getItem(AUTH_REFRESH_KEY)) return loginFail()
-
-  try {
-    const refreshToken = localStorage.getItem(AUTH_REFRESH_KEY)
-    api._config.instance.defaults.headers.common['Authorization'] = `Bearer ${refreshToken}`
-    const response = await api.auth.refresh()
-    const newAccessToken = response.data.accessToken
-    localStorage.setItem(AUTH_ACCESS_KEY, newAccessToken)
-  } catch (e) {
-    return loginFail()
-  }
-
-  try {
-    const accessToken = localStorage.getItem(AUTH_ACCESS_KEY)
-    api._config.instance.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
-    const response = await api.auth.me()
-    if (response.data) {
-      return loginSuccess(response.data)
-    }
-  } catch (e) {
-    // ignore
-  }
-
-  return loginFail()
-}
-
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const api = useApi()
   const [state, dispatch] = useReducer(reducer, {
@@ -112,50 +56,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   })
 
   useEffect(() => {
-    if (state.action === 'LOGIN') {
-      login(api)
-        .then((identity) => {
-          if (identity) {
-            dispatch({ type: 'LOGIN-SUCCESS', payload: identity })
-          } else {
-            dispatch({ type: 'LOGOUT' })
+    async function login(retry = false) {
+      try {
+        const accessToken = localStorage.getItem(AUTH_ACCESS_KEY)
+        api._config.instance.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
+        const response = await api.auth.me()
+        return dispatch({ type: 'LOGIN-SUCCESS', payload: response.data })
+      } catch (error) {
+        if (retry) return dispatch({ type: 'LOGOUT' })
+        if (isAxiosError(error)) {
+          if (error.response?.status === 401) {
+            await refreshToken(api)
+            return login(true)
           }
-        })
-        .catch(() => {
-          dispatch({ type: 'LOGOUT' })
-        })
+        }
+        throw error
+      }
     }
+
+    if (state.action === 'LOGIN') login()
   }, [state.action])
 
   useEffect(() => {
     if (state.isAuthenticated) {
-      let retrying: Promise<boolean> | null = null
+      let refreshing: Promise<boolean> | null = null
       const { requestInterceptorId, responseInterceptorId } = axiosRetry(api._config.instance, {
         retries: 1,
         retryCondition: async (error: any) => {
           if (isAxiosError(error)) {
             if (error.response?.status === 401) {
-              if (retrying) {
-                return false
-              } else {
-                retrying = (async () => {
-                  try {
-                    const identity = await login(api)
-                    if (identity) {
-                      dispatch({ type: 'LOGIN-SUCCESS', payload: identity })
-                      return true
-                    } else {
-                      dispatch({ type: 'LOGOUT' })
-                    }
-                  } catch (_) {
-                    dispatch({ type: 'LOGOUT' })
-                  } finally {
-                    retrying = null
-                  }
-                  return false
-                })()
-                return await retrying
-              }
+              if (refreshing) return await refreshing
+              refreshing = (async () => {
+                const ok = await refreshToken(api)
+                if (!ok) dispatch({ type: 'LOGOUT' })
+                refreshing = null
+                return ok
+              })()
+              return await refreshing
             }
           }
           return false
@@ -169,4 +106,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [state.isAuthenticated])
 
   return <AuthContext.Provider value={[state, dispatch]}>{children}</AuthContext.Provider>
+}
+
+export function useAuth() {
+  return useContext(AuthContext)
+}
+
+const refreshToken = async (api: Api) => {
+  const refreshToken = localStorage.getItem(AUTH_REFRESH_KEY)
+  if (!refreshToken) return false
+
+  try {
+    const response = await api.auth.refresh({
+      headers: {
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    })
+    const newAccessToken = response.data.accessToken
+    localStorage.setItem(AUTH_ACCESS_KEY, newAccessToken)
+    api._config.instance.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`
+    return true
+  } catch (e) {
+    localStorage.removeItem(AUTH_ACCESS_KEY)
+    localStorage.removeItem(AUTH_REFRESH_KEY)
+    return false
+  }
 }

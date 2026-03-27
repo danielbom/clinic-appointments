@@ -38,6 +38,28 @@ go run ./cmd/api/main.go
 air -c .air.toml
 ```
 
+Setup database for tests
+
+```bash
+# Access the postgres database with psql client inside docker
+docker exec -it appointments-db-1 psql -h localhost -p 5432 -U dev_user -d dev_db
+```
+
+Execute the next commands
+
+```sql
+-- Create the user
+CREATE USER test_user WITH PASSWORD 'test_password';
+
+-- Create the database
+CREATE DATABASE test_db OWNER test_user;
+
+-- Grant privileges (optional but good practice)
+GRANT ALL PRIVILEGES ON DATABASE test_db TO test_user;
+
+exit
+```
+
 Look the **Commands section** to see other possible commands.
 
 ## Commands

@@ -17,6 +17,9 @@ import FilterCustomer, {
 } from '../../../components/app/pages/customers/FilterCustomer' /* Keep sync */
 import FilterService, { FilterServiceProps } from '../../../components/app/pages/services/FilterService' /* Keep sync */
 
+import { removeSessionStorage } from '../../../lib/json-storage'
+import { CREATE_APPOINTMENTS_DATA_KEY } from '../../../lib/keys'
+
 interface PageAppointmentProps {
   view: 'table' | 'calendar'
 
@@ -97,7 +100,10 @@ function PageAppointment({
             pagination={pagination}
             selectedItems={selectedItems}
             changeSelectedItems={changeSelectedItems}
-            onClickCreate={() => changeMode('create')}
+            onClickCreate={() => {
+              removeSessionStorage(CREATE_APPOINTMENTS_DATA_KEY)
+              changeMode('create')
+            }}
             onClickCalendar={() => changeMode('list', { view: 'calendar' })}
             onClickDeleteAll={deleteModal.onOpen}
             onClickFilter={filterModal.onOpen}

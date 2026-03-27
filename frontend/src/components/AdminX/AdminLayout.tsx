@@ -10,17 +10,15 @@ import AdminHeader, { AdminHeaderEvent } from './AdminHeader'
 export interface AdminLayoutProps {
   items: MenuProps['items']
   pageKey: string
-  onSelectPage: (pageKey: string) => void
   username: string
   onClickMenu: (key: AdminHeaderEvent) => void
   children: React.ReactNode
 }
 
-function AdminLayout({ items, pageKey, onSelectPage, username, onClickMenu, children }: AdminLayoutProps) {
+function AdminLayout({ items, pageKey, username, onClickMenu, children }: AdminLayoutProps) {
   const sidebar = useDisclosure()
 
-  function selectPageAndClose(key: string) {
-    onSelectPage(key)
+  function selectPageAndClose() {
     sidebar.onClose()
   }
 

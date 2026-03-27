@@ -1,10 +1,22 @@
-import { AxiosResponse } from "axios"
-import { Config } from "../Config"
+import { AxiosResponse } from 'axios'
+import { Config } from '../Config'
 
 export class HealthEndpoint {
-  constructor(public config: Config) {}
+  constructor(public _config: Config) {}
 
-  healthCheck(): Promise<AxiosResponse<any>> {
-    return this.config.instance.get(`/health`)
+  healthCheck(): Promise<AxiosResponse<Status>> {
+    return this._config.instance.get(`/api/health`)
+  }
+}
+
+export type Status = {
+  status: boolean
+  updatedAt: string
+  environment: string
+  database: {
+    status: string
+    version: string
+    maxConnections: number
+    openedConnections: number
   }
 }

@@ -1,0 +1,9 @@
+{
+  "dialect": "postgres",
+  "camelCase": true,
+  "numeric-parser": "number",
+  "outFile": "src/db/types-kysely.ts",
+  "dateParser": "string",
+  "envFile": ".env",
+  "excludePattern": "schema_version"
+}

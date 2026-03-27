@@ -5,23 +5,23 @@ export class ServicesAvailableEndpoint {
   constructor(public _config: Config) {}
 
   getAll(): Promise<AxiosResponse<ServiceAvailableGroup[]>> {
-    return this._config.instance.get(`/services-available`)
+    return this._config.instance.get(`/api/services-available`)
   }
 
   getById(id: string): Promise<AxiosResponse<ServiceAvailable>> {
-    return this._config.instance.get(`/services-available/${id}`)
+    return this._config.instance.get(`/api/services-available/${id}`)
   }
 
   create(data: ServiceAvailableCreateBody): Promise<AxiosResponse<string>> {
-    return this._config.instance.post(`/services-available`, data)
+    return this._config.instance.post(`/api/services-available`, data)
   }
 
   update(id: string, data: ServiceAvailableUpdateBody): Promise<AxiosResponse<string>> {
-    return this._config.instance.put(`/services-available/${id}`, data)
+    return this._config.instance.put(`/api/services-available/${id}`, data)
   }
 
   delete(id: string): Promise<AxiosResponse<void>> {
-    return this._config.instance.delete(`/services-available/${id}`)
+    return this._config.instance.delete(`/api/services-available/${id}`)
   }
 }
 
@@ -45,8 +45,8 @@ export type ServiceAvailableGroup = {
 
 export type ServiceAvailableCreateBody = {
   name: string
-  specialization: string
-  specializationId: string
+  specialization?: string
+  specializationId?: string
 }
 
 export type ServiceAvailableUpdateBody = {

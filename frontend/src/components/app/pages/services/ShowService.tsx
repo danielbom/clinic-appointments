@@ -24,7 +24,7 @@ function ShowService({ isOpen, onClose, onClickDelete, onClickEdit, onReceateApp
         </Descriptions>
       )}
       <Button icon={<CalendarOutlined />} onClick={onReceateAppointment} type="primary" style={{ marginTop: '8px' }}>
-        Criar Agendamento
+        Agendar
       </Button>
     </ShowX.Drawer>
   )

@@ -4,7 +4,7 @@ import type { Specialist, SpecialistSpecialization } from '../../../components/a
 import type { TableSpecialistProps } from '../../../components/app/pages/specialists/TableSpecialist'
 
 import PageLoading from '../../../components/Loading/PageLoading'
-import type { ChangePageMode, PageMode } from '../../../components/AdminX/types'
+import { changeMode, getPageMode } from '../../../components/AdminX/tools'
 import type { SpecialistsGetAllQuery } from '../../../lib/api'
 
 import {
@@ -21,14 +21,9 @@ import {
   useSpecialistUpdate,
 } from '../../../hooks/api/mutations/specialists'
 import { useServiceGroups } from '../../../hooks/api/queries/service-groups'
+import { useSearchParamState } from '../../../hooks/useSearchParam'
 
 const PageSpecialist = lazy(() => import('./PageSpecialist'))
-
-interface PageSpecialistImplProps {
-  mode: PageMode
-  changeMode: ChangePageMode
-  state?: Record<string, string>
-}
 
 type ParamsShow = {
   id: string
@@ -37,9 +32,11 @@ type ParamsShow = {
 }
 type ParamsList = SpecialistsGetAllQuery
 
-function PageSpecialistImpl({ mode, changeMode, state }: PageSpecialistImplProps) {
-  const paramsList = useMemo<ParamsList>(() => loadParamsList(state), [state])
-  const paramsShow = useMemo<ParamsShow>(() => loadParamsShow(state), [state])
+function PageSpecialistImpl() {
+  const [paramsState, setParamsState] = useSearchParamState()
+  const mode = getPageMode(paramsState, 'list')
+  const paramsList = useMemo<ParamsList>(() => loadParamsList(paramsState), [paramsState])
+  const paramsShow = useMemo<ParamsShow>(() => loadParamsShow(paramsState), [paramsState])
   const [previousData, setPreviousData] = useState<Specialist[]>([])
   const [selectedItems, setSelectedItems] = useState<Specialist[]>([])
   const [specializations, setSpecializations] = useState<SpecialistSpecialization[] | null>(null)
@@ -123,7 +120,7 @@ function PageSpecialistImpl({ mode, changeMode, state }: PageSpecialistImplProps
         appointments={queryAppointments.data ?? []}
         pagination={pagination}
         mode={mode}
-        changeMode={changeMode}
+        changeMode={(mode, newState) => setParamsState(changeMode(mode, newState))}
         selectedItems={selectedItems}
         changeSelectedItems={setSelectedItems}
         onClickDeleteAll={() => {

@@ -14,7 +14,7 @@ func (args *CountServicesEnrichedArgs) Validate() *UsecaseError {
 	return nil
 }
 
-func CountServicesEnriched(state State, args CountServicesEnrichedArgs) (int64, *UsecaseError) {
+func CountServicesEnriched(state State, args CountServicesEnrichedArgs) (int32, *UsecaseError) {
 	count, err := state.Queries().CountServicesEnriched(state.Context(), infra.CountServicesEnrichedParams{
 		Specialist:     args.SpecialistName,
 		Specialization: args.SpecializationName,

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import {
   createBrowserRouter,
   Outlet,
@@ -9,7 +9,6 @@ import {
 } from 'react-router-dom'
 import { CalendarOutlined, UserOutlined, ProfileOutlined, ApartmentOutlined } from '@ant-design/icons'
 
-import { ChangePageMode, MoveToPage, PageMode } from '../../components/AdminX/types'
 import AdminBreadcrumb from '../../components/AdminX/AdminBreadcrumb'
 import AdminLayout from '../../components/AdminX/AdminLayout'
 import PageLoading from '../../components/Loading/PageLoading'
@@ -23,78 +22,59 @@ import PageServiceImpl from '../pages/services/PageServiceImpl'
 import PageSpecialistImpl from '../pages/specialists/PageSpecialistImpl'
 import PageSpecializationImpl from '../pages/specializations/PageSpecializationImpl'
 
-import { AdminProvider, useAdmin } from './AdminContext'
-import AdminItem from './AdminItem'
 import { useAuth } from '../../context/AuthContext'
 import { RedirectTo } from '../../components/RedirectTo'
-
-const usePageStateMode = () => {
-  const { state } = useAdmin()
-  const [_, setSearch] = useSearchParams()
-  const navigate = useNavigate()
-
-  const changeMode: ChangePageMode = (pageMode, pageState) => {
-    const searchParams = new URLSearchParams()
-    searchParams.set('mode', pageMode)
-    if (pageState) {
-      for (const key in pageState) {
-        if (pageState[key] === 0 || pageState[key]) {
-          searchParams.set(key, pageState[key].toString())
-        }
-      }
-    }
-    setSearch(searchParams.toString())
-  }
-
-  const moveTo: MoveToPage = (key, state) => {
-    const searchParams = new URLSearchParams(state)
-    searchParams.set('key', key)
-    navigate(`/_move?${searchParams}`)
-  }
-
-  return [state.state, state.mode, changeMode, moveTo] as const
-}
+import { useSearchParamState } from '../../hooks/useSearchParam'
+import { getPageMode } from '../../components/AdminX/tools'
 
 const RE_PATH = /^\/([\w-]+)/
 
-// OBS: Overcomplicated way to handle the page state (query params) and mode (list, create...)
-// TODO: Should I try other approaches?
+interface PageItem {
+  key: string
+  label: string
+  icon: React.ReactNode
+  roles?: string[]
+}
+
+const pageItems: PageItem[] = [
+  { key: 'appointments', label: 'Agendamentos', icon: <CalendarOutlined /> },
+  { key: 'customers', label: 'Clientes', icon: <UserOutlined /> },
+  { key: 'specialists', label: 'Especialistas', icon: <UserOutlined /> },
+  { key: 'secretaries', label: 'Secretários', icon: <UserOutlined />, roles: ['admin'] },
+  { key: 'services', label: 'Serviços', icon: <ProfileOutlined /> },
+  { key: 'services-available', label: 'Serviços disponíveis', icon: <ProfileOutlined /> },
+  { key: 'specializations', label: 'Especializações', icon: <ApartmentOutlined /> },
+]
+
 function AdminPageRoutesLayout() {
-  const { state, dispatch } = useAdmin()
-  const [_, mode, changeMode] = usePageStateMode()
+  const [paramsState] = useSearchParamState()
+  const mode = getPageMode(paramsState, 'list')
   const navigate = useNavigate()
   const location = useLocation()
-  const { items, pageKey } = state
-  const title = items.find((item) => item.key === pageKey)?.label ?? ''
-  const [search] = useSearchParams()
-  const [loaded, setLoaded] = useState(false)
   const [{ isLoading, isAuthenticated, identity }, authDispatch] = useAuth()
 
-  useEffect(() => {
-    if (items.length === 0) return
+  const items = useMemo(() => {
+    return pageItems.filter((item) =>
+      item.roles && item.roles.length > 0 ? identity && item.roles.includes(identity.role) : true,
+    )
+  }, [identity?.role])
+
+  const pageKey = useMemo(() => {
     const path = window.location.pathname.match(RE_PATH)?.[1] ?? ''
     const item = items.find((item) => item.key === path)
-    if (item) {
-      dispatch({ type: 'SET_PAGE_KEY', payload: item.key })
-    } else {
-      navigate('/' + items[0].key)
-      dispatch({ type: 'SET_PAGE_KEY', payload: items[0].key })
-    }
-  }, [navigate, dispatch, items, location?.pathname])
+    return item?.key
+  }, [items, location.pathname])
+
+  const item = items.find((item) => item.key === pageKey)
+  const title = item?.label
 
   useEffect(() => {
-    const searchParams = new URLSearchParams(search)
-    const mode = (searchParams.get('mode') as PageMode) ?? 'list'
-    searchParams.delete('mode')
-
-    const state: Record<string, string> = {}
-    searchParams.forEach((value, key) => {
-      state[key] = value
-    })
-
-    dispatch({ type: 'SET_STATE_MODE', payload: { mode, state } })
-    setLoaded(true)
-  }, [dispatch, search])
+    if (title) {
+      window.document.title = `AS - ${title}`
+    } else {
+      window.document.title = 'Agenda de Serviços'
+    }
+  }, [title])
 
   if (isLoading) {
     return <PageLoading />
@@ -104,18 +84,14 @@ function AdminPageRoutesLayout() {
     return <RedirectTo to="/auth" />
   }
 
-  if (!loaded) {
-    return <PageLoading />
+  if (!pageKey) {
+    return <RedirectTo to={`/${items[0].key}`} />
   }
 
   return (
     <AdminLayout
-      items={state.items}
-      pageKey={state.pageKey}
-      onSelectPage={(key) => {
-        dispatch({ type: 'SET_PAGE_KEY_AND_LIST', payload: key })
-        navigate('/' + key)
-      }}
+      items={items}
+      pageKey={pageKey}
       username={identity?.name ?? ''}
       onClickMenu={(key) => {
         switch (key) {
@@ -130,17 +106,7 @@ function AdminPageRoutesLayout() {
         }
       }}
     >
-      <AdminBreadcrumb mode={mode} title={title} changeMode={changeMode} />
-
-      <AdminItem pageKey="appointments" pageLabel="Agendamentos" pageIcon={<CalendarOutlined />} />
-      <AdminItem pageKey="customers" pageLabel="Clientes" pageIcon={<UserOutlined />} />
-      <AdminItem pageKey="specialists" pageLabel="Especialistas" pageIcon={<UserOutlined />} />
-      {identity?.role === 'admin' && (
-        <AdminItem pageKey="secretaries" pageLabel="Secretários" pageIcon={<UserOutlined />} />
-      )}
-      <AdminItem pageKey="services" pageLabel="Serviços" pageIcon={<ProfileOutlined />} />
-      <AdminItem pageKey="services-available" pageLabel="Serviços disponíveis" pageIcon={<ProfileOutlined />} />
-      <AdminItem pageKey="specializations" pageLabel="Especializações" pageIcon={<ApartmentOutlined />} />
+      <AdminBreadcrumb mode={mode} title={title} pageKey={pageKey} />
 
       <Outlet />
     </AdminLayout>
@@ -152,38 +118,14 @@ function MovePage() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    setTimeout(() => {
-      const searchParams = new URLSearchParams(search)
-      const key = searchParams.get('key') ?? ''
-      searchParams.delete('key')
-      navigate(`/${key}?${searchParams}`)
-    }, 100)
+    const searchParams = new URLSearchParams(search)
+    const key = searchParams.get('key') ?? ''
+    searchParams.delete('key')
+    navigate(`/${key}?${searchParams}`)
   }, [navigate, search])
 
   return <PageLoading />
 }
-
-function withMode<
-  T extends {
-    mode?: PageMode
-    changeMode?: ChangePageMode
-    state?: Record<string, string>
-    moveTo?: MoveToPage
-  },
->(Component: React.ComponentType<T>): React.FC {
-  return function (props: any) {
-    const [state, mode, changeMode, moveTo] = usePageStateMode()
-    return <Component {...props} state={state} mode={mode} changeMode={changeMode} moveTo={moveTo} />
-  }
-}
-
-const PageAppointment = withMode(PageAppointmentImpl)
-const PageCustomer = withMode(PageCustomerImpl)
-const PageSecretaries = withMode(PageSecretaryImpl)
-const PageService = withMode(PageServiceImpl)
-const PageServiceAvailable = withMode(PageServiceAvailableImpl)
-const PageSpecialist = withMode(PageSpecialistImpl)
-const PageSpecialization = withMode(PageSpecializationImpl)
 
 const router = createBrowserRouter([
   {
@@ -196,31 +138,31 @@ const router = createBrowserRouter([
     children: [
       {
         path: 'appointments',
-        element: <PageAppointment />,
+        element: <PageAppointmentImpl />,
       },
       {
         path: 'customers',
-        element: <PageCustomer />,
+        element: <PageCustomerImpl />,
       },
       {
         path: 'specialists',
-        element: <PageSpecialist />,
+        element: <PageSpecialistImpl />,
       },
       {
         path: 'specializations',
-        element: <PageSpecialization />,
+        element: <PageSpecializationImpl />,
       },
       {
         path: 'secretaries',
-        element: <PageSecretaries />,
+        element: <PageSecretaryImpl />,
       },
       {
         path: 'services',
-        element: <PageService />,
+        element: <PageServiceImpl />,
       },
       {
         path: 'services-available',
-        element: <PageServiceAvailable />,
+        element: <PageServiceAvailableImpl />,
       },
     ],
   },
@@ -230,16 +172,8 @@ const router = createBrowserRouter([
   },
 ])
 
-function AdminPageRoutesInternal() {
-  return <RouterProvider router={router} />
-}
-
 function AdminPage() {
-  return (
-    <AdminProvider>
-      <AdminPageRoutesInternal />
-    </AdminProvider>
-  )
+  return <RouterProvider router={router} />
 }
 
 export default AdminPage
