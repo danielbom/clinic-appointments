@@ -2,8 +2,10 @@
   "name": "tests2",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "type": "module",
   "scripts": {
+    "snapshot:replay": "pnpx tsx ./tests/snapshot/api.ts replay",
+    "snapshot:record": "pnpx tsx ./tests/snapshot/api.ts record",
     "test": "vitest run",
     "test:dev": "vitest",
     "test:coverage": "vitest run --coverage"
@@ -23,6 +25,7 @@
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.0",
     "lodash": "^4.17.21",
+    "tsx": "^4.21.0",
     "zod": "^4.0.5"
   }
 }

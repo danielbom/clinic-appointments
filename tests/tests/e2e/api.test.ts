@@ -2,6 +2,7 @@ import _ from 'lodash'
 import axios from 'axios'
 import z from 'zod'
 import { addDays, addHours } from 'date-fns'
+import { getDatePart, getHourPart } from '../../src/lib/date-fns-ext'
 
 import type { DotPaths } from '../api-features'
 import { formatJson, responseIsError } from '../api-extensions'
@@ -115,22 +116,14 @@ describe('clinic-appointments', () => {
         // Does a non expired refresh token return the same token?
         const accessToken = ks.get('accessToken')
         const refreshToken = ks.get('refreshToken')
-        const res = await api.auth.refresh({
-          headers: {
-            Authorization: `Bearer ${refreshToken}`,
-          },
-        })
+        const res = await api.auth.refresh(refreshToken!)
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         expect(res.data.accessToken).toBe(accessToken)
         expect(res.data.refreshToken).toBe(refreshToken)
       })
       it('should fail', async () => {
         const accessToken = ks.get('accessToken')
-        const res = await api.auth.refresh({
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        })
+        const res = await api.auth.refresh(accessToken!)
         expect(res.status).toBe(400)
         if (responseIsError(res)) {
           expect(res.data.trim()).toBe('invalid token')
@@ -1013,8 +1006,8 @@ describe('clinic-appointments', () => {
         expect(loggedIn).toBe('secretary')
         depends(['customers.create'])
         const res = await api.appointments.create({
-          date: createDateIso.slice(0, 10),
-          time: createDateIso.slice(11, 11 + 8),
+          date: getDatePart(createDateIso),
+          time: getHourPart(createDateIso),
           customerId: ks.get('customer')!,
           serviceId: ks.get('service')!,
         })
@@ -1064,8 +1057,8 @@ describe('clinic-appointments', () => {
         expect(loggedIn).toBe('secretary')
         depends(['appointments.create'])
         const res = await api.appointments.update(ids[0], {
-          date: updateDateIso.slice(0, 10),
-          time: updateDateIso.slice(11, 11 + 8),
+          date: getDatePart(updateDateIso),
+          time: getHourPart(updateDateIso),
           status: 2,
         })
         expect(res.status, JSON.stringify(res.data)).toBe(200)

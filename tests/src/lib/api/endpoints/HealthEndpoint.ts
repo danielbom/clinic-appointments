@@ -2,10 +2,10 @@ import { AxiosResponse } from 'axios'
 import { Config } from '../Config'
 
 export class HealthEndpoint {
-  constructor(public config: Config) {}
+  constructor(public _config: Config) {}
 
   healthCheck(): Promise<AxiosResponse<Status>> {
-    return this.config.instance.get(`/api/health`)
+    return this._config.instance.get(`/api/health`)
   }
 }
 
