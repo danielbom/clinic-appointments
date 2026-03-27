@@ -6,11 +6,12 @@ import config from '../config'
 import { Api, Config } from '../lib/api'
 import isAxiosError from '../lib/axios/isAxiosError'
 // import { ApiFake } from '../lib/api-fake'
+// import { proxyPlaceholder } from '../lib/proxy-placeholder'
 
 export const ApiContext = createContext<Api>(null as unknown as Api)
 
 const api = new Api(new Config(axios.create({ baseURL: config.api.baseURL })))
-// const api = new ApiFake(new Config(null as any))
+// const api = new ApiFake(new Config(proxyPlaceholder()))
 
 export function ApiProvider({ children }: { children: React.ReactNode }) {
   // TODO: Should I handle all errors here or in each api request?

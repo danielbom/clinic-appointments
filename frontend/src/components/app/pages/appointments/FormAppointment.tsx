@@ -242,6 +242,8 @@ function getExternalValues(): Partial<FormAppointmentValues> {
     removeSessionStorage(CREATE_APPOINTMENTS_DATA_KEY)
   }, 1000)
 
+  if (!data) return values
+
   if (typeof data.serviceId === 'string') {
     // From ShowAppointment() component
     // From ShowService() component

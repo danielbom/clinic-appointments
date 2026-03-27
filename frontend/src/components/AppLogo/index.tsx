@@ -1,5 +1,7 @@
 import './index.css'
 
+import AppMadeBy from '../AppMadeBy'
+
 interface AppLogoProps {
   madeByVisible?: boolean
 }
@@ -13,11 +15,7 @@ export default function AppLogo({ madeByVisible }: AppLogoProps) {
           <br />
           <b className="app-name">Agenda de Serviços</b>
         </span>
-        {madeByVisible && (
-          <span className="app-made-by">
-            feito por <u>Farina</u>
-          </span>
-        )}
+        {madeByVisible && <AppMadeBy />}
       </div>
     </div>
   )

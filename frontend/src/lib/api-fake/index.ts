@@ -18,8 +18,8 @@ import type {
 } from '../api'
 import { AppointmentStatus } from '../api'
 import { ServicesAvailableEndpoint } from '../api/endpoints/ServicesAvailableEndpoint'
-import { HealthEndpoint } from '../api/endpoints/HealthEndpoint';
-import { TestEndpoint } from '../api/endpoints/TestEndpoint';
+import { HealthEndpoint } from '../api/endpoints/HealthEndpoint'
+import { TestEndpoint } from '../api/endpoints/TestEndpoint'
 
 function _paginate<T>(items: T[], options: { page?: number; pageSize?: number } = {}): T[] {
   const start = (options.page ?? 1) * (options.pageSize ?? 10)
@@ -60,6 +60,7 @@ function randomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
+// @ts-ignore
 function roundInt(value: number, precision: number): number {
   const factor = Math.pow(10, precision)
   return Math.round(value / factor) * factor
@@ -108,10 +109,10 @@ const services: Service[] = (() => {
         const id = specialistServiceId++
         return {
           id: `specialist-service-fake-${id}`,
-          duration: roundInt(randomInt(30, 120), 1) * 60,
+          duration: randomInt(3, 12) * 10,
           serviceName: service.name,
           serviceNameId: service.id,
-          price: roundInt(randomInt(50, 500), 1) * 100,
+          price: randomInt(10, 100) * 5 * 100,
           specialistId: specialist.id,
           specialistName: specialist.name,
           specializationId: specialization.id,
@@ -290,6 +291,6 @@ export class ApiFake implements Api {
     update: async (_id, _data) => _put({ id: 'id' }),
   }
 
-  public health: HealthEndpoint = {} as any;
-  public test: TestEndpoint = {} as any;
+  public health: HealthEndpoint = {} as any
+  public test: TestEndpoint = {} as any
 }
