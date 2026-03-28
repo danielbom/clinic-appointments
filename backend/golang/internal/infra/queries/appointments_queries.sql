@@ -105,13 +105,20 @@ GROUP BY "month", "status"
 ORDER BY "month" ASC;
 
 -- name: AppointmentsIntersects :one
-SELECT COUNT("date") > 0 as count
+SELECT COUNT("date") > 0 AS count
 FROM "appointments"
 WHERE "date" = sqlc.arg('date')
   AND "specialist_id" = sqlc.arg('specialistId')
   AND (
-    ("time" <= sqlc.arg('time')::time AND sqlc.arg('time')::time < "time" + "duration") OR
-    ("time" < sqlc.arg('time')::time + sqlc.arg('duration')::interval AND sqlc.arg('time')::time + sqlc.arg('duration')::interval < "time" + "duration")
+    (
+      "time" <= sqlc.arg('time')::time
+      AND sqlc.arg('time')::time < "time" + make_interval(secs => "duration")
+    )
+    OR
+    (
+      "time" < sqlc.arg('time')::time + make_interval(secs => sqlc.arg('duration')::integer)
+      AND sqlc.arg('time')::time + make_interval(secs => sqlc.arg('duration')::integer) < "time" + make_interval(secs => "duration")
+    )
   )
 LIMIT 1;
 

@@ -17,11 +17,11 @@ export class ServicesEndpoint {
     return this._config.instance.get(`/api/services/${id}`)
   }
 
-  create(data: ServicesCreateBody): Promise<AxiosResponse<Id>> {
+  create(data: ServiceCreateBody): Promise<AxiosResponse<Id>> {
     return this._config.instance.post('/api/services', data)
   }
 
-  update(id: string, data: ServicesUpdateBody): Promise<AxiosResponse<Id>> {
+  update(id: string, data: ServiceUpdateBody): Promise<AxiosResponse<Id>> {
     return this._config.instance.put(`/api/services/${id}`, data)
   }
 
@@ -56,14 +56,14 @@ export type ServicesGetAllQuery = {
   specialist?: string
 }
 
-export type ServicesCreateBody = {
+export type ServiceCreateBody = {
   specialistId: string
   serviceNameId: string
   price: number
   duration: number
 }
 
-export type ServicesUpdateBody = {
+export type ServiceUpdateBody = {
   serviceNameId: string
   price: number
   duration: number

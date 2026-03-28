@@ -24,7 +24,7 @@ func GetAppointment(a infra.ListAppointmentsRow) dtos.Appointment {
 		SpecialistName: a.SpecialistName,
 		SpecialistID:   a.SpecialistID.String(),
 		Price:          a.Price,
-		Duration:       MicrosToMinutes(a.Duration.Microseconds),
+		Duration:       SecondsToMinutes(a.Duration),
 		Date: 					DateToString(a.Date),
 		Time:           TimeToString(a.Time),
 		Status:         int32(a.Status),

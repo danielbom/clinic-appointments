@@ -8,11 +8,19 @@ import (
 	"github.com/pkg/errors"
 )
 
-func DurationFromMinutes(min int32) pgtype.Interval {
+func IntervalToSeconds(internal pgtype.Interval) int32 {
+	return int32(internal.Microseconds / 1000000)
+}
+
+func SecondsToInterval(sec int32) pgtype.Interval {
 	return pgtype.Interval{
-		Microseconds: int64(min) * 60 * 1000000,
+		Microseconds: int64(sec) * 1000000,
 		Valid:        true,
 	}
+}
+
+func MinutesToInterval(min int32) pgtype.Interval {
+	return SecondsToInterval(min * 60)
 }
 
 func DateFromYear(result *pgtype.Date, year int) error {

@@ -39,7 +39,7 @@ func (args *SpecialistServiceInfoArgs) Validate() *UsecaseError {
 		if args.DurationMin <= 0 {
 			return NewInvalidArgumentError(ErrExpectPositiveValue).InField("duration")
 		}
-		args.Duration = DurationFromMinutes(args.DurationMin)
+		args.Duration = MinutesToInterval(args.DurationMin)
 	}
 	if args.Price < 0 {
 		return NewInvalidArgumentError(ErrExpectPositiveValue).InField("price")
@@ -62,7 +62,7 @@ func CreateSpecialistService(state State, args SpecialistServiceInfoArgs) (uuid.
 		ServiceNameId: args.ServiceNameID,
 		SpecialistId:  args.SpecialistID,
 		Price:         args.Price,
-		Duration:      args.Duration,
+		Duration:      IntervalToSeconds(args.Duration),
 	})
 	if err != nil {
 		return uuid.Nil, NewUnexpectedError(err)
@@ -74,7 +74,7 @@ func UpdateSpecialistService(state State, serviceId uuid.UUID, args SpecialistSe
 	params := infra.UpdateServiceParams{
 		ID:       serviceId,
 		Price:    args.Price,
-		Duration: args.Duration,
+		Duration: IntervalToSeconds(args.Duration),
 	}
 	id, err := state.Queries().UpdateService(state.Context(), params)
 	if err != nil {

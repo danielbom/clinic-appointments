@@ -17,7 +17,7 @@ func GetServices(services []infra.ListServicesEnrichedRow) []dtos.Service {
 			Specialization:   s.SpecializationName,
 			SpecializationID: s.SpecializationID.String(),
 			Price:            s.Price,
-			Duration:         MicrosToMinutes(s.Duration.Microseconds),
+			Duration:         SecondsToMinutes(s.Duration),
 		})
 	}
 	return response
@@ -29,6 +29,6 @@ func GetService(s infra.Service) dtos.ServiceBase {
 		ServiceNameID:    s.ServiceNameID.String(),
 		SpecialistID:     s.SpecialistID.String(),
 		Price:            s.Price,
-		Duration:         MicrosToMinutes(s.Duration.Microseconds),
+		Duration:         SecondsToMinutes(s.Duration),
 	}
 }

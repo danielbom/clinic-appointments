@@ -2,7 +2,7 @@ import { message } from 'antd'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { useApi } from '../../../context/ApiContext'
-import { CustomersCreateBody, CustomersUpdateBody } from '../../../lib/api'
+import { CustomerCreateBody, CustomerUpdateBody } from '../../../lib/api'
 import { invalidateQueries } from '../utils'
 
 export function useCustomerCreate() {
@@ -10,7 +10,7 @@ export function useCustomerCreate() {
   const api = useApi()
   return useMutation({
     mutationKey: ['#customers', 'create'],
-    mutationFn: async (values: CustomersCreateBody) => {
+    mutationFn: async (values: CustomerCreateBody) => {
       const response = await api.customers.create(values)
       return response.data
     },
@@ -26,7 +26,7 @@ export function useCustomerUpdate() {
   const api = useApi()
   return useMutation({
     mutationKey: ['#customers', 'update'],
-    mutationFn: async ({ id, body }: { id: string; body: CustomersUpdateBody }) => {
+    mutationFn: async ({ id, body }: { id: string; body: CustomerUpdateBody }) => {
       const response = await api.customers.update(id, body)
       return response.data
     },

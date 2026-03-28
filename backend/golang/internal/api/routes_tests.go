@@ -56,6 +56,6 @@ func (h *api) testInit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("System initialized to be tested"))
+	render.JSON(w, r, "System initialized to be tested")
+	render.Status(r, http.StatusOK)
 }

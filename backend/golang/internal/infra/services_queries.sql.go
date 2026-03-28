@@ -9,7 +9,6 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createService = `-- name: CreateService :one
@@ -26,7 +25,7 @@ type CreateServiceParams struct {
 	ServiceNameId uuid.UUID
 	SpecialistId  uuid.UUID
 	Price         int32
-	Duration      pgtype.Interval
+	Duration      int32
 }
 
 func (q *Queries) CreateService(ctx context.Context, arg CreateServiceParams) (uuid.UUID, error) {
@@ -108,7 +107,7 @@ RETURNING "id"
 
 type UpdateServiceParams struct {
 	Price    int32
-	Duration pgtype.Interval
+	Duration int32
 	ID       uuid.UUID
 }
 

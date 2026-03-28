@@ -22,7 +22,7 @@ type Appointment struct {
 	SpecialistID  uuid.UUID
 	ServiceNameID uuid.UUID
 	Price         int32
-	Duration      pgtype.Interval
+	Duration      int32
 	Date          pgtype.Date
 	Time          pgtype.Time
 	Status        int32
@@ -55,7 +55,7 @@ type Service struct {
 	ServiceNameID uuid.UUID
 	SpecialistID  uuid.UUID
 	Price         int32
-	Duration      pgtype.Interval
+	Duration      int32
 }
 
 type ServiceName struct {

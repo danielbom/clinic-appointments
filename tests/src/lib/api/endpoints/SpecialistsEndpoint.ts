@@ -37,11 +37,11 @@ export class SpecialistsEndpoint {
     return this._config.instance.get(`/api/specialists/${id}/services/${serviceId}`)
   }
 
-  create(data: SpecialistsCreateBody): Promise<AxiosResponse<Id>> {
+  create(data: SpecialistCreateBody): Promise<AxiosResponse<Id>> {
     return this._config.instance.post(`/api/specialists`, data)
   }
 
-  update(id: string, data: SpecialistsUpdateBody): Promise<AxiosResponse<Id>> {
+  update(id: string, data: SpecialistUpdateBody): Promise<AxiosResponse<Id>> {
     return this._config.instance.put(`/api/specialists/${id}`, data)
   }
 
@@ -80,7 +80,7 @@ export type SpecialistsCreateBodyService = {
   duration: number // minutes
 }
 
-export type SpecialistsCreateBody = {
+export type SpecialistCreateBody = {
   name: string
   email: string
   phone: string
@@ -90,7 +90,7 @@ export type SpecialistsCreateBody = {
   services: SpecialistsCreateBodyService[]
 }
 
-export type SpecialistsUpdateBody = {
+export type SpecialistUpdateBody = {
   name: string
   email: string
   phone: string

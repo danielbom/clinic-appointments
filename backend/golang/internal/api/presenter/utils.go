@@ -7,6 +7,10 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+func SecondsToMinutes(sec int32) int32 {
+	return int32(sec / 60)
+}
+
 func MicrosToMinutes(micros int64) int32 {
 	return int32(micros / 1000000 / 60)
 }

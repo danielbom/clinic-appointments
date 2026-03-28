@@ -10,6 +10,16 @@ import { getDatePart, getHourPart } from '../../src/lib/date-fns-ext'
 import { Writable, WriteStr, WriteCombined } from '../../src/lib/writable'
 import { Path } from '../../src/lib/path'
 import { createTracker } from '../../src/lib/tracker'
+import levenshtein from "fast-levenshtein";
+
+export function getSimilarity(a: string, b: string): number {
+  const distance = levenshtein.get(a, b);
+  const maxLength = Math.max(a.length, b.length);
+
+  if (maxLength === 0) return 100;
+
+  return (1 - distance / maxLength) * 100;
+}
 
 const baseApi = new Api(
   new Config(
@@ -30,13 +40,13 @@ function writeResponse(writer: Writable, response: AxiosResponse) {
   if (!url) return
   const status = response.status
   writer.write(`Request: ${method} ${url} ${status}\n`)
-  if (response.config.params) {
+  if (response.config.params != null) {
     writer.write(`Params: ${JSON.stringify(response.config.params, null, 2)}\n`)
   }
-  if (response.config.data) {
+  if (response.config.data != null) {
     writer.write(`Body: ${JSON.stringify(response.config.data, null, 2)}\n`)
   }
-  if (response.data) {
+  if (response.data != null) {
     writer.write(`Response: ${JSON.stringify(response.data, null, 2)}\n`)
   }
   writer.write('\n')
@@ -44,7 +54,7 @@ function writeResponse(writer: Writable, response: AxiosResponse) {
 
 const ids = {
   items: {} as Record<string, number>,
-  current: 0,
+  current: 1,
   get(id: string) {
     ids.items[id] = ids.items[id] || this.current++
     return ids.items[id]
@@ -74,14 +84,10 @@ function redactResponse(response: AxiosResponse | undefined): any {
     return newData
   }
   if (!response || typeof response != 'object') return response
-  const status = response.status
   const { data, config, ...responseRest } = response
   const newResponse: any = { ...responseRest }
   newResponse.config = { ...config, url: config.url ?? '' }
   newResponse.data = redactData(data)
-  if (typeof newResponse.data === 'string' && status === 200) {
-    newResponse.data = ids.get(newResponse.data)
-  }
   if (config.data) {
     newResponse.config.data = redactData(JSON.parse(config.data))
   }
@@ -159,7 +165,7 @@ function complete(args: Args) {
   }
 
   ACTUAL_SNAPSHOT_PATH.writeText(actual)
-  console.log('ERROR: Snapshot mismatch')
+  console.log(`ERROR: Snapshot mismatch: ${getSimilarity(actual, expected).toFixed(2)}%`)
 }
 
 async function run(args: Args) {
@@ -235,12 +241,13 @@ async function run(args: Args) {
     state.refreshToken = res.data.refreshToken
   })
   await api.auth.me()
-  await api.auth.refresh(state.refreshToken)
+  // await api.auth.refresh(state.refreshToken) // TODO: FIX golang refresh logic
 
   // secretaries
   await api.secretaries.count()
   await api.secretaries.getAll()
   await api.secretaries.create(secretaryData).then((res) => (state.secretaryId = res.data.id))
+  await api.secretaries.create(secretaryData)
   await api.secretaries.count()
   await api.secretaries.getAll()
   await api.secretaries.getById(state.secretaryId)

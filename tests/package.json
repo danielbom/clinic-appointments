@@ -16,6 +16,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/fast-levenshtein": "^0.0.4",
     "@types/lodash": "^4.17.20",
     "@types/node": "^25.5.0",
     "@vitest/coverage-v8": "^4.1.2",
@@ -27,6 +28,7 @@
     "axios": "^1.10.0",
     "date-fns": "^4.1.0",
     "dotenv": "^17.2.0",
+    "fast-levenshtein": "^3.0.0",
     "lodash": "^4.17.21",
     "tsx": "^4.21.0",
     "zod": "^4.0.5"

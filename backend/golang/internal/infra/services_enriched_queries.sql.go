@@ -9,7 +9,6 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const countServicesEnriched = `-- name: CountServicesEnriched :one
@@ -65,7 +64,7 @@ type ListServicesEnrichedParams struct {
 type ListServicesEnrichedRow struct {
 	ID                 uuid.UUID
 	Price              int32
-	Duration           pgtype.Interval
+	Duration           int32
 	SpecialistID       uuid.UUID
 	SpecialistName     string
 	ServiceNameID      uuid.UUID

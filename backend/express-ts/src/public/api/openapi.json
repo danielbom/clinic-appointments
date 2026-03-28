@@ -1,0 +1,1408 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Clinic Appointments API",
+    "version": "1.0.0",
+    "description": "Clinic Appointments API documentation using OpenAPI 3.1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local development"
+    }
+  ],
+  "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
+  "paths": {
+    "/api/health": {
+      "get": {
+        "operationId": "health.healthCheck",
+        "summary": "Health check",
+        "tags": ["Health"],
+        "responses": {
+          "200": {
+            "description": "API is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/auth/login": {
+      "post": {
+        "operationId": "auth.login",
+        "tags": ["Auth"]
+      }
+    },
+    "/api/auth/refresh": {
+      "post": {
+        "operationId": "auth.refresh",
+        "tags": ["Auth"]
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "operationId": "auth.me",
+        "tags": ["Auth"]
+      }
+    },
+
+    "/api/appointments": {
+      "get": {
+        "operationId": "appointments.getAll",
+        "summary": "Get all appointments",
+        "tags": ["Appointments"],
+        "parameters": [
+          { "$ref": "#/components/query/Page" },
+          { "$ref": "#/components/query/PageSize" },
+          { "$ref": "#/components/query/StartDate" },
+          { "$ref": "#/components/query/EndDate" },
+          { "$ref": "#/components/query/ServiceName" },
+          { "$ref": "#/components/query/Specialist" },
+          { "$ref": "#/components/query/Customer" },
+          { "$ref": "#/components/query/Status" }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Appointment"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "appointments.create",
+        "summary": "Create an appointment",
+        "tags": ["Appointments"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/AppointmentsCreateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Appointment"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/appointments/count": {
+      "get": {
+        "operationId": "appointments.count",
+        "summary": "Count appointments",
+        "tags": ["Appointments"],
+        "parameters": [
+          { "$ref": "#/components/query/StartDate" },
+          { "$ref": "#/components/query/EndDate" },
+          { "$ref": "#/components/query/ServiceName" },
+          { "$ref": "#/components/query/Specialist" },
+          { "$ref": "#/components/query/Customer" },
+          { "$ref": "#/components/query/Status" }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Count"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/appointments/calendar": {
+      "get": {
+        "operationId": "appointments.getCalendar",
+        "summary": "Get appointments calendar",
+        "tags": ["Appointments"],
+        "parameters": [{ "$ref": "#/components/query/StartDate" }, { "$ref": "#/components/query/EndDate" }],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Appointment"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/appointments/calendar/count": {
+      "get": {
+        "operationId": "appointments.getCalendarCount",
+        "summary": "Get appointments calendar count",
+        "tags": ["Appointments"],
+        "parameters": [{ "$ref": "#/components/query/StartDate" }, { "$ref": "#/components/query/EndDate" }],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppointmentCalendarCount"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/appointments/{id}": {
+      "get": {
+        "operationId": "appointments.getById",
+        "summary": "Get appointment by id",
+        "tags": ["Appointments"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Appointment"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "appointments.update",
+        "summary": "Update an appointment",
+        "tags": ["Appointments"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/AppointmentsUpdateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "appointments.delete",
+        "summary": "Delete an appointment",
+        "tags": ["Appointments"],
+        "responses": {
+          "204": {
+            "description": "Item deleted successfully"
+          }
+        }
+      }
+    },
+
+    "/api/customers": {
+      "get": {
+        "operationId": "customers.getAll",
+        "summary": "Get all customers",
+        "tags": ["Customers"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "customers.create",
+        "summary": "Create an customer",
+        "tags": ["Customers"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/CustomerCreateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/customers/count": {
+      "get": {
+        "operationId": "customers.count",
+        "summary": "Count customers",
+        "tags": ["Customers"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Count"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/customers/{id}": {
+      "get": {
+        "operationId": "customers.getById",
+        "summary": "Get customer by id",
+        "tags": ["Customers"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "customers.update",
+        "summary": "Update an customer",
+        "tags": ["Customers"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/CustomersUpdateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "customers.delete",
+        "summary": "Delete an customer",
+        "tags": ["Customers"],
+        "responses": {
+          "204": {
+            "description": "Item deleted successfully"
+          }
+        }
+      }
+    },
+
+    "/api/secretaries": {
+      "get": {
+        "operationId": "secretaries.getAll",
+        "summary": "Get all secretaries",
+        "tags": ["Secretaries"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Secretary"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "secretaries.create",
+        "summary": "Create an secretaries",
+        "tags": ["Secretaries"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/SecretaryCreateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Secretary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/secretaries/count": {
+      "get": {
+        "operationId": "secretaries.count",
+        "summary": "Count secretaries",
+        "tags": ["Secretaries"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Count"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/secretaries/{id}": {
+      "get": {
+        "operationId": "secretaries.getById",
+        "summary": "Get secretaries by id",
+        "tags": ["Secretaries"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "secretaries.update",
+        "summary": "Update an secretaries",
+        "tags": ["Secretaries"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/SecretaryUpdateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "secretaries.delete",
+        "summary": "Delete an secretaries",
+        "tags": ["Secretaries"],
+        "responses": {
+          "204": {
+            "description": "Item deleted successfully"
+          }
+        }
+      }
+    },
+
+    "/api/services-available": {
+      "get": {
+        "operationId": "servicesAvailable.getAll",
+        "summary": "Get all services available",
+        "tags": ["Services Available"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceAvailable"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "servicesAvailable.create",
+        "summary": "Create a service available",
+        "tags": ["Services Available"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/ServiceAvailableCreateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceAvailable"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/services-available/{id}": {
+      "get": {
+        "operationId": "servicesAvailable.getById",
+        "summary": "Get a service available by id",
+        "tags": ["Services Available"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceAvailable"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "servicesAvailable.update",
+        "summary": "Update an service available",
+        "tags": ["Services Available"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/ServiceAvailableUpdateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "servicesAvailable.delete",
+        "summary": "Delete a service available",
+        "tags": ["Services Available"],
+        "responses": {
+          "204": {
+            "description": "Item deleted successfully"
+          }
+        }
+      }
+    },
+
+    "/api/services": {
+      "get": {
+        "operationId": "services.getAll",
+        "summary": "Get all services",
+        "tags": ["Services"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Service"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "services.create",
+        "summary": "Create a services",
+        "tags": ["Services"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/ServiceCreateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Service"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/services/count": {
+      "get": {
+        "operationId": "services.count",
+        "summary": "Count services",
+        "tags": ["Services"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Count"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/services/{id}": {
+      "get": {
+        "operationId": "services.getById",
+        "summary": "Get services by id",
+        "tags": ["Services"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Service"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "services.update",
+        "summary": "Update a services",
+        "tags": ["Services"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/ServiceUpdateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "services.delete",
+        "summary": "Delete a services",
+        "tags": ["Services"],
+        "responses": {
+          "204": {
+            "description": "Item deleted successfully"
+          }
+        }
+      }
+    },
+
+    "/api/specialists": {
+      "get": {
+        "operationId": "specialists.getAll",
+        "summary": "Get all specialists",
+        "tags": ["Specialists"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Specialist"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "specialists.create",
+        "summary": "Create a specialists",
+        "tags": ["Specialists"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/SpecialistCreateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Specialist"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/specialists/count": {
+      "get": {
+        "operationId": "specialists.count",
+        "summary": "Count specialists",
+        "tags": ["Specialists"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Count"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/specialists/{id}": {
+      "get": {
+        "operationId": "specialists.getById",
+        "summary": "Get specialists by id",
+        "tags": ["Specialists"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Uuid"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Specialist"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "specialists.update",
+        "summary": "Update a specialists",
+        "tags": ["Specialists"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/SpecialistUpdateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "specialists.delete",
+        "summary": "Delete a specialists",
+        "tags": ["Specialists"],
+        "responses": {
+          "204": {
+            "description": "Item deleted successfully"
+          }
+        }
+      }
+    },
+
+    "/api/specializations": {
+      "get": {
+        "operationId": "specializations.getAll",
+        "summary": "Get all specializations",
+        "tags": ["Specializations"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Specialization"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "specializations.create",
+        "summary": "Create a specializations",
+        "tags": ["Specializations"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/SpecializationCreateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Specialization"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/specializations/{id}": {
+      "put": {
+        "operationId": "specializations.update",
+        "summary": "Update an specializations",
+        "tags": ["Specializations"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/SpecializationUpdateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "specializations.delete",
+        "summary": "Delete a specializations",
+        "tags": ["Specializations"],
+        "responses": {
+          "204": {
+            "description": "Item deleted successfully"
+          }
+        }
+      }
+    },
+
+    "/api/test/init": {
+      "get": {
+        "operationId": "test.init",
+        "tags": ["Test"],
+        "description": "Available only in TEST environments"
+      }
+    },
+    "/api/test/stats": {
+      "get": {
+        "operationId": "test.stats",
+        "tags": ["Test"],
+        "description": "Available only in TEST environments"
+      }
+    },
+    "/api/test/debug-claims": {
+      "get": {
+        "operationId": "test.debugClaims",
+        "tags": ["Test"],
+        "description": "Available only in TEST environments"
+      }
+    }
+  },
+
+  "components": {
+    "parameters": {
+      "Uuid": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/domain/Uuid"
+        }
+      }
+    },
+
+    "query": {
+      "StartDate": {
+        "in": "query",
+        "name": "startDate",
+        "schema": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "EndDate": {
+        "in": "query",
+        "name": "endDate",
+        "schema": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "ServiceName": {
+        "in": "query",
+        "name": "serviceName",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "Specialist": {
+        "in": "query",
+        "name": "specialist",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "Customer": {
+        "in": "query",
+        "name": "customer",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "Status": {
+        "in": "query",
+        "name": "status",
+        "schema": {
+          "$ref": "#/components/schemas/AppointmentStatus"
+        }
+      },
+      "Page": {
+        "in": "query",
+        "name": "page",
+        "schema": {
+          "type": "number",
+          "format": "integer"
+        }
+      },
+      "PageSize": {
+        "in": "query",
+        "name": "pageSize",
+        "schema": {
+          "type": "number",
+          "format": "integer"
+        }
+      }
+    },
+
+    "domain": {
+      "Uuid": {
+        "type": "string",
+        "format": "uuid"
+      },
+      "Price": {
+        "type": "number",
+        "format": "integer",
+        "description": "in cents"
+      },
+      "Duration": {
+        "type": "number",
+        "format": "integer",
+        "description": "in minutes"
+      },
+      "Email": {
+        "type": "string",
+        "format": "email"
+      },
+      "Phone": {
+        "type": "string",
+        "format": "phone"
+      },
+      "Cpf": {
+        "type": "string",
+        "format": "cpf"
+      },
+      "Cnpj": {
+        "type": "string",
+        "format": "cnpj"
+      },
+      "Name": {
+        "type": "string",
+        "description": "Non empty string"
+      }
+    },
+
+    "body": {
+      "AppointmentsCreateBody": {
+        "type": "object",
+        "properties": {
+          "customerId": { "$ref": "#/components/domain/Uuid" },
+          "serviceId": { "$ref": "#/components/domain/Uuid" },
+          "date": { "type": "string", "format": "date" },
+          "time": { "type": "string", "format": "time" }
+        },
+        "required": ["customerId", "serviceId", "date", "time"]
+      },
+      "AppointmentsUpdateBody": {
+        "type": "object",
+        "properties": {
+          "date": { "type": "string", "format": "date" },
+          "time": { "type": "string", "format": "time" },
+          "status": { "$ref": "#/components/schemas/AppointmentStatus" }
+        }
+      },
+
+      "CustomerCreateBody": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "$ref": "#/components/domain/Email" },
+          "phone": { "$ref": "#/components/domain/Phone" },
+          "birthdate": { "type": "string", "format": "date" },
+          "cpf": { "$ref": "#/components/domain/Cpf" }
+        },
+        "required": ["name", "email", "phone", "birthdate", "cpf"]
+      },
+      "CustomersUpdateBody": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "$ref": "#/components/domain/Email" },
+          "phone": { "$ref": "#/components/domain/Phone" },
+          "birthdate": { "type": "string", "format": "date" },
+          "cpf": { "$ref": "#/components/domain/Cpf" }
+        },
+        "required": ["name", "email", "phone", "birthdate", "cpf"]
+      },
+
+      "SecretaryCreateBody": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "$ref": "#/components/domain/Email" },
+          "phone": { "$ref": "#/components/domain/Phone" },
+          "birthdate": { "type": "string", "format": "date" },
+          "password": { "type": "string" },
+          "cpf": { "$ref": "#/components/domain/Cpf" },
+          "cnpj": { "$ref": "#/components/domain/Cnpj" }
+        }
+      },
+      "SecretaryUpdateBody": {},
+
+      "ServiceAvailableCreateBody": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "specialization": { "type": "string" },
+          "specializationId": { "$ref": "#/components/domain/Uuid" }
+        },
+        "required": "name"
+      },
+      "ServiceAvailableUpdateBody": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" }
+        },
+        "required": "name"
+      },
+
+      "ServiceCreateBody": {
+        "type": "object",
+        "properties": {
+          "specialistId": { "$ref": "#/components/domain/Uuid" },
+          "serviceNameId": { "$ref": "#/components/domain/Uuid" },
+          "price": { "$ref": "#/components/domain/Price" },
+          "duration": { "$ref": "#/components/domain/Duration" }
+        },
+        "required": ["specialistId", "serviceNameId", "price", "duration"]
+      },
+      "ServiceUpdateBody": {
+        "type": "object",
+        "properties": {
+          "serviceNameId": { "$ref": "#/components/domain/Uuid" },
+          "price": { "$ref": "#/components/domain/Price" },
+          "duration": { "$ref": "#/components/domain/Duration" }
+        },
+        "required": ["serviceNameId", "price", "duration"]
+      },
+
+      "SpecialistsCreateBodyService": {
+        "type": "object",
+        "properties": {
+          "serviceNameId": { "$ref": "#/components/domain/Uuid" },
+          "price": { "$ref": "#/components/domain/Price" },
+          "duration": { "$ref": "#/components/domain/Duration" }
+        },
+        "required": ["serviceNameId", "price", "duration"]
+      },
+      "SpecialistCreateBody": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "$ref": "#/components/domain/Email" },
+          "phone": { "$ref": "#/components/domain/Phone" },
+          "birthdate": { "type": "string", "format": "date" },
+          "cpf": { "$ref": "#/components/domain/Cpf" },
+          "cnpj": { "$ref": "#/components/domain/Cnpj" },
+          "services": {
+            "type": "array",
+            "items": { "$ref": "#/components/body/SpecialistsCreateBodyService" }
+          }
+        },
+        "required": ["name", "email", "phone", "birthdate", "cpf", "cnpj", "services"]
+      },
+      "SpecialistUpdateBody": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "$ref": "#/components/domain/Email" },
+          "phone": { "$ref": "#/components/domain/Phone" },
+          "birthdate": { "type": "string", "format": "date" },
+          "cpf": { "$ref": "#/components/domain/Cpf" },
+          "cnpj": { "$ref": "#/components/domain/Cnpj" },
+          "services": {
+            "type": "array",
+            "items": { "$ref": "#/components/body/SpecialistsCreateBodyService" }
+          }
+        },
+        "required": ["name", "email", "phone", "birthdate", "cpf", "cnpj", "services"]
+      },
+
+      "SpecializationCreateBody": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" }
+        }
+      },
+      "SpecializationUpdateBody": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" }
+        }
+      }
+    },
+
+    "schemas": {
+      "Id": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" }
+        },
+        "required": ["id"]
+      },
+      "Count": {
+        "type": "number"
+      },
+      "Status": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "boolean" },
+          "updatedAt": { "type": "string", "format": "date-time" },
+          "environment": { "type": "string" },
+          "database": {
+            "type": "object",
+            "properties": {
+              "status": { "type": "string" },
+              "version": { "type": "string" },
+              "maxConnections": { "type": "number" },
+              "openedConnections": { "type": "number" },
+              "schemaVersion": { "type": "number" }
+            },
+            "required": ["status", "version", "maxConnections", "openedConnections", "schemaVersion"]
+          }
+        },
+        "required": ["status", "updatedAt", "environment", "database"]
+      },
+
+      "AppointmentStatus": {
+        "type": "number",
+        "description": "0: None 1: Pending 2: Realized 3: Canceled"
+      },
+      "Appointment": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "customerName": { "$ref": "#/components/domain/Name" },
+          "customerId": { "$ref": "#/components/domain/Uuid" },
+          "serviceName": { "$ref": "#/components/domain/Name" },
+          "serviceNameId": { "$ref": "#/components/domain/Uuid" },
+          "specialistName": { "$ref": "#/components/domain/Name" },
+          "specialistId": { "$ref": "#/components/domain/Uuid" },
+          "price": { "$ref": "#/components/domain/Price" },
+          "duration": { "$ref": "#/components/domain/Duration" },
+          "date": { "type": "string", "format": "date" },
+          "time": { "type": "string", "format": "time" },
+          "status": { "$ref": "#/components/schemas/AppointmentStatus" }
+        },
+        "required": [
+          "id",
+          "customerName",
+          "customerId",
+          "serviceName",
+          "serviceNameId",
+          "specialistName",
+          "specialistId",
+          "price",
+          "duration",
+          "date",
+          "time",
+          "status"
+        ]
+      },
+      "AppointmentCalendarCount": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "month": { "type": "number" },
+            "pendingCount": { "type": "number" },
+            "realizedCount": { "type": "number" },
+            "canceledCount": { "type": "number" }
+          },
+          "required": ["month", "pendingCount", "realizedCount", "canceledCount"]
+        }
+      },
+      "AppointmentCalendar": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "date": { "type": "string", "format": "date" },
+          "time": { "type": "string", "format": "time" },
+          "specialistName": { "$ref": "#/components/domain/Name" },
+          "status": { "$ref": "#/components/schemas/AppointmentStatus" }
+        },
+        "required": ["id", "date", "time", "specialistName", "status"]
+      },
+
+      "Customer": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "name": { "$ref": "#/components/domain/Name" },
+          "email": { "$ref": "#/components/domain/Email" },
+          "phone": { "$ref": "#/components/domain/Phone" },
+          "birthdate": { "type": "string" },
+          "cpf": { "$ref": "#/components/domain/Cpf" }
+        },
+        "required": ["id", "name", "email", "phone", "birthdate", "cpf"]
+      },
+
+      "Secretary": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "name": { "$ref": "#/components/domain/Name" },
+          "email": { "$ref": "#/components/domain/Email" },
+          "phone": { "$ref": "#/components/domain/Phone" },
+          "birthdate": { "type": "string" },
+          "cpf": { "$ref": "#/components/domain/Cpf" },
+          "cnpj": { "$ref": "#/components/domain/Cnpj" }
+        },
+        "required": ["id", "name", "email", "phone", "birthdate", "cpf", "cnpj"]
+      },
+
+      "ServiceAvailable": {},
+
+      "Service": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "serviceName": { "$ref": "#/components/domain/Name" },
+          "serviceNameId": { "$ref": "#/components/domain/Uuid" },
+          "specialistName": { "$ref": "#/components/domain/Name" },
+          "specialistId": { "$ref": "#/components/domain/Uuid" },
+          "specialization": { "$ref": "#/components/domain/Name" },
+          "specializationId": { "$ref": "#/components/domain/Uuid" },
+          "price": { "$ref": "#/components/domain/Price" },
+          "duration": { "$ref": "#/components/domain/Duration" }
+        },
+        "required": [
+          "id",
+          "serviceName",
+          "serviceNameId",
+          "specialistName",
+          "specialistId",
+          "specialization",
+          "specializationId",
+          "price",
+          "duration"
+        ]
+      },
+
+      "Specialist": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "name": { "$ref": "#/components/domain/Name" },
+          "email": { "$ref": "#/components/domain/Email" },
+          "phone": { "$ref": "#/components/domain/Phone" },
+          "birthdate": { "type": "string" },
+          "cpf": { "$ref": "#/components/domain/Cpf" },
+          "cnpj": { "$ref": "#/components/domain/Cnpj" }
+        },
+        "required": ["id", "name", "email", "phone", "birthdate", "cpf", "cnpj"]
+      },
+
+      "Specialization": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "name": { "$ref": "#/components/domain/Name" }
+        },
+        "required": ["id", "name"]
+      }
+    }
+  }
+}

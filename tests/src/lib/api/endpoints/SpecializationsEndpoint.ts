@@ -9,11 +9,11 @@ export class SpecializationsEndpoint {
     return this._config.instance.get(`/api/specializations`)
   }
 
-  create(data: SpecializationsCreateBody): Promise<AxiosResponse<Id>> {
+  create(data: SpecializationCreateBody): Promise<AxiosResponse<Id>> {
     return this._config.instance.post(`/api/specializations`, data)
   }
 
-  update(id: string, data: SpecializationsUpdateBody): Promise<AxiosResponse<Id>> {
+  update(id: string, data: SpecializationUpdateBody): Promise<AxiosResponse<Id>> {
     return this._config.instance.put(`/api/specializations/${id}`, data)
   }
 
@@ -27,10 +27,10 @@ type Specialization = {
   name: string
 }
 
-export type SpecializationsCreateBody = {
+export type SpecializationCreateBody = {
   name: string
 }
 
-export type SpecializationsUpdateBody = {
+export type SpecializationUpdateBody = {
   name: string
 }

@@ -8,7 +8,7 @@ Response: {
     "version": "16.10 (Debian 16.10-1.pgdg13+1)",
     "maxConnections": 100,
     "openedConnections": 1,
-    "schemaVersion": 10
+    "schemaVersion": 11
   }
 }
 
@@ -19,6 +19,7 @@ Response: {
 }
 
 Request: GET /api/test/init 200
+Response: "System initialized to be tested"
 
 Request: POST /api/auth/login 200
 Body: {
@@ -38,14 +39,9 @@ Response: {
   "role": "admin"
 }
 
-Request: POST /api/auth/refresh 200
-Response: {
-  "accessToken": 1,
-  "refreshToken": 2
-}
-
 Request: GET /api/secretaries/count 200
 Params: {}
+Response: 0
 
 Request: GET /api/secretaries 200
 Params: {}
@@ -64,6 +60,18 @@ Body: {
 Response: {
   "id": 4
 }
+
+Request: POST /api/secretaries 400
+Body: {
+  "name": "Secretary Test",
+  "email": "secretary@test.com",
+  "password": "456@Mudar",
+  "birthdate": "2000-10-10",
+  "cnpj": "08130896000135",
+  "cpf": "72730805001",
+  "phone": "119876543210"
+}
+Response: "secretary.email: resource already exists\n"
 
 Request: GET /api/secretaries/count 200
 Params: {}
@@ -119,12 +127,14 @@ Response: {
 }
 
 Request: DELETE /api/secretaries/4 204
+Response: ""
 
 Request: GET /api/secretaries/4 400
 Response: "secretary: resource not found\n"
 
 Request: GET /api/secretaries/count 200
 Params: {}
+Response: 0
 
 Request: GET /api/secretaries 200
 Params: {}
@@ -226,8 +236,10 @@ Response: [
 ]
 
 Request: DELETE /api/specializations/8 204
+Response: ""
 
 Request: DELETE /api/specializations/9 204
+Response: ""
 
 Request: GET /api/specializations 200
 Response: []
@@ -411,12 +423,16 @@ Response: {
 }
 
 Request: DELETE /api/services-available/12 204
+Response: ""
 
 Request: DELETE /api/services-available/13 204
+Response: ""
 
 Request: DELETE /api/services-available/14 204
+Response: ""
 
 Request: DELETE /api/services-available/15 204
+Response: ""
 
 Request: GET /api/services-available 200
 Response: [
@@ -506,6 +522,7 @@ Response: []
 
 Request: GET /api/specialists/count 200
 Params: {}
+Response: 0
 
 Request: POST /api/specialists 200
 Body: {
@@ -595,6 +612,7 @@ Response: [
 ]
 
 Request: DELETE /api/specialists/20 204
+Response: ""
 
 Request: GET /api/specialists 200
 Params: {}
@@ -602,6 +620,7 @@ Response: []
 
 Request: GET /api/specialists/count 200
 Params: {}
+Response: 0
 
 Request: POST /api/specialists 200
 Body: {
@@ -672,6 +691,7 @@ Response: [
 ]
 
 Request: DELETE /api/specialists/21 204
+Response: ""
 
 Request: POST /api/specialists 200
 Body: {
@@ -849,6 +869,7 @@ Response: [
 ]
 
 Request: DELETE /api/services/27 204
+Response: ""
 
 Request: GET /api/services 200
 Params: {}
@@ -898,6 +919,7 @@ Response: []
 
 Request: GET /api/customers/count 200
 Params: {}
+Response: 0
 
 Request: POST /api/customers 200
 Body: {
@@ -978,6 +1000,7 @@ Params: {}
 Response: 1
 
 Request: DELETE /api/customers/29 204
+Response: ""
 
 Request: GET /api/customers 200
 Params: {}
@@ -985,6 +1008,7 @@ Response: []
 
 Request: GET /api/customers/count 200
 Params: {}
+Response: 0
 
 Request: POST /api/customers 200
 Body: {
@@ -1004,6 +1028,7 @@ Response: []
 
 Request: GET /api/appointments/count 200
 Params: {}
+Response: 0
 
 Request: POST /api/appointments 200
 Body: {
@@ -1196,6 +1221,7 @@ Response: [
 ]
 
 Request: DELETE /api/appointments/31 204
+Response: ""
 
 Request: GET /api/appointments 200
 Params: {}
@@ -1203,6 +1229,7 @@ Response: []
 
 Request: GET /api/appointments/count 200
 Params: {}
+Response: 0
 
 Request: POST /api/appointments 200
 Body: {
@@ -1311,7 +1338,7 @@ Report:
   "api.appointments.update": 1,
   "api.appointments.delete": 1,
   "api.auth.login": 2,
-  "api.auth.refresh": 1,
+  "api.auth.refresh": 0,
   "api.auth.me": 2,
   "api.customers.getAll": 4,
   "api.customers.count": 4,
@@ -1323,7 +1350,7 @@ Report:
   "api.secretaries.getAll": 3,
   "api.secretaries.count": 3,
   "api.secretaries.getById": 3,
-  "api.secretaries.create": 2,
+  "api.secretaries.create": 3,
   "api.secretaries.update": 1,
   "api.secretaries.delete": 1,
   "api.serviceGroups.getAll": 1,
