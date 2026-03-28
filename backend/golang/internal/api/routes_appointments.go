@@ -238,7 +238,7 @@ func (h *api) getAppointmentsCalendarCount(w http.ResponseWriter, r *http.Reques
 // @Accept       json
 // @Produce      json
 // @Param        request body dtos.CreateAppointmentBody true "Appointments info"
-// @Success      204 {object}  string
+// @Success      204 {object}  dtos.Inserted
 // @Router       /appointments [post]
 func (h *api) createAppointment(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
@@ -271,7 +271,8 @@ func (h *api) createAppointment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Format the response
-	render.JSON(w, r, id.String())
+	response := dtos.Id{ID: id.String()}
+	render.JSON(w, r, response)
 	render.Status(r, http.StatusCreated)
 }
 
@@ -282,7 +283,7 @@ func (h *api) createAppointment(w http.ResponseWriter, r *http.Request) {
 // @Accept       json
 // @Produce      json
 // @Param        request body dtos.UpdateAppointmentBody true "Appointments info"
-// @Success      200 {object}  string
+// @Success      200 {object}  dtos.Inserted
 // @Router       /appointments/{appointment_id} [put]
 func (h *api) updateAppointment(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
@@ -318,7 +319,7 @@ func (h *api) updateAppointment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Format the response
-	response := appointment.ID.String()
+	response := dtos.Id{ID: appointment.ID.String()}
 	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
 }

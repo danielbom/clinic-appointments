@@ -95,7 +95,7 @@ describe('clinic-appointments', () => {
         })
         expect(res.status).toBe(400)
         if (responseIsError(res)) {
-          expect(res.data.trim()).toBe('invalid credentials')
+          expect((res.data as any as string).trim()).toBe('invalid credentials')
         }
       })
     })
@@ -126,7 +126,7 @@ describe('clinic-appointments', () => {
         const res = await api.auth.refresh(accessToken!)
         expect(res.status).toBe(400)
         if (responseIsError(res)) {
-          expect(res.data.trim()).toBe('invalid token')
+          expect((res.data as any as string).trim()).toBe('invalid token')
         }
       })
     })
@@ -298,29 +298,29 @@ describe('clinic-appointments', () => {
         expect(loggedIn).toBe('secretary')
         const res = await api.specializations.create({ name: 'Specialization A' })
         expect(res.status, JSON.stringify(res.data)).toBe(200)
-        expect(typeof res.data).toBe('string')
-        ks.set('specialization-a', res.data)
+        expect(typeof res.data.id).toBe('string')
+        ks.set('specialization-a', res.data.id)
         features.push('specializations.create')
       })
       it('should work (B)', async () => {
         expect(loggedIn).toBe('secretary')
         const res = await api.specializations.create({ name: 'Specialization B' })
         expect(res.status, JSON.stringify(res.data)).toBe(200)
-        expect(typeof res.data).toBe('string')
-        ks.set('specialization-b', res.data)
+        expect(typeof res.data.id).toBe('string')
+        ks.set('specialization-b', res.data.id)
       })
 
       it('should fail (A again)', async () => {
         expect(loggedIn).toBe('secretary')
         const res = await api.specializations.create({ name: 'Specialization A' })
         expect(res.status).toBe(400)
-        expect(res.data.trim()).toBe('specialization.name: resource already exists')
+        expect((res.data as any as string).trim()).toBe('specialization.name: resource already exists')
       })
       it('should fail (empty)', async () => {
         expect(loggedIn).toBe('secretary')
         const res = await api.specializations.create({ name: '' })
         expect(res.status).toBe(400)
-        expect(res.data.trim()).toBe('invalid argument: name: field is required')
+        expect((res.data as any as string).trim()).toBe('invalid argument: name: field is required')
       })
     })
 
@@ -351,7 +351,7 @@ describe('clinic-appointments', () => {
         depends(['specializations.create'])
         const res = await api.specializations.update(ks.get('specialization-a')!, { name: '' })
         expect(res.status).toBe(400)
-        expect(res.data.trim()).toBe('invalid argument: name: field is required')
+        expect((res.data as any as string).trim()).toBe('invalid argument: name: field is required')
       })
     })
 
@@ -376,9 +376,9 @@ describe('clinic-appointments', () => {
         expect(loggedIn).toBe('secretary')
         depends(['specializations.create'])
         const resA = await api.specializations.create({ name: 'Specialization A' })
-        ks.set('specialization-a', resA.data)
+        ks.set('specialization-a', resA.data.id)
         const resB = await api.specializations.create({ name: 'Specialization B' })
-        ks.set('specialization-b', resB.data)
+        ks.set('specialization-b', resB.data.id)
       })
     })
   })
@@ -405,8 +405,8 @@ describe('clinic-appointments', () => {
           specializationId: ks.get('specialization-a'),
         })
         expect(res.status, JSON.stringify(res.data)).toBe(200)
-        expect(typeof res.data).toBe('string')
-        ids.push(res.data)
+        expect(typeof res.data.id).toBe('string')
+        ids.push(res.data.id)
       })
       it.each([{ suffix: '1' }, { suffix: '2' }])('should work (B-$suffix)', async ({ suffix }) => {
         expect(loggedIn).toBe('secretary')
@@ -415,8 +415,8 @@ describe('clinic-appointments', () => {
           specializationId: ks.get('specialization-b'),
         })
         expect(res.status, JSON.stringify(res.data)).toBe(200)
-        expect(typeof res.data).toBe('string')
-        ids.push(res.data)
+        expect(typeof res.data.id).toBe('string')
+        ids.push(res.data.id)
       })
 
       it('should work (count)', () => {
@@ -431,7 +431,7 @@ describe('clinic-appointments', () => {
           specializationId: ks.get('specialization-b'),
         })
         expect(res.status).toBe(400)
-        expect(res.data.trim()).toBe('invalid argument: name: field is required')
+        expect((res.data as any as string).trim()).toBe('invalid argument: name: field is required')
       })
     })
 
@@ -517,8 +517,8 @@ describe('clinic-appointments', () => {
             specializationId: ks.get(args.specialization),
           })
           expect(res.status, JSON.stringify(res.data)).toBe(200)
-          expect(typeof res.data).toBe('string')
-          ks.set(args.service, res.data)
+          expect(typeof res.data.id).toBe('string')
+          ks.set(args.service, res.data.id)
         }
       })
     })
@@ -575,8 +575,8 @@ describe('clinic-appointments', () => {
         expect(loggedIn).toBe('secretary')
         const res = await api.specialists.create(specialistData)
         expect(res.status, JSON.stringify(res.data)).toBe(200)
-        expect(typeof res.data).toBe('string')
-        ids.push(res.data)
+        expect(typeof res.data.id).toBe('string')
+        ids.push(res.data.id)
         features.push('specialists.create')
       })
     })
@@ -687,8 +687,8 @@ describe('clinic-appointments', () => {
           ],
         })
         expect(res.status, JSON.stringify(res.data)).toBe(200)
-        expect(typeof res.data).toBe('string')
-        ids.push(res.data)
+        expect(typeof res.data.id).toBe('string')
+        ids.push(res.data.id)
       })
     })
 
@@ -735,7 +735,7 @@ describe('clinic-appointments', () => {
             { serviceNameId: ks.get('service-available-ab')!, price: 200, duration: 120 },
           ],
         })
-        ks.set('specialist', res.data)
+        ks.set('specialist', res.data.id)
       })
     })
   })
@@ -768,8 +768,8 @@ describe('clinic-appointments', () => {
           specialistId: ks.get('specialist')!,
         })
         expect(res.status, JSON.stringify(res.data)).toBe(200)
-        expect(typeof res.data).toBe('string')
-        ids.push(res.data)
+        expect(typeof res.data.id).toBe('string')
+        ids.push(res.data.id)
         features.push('services.create')
       })
     })
@@ -833,7 +833,7 @@ describe('clinic-appointments', () => {
           serviceNameId: ks.get('service-available-bb')!,
           specialistId: ks.get('specialist')!,
         })
-        ks.set('service', res.data)
+        ks.set('service', res.data.id)
       })
     })
   })
@@ -872,8 +872,8 @@ describe('clinic-appointments', () => {
         expect(loggedIn).toBe('secretary')
         const res = await api.customers.create(customerData)
         expect(res.status, JSON.stringify(res.data)).toBe(200)
-        expect(typeof res.data).toBe('string')
-        ids.push(res.data)
+        expect(typeof res.data.id).toBe('string')
+        ids.push(res.data.id)
         features.push('customers.create')
       })
     })
@@ -965,7 +965,7 @@ describe('clinic-appointments', () => {
         expect(loggedIn).toBe('secretary')
         depends(['customers.create'])
         const res = await api.customers.create({ ...customerData })
-        ks.set('customer', res.data)
+        ks.set('customer', res.data.id)
       })
     })
   })
@@ -1012,8 +1012,8 @@ describe('clinic-appointments', () => {
           serviceId: ks.get('service')!,
         })
         expect(res.status, JSON.stringify(res.data)).toBe(200)
-        expect(typeof res.data).toBe('string')
-        ids.push(res.data)
+        expect(typeof res.data.id).toBe('string')
+        ids.push(res.data.id)
         features.push('appointments.create')
       })
     })
@@ -1108,8 +1108,8 @@ describe('clinic-appointments', () => {
           serviceId: ks.get('service')!,
         })
         expect(res.status, JSON.stringify(res.data)).toBe(200)
-        expect(typeof res.data).toBe('string')
-        ks.set('appointment', res.data)
+        expect(typeof res.data.id).toBe('string')
+        ks.set('appointment', res.data.id)
       })
     })
   })

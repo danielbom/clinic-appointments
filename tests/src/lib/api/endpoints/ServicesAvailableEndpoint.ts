@@ -1,5 +1,6 @@
-import { AxiosResponse } from 'axios'
-import { Config } from '../Config'
+import { type AxiosResponse } from 'axios'
+import { type Config } from '../Config'
+import { type Id } from './types'
 
 export class ServicesAvailableEndpoint {
   constructor(public _config: Config) {}
@@ -12,11 +13,11 @@ export class ServicesAvailableEndpoint {
     return this._config.instance.get(`/api/services-available/${id}`)
   }
 
-  create(data: ServiceAvailableCreateBody): Promise<AxiosResponse<string>> {
+  create(data: ServiceAvailableCreateBody): Promise<AxiosResponse<Id>> {
     return this._config.instance.post(`/api/services-available`, data)
   }
 
-  update(id: string, data: ServiceAvailableUpdateBody): Promise<AxiosResponse<string>> {
+  update(id: string, data: ServiceAvailableUpdateBody): Promise<AxiosResponse<Id>> {
     return this._config.instance.put(`/api/services-available/${id}`, data)
   }
 

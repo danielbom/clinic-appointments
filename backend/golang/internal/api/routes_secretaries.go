@@ -165,7 +165,7 @@ func (h *api) countSecretaries(w http.ResponseWriter, r *http.Request) {
 // @Tags         Secretaries
 // @Produce      json
 // @Param 		  data body dtos.SecretaryInfoBody true "Secretary information"
-// @Success      200 {object}  dtos.Secretary
+// @Success      200 {object}  dtos.Id
 // @Router       /secretaries [post]
 func (h *api) createSecretary(w http.ResponseWriter, r *http.Request) {
 	// Authorize access
@@ -206,7 +206,7 @@ func (h *api) createSecretary(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Format the response
-	response := presenter.GetSecretary(secretary)
+	response := dtos.Id{ID: secretary.ID.String()}
 	render.JSON(w, r, response)
 	render.Status(r, http.StatusCreated)
 }
@@ -216,7 +216,7 @@ func (h *api) createSecretary(w http.ResponseWriter, r *http.Request) {
 // @Description  Update a secretary by id
 // @Tags         Secretaries
 // @Produce      json
-// @Success      200 {object}  dtos.Secretary
+// @Success      200 {object}  dtos.Id
 // @Router       /secretaries/{secretary_id} [put]
 func (h *api) updateSecretary(w http.ResponseWriter, r *http.Request) {
 	// Authorize access
@@ -268,7 +268,7 @@ func (h *api) updateSecretary(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Format the response
-	response := presenter.GetSecretary(secretary)
+	response := dtos.Id{ID: secretary.ID.String()}
 	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
 }

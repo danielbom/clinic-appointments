@@ -117,11 +117,7 @@ const refreshToken = async (api: Api) => {
   if (!refreshToken) return false
 
   try {
-    const response = await api.auth.refresh({
-      headers: {
-        Authorization: `Bearer ${refreshToken}`,
-      },
-    })
+    const response = await api.auth.refresh(refreshToken)
     const newAccessToken = response.data.accessToken
     localStorage.setItem(AUTH_ACCESS_KEY, newAccessToken)
     api._config.instance.defaults.headers.common['Authorization'] = `Bearer ${newAccessToken}`

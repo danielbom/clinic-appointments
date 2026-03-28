@@ -265,8 +265,8 @@ async function run(args: Args) {
 
   // specializations
   await api.specializations.getAll()
-  await api.specializations.create({ name: 'Specialization A' }).then((res) => (state.specializationIdA = res.data))
-  await api.specializations.create({ name: 'Specialization B' }).then((res) => (state.specializationIdB = res.data))
+  await api.specializations.create({ name: 'Specialization A' }).then((res) => (state.specializationIdA = res.data.id))
+  await api.specializations.create({ name: 'Specialization B' }).then((res) => (state.specializationIdB = res.data.id))
   await api.specializations.create({ name: 'Specialization A' })
   await api.specializations.create({ name: '' })
   await api.specializations.getAll()
@@ -275,8 +275,8 @@ async function run(args: Args) {
   await api.specializations.delete(state.specializationIdA)
   await api.specializations.delete(state.specializationIdB)
   await api.specializations.getAll()
-  await api.specializations.create({ name: 'Specialization A' }).then((res) => (state.specializationIdA = res.data))
-  await api.specializations.create({ name: 'Specialization B' }).then((res) => (state.specializationIdB = res.data))
+  await api.specializations.create({ name: 'Specialization A' }).then((res) => (state.specializationIdA = res.data.id))
+  await api.specializations.create({ name: 'Specialization B' }).then((res) => (state.specializationIdB = res.data.id))
 
   // servicesAvailable
   await api.servicesAvailable.getAll()
@@ -285,14 +285,14 @@ async function run(args: Args) {
       name: `Service Available ${suffix}`,
       specializationId: state.specializationIdA,
     })
-    state.servicesAvailableIds.push(res.data)
+    state.servicesAvailableIds.push(res.data.id)
   }
   for (const suffix of ['1', '2']) {
     const res = await api.servicesAvailable.create({
       name: `Service Available ${suffix}`,
       specializationId: state.specializationIdB,
     })
-    state.servicesAvailableIds.push(res.data)
+    state.servicesAvailableIds.push(res.data.id)
   }
   await api.servicesAvailable.getAll()
   for (const servicesAvailableId of state.servicesAvailableIds) {
@@ -314,21 +314,21 @@ async function run(args: Args) {
       name: `Service Available ${suffix}`,
       specializationId: state.specializationIdA,
     })
-    state.servicesAvailableIds.push(res.data)
+    state.servicesAvailableIds.push(res.data.id)
   }
   for (const suffix of ['1', '2']) {
     const res = await api.servicesAvailable.create({
       name: `Service Available ${suffix}`,
       specializationId: state.specializationIdB,
     })
-    state.servicesAvailableIds.push(res.data)
+    state.servicesAvailableIds.push(res.data.id)
   }
   await api.servicesAvailable.getAll()
 
   // specialists
   await api.specialists.getAll()
   await api.specialists.count()
-  await api.specialists.create(specialistData).then((res) => (state.specialistId = res.data))
+  await api.specialists.create(specialistData).then((res) => (state.specialistId = res.data.id))
   await api.specialists.getServices(state.specialistId)
   await api.specialists.getSpecializations(state.specialistId)
   await api.specialists.getAll()
@@ -356,7 +356,7 @@ async function run(args: Args) {
         { serviceNameId: state.servicesAvailableIds[2], price: 200, duration: 120 },
       ],
     })
-    .then((res) => (state.specialistId = res.data))
+    .then((res) => (state.specialistId = res.data.id))
   await api.specialists.getById(state.specialistId)
   await api.specialists.getServices(state.specialistId)
   await api.specialists.getSpecializations(state.specialistId)
@@ -370,7 +370,7 @@ async function run(args: Args) {
         { serviceNameId: state.servicesAvailableIds[1], price: 200, duration: 120 },
       ],
     })
-    .then((res) => (state.specialistId = res.data))
+    .then((res) => (state.specialistId = res.data.id))
 
   // services
   await api.services.getAll()
@@ -382,7 +382,7 @@ async function run(args: Args) {
       serviceNameId: state.servicesAvailableIds[3],
       specialistId: state.specialistId,
     })
-    .then((res) => (state.serviceId = res.data))
+    .then((res) => (state.serviceId = res.data.id))
   await api.services.getAll()
   await api.services.count()
   await api.services.getById(state.serviceId)
@@ -404,12 +404,12 @@ async function run(args: Args) {
       serviceNameId: state.servicesAvailableIds[3],
       specialistId: state.specialistId,
     })
-    .then((res) => (state.serviceId = res.data))
+    .then((res) => (state.serviceId = res.data.id))
 
   // customer
   await api.customers.getAll()
   await api.customers.count()
-  await api.customers.create(customerData).then((res) => (state.customerId = res.data))
+  await api.customers.create(customerData).then((res) => (state.customerId = res.data.id))
   await api.customers.getById(state.customerId)
   await api.customers.getAll()
   await api.customers.count()
@@ -427,7 +427,7 @@ async function run(args: Args) {
   await api.customers.getAll()
   await api.customers.count()
 
-  await api.customers.create(customerData).then((res) => (state.customerId = res.data))
+  await api.customers.create(customerData).then((res) => (state.customerId = res.data.id))
 
   // appointments
   await api.appointments.getAll({})
@@ -439,7 +439,7 @@ async function run(args: Args) {
       customerId: state.customerId,
       serviceId: state.serviceId,
     })
-    .then((res) => (state.appointmentId = res.data))
+    .then((res) => (state.appointmentId = res.data.id))
   await api.appointments.getAll()
   await api.appointments.count()
   await api.appointments.getCalendarCount({
@@ -469,7 +469,7 @@ async function run(args: Args) {
       customerId: state.customerId,
       serviceId: state.serviceId,
     })
-    .then((res) => (state.appointmentId = res.data))
+    .then((res) => (state.appointmentId = res.data.id))
 
   // extras
   await api.specialists.getAppointments(state.specialistId)

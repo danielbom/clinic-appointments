@@ -169,7 +169,8 @@ func (h *api) createService(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Format the response
-	render.JSON(w, r, id.String())
+	response := dtos.Id{ID: id.String()}
+	render.JSON(w, r, response)
 	render.Status(r, http.StatusCreated)
 }
 
@@ -215,7 +216,8 @@ func (h *api) updateService(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Format the response
-	render.JSON(w, r, id.String())
+	response := dtos.Id{ID: id.String()}
+	render.JSON(w, r, response)
 	render.Status(r, http.StatusCreated)
 }
 

@@ -57,3 +57,14 @@ func ListSpecialists(specialists []infra.Specialist) []dtos.Specialist {
 	}
 	return response
 }
+
+func GetSpecialistSpecializations(specializations []infra.Specialization) []dtos.Specialization {
+		var response []dtos.Specialization
+	for _, s := range specializations {
+		response = append(response, dtos.Specialization{
+			ID:   s.ID.String(),
+			Name: s.Name,
+		})
+	}
+	return response
+}

@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "format": "prettier --write ./src ./tests",
-    "snapshot:replay": "pnpx tsx ./tests/snapshot/api.ts replay",
-    "snapshot:record": "pnpx tsx ./tests/snapshot/api.ts record",
+    "typecheck": "tsc --noEmit",
+    "snapshot:replay": "tsx ./tests/snapshot/api.ts replay",
+    "snapshot:record": "tsx ./tests/snapshot/api.ts record",
     "test": "vitest run",
     "test:dev": "vitest",
     "test:coverage": "vitest run --coverage"

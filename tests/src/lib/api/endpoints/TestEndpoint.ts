@@ -1,5 +1,5 @@
-import { AxiosResponse } from 'axios'
-import { Config } from '../Config'
+import { type AxiosResponse } from 'axios'
+import { type Config } from '../Config'
 
 export class TestEndpoint {
   constructor(public _config: Config) {}

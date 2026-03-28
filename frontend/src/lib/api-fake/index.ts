@@ -185,7 +185,7 @@ export class ApiFake implements Api {
   public appointments: AppointmentsEndpoint = {
     _config: this._config,
     count: async () => _get(appointments.length),
-    create: async (_data) => _post('id'),
+    create: async (_data) => _post({ id: 'id' }),
     update: async (_id, _data) => _put({ id: 'id' }),
     delete: async (_id) => _delete(),
     getAll: async (data) => _get(_paginate(appointments, data)),
@@ -224,7 +224,7 @@ export class ApiFake implements Api {
   public customers: CustomersEndpoint = {
     _config: this._config,
     count: async () => _get(customers.length),
-    create: async (_data) => _post('id'),
+    create: async (_data) => _post({ id: 'id' }),
     update: async (_id, _data) => _put({ id: 'id' }),
     delete: async (_id) => _delete(),
     getAll: async (data) => _get(_paginate(customers, data)),
@@ -234,7 +234,7 @@ export class ApiFake implements Api {
   public secretaries: SecretariesEndpoint = {
     _config: this._config,
     count: async () => _get(0),
-    create: async (_data) => _post({} as any),
+    create: async (_data) => _post({ id: 'id' }),
     update: async (_id, _data) => _put({ id: 'id' }),
     delete: async (_id) => _delete(),
     getAll: async (_data) => _get([]),
@@ -249,7 +249,7 @@ export class ApiFake implements Api {
   public services: ServicesEndpoint = {
     _config: this._config,
     count: async () => _get(services.length),
-    create: async (_data) => _post('id'),
+    create: async (_data) => _post({ id: 'id' }),
     update: async (_id, _data) => _put({ id: 'id' }),
     delete: async (_id) => _delete(),
     getAll: async (data) => _get(_paginate(services, data)),
@@ -258,8 +258,8 @@ export class ApiFake implements Api {
 
   public servicesAvailable: ServicesAvailableEndpoint = {
     _config: this._config,
-    create: async (_data) => _post('id'),
-    update: async (_id, _data) => _put('id'),
+    create: async (_data) => _post({ id: 'id' }),
+    update: async (_id, _data) => _put({ id: 'id' }),
     getById: async (id) => _get(services.find((it) => it.id === id)!),
     delete: async (_id) => _delete(),
     getAll: async () => _get(serviceGroups),
@@ -268,7 +268,7 @@ export class ApiFake implements Api {
   public specialists: SpecialistsEndpoint = {
     _config: this._config,
     count: async () => _get(specialists.length),
-    create: async (_data) => _post('id'),
+    create: async (_data) => _post({ id: 'id' }),
     update: async (_id, _data) => _put({ id: 'id' }),
     delete: async (_id) => _delete(),
     getById: async (_id) => _get(specialists.find(filterId(_id))!),
@@ -286,7 +286,7 @@ export class ApiFake implements Api {
   public specializations: SpecializationsEndpoint = {
     _config: this._config,
     getAll: async () => _get(serviceGroups),
-    create: async (_data) => _post('id'),
+    create: async (_data) => _post({ id: 'id' }),
     delete: async (_id) => _delete(),
     update: async (_id, _data) => _put({ id: 'id' }),
   }

@@ -62,13 +62,7 @@ Body: {
   "phone": "119876543210"
 }
 Response: {
-  "id": 4,
-  "name": "Secretary Test",
-  "email": "secretary@test.com",
-  "phone": "119876543210",
-  "birthdate": "2000-10-10",
-  "cpf": "72730805001",
-  "cnpj": "08130896000135"
+  "id": 4
 }
 
 Request: GET /api/secretaries/count 200
@@ -110,13 +104,7 @@ Body: {
   "birthdate": "2000-10-10"
 }
 Response: {
-  "id": 4,
-  "name": "Secretary Test Updated",
-  "email": "secretary@test.com",
-  "phone": "449876543210",
-  "birthdate": "2000-10-10",
-  "cpf": "72730805001",
-  "cnpj": "08130896000135"
+  "id": 4
 }
 
 Request: GET /api/secretaries/4 200
@@ -153,13 +141,7 @@ Body: {
   "phone": "119876543210"
 }
 Response: {
-  "id": 5,
-  "name": "Secretary Test",
-  "email": "secretary@test.com",
-  "phone": "119876543210",
-  "birthdate": "2000-10-10",
-  "cpf": "72730805001",
-  "cnpj": "08130896000135"
+  "id": 5
 }
 
 Request: POST /api/auth/login 200
@@ -187,13 +169,17 @@ Request: POST /api/specializations 200
 Body: {
   "name": "Specialization A"
 }
-Response: 8
+Response: {
+  "id": 8
+}
 
 Request: POST /api/specializations 200
 Body: {
   "name": "Specialization B"
 }
-Response: 9
+Response: {
+  "id": 9
+}
 
 Request: POST /api/specializations 400
 Body: {
@@ -223,7 +209,9 @@ Request: PUT /api/specializations/8 200
 Body: {
   "name": "Specialization A Updated"
 }
-Response: 8
+Response: {
+  "id": 8
+}
 
 Request: GET /api/specializations 200
 Response: [
@@ -248,13 +236,17 @@ Request: POST /api/specializations 200
 Body: {
   "name": "Specialization A"
 }
-Response: 10
+Response: {
+  "id": 10
+}
 
 Request: POST /api/specializations 200
 Body: {
   "name": "Specialization B"
 }
-Response: 11
+Response: {
+  "id": 11
+}
 
 Request: GET /api/services-available 200
 Response: [
@@ -275,28 +267,36 @@ Body: {
   "name": "Service Available A",
   "specializationId": 10
 }
-Response: 12
+Response: {
+  "id": 12
+}
 
 Request: POST /api/services-available 200
 Body: {
   "name": "Service Available B",
   "specializationId": 10
 }
-Response: 13
+Response: {
+  "id": 13
+}
 
 Request: POST /api/services-available 200
 Body: {
   "name": "Service Available 1",
   "specializationId": 11
 }
-Response: 14
+Response: {
+  "id": 14
+}
 
 Request: POST /api/services-available 200
 Body: {
   "name": "Service Available 2",
   "specializationId": 11
 }
-Response: 15
+Response: {
+  "id": 15
+}
 
 Request: GET /api/services-available 200
 Response: [
@@ -366,7 +366,9 @@ Request: PUT /api/services-available/12 200
 Body: {
   "name": "Updated"
 }
-Response: 12
+Response: {
+  "id": 12
+}
 
 Request: GET /api/services-available 200
 Response: [
@@ -435,28 +437,36 @@ Body: {
   "name": "Service Available A",
   "specializationId": 10
 }
-Response: 16
+Response: {
+  "id": 16
+}
 
 Request: POST /api/services-available 200
 Body: {
   "name": "Service Available B",
   "specializationId": 10
 }
-Response: 17
+Response: {
+  "id": 17
+}
 
 Request: POST /api/services-available 200
 Body: {
   "name": "Service Available 1",
   "specializationId": 11
 }
-Response: 18
+Response: {
+  "id": 18
+}
 
 Request: POST /api/services-available 200
 Body: {
   "name": "Service Available 2",
   "specializationId": 11
 }
-Response: 19
+Response: {
+  "id": 19
+}
 
 Request: GET /api/services-available 200
 Response: [
@@ -507,7 +517,9 @@ Body: {
   "birthdate": "1999-09-09",
   "services": []
 }
-Response: 20
+Response: {
+  "id": 20
+}
 
 Request: GET /api/specialists/20/services 200
 Response: []
@@ -554,13 +566,7 @@ Body: {
   "services": []
 }
 Response: {
-  "id": 20,
-  "name": "Specialist Test Updated",
-  "email": "specialist@test.com",
-  "phone": "449876543210",
-  "birthdate": "1999-08-07",
-  "cpf": "96156338012",
-  "cnpj": "16833374000128"
+  "id": 20
 }
 
 Request: GET /api/specialists/20 200
@@ -618,7 +624,9 @@ Body: {
     }
   ]
 }
-Response: 21
+Response: {
+  "id": 21
+}
 
 Request: GET /api/specialists/21 200
 Response: {
@@ -686,7 +694,9 @@ Body: {
     }
   ]
 }
-Response: 24
+Response: {
+  "id": 24
+}
 
 Request: GET /api/services 200
 Params: {}
@@ -726,7 +736,9 @@ Body: {
   "serviceNameId": 19,
   "specialistId": 24
 }
-Response: 27
+Response: {
+  "id": 27
+}
 
 Request: GET /api/services 200
 Params: {}
@@ -785,7 +797,9 @@ Body: {
   "price": 500,
   "serviceNameId": 18
 }
-Response: 27
+Response: {
+  "id": 27
+}
 
 Request: GET /api/services/27 200
 Response: {
@@ -874,7 +888,9 @@ Body: {
   "serviceNameId": 19,
   "specialistId": 24
 }
-Response: 28
+Response: {
+  "id": 28
+}
 
 Request: GET /api/customers 200
 Params: {}
@@ -891,7 +907,9 @@ Body: {
   "birthdate": "1999-08-08",
   "phone": "21987654321"
 }
-Response: 29
+Response: {
+  "id": 29
+}
 
 Request: GET /api/customers/29 200
 Response: {
@@ -929,12 +947,7 @@ Body: {
   "birthdate": "1999-08-07"
 }
 Response: {
-  "id": 29,
-  "name": "Customer Test Updated",
-  "email": "customer@test.com",
-  "phone": "44987654321",
-  "birthdate": "1999-08-07",
-  "cpf": "11431287962"
+  "id": 29
 }
 
 Request: GET /api/customers/29 200
@@ -981,7 +994,9 @@ Body: {
   "birthdate": "1999-08-08",
   "phone": "21987654321"
 }
-Response: 30
+Response: {
+  "id": 30
+}
 
 Request: GET /api/appointments 200
 Params: {}
@@ -997,7 +1012,9 @@ Body: {
   "customerId": 30,
   "serviceId": 28
 }
-Response: 31
+Response: {
+  "id": 31
+}
 
 Request: GET /api/appointments 200
 Params: {}
@@ -1139,7 +1156,9 @@ Body: {
   "time": "04:00:00",
   "status": 2
 }
-Response: 31
+Response: {
+  "id": 31
+}
 
 Request: GET /api/appointments/31 200
 Response: {
@@ -1192,7 +1211,9 @@ Body: {
   "customerId": 30,
   "serviceId": 28
 }
-Response: 32
+Response: {
+  "id": 32
+}
 
 Request: GET /api/specialists/24/appointments 200
 Params: {}

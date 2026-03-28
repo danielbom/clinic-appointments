@@ -1,5 +1,6 @@
-import { AxiosResponse } from 'axios'
-import { Config } from '../Config'
+import { type AxiosResponse } from 'axios'
+import { type Config } from '../Config'
+import { type Id } from './types'
 
 export class AppointmentsEndpoint {
   constructor(public _config: Config) {}
@@ -24,11 +25,11 @@ export class AppointmentsEndpoint {
     return this._config.instance.get(`/api/appointments/${id}`)
   }
 
-  create(data: AppointmentsCreateBody): Promise<AxiosResponse<string>> {
+  create(data: AppointmentsCreateBody): Promise<AxiosResponse<Id>> {
     return this._config.instance.post(`/api/appointments`, data)
   }
 
-  update(id: string, data: AppointmentsUpdateBody): Promise<AxiosResponse<any>> {
+  update(id: string, data: AppointmentsUpdateBody): Promise<AxiosResponse<Id>> {
     return this._config.instance.put(`/api/appointments/${id}`, data)
   }
 

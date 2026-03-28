@@ -139,7 +139,7 @@ func (h *api) countCustomers(w http.ResponseWriter, r *http.Request) {
 // @Tags         Customers
 // @Produce      json
 // @Param 		  data body dtos.CustomerInfoBody true "Customer information"
-// @Success      200 {object}  string
+// @Success      200 {object}  dtos.Id
 // @Router       /customers [post]
 func (h *api) createCustomer(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
@@ -171,7 +171,7 @@ func (h *api) createCustomer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Format the response
-	response := customer.ID.String()
+	response := dtos.Id{ID: customer.ID.String()}
 	render.JSON(w, r, response)
 	render.Status(r, http.StatusCreated)
 }
@@ -181,7 +181,7 @@ func (h *api) createCustomer(w http.ResponseWriter, r *http.Request) {
 // @Description  Update a customer by id
 // @Tags         Customers
 // @Produce      json
-// @Success      200 {object}  dtos.Customer
+// @Success      200 {object}  dtos.Id
 // @Router       /customers/{customer_id} [put]
 func (h *api) updateCustomer(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
@@ -217,7 +217,7 @@ func (h *api) updateCustomer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Format the response
-	response := presenter.GetCustomer(customer)
+	response := dtos.Id{ID: customer.ID.String()}
 	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
 }

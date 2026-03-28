@@ -154,7 +154,8 @@ func (h *api) createSpecialist(w http.ResponseWriter, r *http.Request) {
 	tx.Commit(r.Context())
 
 	// Format the response
-	render.JSON(w, r, specialistID.String())
+	response := dtos.Id{ID: specialistID.String()}
+	render.JSON(w, r, response)
 	render.Status(r, http.StatusCreated)
 }
 
@@ -214,7 +215,7 @@ func (h *api) updateSpecialist(w http.ResponseWriter, r *http.Request) {
 	tx.Commit(r.Context())
 
 	// Format the response
-	response := presenter.GetSpecialist(specialist)
+	response := dtos.Id{ID: specialist.ID.String()}
 	render.JSON(w, r, response)
 	render.Status(r, http.StatusCreated)
 }
@@ -290,14 +291,7 @@ func (h *api) getSpecialistSpecializations(w http.ResponseWriter, r *http.Reques
 	}
 
 	// Format the response
-	var response []dtos.Specialization
-	for _, s := range specializations {
-		response = append(response, dtos.Specialization{
-			ID:   s.ID.String(),
-			Name: s.Name,
-		})
-	}
-
+	response := presenter.GetSpecialistSpecializations(specializations)
 	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
 }
