@@ -26,7 +26,7 @@ export default function plugOpenApiResolvers(router: Router, openApiJson: any) {
     const operations = openApiJson.paths[path]
     for (const method in operations) {
       const operation = operations[method]
-      const expressPath = path.replace(/\{(\w+)\}/, ':$1')
+      const expressPath = path.replaceAll(/\{(\w+)\}/g, ':$1')
       const resolver = getResolver(operation.operationId)
       if (!resolver) {
         missing.push(operation.operationId)

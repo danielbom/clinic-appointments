@@ -182,7 +182,7 @@
         "tags": ["Appointments"],
         "parameters": [
           {
-            "$ref": "#/components/parameters/Uuid"
+            "$ref": "#/components/parameters/Id"
           }
         ],
         "responses": {
@@ -311,7 +311,7 @@
         "tags": ["Customers"],
         "parameters": [
           {
-            "$ref": "#/components/parameters/Uuid"
+            "$ref": "#/components/parameters/Id"
           }
         ],
         "responses": {
@@ -336,7 +336,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/body/CustomersUpdateBody"
+                "$ref": "#/components/body/CustomerUpdateBody"
               }
             }
           }
@@ -440,7 +440,7 @@
         "tags": ["Secretaries"],
         "parameters": [
           {
-            "$ref": "#/components/parameters/Uuid"
+            "$ref": "#/components/parameters/Id"
           }
         ],
         "responses": {
@@ -549,7 +549,7 @@
         "tags": ["Services Available"],
         "parameters": [
           {
-            "$ref": "#/components/parameters/Uuid"
+            "$ref": "#/components/parameters/Id"
           }
         ],
         "responses": {
@@ -678,7 +678,7 @@
         "tags": ["Services"],
         "parameters": [
           {
-            "$ref": "#/components/parameters/Uuid"
+            "$ref": "#/components/parameters/Id"
           }
         ],
         "responses": {
@@ -728,6 +728,28 @@
         "responses": {
           "204": {
             "description": "Item deleted successfully"
+          }
+        }
+      }
+    },
+
+    "/api/service-groups": {
+      "get": {
+        "operationId": "serviceGroups.getAll",
+        "summary": "Get all services grouped by specification",
+        "tags": ["Service Groups"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ServiceGroup" }
+                }
+              }
+            }
           }
         }
       }
@@ -800,6 +822,115 @@
         }
       }
     },
+    "/api/specialists/{id}/services": {
+      "get": {
+        "operationId": "specialists.getServices",
+        "tags": ["Specialists"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Service"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/specialists/{id}/specializations": {
+      "get": {
+        "operationId": "specialists.getSpecializations",
+        "tags": ["Specialists"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Specialization"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/specialists/{id}/appointments": {
+      "get": {
+        "operationId": "specialists.getAppointments",
+        "tags": ["Specialists"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SpecialistAppointment"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/specialists/{id}/services/{service_id}": {
+      "get": {
+        "operationId": "specialists.getService",
+        "tags": ["Specialists"],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Id"
+          },
+          {
+            "name": "service_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/domain/Uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Service"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/specialists/{id}": {
       "get": {
         "operationId": "specialists.getById",
@@ -807,7 +938,7 @@
         "tags": ["Specialists"],
         "parameters": [
           {
-            "$ref": "#/components/parameters/Uuid"
+            "$ref": "#/components/parameters/Id"
           }
         ],
         "responses": {
@@ -974,7 +1105,7 @@
 
   "components": {
     "parameters": {
-      "Uuid": {
+      "Id": {
         "name": "id",
         "in": "path",
         "required": true,
@@ -1066,6 +1197,9 @@
         "type": "string",
         "format": "email"
       },
+      "Password": {
+        "type": "string"
+      },
       "Phone": {
         "type": "string",
         "format": "phone"
@@ -1085,6 +1219,15 @@
     },
 
     "body": {
+      "AuthLogin": {
+        "type": "object",
+        "properties": {
+          "email": { "$ref": "#/components/domain/Email" },
+          "password": { "$ref": "#/components/domain/Password" }
+        },
+        "required": ["email", "password"]
+      },
+
       "AppointmentsCreateBody": {
         "type": "object",
         "properties": {
@@ -1101,7 +1244,8 @@
           "date": { "type": "string", "format": "date" },
           "time": { "type": "string", "format": "time" },
           "status": { "$ref": "#/components/schemas/AppointmentStatus" }
-        }
+        },
+        "required": ["date", "time", "status"]
       },
 
       "CustomerCreateBody": {
@@ -1115,7 +1259,7 @@
         },
         "required": ["name", "email", "phone", "birthdate", "cpf"]
       },
-      "CustomersUpdateBody": {
+      "CustomerUpdateBody": {
         "type": "object",
         "properties": {
           "name": { "type": "string" },
@@ -1137,9 +1281,22 @@
           "password": { "type": "string" },
           "cpf": { "$ref": "#/components/domain/Cpf" },
           "cnpj": { "$ref": "#/components/domain/Cnpj" }
-        }
+        },
+        "required": ["name", "email", "phone", "birthdate", "password", "cpf", "cnpj"]
       },
-      "SecretaryUpdateBody": {},
+      "SecretaryUpdateBody": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "email": { "$ref": "#/components/domain/Email" },
+          "phone": { "$ref": "#/components/domain/Phone" },
+          "birthdate": { "type": "string", "format": "date" },
+          "password": { "type": "string" },
+          "cpf": { "$ref": "#/components/domain/Cpf" },
+          "cnpj": { "$ref": "#/components/domain/Cnpj" }
+        },
+        "required": ["name", "email", "phone", "birthdate", "cpf", "cnpj"]
+      },
 
       "ServiceAvailableCreateBody": {
         "type": "object",
@@ -1171,11 +1328,10 @@
       "ServiceUpdateBody": {
         "type": "object",
         "properties": {
-          "serviceNameId": { "$ref": "#/components/domain/Uuid" },
           "price": { "$ref": "#/components/domain/Price" },
           "duration": { "$ref": "#/components/domain/Duration" }
         },
-        "required": ["serviceNameId", "price", "duration"]
+        "required": ["price", "duration"]
       },
 
       "SpecialistsCreateBodyService": {
@@ -1263,7 +1419,7 @@
             "required": ["status", "version", "maxConnections", "openedConnections", "schemaVersion"]
           }
         },
-        "required": ["status", "updatedAt", "environment", "database"]
+        "required": ["status", "updatedAt", "environment"]
       },
 
       "AppointmentStatus": {
@@ -1336,7 +1492,7 @@
           "birthdate": { "type": "string" },
           "cpf": { "$ref": "#/components/domain/Cpf" }
         },
-        "required": ["id", "name", "email", "phone", "birthdate", "cpf"]
+        "required": ["id", "name", "phone", "birthdate", "cpf"]
       },
 
       "Secretary": {
@@ -1350,7 +1506,7 @@
           "cpf": { "$ref": "#/components/domain/Cpf" },
           "cnpj": { "$ref": "#/components/domain/Cnpj" }
         },
-        "required": ["id", "name", "email", "phone", "birthdate", "cpf", "cnpj"]
+        "required": ["id", "name", "email", "phone", "birthdate", "cpf"]
       },
 
       "ServiceAvailable": {},
@@ -1381,6 +1537,26 @@
         ]
       },
 
+      "ServiceGroup": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "name": { "$ref": "#/components/domain/Name" },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "$ref": "#/components/domain/Uuid" },
+                "name": { "$ref": "#/components/domain/Name" }
+              },
+              "required": ["id", "name"]
+            }
+          }
+        },
+        "required": ["id", "name", "items"]
+      },
+
       "Specialist": {
         "type": "object",
         "properties": {
@@ -1392,7 +1568,34 @@
           "cpf": { "$ref": "#/components/domain/Cpf" },
           "cnpj": { "$ref": "#/components/domain/Cnpj" }
         },
-        "required": ["id", "name", "email", "phone", "birthdate", "cpf", "cnpj"]
+        "required": ["id", "name", "email", "phone", "birthdate", "cpf"]
+      },
+      "SpecialistAppointment": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "customerName": { "$ref": "#/components/domain/Name" },
+          "customerId": { "$ref": "#/components/domain/Uuid" },
+          "serviceName": { "$ref": "#/components/domain/Name" },
+          "serviceNameId": { "$ref": "#/components/domain/Uuid" },
+          "price": { "$ref": "#/components/domain/Price" },
+          "duration": { "$ref": "#/components/domain/Duration" },
+          "date": { "type": "string", "format": "date" },
+          "time": { "type": "string", "format": "time" },
+          "status": { "$ref": "#/components/schemas/AppointmentStatus" }
+        },
+        "required": [
+          "id",
+          "customerName",
+          "customerId",
+          "serviceName",
+          "serviceNameId",
+          "price",
+          "duration",
+          "date",
+          "time",
+          "status"
+        ]
       },
 
       "Specialization": {

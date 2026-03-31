@@ -4,6 +4,7 @@ import { db } from './db'
 import { getAppConfig, getDatabaseConfig, listConfiguredResources } from './config'
 import { validate as isUuid } from 'uuid'
 import { generateAccessJWT, generateRefreshJWT, getJwtData, isRefreshToken, JwtData } from './jwt'
+import * as types from './swagger-types'
 
 const saltRounds = 10
 
@@ -36,6 +37,10 @@ async function getJwtDataFromRequest(req: Request) {
 
 function getDatePart(isodate: string): string {
   return isodate.slice(0, 10)
+}
+
+function getTimePart(isodate: string): string {
+  return isodate.slice(11, 19)
 }
 
 type Brand<T, B> = T & { readonly __brand: B }
@@ -85,8 +90,68 @@ async function getIdentity(where: { email: string } | { id: string }) {
   return null
 }
 
+const AppointmentStatus = {
+  None: 0,
+  Pending: 1,
+  Realized: 2,
+  Canceled: 3,
+}
+
 const presenter = {
-  secretary(row: any /** Prima result */): any {
+  appointment(
+    row: Awaited<
+      ReturnType<
+        typeof db.appointments.findMany<{
+          include: {
+            customers: {}
+            service_names: {}
+            specialists: {}
+          }
+        }>
+      >
+    >[number],
+  ): types.schemas.Appointment {
+    return {
+      id: row.id,
+      customerName: row.customers.name,
+      customerId: row.customer_id,
+      serviceName: row.service_names.name,
+      serviceNameId: row.service_names.id,
+      specialistName: row.specialists.name,
+      specialistId: row.specialists.id,
+      price: row.price,
+      duration: row.duration / 60,
+      date: getDatePart(row.date.toISOString()),
+      time: getTimePart(row.time.toISOString()),
+      status: row.status,
+    }
+  },
+  specialistAppointment(
+    row: Awaited<
+      ReturnType<
+        typeof db.appointments.findMany<{
+          include: {
+            customers: {}
+            service_names: {}
+          }
+        }>
+      >
+    >[number],
+  ): types.schemas.SpecialistAppointment {
+    return {
+      id: row.id,
+      customerName: row.customers.name,
+      customerId: row.customer_id,
+      serviceName: row.service_names.name,
+      serviceNameId: row.service_names.id,
+      price: row.price,
+      duration: row.duration / 60,
+      date: getDatePart(row.date.toISOString()),
+      time: getTimePart(row.time.toISOString()),
+      status: row.status,
+    }
+  },
+  secretary(row: Awaited<ReturnType<typeof db.secretaries.findMany<{}>>>[number]): types.schemas.Secretary {
     return {
       id: row.id,
       name: row.name,
@@ -94,7 +159,84 @@ const presenter = {
       phone: row.phone,
       birthdate: getDatePart(row.birthdate.toISOString()),
       cpf: row.cpf,
-      cnpj: row.cnpj,
+      cnpj: row.cnpj ?? undefined,
+    }
+  },
+  customer(row: Awaited<ReturnType<typeof db.customers.findMany<{}>>>[number]): types.schemas.Customer {
+    return {
+      id: row.id,
+      name: row.name,
+      email: row.email ?? undefined,
+      phone: row.phone,
+      birthdate: getDatePart(row.birthdate.toISOString()),
+      cpf: row.cpf,
+    }
+  },
+  specialist(row: Awaited<ReturnType<typeof db.specialists.findMany<{}>>>[number]): types.schemas.Specialist {
+    return {
+      id: row.id,
+      name: row.name,
+      email: row.email,
+      phone: row.phone,
+      birthdate: getDatePart(row.birthdate.toISOString()),
+      cpf: row.cpf,
+      cnpj: row.cnpj ?? undefined,
+    }
+  },
+  specialistService(
+    row: Awaited<
+      ReturnType<
+        typeof db.services.findMany<{
+          include: {
+            service_names: {}
+          }
+        }>
+      >
+    >[number],
+  ) {
+    return {
+      id: row.id,
+      specializationId: row.service_names.specialization_id,
+      serviceName: row.service_names.name,
+      serviceNameId: row.service_name_id,
+      price: row.price,
+      duration: row.duration / 60,
+    }
+  },
+  service(
+    row: Awaited<
+      ReturnType<
+        typeof db.services.findMany<{
+          include: {
+            service_names: { include: { specializations: {} } }
+            specialists: {}
+          }
+        }>
+      >
+    >[number],
+  ): types.schemas.Service {
+    return {
+      id: row.id,
+      serviceName: row.service_names.name,
+      serviceNameId: row.service_name_id,
+      specialistName: row.specialists.name,
+      specialistId: row.specialists.id,
+      specialization: row.service_names.specializations.name,
+      specializationId: row.service_names.specializations.id,
+      price: row.price,
+      duration: row.duration / 60,
+    }
+  },
+  serviceGroup(
+    row: Awaited<ReturnType<typeof db.specializations.findMany<{ include: { service_names: {} } }>>>[number],
+  ): types.schemas.ServiceGroup {
+    return {
+      id: row.id,
+      name: row.name,
+      items: row.service_names.map((s) => ({
+        id: s.id,
+        name: s.name,
+      })),
     }
   },
 }
@@ -142,21 +284,8 @@ export default {
         },
       }
 
-      type HealthResponse = {
-        status: boolean
-        updatedAt: string
-        environment: string
-        database?: {
-          status: string
-          version: string
-          maxConnections: number
-          openedConnections: number
-          schemaVersion: number
-        }
-      }
-
       const appConfig = getAppConfig()
-      const response: HealthResponse = {
+      const response: types.schemas.Status = {
         status: true,
         updatedAt: new Date().toISOString(),
         environment: appConfig.environemnt,
@@ -176,7 +305,7 @@ export default {
   },
   auth: {
     async login(req: Request, res: Response) {
-      const args = {
+      const args: types.body.AuthLogin = {
         email: req.body.email,
         password: req.body.password,
       }
@@ -262,50 +391,257 @@ export default {
   },
   appointments: {
     async getAll(req: Request, res: Response) {
-      res.send('OK')
+      const rows = await db.appointments.findMany({
+        include: {
+          customers: {},
+          service_names: {},
+          specialists: {},
+        },
+        orderBy: [{ date: 'desc' }, { time: 'desc' }],
+      })
+      const response = rows.map((row) => presenter.appointment(row))
+      res.json(response)
     },
     async create(req: Request, res: Response) {
-      res.send('OK')
+      const args: types.body.AppointmentsCreateBody = {
+        customerId: req.body.customerId,
+        date: req.body.date,
+        serviceId: req.body.serviceId,
+        time: req.body.time,
+      }
+
+      const service = await db.services.findUnique({
+        where: { id: args.serviceId },
+      })
+
+      if (!service) {
+        res.status(400).send('service: resource not found\n')
+        return
+      }
+
+      const row = await db.appointments.create({
+        data: {
+          date: new Date(args.date),
+          time: new Date(`2020-01-02T${args.time}.000Z`),
+          duration: service.duration,
+          price: service.price,
+          customer_id: args.customerId,
+          service_name_id: service.service_name_id,
+          specialist_id: service.specialist_id,
+          status: AppointmentStatus.Pending,
+        },
+      })
+
+      res.json({ id: row.id })
     },
     async count(req: Request, res: Response) {
       const count = await db.appointments.count({})
       res.send(count)
     },
     async getCalendar(req: Request, res: Response) {
-      res.send('OK')
+      const row = await db.appointments.findMany({
+        where: {
+          AND: [
+            { date: { gt: new Date(req.query.startDate as string) } },
+            { date: { lt: new Date(req.query.endDate as string) } },
+          ],
+        },
+        include: { specialists: {} },
+      })
+
+      const response = row.map((row) => ({
+        id: row.id,
+        date: getDatePart(row.date.toISOString()),
+        time: getTimePart(row.time.toISOString()),
+        specialistName: row.specialists.name,
+        status: row.status,
+      }))
+      res.send(response)
     },
     async getCalendarCount(req: Request, res: Response) {
-      res.send('OK')
+      const appointmentsCount = await db.appointments.groupBy({
+        where: {
+          AND: [
+            { date: { gt: new Date(req.query.startDate as string) } },
+            { date: { lt: new Date(req.query.endDate as string) } },
+          ],
+        },
+        by: ['date', 'status'],
+        _count: { status: true },
+      })
+
+      const response: types.schemas.AppointmentCalendarCount[] = Array.from({ length: 12 }, (_, month) => ({
+        month,
+        pendingCount: 0,
+        realizedCount: 0,
+        canceledCount: 0,
+      }))
+
+      appointmentsCount.forEach((count) => {
+        switch (count.status) {
+          case AppointmentStatus.Pending: {
+            response[count.date.getMonth()].pendingCount += count._count.status
+            break
+          }
+          case AppointmentStatus.Realized: {
+            response[count.date.getMonth()].realizedCount += count._count.status
+            break
+          }
+          case AppointmentStatus.Canceled: {
+            response[count.date.getMonth()].canceledCount += count._count.status
+            break
+          }
+        }
+      })
+
+      res.send(response)
     },
     async getById(req: Request, res: Response) {
-      res.send('OK')
+      const id = getAndParseUuidParam(req, res, 'id')
+      if (!id) return
+
+      const row = await db.appointments.findFirst({
+        include: {
+          customers: {},
+          service_names: {},
+          specialists: {},
+        },
+        where: { id },
+      })
+
+      if (!row) {
+        res.status(400).send('appointment: resource not found\n')
+        return
+      }
+
+      res.json(presenter.appointment(row))
     },
     async update(req: Request, res: Response) {
-      res.send('OK')
+      const args: types.body.AppointmentsUpdateBody = {
+        date: req.body.date,
+        status: req.body.status,
+        time: req.body.time,
+      }
+
+      const id = getAndParseUuidParam(req, res, 'id')
+      if (!id) return
+
+      const row = await db.appointments.update({
+        where: { id },
+        data: {
+          date: new Date(args.date),
+          time: new Date(`2020-01-02T${args.time}.000Z`),
+          status: args.status,
+        },
+      })
+
+      res.json({ id: row.id })
     },
     async delete(req: Request, res: Response) {
-      res.send('OK')
+      const id = getAndParseUuidParam(req, res, 'id')
+      if (!id) return
+
+      const row = await db.appointments.delete({
+        where: { id },
+      })
+
+      if (!row) {
+        res.status(400).send('appointment: resource not found\n')
+        return
+      }
+
+      res.status(204).send('')
     },
   },
   customers: {
     async getAll(req: Request, res: Response) {
-      res.send('OK')
+      const rows = await db.customers.findMany({
+        orderBy: { name: 'asc' },
+      })
+      const response = rows.map((row) => presenter.customer(row))
+      res.json(response)
     },
     async create(req: Request, res: Response) {
-      res.send('OK')
+      const args: types.body.CustomerCreateBody = {
+        birthdate: req.body.birthdate,
+        cpf: req.body.cpf,
+        email: req.body.email,
+        name: req.body.name,
+        phone: req.body.phone,
+      }
+
+      const row = await db.customers.create({
+        data: {
+          birthdate: new Date(args.birthdate),
+          cpf: args.cpf,
+          email: args.email,
+          name: args.name,
+          phone: args.phone,
+        },
+      })
+
+      res.json({ id: row.id })
     },
     async count(req: Request, res: Response) {
       const count = await db.customers.count({})
       res.send(count)
     },
     async getById(req: Request, res: Response) {
-      res.send('OK')
+      const id = getAndParseUuidParam(req, res, 'id')
+      if (!id) return
+
+      const row = await db.customers.findFirst({
+        where: { id },
+      })
+
+      if (!row) {
+        res.status(400).send('customer: resource not found\n')
+        return
+      }
+
+      res.json(presenter.customer(row))
     },
     async update(req: Request, res: Response) {
-      res.send('OK')
+      const args: types.body.CustomerUpdateBody = {
+        name: req.body.name,
+        email: req.body.email,
+        phone: req.body.phone,
+        birthdate: req.body.birthdate,
+        cpf: req.body.cpf,
+      }
+
+      const id = getAndParseUuidParam(req, res, 'id')
+      if (!id) return
+
+      const data = {
+        name: args.name,
+        email: args.email,
+        phone: args.phone,
+        birthdate: new Date(args.birthdate),
+        cpf: args.cpf,
+      }
+
+      const row = await db.customers.update({
+        where: { id },
+        data,
+      })
+
+      res.json({ id: row.id })
     },
     async delete(req: Request, res: Response) {
-      res.send('OK')
+      const id = getAndParseUuidParam(req, res, 'id')
+      if (!id) return
+
+      const row = await db.customers.delete({
+        where: { id },
+      })
+
+      if (!row) {
+        res.status(400).send('customer: resource not found\n')
+        return
+      }
+
+      res.status(204).send('')
     },
   },
   secretaries: {
@@ -313,17 +649,18 @@ export default {
       const rows = await db.secretaries.findMany({
         orderBy: { name: 'asc' },
       })
-      res.json(rows.map((row) => presenter.secretary(row)))
+      const response = rows.map((row) => presenter.secretary(row))
+      res.json(response)
     },
     async create(req: Request, res: Response) {
-      const args = {
-        birthdate: req.body.birthdate as string,
-        cpf: req.body.cpf as string,
-        email: req.body.email as string,
-        name: req.body.name as string,
-        password: req.body.password as string,
-        phone: req.body.phone as string,
-        cnpj: req.body.cnpj as string,
+      const args: types.body.SecretaryCreateBody = {
+        birthdate: req.body.birthdate,
+        cpf: req.body.cpf,
+        email: req.body.email,
+        name: req.body.name,
+        password: req.body.password,
+        phone: req.body.phone,
+        cnpj: req.body.cnpj,
       }
 
       const exists = await db.secretaries.findUnique({
@@ -346,6 +683,7 @@ export default {
           cnpj: args.cnpj,
         },
       })
+
       res.json({ id: row.id })
     },
     async count(req: Request, res: Response) {
@@ -368,26 +706,26 @@ export default {
       res.json(presenter.secretary(row))
     },
     async update(req: Request, res: Response) {
-      const args = {
-        name: req.body.name as string | undefined,
-        email: req.body.email as string | undefined,
-        phone: req.body.phone as string | undefined,
-        birthdate: req.body.birthdate as string | undefined,
-        cpf: req.body.cpf as string | undefined,
-        cnpj: req.body.cnpj as string | undefined,
-        password: req.body.password as string | undefined,
+      const args: types.body.SecretaryUpdateBody = {
+        name: req.body.name,
+        email: req.body.email,
+        phone: req.body.phone,
+        birthdate: req.body.birthdate,
+        cpf: req.body.cpf,
+        cnpj: req.body.cnpj,
+        password: req.body.password,
       }
 
       const id = getAndParseUuidParam(req, res, 'id')
       if (!id) return
 
       const data = {
-        name: args.name ? args.name : undefined,
-        email: args.email ? args.email : undefined,
-        phone: args.phone ? args.phone : undefined,
-        birthdate: args.birthdate ? new Date(args.birthdate) : undefined,
-        cpf: args.cpf ? args.cpf : undefined,
-        cnpj: args.cnpj ? args.cnpj : undefined,
+        name: args.name,
+        email: args.email,
+        phone: args.phone,
+        birthdate: new Date(args.birthdate),
+        cpf: args.cpf,
+        cnpj: args.cnpj,
         password: args.password ? await hashPassword(args.password) : undefined,
       }
 
@@ -400,7 +738,7 @@ export default {
         return
       }
 
-      if (data.email && row.email !== data.email) {
+      if (row.email !== data.email) {
         const exists = await db.secretaries.findUnique({
           where: { email: data.email },
         })
@@ -442,19 +780,19 @@ export default {
           service_names: {},
         },
       })
-      res.json(
-        rows.map((row) => ({
-          id: row.id,
-          name: row.name,
-          items: row.service_names.map((s) => ({ id: s.id, name: s.name })),
-        })),
-      )
+
+      const response = rows.map((row) => ({
+        id: row.id,
+        name: row.name,
+        items: row.service_names.map((s) => ({ id: s.id, name: s.name })),
+      }))
+      res.json(response)
     },
     async create(req: Request, res: Response) {
-      const args = {
-        name: req.body.name as string,
-        specialization: req.body.specialization as string | undefined,
-        specializationId: req.body.specializationId as string | undefined,
+      const args: types.body.ServiceAvailableCreateBody = {
+        name: req.body.name,
+        specialization: req.body.specialization,
+        specializationId: req.body.specializationId,
       }
 
       if (args.name.length === 0) {
@@ -502,7 +840,7 @@ export default {
       })
 
       if (!row) {
-        res.status(400).send('service_names: resource not found\n')
+        res.status(400).send('service_name: resource not found\n')
         return
       }
 
@@ -517,8 +855,8 @@ export default {
       const id = getAndParseUuidParam(req, res, 'id')
       if (!id) return
 
-      const args = {
-        name: req.body.name as string,
+      const args: types.body.ServiceAvailableUpdateBody = {
+        name: req.body.name,
       }
 
       if (args.name.length === 0) {
@@ -531,7 +869,7 @@ export default {
       })
 
       if (!row) {
-        res.status(400).send('service_names: resource not found\n')
+        res.status(400).send('service_name: resource not found\n')
         return
       }
 
@@ -565,7 +903,7 @@ export default {
       })
 
       if (!row) {
-        res.status(400).send('service_names: resource not found\n')
+        res.status(400).send('service_name: resource not found\n')
         return
       }
 
@@ -574,23 +912,105 @@ export default {
   },
   services: {
     async getAll(req: Request, res: Response) {
-      res.send('OK')
+      const rows = await db.services.findMany({
+        include: { service_names: { include: { specializations: {} } }, specialists: {} },
+      })
+
+      const response = rows.map((row) => presenter.service(row))
+      res.json(response)
     },
     async create(req: Request, res: Response) {
-      res.send('OK')
+      const args: types.body.ServiceCreateBody = {
+        duration: req.body.duration,
+        price: req.body.price,
+        serviceNameId: req.body.serviceNameId,
+        specialistId: req.body.specialistId,
+      }
+
+      const row = await db.services.create({
+        data: {
+          service_name_id: args.serviceNameId,
+          specialist_id: args.specialistId,
+          price: args.price,
+          duration: args.duration * 60,
+        },
+      })
+
+      res.json({ id: row.id })
     },
     async count(req: Request, res: Response) {
       const count = await db.services.count({})
       res.send(count)
     },
     async getById(req: Request, res: Response) {
-      res.send('OK')
+      const id = getAndParseUuidParam(req, res, 'id')
+      if (!id) return
+
+      const row = await db.services.findUnique({
+        where: { id },
+      })
+
+      if (!row) {
+        res.status(400).send('service: resource not found\n')
+        return
+      }
+
+      res.send({
+        id: row.id,
+        specialistId: row.specialist_id,
+        serviceNameId: row.service_name_id,
+        price: row.price,
+        duration: row.duration / 60,
+      })
     },
     async update(req: Request, res: Response) {
-      res.send('OK')
+      const id = getAndParseUuidParam(req, res, 'id')
+      if (!id) return
+
+      const args: types.body.ServiceUpdateBody = {
+        duration: req.body.duration,
+        price: req.body.price,
+      }
+
+      const row = await db.services.update({
+        where: { id },
+        data: {
+          duration: args.duration * 60,
+          price: args.price,
+        },
+      })
+
+      if (!row) {
+        res.status(400).send('service: resource not found\n')
+        return
+      }
+
+      res.send({ id: row.id })
     },
     async delete(req: Request, res: Response) {
-      res.send('OK')
+      const id = getAndParseUuidParam(req, res, 'id')
+      if (!id) return
+
+      const row = await db.services.delete({
+        where: { id },
+      })
+
+      if (!row) {
+        res.status(400).send('service: resource not found\n')
+        return
+      }
+
+      res.status(204).send('')
+    },
+  },
+  serviceGroups: {
+    async getAll(req: Request, res: Response) {
+      const rows = await db.specializations.findMany({
+        include: { service_names: {} },
+      })
+
+      const response = rows.map((row) => presenter.serviceGroup(row))
+      res.json(response)
     },
   },
   specialists: {
@@ -598,20 +1018,166 @@ export default {
       const rows = await db.specialists.findMany({
         orderBy: { name: 'asc' },
       })
-      res.json(rows)
+      const response = rows.map((row) => presenter.specialist(row))
+      res.json(response)
     },
     async create(req: Request, res: Response) {
-      res.send('OK')
+      const args: types.body.SpecialistCreateBody = {
+        name: req.body.name.trim(),
+        birthdate: req.body.birthdate,
+        cnpj: req.body.cnpj,
+        cpf: req.body.cpf,
+        email: req.body.email,
+        phone: req.body.phone,
+        services: req.body.services,
+      }
+
+      const exists = await db.specialists.findUnique({
+        where: { email: args.email },
+      })
+
+      if (exists) {
+        res.status(400).send('specialist.email: resource already exists\n')
+        return
+      }
+
+      const row = await db.$transaction(async (tx) => {
+        const row = await tx.specialists.create({
+          data: {
+            birthdate: new Date(args.birthdate),
+            cpf: args.cpf,
+            email: args.email,
+            name: args.name,
+            phone: args.phone,
+            cnpj: args.cnpj,
+          },
+        })
+
+        await tx.services.createMany({
+          data: args.services.map((s) => ({
+            service_name_id: s.serviceNameId,
+            price: s.price,
+            duration: s.duration * 60,
+            specialist_id: row.id,
+          })),
+        })
+
+        return row
+      })
+
+      res.json({ id: row.id })
     },
     async count(req: Request, res: Response) {
       const count = await db.specialists.count({})
       res.send(count)
     },
     async getById(req: Request, res: Response) {
-      res.send('OK')
+      const id = getAndParseUuidParam(req, res, 'id')
+      if (!id) return
+
+      const row = await db.specialists.findUnique({
+        where: { id },
+      })
+
+      if (!row) {
+        res.status(400).send('specialist: resource not found\n')
+        return
+      }
+
+      const response = presenter.specialist(row)
+      res.json(response)
+    },
+    async getServices(req: Request, res: Response) {
+      const id = getAndParseUuidParam(req, res, 'id')
+      if (!id) return
+
+      const rows = await db.services.findMany({
+        where: { specialist_id: id },
+        include: { service_names: {} },
+      })
+
+      const response = rows.map((row) => presenter.specialistService(row))
+      res.json(response)
+    },
+    async getSpecializations(req: Request, res: Response) {
+      const id = getAndParseUuidParam(req, res, 'id')
+      if (!id) return
+
+      const rows = await db.specializations.findMany({
+        where: { service_names: { some: { services: { some: { specialist_id: id } } } } },
+      })
+
+      const response = rows
+      res.json(response)
+    },
+    async getAppointments(req: Request, res: Response) {
+      const id = getAndParseUuidParam(req, res, 'id')
+      if (!id) return
+
+      const rows = await db.appointments.findMany({
+        where: { specialist_id: id },
+        include: { service_names: {}, customers: {} },
+      })
+
+      const response = rows.map((row) => presenter.specialistAppointment(row))
+      res.json(response)
+    },
+    async getService(req: Request, res: Response) {
+      const id = getAndParseUuidParam(req, res, 'id')
+      if (!id) return
+      const serviceId = getAndParseUuidParam(req, res, 'service_id')
+      if (!serviceId) return
+
+      const row = await db.services.findFirst({
+        where: { specialist_id: id, service_name_id: serviceId },
+      })
+
+      if (!row) {
+        res.status(400).send('service: resource not found\n')
+        return
+      }
+
+      const response = {
+        id: row.id,
+        specialistId: row.specialist_id,
+        serviceNameId: row.service_name_id,
+        price: row.price,
+        duration: row.duration / 60,
+      }
+      res.json(response)
     },
     async update(req: Request, res: Response) {
-      res.send('OK')
+      const id = getAndParseUuidParam(req, res, 'id')
+      if (!id) return
+
+      const args: types.body.SpecialistUpdateBody = {
+        name: req.body.name.trim(),
+        birthdate: req.body.birthdate,
+        cnpj: req.body.cnpj,
+        cpf: req.body.cpf,
+        email: req.body.email,
+        phone: req.body.phone,
+        services: req.body.services,
+      }
+
+      if (args.name.length === 0) {
+        res.status(400).send('invalid argument: name: field is required\n')
+        return
+      }
+
+      const row = await db.specialists.update({
+        where: { id },
+        data: {
+          birthdate: new Date(args.birthdate),
+          cpf: args.cpf,
+          email: args.email,
+          name: args.name,
+          phone: args.phone,
+          cnpj: args.cnpj,
+        },
+      })
+
+      res.json({ id: row.id })
     },
     async delete(req: Request, res: Response) {
       const id = getAndParseUuidParam(req, res, 'id')

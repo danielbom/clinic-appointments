@@ -10,15 +10,15 @@ import { getDatePart, getHourPart } from '../../src/lib/date-fns-ext'
 import { Writable, WriteStr, WriteCombined } from '../../src/lib/writable'
 import { Path } from '../../src/lib/path'
 import { createTracker } from '../../src/lib/tracker'
-import levenshtein from "fast-levenshtein";
+import levenshtein from 'fast-levenshtein'
 
 export function getSimilarity(a: string, b: string): number {
-  const distance = levenshtein.get(a, b);
-  const maxLength = Math.max(a.length, b.length);
+  const distance = levenshtein.get(a, b)
+  const maxLength = Math.max(a.length, b.length)
 
-  if (maxLength === 0) return 100;
+  if (maxLength === 0) return 100
 
-  return (1 - distance / maxLength) * 100;
+  return (1 - distance / maxLength) * 100
 }
 
 const baseApi = new Api(
@@ -165,7 +165,8 @@ function complete(args: Args) {
   }
 
   ACTUAL_SNAPSHOT_PATH.writeText(actual)
-  console.log(`ERROR: Snapshot mismatch: ${getSimilarity(actual, expected).toFixed(2)}%`)
+  const similarity = getSimilarity(actual, expected).toFixed(2)
+  console.log(`ERROR: Snapshot mismatch: ${similarity === '100.00' ? '99.99' : similarity}%`)
 }
 
 async function run(args: Args) {

@@ -32,7 +32,7 @@ WHERE "sp"."id" IN (
 	SELECT "sn"."specialization_id" 
 	FROM "services" "s" 
 	JOIN "service_names" "sn" ON "sn"."id" = "s"."service_name_id"
-	WHERE "s"."specialist_id" = sqlc.arg('specializationId')
+	WHERE "s"."specialist_id" = sqlc.arg('specialistId')
 );
 
 -- name: DeleteSpecializationByID :execrows

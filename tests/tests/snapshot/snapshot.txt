@@ -542,6 +542,7 @@ Request: GET /api/specialists/20/services 200
 Response: []
 
 Request: GET /api/specialists/20/specializations 200
+Response: []
 
 Request: GET /api/specialists 200
 Params: {}
@@ -1250,11 +1251,12 @@ Response: [
     "customerName": "Customer Test",
     "customerId": 30,
     "serviceName": "Service Available 2",
-    "serviceId": 19,
+    "serviceNameId": 19,
     "price": 1000,
     "duration": 60,
     "date": "2030-01-02",
-    "time": "03:00:00"
+    "time": "03:00:00",
+    "status": 1
   }
 ]
 

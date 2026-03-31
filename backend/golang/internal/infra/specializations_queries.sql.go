@@ -100,8 +100,8 @@ WHERE "sp"."id" IN (
 )
 `
 
-func (q *Queries) ListSpecializationsBySpecialistID(ctx context.Context, specializationid uuid.UUID) ([]Specialization, error) {
-	rows, err := q.db.Query(ctx, listSpecializationsBySpecialistID, specializationid)
+func (q *Queries) ListSpecializationsBySpecialistID(ctx context.Context, specialistid uuid.UUID) ([]Specialization, error) {
+	rows, err := q.db.Query(ctx, listSpecializationsBySpecialistID, specialistid)
 	if err != nil {
 		return nil, err
 	}
