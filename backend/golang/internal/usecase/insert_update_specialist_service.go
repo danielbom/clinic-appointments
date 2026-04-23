@@ -4,7 +4,6 @@ import (
 	"backend/internal/infra"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type SpecialistServiceInfoArgs struct {
@@ -14,7 +13,6 @@ type SpecialistServiceInfoArgs struct {
 	SpecialistID      uuid.UUID
 	Price             int32
 	DurationMin       int32
-	Duration          pgtype.Interval
 	RequireSpecialist bool
 }
 
@@ -35,11 +33,8 @@ func (args *SpecialistServiceInfoArgs) Validate() *UsecaseError {
 			return NewInvalidArgumentError(ErrInvalidUuid).InField("specialistId")
 		}
 	}
-	if !args.Duration.Valid {
-		if args.DurationMin <= 0 {
-			return NewInvalidArgumentError(ErrExpectPositiveValue).InField("duration")
-		}
-		args.Duration = DurationFromMinutes(args.DurationMin)
+	if args.DurationMin <= 0 {
+		return NewInvalidArgumentError(ErrExpectPositiveValue).InField("duration")
 	}
 	if args.Price < 0 {
 		return NewInvalidArgumentError(ErrExpectPositiveValue).InField("price")
@@ -62,7 +57,7 @@ func CreateSpecialistService(state State, args SpecialistServiceInfoArgs) (uuid.
 		ServiceNameId: args.ServiceNameID,
 		SpecialistId:  args.SpecialistID,
 		Price:         args.Price,
-		Duration:      args.Duration,
+		Duration:      args.DurationMin,
 	})
 	if err != nil {
 		return uuid.Nil, NewUnexpectedError(err)
@@ -74,7 +69,7 @@ func UpdateSpecialistService(state State, serviceId uuid.UUID, args SpecialistSe
 	params := infra.UpdateServiceParams{
 		ID:       serviceId,
 		Price:    args.Price,
-		Duration: args.Duration,
+		Duration: args.DurationMin,
 	}
 	id, err := state.Queries().UpdateService(state.Context(), params)
 	if err != nil {

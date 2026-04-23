@@ -9,7 +9,6 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const countServicesEnriched = `-- name: CountServicesEnriched :one
@@ -50,7 +49,7 @@ WHERE true
    AND ($1::text = ''     OR LOWER(unaccent("sp"."name")) LIKE '%' || LOWER(unaccent($1)) || '%')
    AND ($2::text = '' OR LOWER(unaccent("sz"."name")) LIKE '%' || LOWER(unaccent($2)) || '%')
    AND ($3::text = ''    OR LOWER(unaccent("sn"."name")) LIKE '%' || LOWER(unaccent($3)) || '%')
-ORDER BY "specialist_name", "service_name"
+ORDER BY "specialization_name", "specialist_name"
 LIMIT $5::integer
 OFFSET $4::integer
 `
@@ -66,7 +65,7 @@ type ListServicesEnrichedParams struct {
 type ListServicesEnrichedRow struct {
 	ID                 uuid.UUID
 	Price              int32
-	Duration           pgtype.Interval
+	Duration           int32
 	SpecialistID       uuid.UUID
 	SpecialistName     string
 	ServiceNameID      uuid.UUID

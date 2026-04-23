@@ -150,7 +150,7 @@ type ListServicesBySpecialistIDRow struct {
 	ServiceNameID    uuid.UUID
 	ServiceName      string
 	Price            int32
-	Duration         pgtype.Interval
+	Duration         int32
 }
 
 func (q *Queries) ListServicesBySpecialistID(ctx context.Context, specialistid uuid.UUID) ([]ListServicesBySpecialistIDRow, error) {

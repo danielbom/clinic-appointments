@@ -110,8 +110,8 @@ FROM "appointments"
 WHERE "date" = sqlc.arg('date')
   AND "specialist_id" = sqlc.arg('specialistId')
   AND (
-    ("time" <= sqlc.arg('time')::time AND sqlc.arg('time')::time < "time" + "duration") OR
-    ("time" < sqlc.arg('time')::time + sqlc.arg('duration')::interval AND sqlc.arg('time')::time + sqlc.arg('duration')::interval < "time" + "duration")
+    "time" < sqlc.arg('time')::time + make_interval(mins => sqlc.arg('duration')::integer)
+    AND sqlc.arg('time')::time < "time" + make_interval(mins => "duration")
   )
 LIMIT 1;
 

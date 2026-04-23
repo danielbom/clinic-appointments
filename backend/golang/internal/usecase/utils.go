@@ -8,13 +8,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-func DurationFromMinutes(min int32) pgtype.Interval {
-	return pgtype.Interval{
-		Microseconds: int64(min) * 60 * 1000000,
-		Valid:        true,
-	}
-}
-
 func DateFromYear(result *pgtype.Date, year int) error {
 	return result.Scan(time.Date(year, 1, 1, 0, 0, 0, 0, time.UTC))
 }

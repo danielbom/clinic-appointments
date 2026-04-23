@@ -79,7 +79,6 @@ func UpdateSpecialistWithServices(state State, specialistID uuid.UUID, args Spec
 					ServiceNameID: serviceArg.ServiceNameID,
 					Price:         serviceArg.Price,
 					DurationMin:   serviceArg.DurationMin,
-					Duration:      serviceArg.Duration,
 				})
 				if err != nil {
 					return none, err

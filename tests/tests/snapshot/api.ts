@@ -111,14 +111,12 @@ function redactResponse(response: AxiosResponse | undefined): any {
 }
 
 const ACTUAL_SNAPSHOT_PATH = Path.from(import.meta.dirname).append('snapshot.actual.txt')
+const SNAPSHOT_LOG_PATH = Path.from(import.meta.dirname).append('snapshot.log')
 const CURRENT_SNAPSHOT_PATH = Path.from(import.meta.dirname).append('snapshot.txt')
-const DEBUG_STATE = false
 
 const output = new WriteStr()
-const w = new WriteCombined([
-  // new WriteStdout(),
-  output,
-])
+const logger = SNAPSHOT_LOG_PATH.open('w')
+const w = new WriteCombined([output])
 
 class SimpleAxiosError extends Error {
   public code = ''
@@ -146,10 +144,12 @@ let WRITE_RESPONSE = true
 api._config.instance.interceptors.response.use(
   (response) => {
     if (WRITE_RESPONSE) writeResponse(w, redactResponse(response))
+    writeResponse(logger, response)
     return response
   },
   (error) => {
     if (WRITE_RESPONSE) writeResponse(w, redactResponse(error.response))
+    writeResponse(logger, error.response)
     throw new SimpleAxiosError(error)
   },
 )
@@ -721,4 +721,5 @@ run({ record: process.argv[2] === 'record' })
   })
   .finally(() => {
     console.timeEnd(timeMessage)
+    logger.close()
   })

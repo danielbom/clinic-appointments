@@ -18,8 +18,8 @@ FROM "appointments"
 WHERE "date" = $1
   AND "specialist_id" = $2
   AND (
-    ("time" <= $3::time AND $3::time < "time" + "duration") OR
-    ("time" < $3::time + $4::interval AND $3::time + $4::interval < "time" + "duration")
+    "time" < $3::time + make_interval(mins => $4::integer)
+    AND $3::time < "time" + make_interval(mins => "duration")
   )
 LIMIT 1
 `
@@ -28,7 +28,7 @@ type AppointmentsIntersectsParams struct {
 	Date         pgtype.Date
 	SpecialistId uuid.UUID
 	Time         pgtype.Time
-	Duration     pgtype.Interval
+	Duration     int32
 }
 
 func (q *Queries) AppointmentsIntersects(ctx context.Context, arg AppointmentsIntersectsParams) (bool, error) {
@@ -100,7 +100,7 @@ type CreateAppointmentParams struct {
 	SpecialistId  uuid.UUID
 	ServiceNameId uuid.UUID
 	Price         int32
-	Duration      pgtype.Interval
+	Duration      int32
 	Date          pgtype.Date
 	Time          pgtype.Time
 	Status        int32
@@ -175,7 +175,7 @@ WHERE "a"."id" = $1
 type GetAppointmentEnrichedByIDRow struct {
 	ID             uuid.UUID
 	Price          int32
-	Duration       pgtype.Interval
+	Duration       int32
 	Date           pgtype.Date
 	Time           pgtype.Time
 	Status         int32
@@ -246,7 +246,7 @@ type ListAppointmentsParams struct {
 type ListAppointmentsRow struct {
 	ID             uuid.UUID
 	Price          int32
-	Duration       pgtype.Interval
+	Duration       int32
 	Date           pgtype.Date
 	Time           pgtype.Time
 	Status         int32
@@ -363,7 +363,7 @@ type ListAppointmentsBySpecialistIDParams struct {
 type ListAppointmentsBySpecialistIDRow struct {
 	ID            uuid.UUID
 	Price         int32
-	Duration      pgtype.Interval
+	Duration      int32
 	Date          pgtype.Date
 	Time          pgtype.Time
 	Status        int32

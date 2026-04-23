@@ -14,7 +14,7 @@ func GetSpecialistServices(services []infra.ListServicesBySpecialistIDRow) []dto
 			ServiceNameID:    s.ServiceNameID.String(),
 			SpecializationID: s.SpecializationID.String(),
 			Price:            s.Price,
-			Duration:         MicrosToMinutes(s.Duration.Microseconds),
+			Duration:         s.Duration,
 		})
 	}
 	return response
@@ -30,7 +30,7 @@ func GetSpecialistAppointments(appointments []infra.ListAppointmentsBySpecialist
 			ServiceName:   a.ServiceName,
 			ServiceNameID: a.ServiceNameID.String(),
 			Price:         a.Price,
-			Duration:      MicrosToMinutes(a.Duration.Microseconds),
+			Duration:      a.Duration,
 			Date:          DateToString(a.Date),
 			Time:          TimeToString(a.Time),
 			Status:        a.Status,
