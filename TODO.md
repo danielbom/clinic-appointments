@@ -52,3 +52,5 @@
         - [x] calendar
     - [x] specializations
     - [x] secretaries
+
+* Try E2E with [playwright](https://playwright.dev/docs/intro)
