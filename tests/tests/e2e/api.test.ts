@@ -6,7 +6,7 @@ import { getDatePart, getHourPart } from '../../src/lib/date-fns-ext'
 
 import type { DotPaths } from '../api-features'
 import { formatJson, responseIsError } from '../api-extensions'
-import { BASE_URL } from '../config'
+import { API_URL } from '../config'
 
 import { Api, Config } from '../../src/lib/api'
 import {
@@ -28,7 +28,7 @@ import {
 const api = new Api(
   new Config(
     axios.create({
-      baseURL: BASE_URL,
+      baseURL: API_URL,
       validateStatus: (status) => status < 500,
     }),
   ),

@@ -14,7 +14,7 @@ func GetSpecialistServices(services []infra.ListServicesBySpecialistIDRow) []dto
 			ServiceNameID:    s.ServiceNameID.String(),
 			SpecializationID: s.SpecializationID.String(),
 			Price:            s.Price,
-			Duration:         SecondsToMinutes(s.Duration),
+			Duration:         s.Duration,
 		})
 	}
 	return response
@@ -30,7 +30,7 @@ func GetSpecialistAppointments(appointments []infra.ListAppointmentsBySpecialist
 			ServiceName:   a.ServiceName,
 			ServiceNameID: a.ServiceNameID.String(),
 			Price:         a.Price,
-			Duration:      SecondsToMinutes(a.Duration),
+			Duration:      a.Duration,
 			Date:          DateToString(a.Date),
 			Time:          TimeToString(a.Time),
 			Status:        a.Status,
@@ -60,7 +60,7 @@ func ListSpecialists(specialists []infra.Specialist) []dtos.Specialist {
 }
 
 func GetSpecialistSpecializations(specializations []infra.Specialization) []dtos.Specialization {
-	var response []dtos.Specialization
+	response := make([]dtos.Specialization, 0, len(specializations))
 	for _, s := range specializations {
 		response = append(response, dtos.Specialization{
 			ID:   s.ID.String(),

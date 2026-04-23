@@ -10,7 +10,3 @@ backend/express-ts/src/lib/writable.ts
 [path.ts]
 tests/src/lib/path.ts
 backend/express-ts/src/lib/path.ts
-
-[queries.sql]
-backend/golang/internal/infra/queries
-db-types/queries

@@ -1,16 +1,19 @@
 import axios, { AxiosResponse } from 'axios'
 import _ from 'lodash'
-import { addDays, addHours, addMinutes, endOfYear, startOfYear } from 'date-fns'
+import { addDays, addHours, endOfYear, startOfYear } from 'date-fns'
 
-import { BASE_URL } from '../config'
+import { API_URL } from '../config'
 
-import { Api, Config } from '../../src/lib/api'
+import { Api, AppointmentStatus, Config } from '../../src/lib/api'
 import { getDatePart, getHourPart } from '../../src/lib/date-fns-ext'
 
 import { Writable, WriteStr, WriteCombined } from '../../src/lib/writable'
 import { Path } from '../../src/lib/path'
 import { createTracker } from '../../src/lib/tracker'
 import levenshtein from 'fast-levenshtein'
+import { Random, rng } from '../../src/lib/rng'
+
+const random = new Random(rng.mulberry32(12345))
 
 export function getSimilarity(a: string, b: string): number {
   const distance = levenshtein.get(a, b)
@@ -21,10 +24,20 @@ export function getSimilarity(a: string, b: string): number {
   return (1 - distance / maxLength) * 100
 }
 
+async function generateDatesFrom(args: { startAt: Date; endAt: Date; consume: (date: Date) => Promise<void> }) {
+  let date = args.startAt
+  const endAt = args.endAt.getTime()
+  while (date.getTime() < endAt) {
+    await args.consume(date)
+    date = addDays(date, 1)
+  }
+  return date
+}
+
 const baseApi = new Api(
   new Config(
     axios.create({
-      baseURL: BASE_URL,
+      baseURL: API_URL,
       validateStatus: (status) => status < 500,
     }),
   ),
@@ -98,13 +111,12 @@ function redactResponse(response: AxiosResponse | undefined): any {
 }
 
 const ACTUAL_SNAPSHOT_PATH = Path.from(import.meta.dirname).append('snapshot.actual.txt')
+const SNAPSHOT_LOG_PATH = Path.from(import.meta.dirname).append('snapshot.log')
 const CURRENT_SNAPSHOT_PATH = Path.from(import.meta.dirname).append('snapshot.txt')
 
 const output = new WriteStr()
-const w = new WriteCombined([
-  // new WriteStdout(),
-  output,
-])
+const logger = SNAPSHOT_LOG_PATH.open('w')
+const w = new WriteCombined([output])
 
 class SimpleAxiosError extends Error {
   public code = ''
@@ -127,13 +139,17 @@ class SimpleAxiosError extends Error {
   }
 }
 
+let WRITE_RESPONSE = true
+
 api._config.instance.interceptors.response.use(
   (response) => {
-    writeResponse(w, redactResponse(response))
+    if (WRITE_RESPONSE) writeResponse(w, redactResponse(response))
+    writeResponse(logger, response)
     return response
   },
   (error) => {
-    writeResponse(w, redactResponse(error.response))
+    if (WRITE_RESPONSE) writeResponse(w, redactResponse(error.response))
+    writeResponse(logger, error.response)
     throw new SimpleAxiosError(error)
   },
 )
@@ -224,6 +240,13 @@ async function run(args: Args) {
     serviceId: '',
     customerId: '',
     appointmentId: '',
+    secretaryIds: [] as string[],
+    specializationIds: [] as string[],
+    specialistIds: [] as string[],
+    customerIds: [] as string[],
+    specialistServiceIds: {} as Record<string, { serviceId: string; serviceNameId: string }[]>,
+    serviceIds: [] as string[],
+    appointmentIds: [] as string[],
   }
 
   await api.health.healthCheck().then((res) => {
@@ -490,10 +513,213 @@ async function run(args: Args) {
   w.write('Report: \n')
   w.write(JSON.stringify(tracker.report(), null, 2))
   w.write('\n')
+  w.write('\n')
+
+  // Seed
+  {
+    WRITE_RESPONSE = false
+
+    await api.test.init()
+    state.servicesAvailableIds.length = 0
+
+    await api.auth.login(adminCredentials).then((res) => apiLogin(res.data.accessToken))
+
+    // [secretaries]
+    for (let i = 0; i < 20; i++) {
+      const res = await api.secretaries.create({
+        name: `Secretary ${i}`,
+        email: `secretary-${i}@test.com`,
+        password: '123@mudaR',
+        birthdate: random.date(1980, 2010),
+        cnpj: '08130896000135',
+        cpf: '72730805001',
+        phone: '119876543210',
+      })
+      if (res.status !== 200) throw new Error(`secretaries ${i}: ${JSON.stringify(res.data)}`)
+      state.secretaryIds.push(res.data.id)
+    }
+
+    // [specializations]
+    for (let i = 0; i < 10; i++) {
+      const res = await api.specializations.create({
+        name: `Specialization ${i}`,
+      })
+      if (res.status !== 200) throw new Error(`specializations ${i}: ${JSON.stringify(res.data)}`)
+      state.specializationIds.push(res.data.id)
+    }
+
+    // [servicesAvailable]
+    for (let ix = 0; ix < state.specializationIds.length; ix++) {
+      const specializationId = state.specializationIds[ix]
+      for (let i = 0; i < 5; i++) {
+        const res = await api.servicesAvailable.create({
+          name: `Service Available ${ix}-${i}`,
+          specializationId: specializationId,
+        })
+        if (res.status !== 200) throw new Error(`servicesAvailable ${i}: ${JSON.stringify(res.data)}`)
+        state.servicesAvailableIds.push(res.data.id)
+      }
+    }
+
+    // [specialists]
+    for (let i = 0; i < 50; i++) {
+      const res = await api.specialists.create({
+        name: `Specialist ${i}`,
+        email: `specialist-${i}@test.com`,
+        phone: '219876543210',
+        cnpj: '16833374000128',
+        cpf: '96156338012',
+        birthdate: random.date(1980, 2000),
+        services: [],
+      })
+      if (res.status !== 200) throw new Error(`specialists ${i}: ${JSON.stringify(res.data)}`)
+      state.specialistIds.push(res.data.id)
+    }
+
+    // [services]
+    for (let ix = 0; ix < state.specialistIds.length; ix++) {
+      const specialistId = state.specialistIds[ix]
+
+      const serviceNameIds = _.uniq(random.choices(random.integer(1, 5), state.servicesAvailableIds))
+      for (let i = 0; i < serviceNameIds.length; i++) {
+        const serviceNameId = serviceNameIds[i]
+        const res = await api.services.create({
+          duration: random.range(30, 90, 15),
+          price: random.range(25, 250, 25),
+          serviceNameId,
+          specialistId,
+        })
+        if (res.status !== 200) throw new Error(`services ${ix}: i: ${JSON.stringify(res.data)}`)
+        state.specialistServiceIds[specialistId] = state.specialistServiceIds[specialistId] || []
+        state.specialistServiceIds[specialistId].push({ serviceNameId, serviceId: res.data.id })
+        state.serviceIds.push(res.data.id)
+      }
+    }
+
+    // [customers]
+    for (let i = 0; i < 150; i++) {
+      const res = await api.customers.create({
+        name: `Customer ${i}`,
+        email: `customer-${i}@test.com`,
+        cpf: '11431287962',
+        birthdate: random.date(1960, 2010),
+        phone: `21987654${i.toString().padStart(3, '0')}`,
+      })
+      if (res.status !== 200) throw new Error(`customers ${i}: ${JSON.stringify(res.data)}`)
+      state.customerIds.push(res.data.id)
+    }
+
+    // appointments
+    const frequencyRanges: [number, number][] = [
+      [0, 0],
+      [5, 6],
+      [5, 6],
+      [4, 5],
+      [3, 4],
+      [4, 5],
+      [0, 0],
+    ]
+    const specialistIds = Object.keys(state.specialistServiceIds)
+    await generateDatesFrom({
+      startAt: new Date(2031, 0, 2),
+      endAt: new Date(2031, 11, 30),
+      async consume(date) {
+        const [min, max] = frequencyRanges[date.getDay()]
+        random.shuffle(specialistIds)
+
+        const count = Math.min(random.integer(min, max), specialistIds.length)
+
+        for (let ix = 0; ix < count; ix++) {
+          const res = await api.appointments.create({
+            date: getDatePart(date.toISOString()),
+            time: `${(9 + ix).toString().padStart(2, '0')}:00:00`,
+            customerId: random.choice(state.customerIds),
+            serviceId: random.choice(state.specialistServiceIds[specialistIds[ix]]).serviceId,
+          })
+          if (res.status !== 200) throw new Error(`appointments ${ix}: ${JSON.stringify(res.data)}`)
+          state.appointmentIds.push(res.data.id)
+        }
+      },
+    })
+    WRITE_RESPONSE = true
+  }
+
+  // await api.services.getAll({ page: 1, pageSize: 5, specialist: '' })
+
+  await api.customers.getAll({ page: 0, pageSize: 5, name: 'CustomerX' })
+  await api.customers.getAll({ page: 0, pageSize: 5, name: '1' })
+  await api.customers.getAll({ page: 1, pageSize: 5, name: '1' })
+  await api.customers.getAll({ phone: '21987654002' })
+  await api.customers.getAll({ page: 0, pageSize: 5, cpf: '11431287962' })
+
+  await api.customers.count({ name: 'CustomerX' })
+  await api.customers.count({ name: '1' })
+  await api.customers.count({ phone: '21987654002' })
+  await api.customers.count({ cpf: '11431287962' })
+
+  await api.secretaries.getAll({ page: 0, pageSize: 5, name: 'SecretaryX' })
+  await api.secretaries.getAll({ page: 0, pageSize: 5, name: '1' })
+  await api.secretaries.getAll({ page: 1, pageSize: 5, name: '1' })
+  await api.secretaries.getAll({ page: 0, pageSize: 5, phone: '119876543210' })
+  await api.secretaries.getAll({ page: 0, pageSize: 5, cpf: '72730805001' })
+  await api.secretaries.getAll({ page: 0, pageSize: 5, cnpj: '08130896000135' })
+
+  await api.secretaries.count({ name: 'SecretaryX' })
+  await api.secretaries.count({ name: '1' })
+  await api.secretaries.count({ phone: '119876543210' })
+  await api.secretaries.count({ cpf: '72730805001' })
+  await api.secretaries.count({ cnpj: '08130896000135' })
+
+  await api.specialists.getAll({ page: 0, pageSize: 5, name: 'SpecialistX' })
+  await api.specialists.getAll({ page: 0, pageSize: 5, name: '1' })
+  await api.specialists.getAll({ page: 1, pageSize: 5, name: '1' })
+  await api.specialists.getAll({ page: 0, pageSize: 5, phone: '219876543210' })
+  await api.specialists.getAll({ page: 0, pageSize: 5, cpf: '96156338012' })
+  await api.specialists.getAll({ page: 0, pageSize: 5, cnpj: '16833374000128' })
+
+  await api.specialists.count({ name: 'SpecialistX' })
+  await api.specialists.count({ name: '1' })
+  await api.specialists.count({ phone: '219876543210' })
+  await api.specialists.count({ cpf: '96156338012' })
+  await api.specialists.count({ cnpj: '16833374000128' })
+
+  await api.services.getAll({ page: 0, pageSize: 5, service: '1' })
+  await api.services.getAll({ page: 1, pageSize: 5, service: '1' })
+  await api.services.getAll({ page: 0, pageSize: 5, specialist: '10' })
+  await api.services.getAll({ page: 0, pageSize: 5, specialization: '0' })
+
+  await api.services.count({ service: '1' })
+  await api.services.count({ service: '1' })
+  await api.services.count({ specialist: '10' })
+  await api.services.count({ specialization: '0' })
+
+  await api.appointments.getAll({ page: 0, pageSize: 5, customer: '100' })
+  await api.appointments.getAll({ page: 1, pageSize: 5, customer: '100' })
+  await api.appointments.getAll({ page: 0, pageSize: 5, startDate: '2031-06-01', endDate: '2031-06-31' })
+  await api.appointments.getAll({ page: 0, pageSize: 5, specialist: '10' })
+  await api.appointments.getAll({ page: 0, pageSize: 5, serviceName: '10' })
+  await api.appointments.getAll({ page: 0, pageSize: 5, status: AppointmentStatus.Pending })
+
+  await api.servicesAvailable.getAll()
+
+  await api.specializations.getAll()
+
+  await api.appointments.getCalendar({ startDate: '2031-01-01', endDate: '2031-12-31' })
+  await api.appointments.getCalendarCount({ startDate: '2031-01-01', endDate: '2031-12-31' })
+
   complete(args)
 }
 
-run({ record: process.argv[2] === 'record' }).catch((error) => {
-  ACTUAL_SNAPSHOT_PATH.writeText(output.toString())
-  throw error
-})
+const startAt = new Date()
+const timeMessage = `[${startAt.toISOString()}] Time`
+console.time(timeMessage)
+
+run({ record: process.argv[2] === 'record' })
+  .catch((error) => {
+    ACTUAL_SNAPSHOT_PATH.writeText(output.toString())
+    throw error
+  })
+  .finally(() => {
+    console.timeEnd(timeMessage)
+    logger.close()
+  })

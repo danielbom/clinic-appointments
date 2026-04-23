@@ -18,15 +18,8 @@ FROM "appointments"
 WHERE "date" = $1
   AND "specialist_id" = $2
   AND (
-    (
-      "time" <= $3::time
-      AND $3::time < "time" + make_interval(secs => "duration")
-    )
-    OR
-    (
-      "time" < $3::time + make_interval(secs => $4::integer)
-      AND $3::time + make_interval(secs => $4::integer) < "time" + make_interval(secs => "duration")
-    )
+    "time" < $3::time + make_interval(mins => $4::integer)
+    AND $3::time < "time" + make_interval(mins => "duration")
   )
 LIMIT 1
 `
@@ -51,7 +44,7 @@ func (q *Queries) AppointmentsIntersects(ctx context.Context, arg AppointmentsIn
 }
 
 const countAppointments = `-- name: CountAppointments :one
-SELECT COUNT("a"."id")::int as count
+SELECT COUNT("a"."id")::int AS count
 FROM "appointments" "a"
 JOIN "customers" "c" ON "a"."customer_id" = "c"."id"
 JOIN "specialists" "s" ON "a"."specialist_id" = "s"."id"
@@ -169,9 +162,9 @@ func (q *Queries) GetAppointmentByID(ctx context.Context, id uuid.UUID) (Appoint
 
 const getAppointmentEnrichedByID = `-- name: GetAppointmentEnrichedByID :one
 SELECT "a"."id", "a"."price", "a"."duration", "a"."date", "a"."time", "a"."status", "a"."notified_at", "a"."notified_by",
-  "a"."customer_id", "c"."name" as "customer_name",
-  "a"."specialist_id", "s"."name" as "specialist_name",
-  "a"."service_name_id", "sn"."name" as "service_name"
+  "a"."customer_id", "c"."name" AS "customer_name",
+  "a"."specialist_id", "s"."name" AS "specialist_name",
+  "a"."service_name_id", "sn"."name" AS "service_name"
 FROM "appointments" "a"
 JOIN "customers" "c" ON "a"."customer_id" = "c"."id"
 JOIN "specialists" "s" ON "a"."specialist_id" = "s"."id"
@@ -220,9 +213,9 @@ func (q *Queries) GetAppointmentEnrichedByID(ctx context.Context, id uuid.UUID) 
 
 const listAppointments = `-- name: ListAppointments :many
 SELECT "a"."id", "a"."price", "a"."duration", "a"."date", "a"."time", "a"."status", "a"."notified_at", "a"."notified_by",
-  "a"."customer_id", "c"."name" as "customer_name",
-  "a"."specialist_id", "s"."name" as "specialist_name",
-  "a"."service_name_id", "sn"."name" as "service_name"
+  "a"."customer_id", "c"."name" AS "customer_name",
+  "a"."specialist_id", "s"."name" AS "specialist_name",
+  "a"."service_name_id", "sn"."name" AS "service_name"
 FROM "appointments" "a"
 JOIN "customers" "c" ON "a"."customer_id" = "c"."id"
 JOIN "specialists" "s" ON "a"."specialist_id" = "s"."id"
@@ -352,8 +345,8 @@ func (q *Queries) ListAppointmentsByDate(ctx context.Context, date pgtype.Date) 
 
 const listAppointmentsBySpecialistID = `-- name: ListAppointmentsBySpecialistID :many
 SELECT "a"."id", "a"."price", "a"."duration", "a"."date", "a"."time", "a"."status", "a"."notified_at", "a"."notified_by",
-  "a"."customer_id", "c"."name" as "customer_name",
-  "a"."service_name_id", "sn"."name" as "service_name"
+  "a"."customer_id", "c"."name" AS "customer_name",
+  "a"."service_name_id", "sn"."name" AS "service_name"
 FROM "appointments" "a"
 JOIN "customers" "c" ON "a"."customer_id" = "c"."id"
 JOIN "service_names" "sn" ON "a"."service_name_id" = "sn"."id"
@@ -416,7 +409,7 @@ func (q *Queries) ListAppointmentsBySpecialistID(ctx context.Context, arg ListAp
 }
 
 const listAppointmentsCalendar = `-- name: ListAppointmentsCalendar :many
-SELECT "a"."id", "a"."date", "a"."time", "a"."status", "s"."name" as "specialist_name"
+SELECT "a"."id", "a"."date", "a"."time", "a"."status", "s"."name" AS "specialist_name"
 FROM "appointments" "a"
 JOIN "specialists" "s" ON "a"."specialist_id" = "s"."id"
 WHERE "a"."date" >= $1
@@ -464,8 +457,8 @@ func (q *Queries) ListAppointmentsCalendar(ctx context.Context, arg ListAppointm
 }
 
 const listAppointmentsCalendarCount = `-- name: ListAppointmentsCalendarCount :many
-SELECT date_part('month', "a"."date")::int as "month"
-     , "status", COUNT("a"."id")::int as "count"
+SELECT date_part('month', "a"."date")::int AS "month"
+     , "status", COUNT("a"."id")::int AS "count"
 FROM "appointments" "a"
 WHERE "a"."date" >= $1
   AND "a"."date" <= $2

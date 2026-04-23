@@ -24,8 +24,8 @@ func GetAppointment(a infra.ListAppointmentsRow) dtos.Appointment {
 		SpecialistName: a.SpecialistName,
 		SpecialistID:   a.SpecialistID.String(),
 		Price:          a.Price,
-		Duration:       SecondsToMinutes(a.Duration),
-		Date: 					DateToString(a.Date),
+		Duration:       a.Duration,
+		Date:           DateToString(a.Date),
 		Time:           TimeToString(a.Time),
 		Status:         int32(a.Status),
 	}
@@ -36,7 +36,7 @@ func GetAppointmentsCalendar(appointments []infra.ListAppointmentsCalendarRow) [
 	for _, appointment := range appointments {
 		response = append(response, dtos.AppointmentCalendar{
 			ID:             appointment.ID.String(),
-			Date: 					DateToString(appointment.Date),
+			Date:           DateToString(appointment.Date),
 			Time:           TimeToString(appointment.Time),
 			SpecialistName: appointment.SpecialistName,
 			Status:         int32(appointment.Status),

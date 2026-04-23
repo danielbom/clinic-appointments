@@ -118,9 +118,9 @@ air
 # go run ./cmd/wenv/main.go
 
 go run ./cmd/wenv/main.go tern init ./internal/infra/migrations
-go run ./cmd/wenv/main.go tern new --migrations ./internal/infra/migrations/ create_users_table
-go run ./cmd/wenv/main.go tern status --migrations ./internal/infra/migrations/ --config ./internal/infra/migrations/tern.conf
-go run ./cmd/wenv/main.go tern migrate --migrations ./internal/infra/migrations/ --config ./internal/infra/migrations/tern.conf
+go run ./cmd/wenv/main.go tern new      --migrations ./internal/infra/migrations/ create_users_table
+go run ./cmd/wenv/main.go tern status   --migrations ./internal/infra/migrations/ --config ./internal/infra/migrations/tern.conf
+go run ./cmd/wenv/main.go tern migrate  --migrations ./internal/infra/migrations/ --config ./internal/infra/migrations/tern.conf
 ```
 
 ### Generating GO code to access the database

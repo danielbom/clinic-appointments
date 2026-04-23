@@ -64,6 +64,7 @@ export type SpecialistsCountAllQuery = {
   name?: string
   phone?: string
   cpf?: string
+  cnpj?: string
 }
 export type SpecialistsGetAllQuery = SpecialistsCountAllQuery & {
   page?: number
@@ -74,7 +75,7 @@ export type GetSpecialistAppointmentQuery = {
   date?: string
 }
 
-export type SpecialistsCreateBodyService = {
+export type SpecialistCreateBodyService = {
   serviceNameId: string
   price: number
   duration: number // minutes
@@ -87,7 +88,7 @@ export type SpecialistCreateBody = {
   birthdate: string
   cpf: string
   cnpj: string
-  services: SpecialistsCreateBodyService[]
+  services: SpecialistCreateBodyService[]
 }
 
 export type SpecialistUpdateBody = {
@@ -97,7 +98,7 @@ export type SpecialistUpdateBody = {
   birthdate: string
   cpf: string
   cnpj: string
-  services: SpecialistsCreateBodyService[]
+  services: SpecialistCreateBodyService[]
 }
 
 export type SpecialistAppointment = {

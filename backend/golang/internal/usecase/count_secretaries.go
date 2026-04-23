@@ -6,6 +6,7 @@ import (
 
 type CountSecretariesArgs struct {
 	Cpf   string
+	Cnpj  string
 	Phone string
 	Name  string
 }
@@ -18,6 +19,7 @@ func CountSecretaries(state State, args CountSecretariesArgs) (int32, *UsecaseEr
 	count, err := state.Queries().CountSecretaries(state.Context(), infra.CountSecretariesParams{
 		Name:  args.Name,
 		Cpf:   args.Cpf,
+		Cnpj:  args.Cnpj,
 		Phone: args.Phone,
 	})
 	if err == nil {

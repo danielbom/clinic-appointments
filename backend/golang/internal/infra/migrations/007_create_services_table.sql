@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS services (
     "id"                        UUID      PRIMARY KEY  NOT NULL   DEFAULT gen_random_uuid(),
-    "service_name_id" UUID                   NOT NULL,
+    "service_name_id"           UUID                   NOT NULL,
     "specialist_id"             UUID                   NOT NULL,
     "price"                     INT                    NOT NULL, -- in cents
     "duration"                  INTERVAL               NOT NULL, -- in minutes

@@ -22,8 +22,8 @@ RETURNING "id", "customer_id", "specialist_id", "service_name_id", "price", "dur
 
 -- name: ListAppointmentsBySpecialistID :many
 SELECT "a"."id", "a"."price", "a"."duration", "a"."date", "a"."time", "a"."status", "a"."notified_at", "a"."notified_by",
-  "a"."customer_id", "c"."name" as "customer_name",
-  "a"."service_name_id", "sn"."name" as "service_name"
+  "a"."customer_id", "c"."name" AS "customer_name",
+  "a"."service_name_id", "sn"."name" AS "service_name"
 FROM "appointments" "a"
 JOIN "customers" "c" ON "a"."customer_id" = "c"."id"
 JOIN "service_names" "sn" ON "a"."service_name_id" = "sn"."id"
@@ -38,9 +38,9 @@ WHERE "id" = sqlc.arg('id');
 
 -- name: GetAppointmentEnrichedByID :one
 SELECT "a"."id", "a"."price", "a"."duration", "a"."date", "a"."time", "a"."status", "a"."notified_at", "a"."notified_by",
-  "a"."customer_id", "c"."name" as "customer_name",
-  "a"."specialist_id", "s"."name" as "specialist_name",
-  "a"."service_name_id", "sn"."name" as "service_name"
+  "a"."customer_id", "c"."name" AS "customer_name",
+  "a"."specialist_id", "s"."name" AS "specialist_name",
+  "a"."service_name_id", "sn"."name" AS "service_name"
 FROM "appointments" "a"
 JOIN "customers" "c" ON "a"."customer_id" = "c"."id"
 JOIN "specialists" "s" ON "a"."specialist_id" = "s"."id"
@@ -55,9 +55,9 @@ ORDER BY "date" DESC, "time" DESC;
 
 -- name: ListAppointments :many
 SELECT "a"."id", "a"."price", "a"."duration", "a"."date", "a"."time", "a"."status", "a"."notified_at", "a"."notified_by",
-  "a"."customer_id", "c"."name" as "customer_name",
-  "a"."specialist_id", "s"."name" as "specialist_name",
-  "a"."service_name_id", "sn"."name" as "service_name"
+  "a"."customer_id", "c"."name" AS "customer_name",
+  "a"."specialist_id", "s"."name" AS "specialist_name",
+  "a"."service_name_id", "sn"."name" AS "service_name"
 FROM "appointments" "a"
 JOIN "customers" "c" ON "a"."customer_id" = "c"."id"
 JOIN "specialists" "s" ON "a"."specialist_id" = "s"."id"
@@ -74,7 +74,7 @@ LIMIT sqlc.arg('limit')::integer
 OFFSET sqlc.arg('offset')::integer;
 
 -- name: CountAppointments :one
-SELECT COUNT("a"."id")::int as count
+SELECT COUNT("a"."id")::int AS count
 FROM "appointments" "a"
 JOIN "customers" "c" ON "a"."customer_id" = "c"."id"
 JOIN "specialists" "s" ON "a"."specialist_id" = "s"."id"
@@ -88,7 +88,7 @@ WHERE true
   AND (sqlc.arg('status')::integer = 0       OR "a"."status" = sqlc.arg('status'));
 
 -- name: ListAppointmentsCalendar :many
-SELECT "a"."id", "a"."date", "a"."time", "a"."status", "s"."name" as "specialist_name"
+SELECT "a"."id", "a"."date", "a"."time", "a"."status", "s"."name" AS "specialist_name"
 FROM "appointments" "a"
 JOIN "specialists" "s" ON "a"."specialist_id" = "s"."id"
 WHERE "a"."date" >= sqlc.arg('startDate')
@@ -96,8 +96,8 @@ WHERE "a"."date" >= sqlc.arg('startDate')
 ORDER BY "a"."date" DESC, "a"."time" DESC;
 
 -- name: ListAppointmentsCalendarCount :many
-SELECT date_part('month', "a"."date")::int as "month"
-     , "status", COUNT("a"."id")::int as "count"
+SELECT date_part('month', "a"."date")::int AS "month"
+     , "status", COUNT("a"."id")::int AS "count"
 FROM "appointments" "a"
 WHERE "a"."date" >= sqlc.arg('startDate')
   AND "a"."date" <= sqlc.arg('endDate')
@@ -110,15 +110,8 @@ FROM "appointments"
 WHERE "date" = sqlc.arg('date')
   AND "specialist_id" = sqlc.arg('specialistId')
   AND (
-    (
-      "time" <= sqlc.arg('time')::time
-      AND sqlc.arg('time')::time < "time" + make_interval(secs => "duration")
-    )
-    OR
-    (
-      "time" < sqlc.arg('time')::time + make_interval(secs => sqlc.arg('duration')::integer)
-      AND sqlc.arg('time')::time + make_interval(secs => sqlc.arg('duration')::integer) < "time" + make_interval(secs => "duration")
-    )
+    "time" < sqlc.arg('time')::time + make_interval(mins => sqlc.arg('duration')::integer)
+    AND sqlc.arg('time')::time < "time" + make_interval(mins => "duration")
   )
 LIMIT 1;
 
