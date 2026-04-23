@@ -40,6 +40,7 @@ func (h *api) listSpecialists(w http.ResponseWriter, r *http.Request) {
 	pageSize := ParseIntOrDefault(query.Get("pageSize"), 10)
 	name := query.Get("name")
 	cpf := query.Get("cpf")
+	cnpj := query.Get("cnpj")
 	phone := query.Get("phone")
 
 	// Validate e execute the usecase
@@ -50,6 +51,7 @@ func (h *api) listSpecialists(w http.ResponseWriter, r *http.Request) {
 		},
 		CountArgs: usecase.CountSpecialistArgs{
 			Cpf:   cpf,
+			Cnpj:  cnpj,
 			Phone: phone,
 			Name:  name,
 		},
@@ -78,11 +80,13 @@ func (h *api) countSpecialists(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	name := query.Get("name")
 	cpf := query.Get("cpf")
+	cnpj := query.Get("cnpj")
 	phone := query.Get("phone")
 
 	// Validate e execute the usecase
 	args := usecase.CountSpecialistArgs{
 		Cpf:   cpf,
+		Cnpj:  cnpj,
 		Phone: phone,
 		Name:  name,
 	}

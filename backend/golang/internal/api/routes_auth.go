@@ -86,7 +86,7 @@ func (h *api) authRefresh(w http.ResponseWriter, r *http.Request) {
 
 	identity, err := usecase.AuthMe(rs, userID)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		http.Error(w, "invalid token", http.StatusBadRequest)
 		return
 	}
 

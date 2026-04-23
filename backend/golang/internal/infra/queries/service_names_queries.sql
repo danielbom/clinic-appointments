@@ -14,12 +14,12 @@ RETURNING "id";
 
 -- name: GetServiceNameByName :one
 SELECT "id", "name", "specialization_id"
-FROM "service_names" 
+FROM "service_names"
 WHERE "name" = sqlc.arg('serviceName');
 
 -- name: GetServiceNameByID :one
 SELECT "id", "name", "specialization_id"
-FROM "service_names" 
+FROM "service_names"
 WHERE "id" = sqlc.arg('serviceNameId');
 
 -- name: ListServiceNames :many

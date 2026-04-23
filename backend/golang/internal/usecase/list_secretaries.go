@@ -25,6 +25,7 @@ func ListSecretaries(state State, args ListSecretariesArgs) ([]infra.Secretary, 
 	secretaries, err := state.Queries().ListSecretaries(state.Context(), infra.ListSecretariesParams{
 		Name:   args.CountArgs.Name,
 		Cpf:    args.CountArgs.Cpf,
+		Cnpj:   args.CountArgs.Cnpj,
 		Phone:  args.CountArgs.Phone,
 		Limit:  args.PaginationArgs.PageSize,
 		Offset: args.PaginationArgs.Page * args.PaginationArgs.PageSize,

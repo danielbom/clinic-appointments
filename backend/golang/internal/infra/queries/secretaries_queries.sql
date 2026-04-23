@@ -41,7 +41,9 @@ FROM "secretaries"
 WHERE true
   AND (sqlc.arg('name')::text = ''  OR "name" ILIKE '%' || sqlc.arg('name') || '%')
   AND (sqlc.arg('cpf')::text = ''   OR "cpf" = sqlc.arg('cpf'))
+  AND (sqlc.arg('cnpj')::text = ''  OR "cnpj" = sqlc.arg('cnpj'))
   AND (sqlc.arg('phone')::text = '' OR "phone" = sqlc.arg('phone'))
+ORDER BY "name"
 LIMIT sqlc.arg('limit')::integer
 OFFSET sqlc.arg('offset')::integer;
 
@@ -51,6 +53,7 @@ FROM "secretaries"
 WHERE true
   AND (sqlc.arg('name')::text = ''  OR "name" ILIKE '%' || sqlc.arg('name') || '%')
   AND (sqlc.arg('cpf')::text = ''   OR "cpf" = sqlc.arg('cpf'))
+  AND (sqlc.arg('cnpj')::text = ''  OR "cnpj" = sqlc.arg('cnpj'))
   AND (sqlc.arg('phone')::text = '' OR "phone" = sqlc.arg('phone'));
 
 -- name: DeleteSecretaryByID :execrows

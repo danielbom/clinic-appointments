@@ -2,7 +2,7 @@ import { message } from 'antd'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { useApi } from '../../../context/ApiContext'
-import { SecretariesCreateBody, SecretariesUpdateBody } from '../../../lib/api'
+import { SecretaryCreateBody, SecretaryUpdateBody } from '../../../lib/api'
 import { invalidateQueries } from '../utils'
 
 export function useSecretaryCreate() {
@@ -10,7 +10,7 @@ export function useSecretaryCreate() {
   const api = useApi()
   return useMutation({
     mutationKey: ['#secretaries', 'create'],
-    async mutationFn(values: SecretariesCreateBody) {
+    async mutationFn(values: SecretaryCreateBody) {
       const response = await api.secretaries.create(values)
       return response.data
     },
@@ -26,7 +26,7 @@ export function useSecretaryUpdate() {
   const api = useApi()
   return useMutation({
     mutationKey: ['#secretaries', 'update'],
-    async mutationFn({ id, body }: { id: string; body: SecretariesUpdateBody }) {
+    async mutationFn({ id, body }: { id: string; body: SecretaryUpdateBody }) {
       const response = await api.secretaries.update(id, body)
       return response.data
     },

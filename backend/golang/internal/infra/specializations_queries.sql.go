@@ -98,6 +98,7 @@ WHERE "sp"."id" IN (
 	JOIN "service_names" "sn" ON "sn"."id" = "s"."service_name_id"
 	WHERE "s"."specialist_id" = $1
 )
+ORDER BY "name"
 `
 
 func (q *Queries) ListSpecializationsBySpecialistID(ctx context.Context, specializationid uuid.UUID) ([]Specialization, error) {

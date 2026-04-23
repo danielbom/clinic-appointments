@@ -24,6 +24,15 @@ export class Path {
     return new Path(path.resolve(partialPath))
   }
 
+  open(flags: fs.OpenMode, mode?: fs.Mode | null) {
+    const fd = fs.openSync(this.path, flags, mode)
+    return {
+      fd,
+      close: () => fs.closeSync(fd),
+      write: (text: string) => fs.writeSync(fd, text),
+    }
+  }
+
   exists(): boolean {
     return fs.existsSync(this.path)
   }

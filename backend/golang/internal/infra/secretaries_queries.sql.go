@@ -18,17 +18,24 @@ FROM "secretaries"
 WHERE true
   AND ($1::text = ''  OR "name" ILIKE '%' || $1 || '%')
   AND ($2::text = ''   OR "cpf" = $2)
-  AND ($3::text = '' OR "phone" = $3)
+  AND ($3::text = ''  OR "cnpj" = $3)
+  AND ($4::text = '' OR "phone" = $4)
 `
 
 type CountSecretariesParams struct {
 	Name  string
 	Cpf   string
+	Cnpj  string
 	Phone string
 }
 
 func (q *Queries) CountSecretaries(ctx context.Context, arg CountSecretariesParams) (int32, error) {
-	row := q.db.QueryRow(ctx, countSecretaries, arg.Name, arg.Cpf, arg.Phone)
+	row := q.db.QueryRow(ctx, countSecretaries,
+		arg.Name,
+		arg.Cpf,
+		arg.Cnpj,
+		arg.Phone,
+	)
 	var count int32
 	err := row.Scan(&count)
 	return count, err
@@ -146,14 +153,17 @@ FROM "secretaries"
 WHERE true
   AND ($1::text = ''  OR "name" ILIKE '%' || $1 || '%')
   AND ($2::text = ''   OR "cpf" = $2)
-  AND ($3::text = '' OR "phone" = $3)
-LIMIT $5::integer
-OFFSET $4::integer
+  AND ($3::text = ''  OR "cnpj" = $3)
+  AND ($4::text = '' OR "phone" = $4)
+ORDER BY "name"
+LIMIT $6::integer
+OFFSET $5::integer
 `
 
 type ListSecretariesParams struct {
 	Name   string
 	Cpf    string
+	Cnpj   string
 	Phone  string
 	Offset int32
 	Limit  int32
@@ -163,6 +173,7 @@ func (q *Queries) ListSecretaries(ctx context.Context, arg ListSecretariesParams
 	rows, err := q.db.Query(ctx, listSecretaries,
 		arg.Name,
 		arg.Cpf,
+		arg.Cnpj,
 		arg.Phone,
 		arg.Offset,
 		arg.Limit,

@@ -33,6 +33,7 @@ func GetSpecialistAppointments(appointments []infra.ListAppointmentsBySpecialist
 			Duration:      MicrosToMinutes(a.Duration.Microseconds),
 			Date:          DateToString(a.Date),
 			Time:          TimeToString(a.Time),
+			Status:        a.Status,
 		})
 	}
 	return response
@@ -59,7 +60,7 @@ func ListSpecialists(specialists []infra.Specialist) []dtos.Specialist {
 }
 
 func GetSpecialistSpecializations(specializations []infra.Specialization) []dtos.Specialization {
-		var response []dtos.Specialization
+	response := make([]dtos.Specialization, 0, len(specializations))
 	for _, s := range specializations {
 		response = append(response, dtos.Specialization{
 			ID:   s.ID.String(),

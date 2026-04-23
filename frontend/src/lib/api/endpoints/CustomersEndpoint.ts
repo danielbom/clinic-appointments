@@ -17,11 +17,11 @@ export class CustomersEndpoint {
     return this._config.instance.get(`/api/customers/${id}`)
   }
 
-  create(data: CustomersCreateBody): Promise<AxiosResponse<Id>> {
+  create(data: CustomerCreateBody): Promise<AxiosResponse<Id>> {
     return this._config.instance.post(`/api/customers`, data)
   }
 
-  update(id: string, data: CustomersUpdateBody): Promise<AxiosResponse<Id>> {
+  update(id: string, data: CustomerUpdateBody): Promise<AxiosResponse<Id>> {
     return this._config.instance.put(`/api/customers/${id}`, data)
   }
 
@@ -51,7 +51,7 @@ export type CustomersGetAllQuery = CustomersCountAllQuery & {
   pageSize?: number
 }
 
-export type CustomersCreateBody = {
+export type CustomerCreateBody = {
   name: string
   email: string
   phone: string
@@ -59,7 +59,7 @@ export type CustomersCreateBody = {
   cpf: string
 }
 
-export type CustomersUpdateBody = {
+export type CustomerUpdateBody = {
   name: string
   email: string
   phone: string

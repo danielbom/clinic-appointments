@@ -12,7 +12,7 @@ type Appointment struct {
 	Duration       int32  `json:"duration"`
 	Date           string `json:"date"`
 	Time           string `json:"time"`
-	Status         int32  `json:"status"` // TODO: remove
+	Status         int32  `json:"status"`
 }
 
 type CreateAppointmentBody struct {

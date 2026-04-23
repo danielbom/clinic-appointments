@@ -15,10 +15,27 @@ import (
 const countSpecialists = `-- name: CountSpecialists :one
 SELECT COUNT("s"."id")::int as count
 FROM "specialists" "s"
+WHERE true
+  AND ($1::text = ''  OR "name" ILIKE '%' || LOWER(unaccent($1)) || '%')
+  AND ($2::text = ''   OR "cpf" = $2)
+  AND ($3::text = ''  OR "cnpj" = $3)
+  AND ($4::text = '' OR "phone" = $4)
 `
 
-func (q *Queries) CountSpecialists(ctx context.Context) (int32, error) {
-	row := q.db.QueryRow(ctx, countSpecialists)
+type CountSpecialistsParams struct {
+	Name  string
+	Cpf   string
+	Cnpj  string
+	Phone string
+}
+
+func (q *Queries) CountSpecialists(ctx context.Context, arg CountSpecialistsParams) (int32, error) {
+	row := q.db.QueryRow(ctx, countSpecialists,
+		arg.Name,
+		arg.Cpf,
+		arg.Cnpj,
+		arg.Phone,
+	)
 	var count int32
 	err := row.Scan(&count)
 	return count, err
@@ -171,6 +188,7 @@ WHERE true
   AND ($2::text = ''   OR "cpf" = $2)
   AND ($3::text = ''  OR "cnpj" = $3)
   AND ($4::text = '' OR "phone" = $4)
+ORDER BY "name"
 LIMIT $6::integer
 OFFSET $5::integer
 `

@@ -37,11 +37,11 @@ export class SpecialistsEndpoint {
     return this._config.instance.get(`/api/specialists/${id}/services/${serviceId}`)
   }
 
-  create(data: SpecialistsCreateBody): Promise<AxiosResponse<Id>> {
+  create(data: SpecialistCreateBody): Promise<AxiosResponse<Id>> {
     return this._config.instance.post(`/api/specialists`, data)
   }
 
-  update(id: string, data: SpecialistsUpdateBody): Promise<AxiosResponse<Id>> {
+  update(id: string, data: SpecialistUpdateBody): Promise<AxiosResponse<Id>> {
     return this._config.instance.put(`/api/specialists/${id}`, data)
   }
 
@@ -64,6 +64,7 @@ export type SpecialistsCountAllQuery = {
   name?: string
   phone?: string
   cpf?: string
+  cnpj?: string
 }
 export type SpecialistsGetAllQuery = SpecialistsCountAllQuery & {
   page?: number
@@ -74,30 +75,30 @@ export type GetSpecialistAppointmentQuery = {
   date?: string
 }
 
-export type SpecialistsCreateBodyService = {
+export type SpecialistCreateBodyService = {
   serviceNameId: string
   price: number
   duration: number // minutes
 }
 
-export type SpecialistsCreateBody = {
+export type SpecialistCreateBody = {
   name: string
   email: string
   phone: string
   birthdate: string
   cpf: string
   cnpj: string
-  services: SpecialistsCreateBodyService[]
+  services: SpecialistCreateBodyService[]
 }
 
-export type SpecialistsUpdateBody = {
+export type SpecialistUpdateBody = {
   name: string
   email: string
   phone: string
   birthdate: string
   cpf: string
   cnpj: string
-  services: SpecialistsCreateBodyService[]
+  services: SpecialistCreateBodyService[]
 }
 
 export type SpecialistAppointment = {
@@ -105,11 +106,12 @@ export type SpecialistAppointment = {
   customerName: string
   customerId: string
   serviceName: string
-  serviceId: string
+  serviceNameId: string
   price: number
   duration: number
   date: string
   time: string
+  status: number
 }
 
 export type SpecialistService = {

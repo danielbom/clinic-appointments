@@ -52,9 +52,10 @@ class SyncChecker:
         if reference in exclude:
             return
         if reference.is_file():
+            path = reference
             content = path.read_text(encoding="utf-8")
             for other in others:
-                other_path = other / path.name
+                other_path = other
                 if not other_path.exists():
                     print(f"[ERROR] {path} != {other_path}: missing")
                     continue

@@ -24,11 +24,12 @@ type SpecialistAppointment struct {
 	CustomerName  string `json:"customerName"`
 	CustomerID    string `json:"customerId"`
 	ServiceName   string `json:"serviceName"`
-	ServiceNameID string `json:"serviceId"`
+	ServiceNameID string `json:"serviceNameId"`
 	Price         int32  `json:"price"`
 	Duration      int32  `json:"duration"`
 	Date          string `json:"date"`
 	Time          string `json:"time"`
+	Status        int32  `json:"status"`
 }
 
 type SpecialistServiceInfoBody struct {

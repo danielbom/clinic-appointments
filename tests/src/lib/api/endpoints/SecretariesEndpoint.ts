@@ -17,11 +17,11 @@ export class SecretariesEndpoint {
     return this._config.instance.get(`/api/secretaries/${id}`)
   }
 
-  create(data: SecretariesCreateBody): Promise<AxiosResponse<Id>> {
+  create(data: SecretaryCreateBody): Promise<AxiosResponse<Id>> {
     return this._config.instance.post(`/api/secretaries`, data)
   }
 
-  update(id: string, data: SecretariesUpdateBody): Promise<AxiosResponse<Id>> {
+  update(id: string, data: SecretaryUpdateBody): Promise<AxiosResponse<Id>> {
     return this._config.instance.put(`/api/secretaries/${id}`, data)
   }
 
@@ -53,7 +53,7 @@ export type SecretariesGetAllQuery = SecretariesCountAllQuery & {
   pageSize?: number
 }
 
-export type SecretariesCreateBody = {
+export type SecretaryCreateBody = {
   name: string
   email: string
   phone: string
@@ -63,7 +63,7 @@ export type SecretariesCreateBody = {
   cnpj: string
 }
 
-export type SecretariesUpdateBody = {
+export type SecretaryUpdateBody = {
   name: string
   email: string
   phone: string

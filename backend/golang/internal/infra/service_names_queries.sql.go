@@ -46,7 +46,7 @@ func (q *Queries) DeleteServiceNameByID(ctx context.Context, servicenameid uuid.
 
 const getServiceNameByID = `-- name: GetServiceNameByID :one
 SELECT "id", "name", "specialization_id"
-FROM "service_names" 
+FROM "service_names"
 WHERE "id" = $1
 `
 
@@ -59,7 +59,7 @@ func (q *Queries) GetServiceNameByID(ctx context.Context, servicenameid uuid.UUI
 
 const getServiceNameByName = `-- name: GetServiceNameByName :one
 SELECT "id", "name", "specialization_id"
-FROM "service_names" 
+FROM "service_names"
 WHERE "name" = $1
 `
 

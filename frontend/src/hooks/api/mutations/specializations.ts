@@ -2,7 +2,7 @@ import { message } from 'antd'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { useApi } from '../../../context/ApiContext'
-import { SpecializationsCreateBody, SpecializationsUpdateBody } from '../../../lib/api'
+import { SpecializationCreateBody, SpecializationUpdateBody } from '../../../lib/api'
 import { invalidateQueries } from '../utils'
 
 export function useSpecializationCreate() {
@@ -10,7 +10,7 @@ export function useSpecializationCreate() {
   const api = useApi()
   return useMutation({
     mutationKey: ['#specializations', 'create'],
-    mutationFn: async (values: SpecializationsCreateBody) => {
+    mutationFn: async (values: SpecializationCreateBody) => {
       const response = await api.specializations.create(values)
       return response.data
     },
@@ -26,7 +26,7 @@ export function useSpecializationUpdate() {
   const api = useApi()
   return useMutation({
     mutationKey: ['#specializations', 'update'],
-    mutationFn: async ({ id, body }: { id: string; body: SpecializationsUpdateBody }) => {
+    mutationFn: async ({ id, body }: { id: string; body: SpecializationUpdateBody }) => {
       const response = await api.specializations.update(id, body)
       return response.data
     },

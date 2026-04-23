@@ -27,7 +27,7 @@ export type SpecialistAppointment = {
   customerName: string
   customerId: string
   serviceName: string
-  serviceId: string
+  serviceNameId: string
   price: number
   duration: number
   date: string

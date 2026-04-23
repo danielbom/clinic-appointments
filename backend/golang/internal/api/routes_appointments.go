@@ -114,15 +114,15 @@ func (h *api) countAppointments(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	startDate := query.Get("startDate")
 	endDate := query.Get("endDate")
-	serviceNameID := query.Get("serviceNameId")
-	specialistID := query.Get("specialistId")
-	customerID := query.Get("customerId")
+	serviceName := query.Get("serviceName")
+	specialist := query.Get("specialist")
+	customer := query.Get("customer")
 
 	// Validate e execute the usecase
 	args := usecase.CountAppointmentsArgs{
-		ServiceName:    serviceNameID,
-		SpecialistName: specialistID,
-		CustomerName:   customerID,
+		ServiceName:    serviceName,
+		SpecialistName: specialist,
+		CustomerName:   customer,
 		StartDateRaw:   startDate,
 		EndDateRaw:     endDate,
 	}
