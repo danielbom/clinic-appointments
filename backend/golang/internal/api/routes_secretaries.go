@@ -64,7 +64,7 @@ func (h *api) getSecretary(w http.ResponseWriter, r *http.Request) {
 // @Param        phone     query string  false "Phone"
 // @Success      200 {object}  []dtos.Secretary
 // @Router       /secretaries [get]
-func (h *api) getSecretaries(w http.ResponseWriter, r *http.Request) {
+func (h *api) listSecretaries(w http.ResponseWriter, r *http.Request) {
 	// Authorize access
 	jwtData := GetJwtData(r)
 	if !jwtData.HasAccess() {

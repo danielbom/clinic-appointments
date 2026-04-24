@@ -20,7 +20,7 @@ import (
 // @Param        pageSize  query int     false "Page size"
 // @Success      200 {object}  []dtos.Specialization
 // @Router       /specializations [get]
-func (h *api) getSpecializations(w http.ResponseWriter, r *http.Request) {
+func (h *api) listSpecializations(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
 
 	// Validate e execute the usecase

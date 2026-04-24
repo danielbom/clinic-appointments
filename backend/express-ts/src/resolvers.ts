@@ -2,8 +2,9 @@ import bcrypt from 'bcrypt'
 import { type Request, type Response } from 'express'
 import { db } from './db'
 import { getAppConfig, getDatabaseConfig, listConfiguredResources } from './config'
-import { validate as isUuid } from 'uuid'
+import { validate as isUuid, v7 as generateId } from 'uuid'
 import { generateAccessJWT, generateRefreshJWT, getJwtData, isRefreshToken, JwtData } from './jwt'
+import { getDateParam, getIntParam, getStringParam } from './utils'
 import * as types from './swagger-types'
 
 const saltRounds = 10
@@ -120,7 +121,7 @@ const presenter = {
       specialistName: row.specialists.name,
       specialistId: row.specialists.id,
       price: row.price,
-      duration: row.duration / 60,
+      duration: row.duration,
       date: getDatePart(row.date.toISOString()),
       time: getTimePart(row.time.toISOString()),
       status: row.status,
@@ -145,7 +146,7 @@ const presenter = {
       serviceName: row.service_names.name,
       serviceNameId: row.service_names.id,
       price: row.price,
-      duration: row.duration / 60,
+      duration: row.duration,
       date: getDatePart(row.date.toISOString()),
       time: getTimePart(row.time.toISOString()),
       status: row.status,
@@ -200,7 +201,7 @@ const presenter = {
       serviceName: row.service_names.name,
       serviceNameId: row.service_name_id,
       price: row.price,
-      duration: row.duration / 60,
+      duration: row.duration,
     }
   },
   service(
@@ -214,7 +215,7 @@ const presenter = {
         }>
       >
     >[number],
-  ): types.schemas.Service {
+  ): types.schemas.ServiceEnriched {
     return {
       id: row.id,
       serviceName: row.service_names.name,
@@ -224,7 +225,7 @@ const presenter = {
       specialization: row.service_names.specializations.name,
       specializationId: row.service_names.specializations.id,
       price: row.price,
-      duration: row.duration / 60,
+      duration: row.duration,
     }
   },
   serviceGroup(
@@ -284,7 +285,10 @@ export default {
         },
       }
 
+      // Collect query parameters, path parameters, and request body
       const appConfig = getAppConfig()
+
+      // Validate e execute the usecase
       const response: types.schemas.Status = {
         status: true,
         updatedAt: new Date().toISOString(),
@@ -300,16 +304,19 @@ export default {
         await resourceCheck()
       }
 
+      // Format the response
       res.json(response)
     },
   },
   auth: {
     async login(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const args: types.body.AuthLogin = {
         email: req.body.email,
         password: req.body.password,
       }
 
+      // Validate e execute the usecase
       const identity = await getIdentity({ email: args.email })
 
       if (!identity) {
@@ -331,9 +338,12 @@ export default {
       const accessToken = generateAccessJWT(data)
       const refreshToken = generateRefreshJWT(data)
 
-      res.json({ accessToken, refreshToken })
+      // Format the response
+      const response: types.schemas.AuthResponse = { accessToken, refreshToken }
+      res.json(response)
     },
     async refresh(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const refreshToken = getAccessTokenFromRequest(req)
       if (!refreshToken) {
         res.status(400).send('invalid token\n')
@@ -353,6 +363,7 @@ export default {
         return
       }
 
+      // Validate e execute the usecase
       const identity = await getIdentity({ id: userIdOrError })
       if (!identity) {
         res.status(400).send('invalid token\n')
@@ -366,43 +377,74 @@ export default {
 
       const accessToken = generateAccessJWT(data)
 
-      res.json({ accessToken, refreshToken })
+      // Format the response
+      const response: types.schemas.AuthResponse = { accessToken, refreshToken }
+      res.json(response)
     },
     async me(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const jwtData = await getJwtDataFromRequest(req)
       if (!jwtData) {
         res.status(400).send('invalid token\n')
         return
       }
 
+      // Validate e execute the usecase
       const identity = await getIdentity({ id: jwtData.userId })
       if (!identity) {
         res.status(400).send('invalid token\n')
         return
       }
 
-      res.json({
+      // Format the response
+      const response: types.schemas.AuthIdentity = {
         id: identity.id,
         name: identity.name,
         email: identity.email,
         role: identity.role,
-      })
+      }
+      res.json(response)
     },
   },
   appointments: {
-    async getAll(req: Request, res: Response) {
+    async listAppointments(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
+      const page = getIntParam(req.query.page, 0)
+      const pageSize = getIntParam(req.query.pageSize, 10)
+      const startDate = getDateParam(req.query.startDate)
+      const endDate = getDateParam(req.query.endDate)
+      const serviceName = getStringParam(req.query.serviceName)
+      const specialist = getStringParam(req.query.specialist)
+      const customer = getStringParam(req.query.customer)
+
+      // Validate e execute the usecase
       const rows = await db.appointments.findMany({
         include: {
           customers: {},
           service_names: {},
           specialists: {},
         },
+        where: {
+          AND: [
+            ...(startDate ? [{ date: { gte: startDate } }] : []),
+            ...(endDate ? [{ date: { lte: endDate } }] : []),
+            ...(serviceName
+              ? [{ service_names: { name: { contains: serviceName, mode: 'insensitive' } } } as const]
+              : []), //
+            ...(specialist ? [{ specialists: { name: { contains: specialist, mode: 'insensitive' } } } as const] : []), //
+            ...(customer ? [{ customers: { name: { contains: customer, mode: 'insensitive' } } } as const] : []), //
+          ],
+        },
         orderBy: [{ date: 'desc' }, { time: 'desc' }],
+        take: pageSize,
+        skip: page * pageSize,
       })
-      const response = rows.map((row) => presenter.appointment(row))
+
+      // Format the response
+      const response: types.schemas.Appointment[] = rows.map((row) => presenter.appointment(row))
       res.json(response)
     },
-    async create(req: Request, res: Response) {
+    async createAppointment(req: Request, res: Response) {
       const args: types.body.AppointmentsCreateBody = {
         customerId: req.body.customerId,
         date: req.body.date,
@@ -421,6 +463,7 @@ export default {
 
       const row = await db.appointments.create({
         data: {
+          id: generateId(),
           date: new Date(args.date),
           time: new Date(`2020-01-02T${args.time}.000Z`),
           duration: service.duration,
@@ -432,24 +475,43 @@ export default {
         },
       })
 
-      res.json({ id: row.id })
+      const response: types.schemas.Id = { id: row.id }
+      res.json(response)
     },
-    async count(req: Request, res: Response) {
+    async countAppointments(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
+
+      // Validate e execute the usecase
       const count = await db.appointments.count({})
+
+      // Format the response
       res.send(count)
     },
-    async getCalendar(req: Request, res: Response) {
+    async getAppointmentsCalendar(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
+      const startDate = getDateParam(req.query.startDate)
+      if (!startDate) {
+        return res.status(400).send('invalid date param: startDate\n')
+      }
+      const endDate = getDateParam(req.query.endDate)
+      if (!endDate) {
+        return res.status(400).send('invalid date param: endDate\n')
+      }
+
+      // Validate e execute the usecase
       const row = await db.appointments.findMany({
         where: {
           AND: [
-            { date: { gt: new Date(req.query.startDate as string) } },
-            { date: { lt: new Date(req.query.endDate as string) } },
+            { date: { gt: startDate } }, //
+            { date: { lt: endDate } }, //
           ],
         },
+        orderBy: [{ date: 'desc' }, { time: 'desc' }],
         include: { specialists: {} },
       })
 
-      const response = row.map((row) => ({
+      // Format the response
+      const response: types.schemas.AppointmentCalendar[] = row.map((row) => ({
         id: row.id,
         date: getDatePart(row.date.toISOString()),
         time: getTimePart(row.time.toISOString()),
@@ -458,18 +520,30 @@ export default {
       }))
       res.send(response)
     },
-    async getCalendarCount(req: Request, res: Response) {
+    async getAppointmentsCalendarCount(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
+      const startDate = getDateParam(req.query.startDate)
+      if (!startDate) {
+        return res.status(400).send('invalid date param: startDate\n')
+      }
+      const endDate = getDateParam(req.query.endDate)
+      if (!endDate) {
+        return res.status(400).send('invalid date param: endDate\n')
+      }
+
+      // Validate e execute the usecase
       const appointmentsCount = await db.appointments.groupBy({
         where: {
           AND: [
-            { date: { gt: new Date(req.query.startDate as string) } },
-            { date: { lt: new Date(req.query.endDate as string) } },
+            { date: { gt: startDate } }, //
+            { date: { lt: endDate } }, //
           ],
         },
         by: ['date', 'status'],
         _count: { status: true },
       })
 
+      // Format the response
       const response: types.schemas.AppointmentCalendarCount[] = Array.from({ length: 12 }, (_, month) => ({
         month,
         pendingCount: 0,
@@ -496,10 +570,12 @@ export default {
 
       res.send(response)
     },
-    async getById(req: Request, res: Response) {
+    async getAppointmentById(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const id = getAndParseUuidParam(req, res, 'id')
       if (!id) return
 
+      // Validate e execute the usecase
       const row = await db.appointments.findFirst({
         include: {
           customers: {},
@@ -514,9 +590,11 @@ export default {
         return
       }
 
+      // Format the response
       res.json(presenter.appointment(row))
     },
-    async update(req: Request, res: Response) {
+    async updateAppointment(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const args: types.body.AppointmentsUpdateBody = {
         date: req.body.date,
         status: req.body.status,
@@ -526,6 +604,7 @@ export default {
       const id = getAndParseUuidParam(req, res, 'id')
       if (!id) return
 
+      // Validate e execute the usecase
       const row = await db.appointments.update({
         where: { id },
         data: {
@@ -535,12 +614,16 @@ export default {
         },
       })
 
-      res.json({ id: row.id })
+      // Format the response
+      const response: types.schemas.Id = { id: row.id }
+      res.json(response)
     },
-    async delete(req: Request, res: Response) {
+    async deleteAppointment(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const id = getAndParseUuidParam(req, res, 'id')
       if (!id) return
 
+      // Validate e execute the usecase
       const row = await db.appointments.delete({
         where: { id },
       })
@@ -550,18 +633,39 @@ export default {
         return
       }
 
+      // Format the response
       res.status(204).send('')
     },
   },
   customers: {
-    async getAll(req: Request, res: Response) {
+    async listCustomers(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
+      const page = getIntParam(req.query.page, 0)
+      const pageSize = getIntParam(req.query.pageSize, 10)
+      const name = getStringParam(req.query.name, '')
+      const cpf = getStringParam(req.query.cpf, '')
+      const phone = getStringParam(req.query.phone, '')
+
+      // Validate e execute the usecase
       const rows = await db.customers.findMany({
-        orderBy: { name: 'asc' },
+        where: {
+          AND: [
+            ...(name ? [{ name: { contains: name, mode: 'insensitive' } as const }] : []), //
+            ...(cpf ? [{ cpf }] : []), //
+            ...(phone ? [{ phone }] : []), //
+          ],
+        },
+        // orderBy: { name: 'asc' },
+        take: pageSize,
+        skip: page * pageSize,
       })
+
+      // Format the response
       const response = rows.map((row) => presenter.customer(row))
       res.json(response)
     },
-    async create(req: Request, res: Response) {
+    async createCustomer(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const args: types.body.CustomerCreateBody = {
         birthdate: req.body.birthdate,
         cpf: req.body.cpf,
@@ -570,8 +674,10 @@ export default {
         phone: req.body.phone,
       }
 
+      // Validate e execute the usecase
       const row = await db.customers.create({
         data: {
+          id: generateId(),
           birthdate: new Date(args.birthdate),
           cpf: args.cpf,
           email: args.email,
@@ -580,16 +686,36 @@ export default {
         },
       })
 
-      res.json({ id: row.id })
+      // Format the response
+      const response: types.schemas.Id = { id: row.id }
+      res.json(response)
     },
-    async count(req: Request, res: Response) {
-      const count = await db.customers.count({})
+    async countCustomers(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
+      const name = getStringParam(req.query.name, '')
+      const cpf = getStringParam(req.query.cpf, '')
+      const phone = getStringParam(req.query.phone, '')
+
+      // Validate e execute the usecase
+      const count = await db.customers.count({
+        where: {
+          AND: [
+            ...(name ? [{ name: { contains: name, mode: 'insensitive' } as const }] : []), //
+            ...(cpf ? [{ cpf }] : []), //
+            ...(phone ? [{ phone }] : []), //
+          ],
+        },
+      })
+
+      // Format the response
       res.send(count)
     },
-    async getById(req: Request, res: Response) {
+    async getCustomerById(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const id = getAndParseUuidParam(req, res, 'id')
       if (!id) return
 
+      // Validate e execute the usecase
       const row = await db.customers.findFirst({
         where: { id },
       })
@@ -599,9 +725,11 @@ export default {
         return
       }
 
+      // Format the response
       res.json(presenter.customer(row))
     },
-    async update(req: Request, res: Response) {
+    async updateCustomer(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const args: types.body.CustomerUpdateBody = {
         name: req.body.name,
         email: req.body.email,
@@ -621,17 +749,22 @@ export default {
         cpf: args.cpf,
       }
 
+      // Validate e execute the usecase
       const row = await db.customers.update({
         where: { id },
         data,
       })
 
-      res.json({ id: row.id })
+      // Format the response
+      const response: types.schemas.Id = { id: row.id }
+      res.json(response)
     },
-    async delete(req: Request, res: Response) {
+    async deleteCustomer(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const id = getAndParseUuidParam(req, res, 'id')
       if (!id) return
 
+      // Validate e execute the usecase
       const row = await db.customers.delete({
         where: { id },
       })
@@ -641,18 +774,41 @@ export default {
         return
       }
 
+      // Format the response
       res.status(204).send('')
     },
   },
   secretaries: {
-    async getAll(req: Request, res: Response) {
+    async listSecretaries(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
+      const page = getIntParam(req.query.page, 0)
+      const pageSize = getIntParam(req.query.pageSize, 10)
+      const name = getStringParam(req.query.name, '')
+      const cpf = getStringParam(req.query.cpf, '')
+      const cnpj = getStringParam(req.query.cnpj, '')
+      const phone = getStringParam(req.query.phone, '')
+
+      // Validate e execute the usecase
       const rows = await db.secretaries.findMany({
+        where: {
+          AND: [
+            ...(name ? [{ name: { contains: name, mode: 'insensitive' } as const }] : []), //
+            ...(cpf ? [{ cpf }] : []), //
+            ...(cnpj ? [{ cnpj }] : []), //
+            ...(phone ? [{ phone }] : []), //
+          ],
+        },
         orderBy: { name: 'asc' },
+        take: pageSize,
+        skip: page * pageSize,
       })
+
+      // Format the response
       const response = rows.map((row) => presenter.secretary(row))
       res.json(response)
     },
-    async create(req: Request, res: Response) {
+    async createSecretary(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const args: types.body.SecretaryCreateBody = {
         birthdate: req.body.birthdate,
         cpf: req.body.cpf,
@@ -663,6 +819,7 @@ export default {
         cnpj: req.body.cnpj,
       }
 
+      // Validate e execute the usecase
       const exists = await db.secretaries.findUnique({
         where: { email: args.email },
       })
@@ -674,6 +831,7 @@ export default {
 
       const row = await db.secretaries.create({
         data: {
+          id: generateId(),
           birthdate: new Date(args.birthdate),
           cpf: args.cpf,
           email: args.email,
@@ -684,16 +842,38 @@ export default {
         },
       })
 
-      res.json({ id: row.id })
+      // Format the response
+      const response: types.schemas.Id = { id: row.id }
+      res.json(response)
     },
-    async count(req: Request, res: Response) {
-      const count = await db.secretaries.count({})
+    async countSecretaries(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
+      const name = getStringParam(req.query.name, '')
+      const cpf = getStringParam(req.query.cpf, '')
+      const cnpj = getStringParam(req.query.cnpj, '')
+      const phone = getStringParam(req.query.phone, '')
+
+      // Validate e execute the usecase
+      const count = await db.secretaries.count({
+        where: {
+          AND: [
+            ...(name ? [{ name: { contains: name, mode: 'insensitive' } as const }] : []), //
+            ...(cpf ? [{ cpf }] : []), //
+            ...(cnpj ? [{ cnpj }] : []), //
+            ...(phone ? [{ phone }] : []), //
+          ],
+        },
+      })
+
+      // Format the response
       res.send(count)
     },
-    async getById(req: Request, res: Response) {
+    async getSecretaryById(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const id = getAndParseUuidParam(req, res, 'id')
       if (!id) return
 
+      // Validate e execute the usecase
       const row = await db.secretaries.findFirst({
         where: { id },
       })
@@ -703,9 +883,11 @@ export default {
         return
       }
 
+      // Format the response
       res.json(presenter.secretary(row))
     },
-    async update(req: Request, res: Response) {
+    async updateSecretary(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const args: types.body.SecretaryUpdateBody = {
         name: req.body.name,
         email: req.body.email,
@@ -729,6 +911,7 @@ export default {
         password: args.password ? await hashPassword(args.password) : undefined,
       }
 
+      // Validate e execute the usecase
       const row = await db.secretaries.findFirst({
         where: { id },
       })
@@ -754,12 +937,16 @@ export default {
         data,
       })
 
-      res.json({ id: row.id })
+      // Format the response
+      const response: types.schemas.Id = { id: row.id }
+      res.json(response)
     },
-    async delete(req: Request, res: Response) {
+    async deleteSecretary(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const id = getAndParseUuidParam(req, res, 'id')
       if (!id) return
 
+      // Validate e execute the usecase
       const row = await db.secretaries.delete({
         where: { id },
       })
@@ -769,26 +956,36 @@ export default {
         return
       }
 
+      // Format the response
       res.status(204).send('')
     },
   },
   servicesAvailable: {
-    async getAll(req: Request, res: Response) {
+    async listServicesAvailable(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
+      const page = getIntParam(req.query.page, 0)
+      const pageSize = getIntParam(req.query.pageSize, 10)
+
+      // Validate e execute the usecase
       const rows = await db.specializations.findMany({
         orderBy: { name: 'asc' },
         include: {
           service_names: {},
         },
+        take: pageSize,
+        skip: page * pageSize,
       })
 
-      const response = rows.map((row) => ({
+      // Format the response
+      const response: types.schemas.ServiceAvailable[] = rows.map((row) => ({
         id: row.id,
         name: row.name,
         items: row.service_names.map((s) => ({ id: s.id, name: s.name })),
       }))
       res.json(response)
     },
-    async create(req: Request, res: Response) {
+    async createServiceAvailable(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const args: types.body.ServiceAvailableCreateBody = {
         name: req.body.name,
         specialization: req.body.specialization,
@@ -800,6 +997,7 @@ export default {
         return
       }
 
+      // Validate e execute the usecase
       const exists = await db.service_names.findUnique({
         where: { name: args.name },
       })
@@ -821,17 +1019,22 @@ export default {
 
       const row = await db.service_names.create({
         data: {
+          id: generateId(),
           name: args.name,
           specialization_id: args.specializationId,
         },
       })
 
-      res.json({ id: row.id })
+      // Format the response
+      const response: types.schemas.Id = { id: row.id }
+      res.json(response)
     },
-    async getById(req: Request, res: Response) {
+    async getServiceAvailableById(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const id = getAndParseUuidParam(req, res, 'id')
       if (!id) return
 
+      // Validate e execute the usecase
       const row = await db.service_names.findUnique({
         where: { id },
         include: {
@@ -844,6 +1047,7 @@ export default {
         return
       }
 
+      // Format the response
       res.json({
         serviceName: row.name,
         serviceNameId: row.id,
@@ -851,7 +1055,8 @@ export default {
         specializationId: row.specializations.id,
       })
     },
-    async update(req: Request, res: Response) {
+    async updateServiceAvailable(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const id = getAndParseUuidParam(req, res, 'id')
       if (!id) return
 
@@ -864,6 +1069,7 @@ export default {
         return
       }
 
+      // Validate e execute the usecase
       const row = await db.service_names.findUnique({
         where: { id },
       })
@@ -892,12 +1098,16 @@ export default {
         data: { name: args.name },
       })
 
-      res.json({ id: row.id })
+      // Format the response
+      const response: types.schemas.Id = { id: row.id }
+      res.json(response)
     },
-    async delete(req: Request, res: Response) {
+    async deleteServiceAvailable(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const id = getAndParseUuidParam(req, res, 'id')
       if (!id) return
 
+      // Validate e execute the usecase
       const row = await db.service_names.delete({
         where: { id },
       })
@@ -907,19 +1117,42 @@ export default {
         return
       }
 
+      // Format the response
       res.status(204).send('')
     },
   },
   services: {
-    async getAll(req: Request, res: Response) {
+    async listServices(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
+      const page = getIntParam(req.query.page, 0)
+      const pageSize = getIntParam(req.query.pageSize, 10)
+      const service = getStringParam(req.query.service).toLowerCase()
+      const specialist = getStringParam(req.query.specialist).toLowerCase()
+      const specialization = getStringParam(req.query.specialization).toLowerCase()
+
+      // Validate e execute the usecase
       const rows = await db.services.findMany({
+        where: {
+          AND: [
+            ...(service ? [{ service_names: { name: { contains: service } } } as const] : []), //
+            ...(specialist ? [{ specialists: { name: { contains: specialist } } } as const] : []), //
+            ...(specialization
+              ? [{ service_names: { specializations: { name: { contains: specialization } } } } as const]
+              : []), //
+          ],
+        },
         include: { service_names: { include: { specializations: {} } }, specialists: {} },
+        // orderBy: [{ service_names: { specializations: { name: 'asc' } } }, { specialists: { name: 'asc' } }],
+        take: pageSize,
+        skip: page * pageSize,
       })
 
-      const response = rows.map((row) => presenter.service(row))
+      // Format the response
+      const response: types.schemas.ServiceEnriched[] = rows.map((row) => presenter.service(row))
       res.json(response)
     },
-    async create(req: Request, res: Response) {
+    async createService(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const args: types.body.ServiceCreateBody = {
         duration: req.body.duration,
         price: req.body.price,
@@ -927,25 +1160,36 @@ export default {
         specialistId: req.body.specialistId,
       }
 
+      // Validate e execute the usecase
       const row = await db.services.create({
         data: {
+          id: generateId(),
           service_name_id: args.serviceNameId,
           specialist_id: args.specialistId,
           price: args.price,
-          duration: args.duration * 60,
+          duration: args.duration,
         },
       })
 
-      res.json({ id: row.id })
+      // Format the response
+      const response: types.schemas.Id = { id: row.id }
+      res.json(response)
     },
-    async count(req: Request, res: Response) {
+    async countServices(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
+
+      // Validate e execute the usecase
       const count = await db.services.count({})
+
+      // Format the response
       res.send(count)
     },
-    async getById(req: Request, res: Response) {
+    async getServiceById(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const id = getAndParseUuidParam(req, res, 'id')
       if (!id) return
 
+      // Validate e execute the usecase
       const row = await db.services.findUnique({
         where: { id },
       })
@@ -955,15 +1199,18 @@ export default {
         return
       }
 
-      res.send({
+      // Format the response
+      const response: types.schemas.Service = {
         id: row.id,
         specialistId: row.specialist_id,
         serviceNameId: row.service_name_id,
         price: row.price,
-        duration: row.duration / 60,
-      })
+        duration: row.duration,
+      }
+      res.send(response)
     },
-    async update(req: Request, res: Response) {
+    async updateService(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const id = getAndParseUuidParam(req, res, 'id')
       if (!id) return
 
@@ -972,10 +1219,11 @@ export default {
         price: req.body.price,
       }
 
+      // Validate e execute the usecase
       const row = await db.services.update({
         where: { id },
         data: {
-          duration: args.duration * 60,
+          duration: args.duration,
           price: args.price,
         },
       })
@@ -985,12 +1233,16 @@ export default {
         return
       }
 
-      res.send({ id: row.id })
+      // Format the response
+      const response: types.schemas.Id = { id: row.id }
+      res.json(response)
     },
-    async delete(req: Request, res: Response) {
+    async deleteService(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const id = getAndParseUuidParam(req, res, 'id')
       if (!id) return
 
+      // Validate e execute the usecase
       const row = await db.services.delete({
         where: { id },
       })
@@ -1000,28 +1252,55 @@ export default {
         return
       }
 
+      // Format the response
       res.status(204).send('')
     },
   },
   serviceGroups: {
-    async getAll(req: Request, res: Response) {
+    async listServiceGroups(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
+
+      // Validate e execute the usecase
       const rows = await db.specializations.findMany({
         include: { service_names: {} },
       })
 
-      const response = rows.map((row) => presenter.serviceGroup(row))
+      // Format the response
+      const response: types.schemas.ServiceGroup[] = rows.map((row) => presenter.serviceGroup(row))
       res.json(response)
     },
   },
   specialists: {
-    async getAll(req: Request, res: Response) {
+    async listSpecialists(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
+      const page = getIntParam(req.query.page, 0)
+      const pageSize = getIntParam(req.query.pageSize, 10)
+      const name = getStringParam(req.query.name)
+      const cpf = getStringParam(req.query.cpf)
+      const cnpj = getStringParam(req.query.cnpj)
+      const phone = getStringParam(req.query.phone)
+
+      // Validate e execute the usecase
       const rows = await db.specialists.findMany({
+        where: {
+          AND: [
+            ...(name ? [{ name: { contains: name, mode: 'insensitive' } as const }] : []), //
+            ...(cpf ? [{ cpf }] : []), //
+            ...(cnpj ? [{ cnpj }] : []), //
+            ...(phone ? [{ phone }] : []), //
+          ],
+        },
         orderBy: { name: 'asc' },
+        take: pageSize,
+        skip: page * pageSize,
       })
-      const response = rows.map((row) => presenter.specialist(row))
+
+      // Format the response
+      const response: types.schemas.Specialist[] = rows.map((row) => presenter.specialist(row))
       res.json(response)
     },
-    async create(req: Request, res: Response) {
+    async createSpecialist(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const args: types.body.SpecialistCreateBody = {
         name: req.body.name.trim(),
         birthdate: req.body.birthdate,
@@ -1032,6 +1311,7 @@ export default {
         services: req.body.services,
       }
 
+      // Validate e execute the usecase
       const exists = await db.specialists.findUnique({
         where: { email: args.email },
       })
@@ -1044,6 +1324,7 @@ export default {
       const row = await db.$transaction(async (tx) => {
         const row = await tx.specialists.create({
           data: {
+            id: generateId(),
             birthdate: new Date(args.birthdate),
             cpf: args.cpf,
             email: args.email,
@@ -1055,9 +1336,10 @@ export default {
 
         await tx.services.createMany({
           data: args.services.map((s) => ({
+            id: generateId(),
             service_name_id: s.serviceNameId,
             price: s.price,
-            duration: s.duration * 60,
+            duration: s.duration,
             specialist_id: row.id,
           })),
         })
@@ -1065,13 +1347,33 @@ export default {
         return row
       })
 
-      res.json({ id: row.id })
+      // Format the response
+      const response: types.schemas.Id = { id: row.id }
+      res.json(response)
     },
-    async count(req: Request, res: Response) {
-      const count = await db.specialists.count({})
+    async countSpecialists(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
+      const name = getStringParam(req.query.name)
+      const cpf = getStringParam(req.query.cpf)
+      const cnpj = getStringParam(req.query.cnpj)
+      const phone = getStringParam(req.query.phone)
+
+      // Validate e execute the usecase
+      const count = await db.specialists.count({
+        where: {
+          AND: [
+            ...(name ? [{ name: { contains: name, mode: 'insensitive' } as const }] : []), //
+            ...(cpf ? [{ cpf }] : []), //
+            ...(cnpj ? [{ cnpj }] : []), //
+            ...(phone ? [{ phone }] : []), //
+          ],
+        },
+      })
+
+      // Format the response
       res.send(count)
     },
-    async getById(req: Request, res: Response) {
+    async getSpecialistById(req: Request, res: Response) {
       const id = getAndParseUuidParam(req, res, 'id')
       if (!id) return
 
@@ -1084,10 +1386,10 @@ export default {
         return
       }
 
-      const response = presenter.specialist(row)
+      const response: types.schemas.Specialist = presenter.specialist(row)
       res.json(response)
     },
-    async getServices(req: Request, res: Response) {
+    async getSpecialistServices(req: Request, res: Response) {
       const id = getAndParseUuidParam(req, res, 'id')
       if (!id) return
 
@@ -1099,35 +1401,43 @@ export default {
       const response = rows.map((row) => presenter.specialistService(row))
       res.json(response)
     },
-    async getSpecializations(req: Request, res: Response) {
+    async getSpecialistSpecializations(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const id = getAndParseUuidParam(req, res, 'id')
       if (!id) return
 
+      // Validate e execute the usecase
       const rows = await db.specializations.findMany({
         where: { service_names: { some: { services: { some: { specialist_id: id } } } } },
       })
 
-      const response = rows
+      // Format the response
+      const response: types.schemas.Specialization[] = rows
       res.json(response)
     },
-    async getAppointments(req: Request, res: Response) {
+    async getSpecialistAppointments(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const id = getAndParseUuidParam(req, res, 'id')
       if (!id) return
 
+      // Validate e execute the usecase
       const rows = await db.appointments.findMany({
         where: { specialist_id: id },
         include: { service_names: {}, customers: {} },
       })
 
+      // Format the response
       const response = rows.map((row) => presenter.specialistAppointment(row))
       res.json(response)
     },
-    async getService(req: Request, res: Response) {
+    async getSpecialistService(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const id = getAndParseUuidParam(req, res, 'id')
       if (!id) return
       const serviceId = getAndParseUuidParam(req, res, 'service_id')
       if (!serviceId) return
 
+      // Validate e execute the usecase
       const row = await db.services.findFirst({
         where: { specialist_id: id, service_name_id: serviceId },
       })
@@ -1137,16 +1447,18 @@ export default {
         return
       }
 
-      const response = {
+      // Format the response
+      const response: types.schemas.Service = {
         id: row.id,
         specialistId: row.specialist_id,
         serviceNameId: row.service_name_id,
         price: row.price,
-        duration: row.duration / 60,
+        duration: row.duration,
       }
       res.json(response)
     },
-    async update(req: Request, res: Response) {
+    async updateSpecialist(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const id = getAndParseUuidParam(req, res, 'id')
       if (!id) return
 
@@ -1165,6 +1477,7 @@ export default {
         return
       }
 
+      // Validate e execute the usecase
       const row = await db.specialists.update({
         where: { id },
         data: {
@@ -1177,12 +1490,16 @@ export default {
         },
       })
 
-      res.json({ id: row.id })
+      // Format the response
+      const response: types.schemas.Id = { id: row.id }
+      res.json(response)
     },
-    async delete(req: Request, res: Response) {
+    async deleteSpecialist(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const id = getAndParseUuidParam(req, res, 'id')
       if (!id) return
 
+      // Validate e execute the usecase
       const row = await db.specialists.delete({
         where: { id },
       })
@@ -1192,26 +1509,34 @@ export default {
         return
       }
 
+      // Format the response
       res.status(204).send('')
     },
   },
   specializations: {
-    async getAll(req: Request, res: Response) {
+    async listSpecializations(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
+
+      // Validate e execute the usecase
       const rows = await db.specializations.findMany({
         orderBy: { name: 'asc' },
       })
+
+      // Format the response
       res.json(rows)
     },
-    async create(req: Request, res: Response) {
-      const args = {
-        name: req.body.name.trim() as string,
+    async createSpecialization(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
+      const args: types.body.SpecializationCreateBody = {
+        name: req.body.name?.trim(),
       }
 
-      if (args.name.length === 0) {
+      if (!args.name) {
         res.status(400).send('invalid argument: name: field is required\n')
         return
       }
 
+      // Validate e execute the usecase
       const exists = await db.specializations.findUnique({
         where: { name: args.name },
       })
@@ -1223,25 +1548,30 @@ export default {
 
       const row = await db.specializations.create({
         data: {
+          id: generateId(),
           name: args.name,
         },
       })
 
-      res.json({ id: row.id })
+      // Format the response
+      const response: types.schemas.Id = { id: row.id }
+      res.json(response)
     },
-    async update(req: Request, res: Response) {
+    async updateSpecialization(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const id = getAndParseUuidParam(req, res, 'id')
       if (!id) return
 
-      const args = {
-        name: (req.body.name as string | undefined)?.trim(),
+      const args: types.body.SpecializationUpdateBody = {
+        name: req.body.name?.trim(),
       }
 
-      if (!args.name || args.name.length === 0) {
+      if (!args.name) {
         res.status(400).send('invalid argument: name: field is required\n')
         return
       }
 
+      // Validate e execute the usecase
       const row = await db.specializations.update({
         where: { id },
         data: { name: args.name },
@@ -1252,12 +1582,16 @@ export default {
         return
       }
 
-      res.json({ id: row.id })
+      // Format the response
+      const response: types.schemas.Id = { id: row.id }
+      res.json(response)
     },
-    async delete(req: Request, res: Response) {
+    async deleteSpecialization(req: Request, res: Response) {
+      // Collect query parameters, path parameters, and request body
       const id = getAndParseUuidParam(req, res, 'id')
       if (!id) return
 
+      // Validate e execute the usecase
       const row = await db.specializations.delete({
         where: { id },
       })
@@ -1267,11 +1601,12 @@ export default {
         return
       }
 
+      // Format the response
       res.status(204).send('')
     },
   },
   test: {
-    async init(req: Request, res: Response) {
+    async initTest(req: Request, res: Response) {
       await db.$transaction(async (tx) => {
         await tx.admins.deleteMany()
         await tx.appointments.deleteMany()
@@ -1285,6 +1620,7 @@ export default {
 
         await tx.admins.create({
           data: {
+            id: generateId(),
             name: 'Admin Test',
             email: 'admin@test.com',
             password: await hashPassword('123mudar'),
@@ -1293,14 +1629,14 @@ export default {
       })
       res.send('System initialized to be tested')
     },
-    async stats(req: Request, res: Response) {
+    async statsTest(req: Request, res: Response) {
       const dbConfig = getDatabaseConfig()
       res.json({
         database: `user=${dbConfig.user} password=${dbConfig.password} host=${dbConfig.host} port=${dbConfig.port} dbname=${dbConfig.name}`,
         message: 'Environment: TEST',
       })
     },
-    async debugClaims(req: Request, res: Response) {
+    async debugClaimsTest(req: Request, res: Response) {
       res.send('OK')
     },
   },

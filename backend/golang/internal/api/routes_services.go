@@ -52,7 +52,7 @@ func (h *api) getService(w http.ResponseWriter, r *http.Request) {
 // @Param        specialization	query string  false "Specialization"
 // @Success      200 {object}  []dtos.Service
 // @Router       /services [get]
-func (h *api) getServices(w http.ResponseWriter, r *http.Request) {
+func (h *api) listServices(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
 	query := r.URL.Query()
 	page := ParseIntOrDefault(query.Get("page"), 0)

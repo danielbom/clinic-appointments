@@ -21,6 +21,8 @@ export namespace domain {
    */
   export type Email = string
 
+  export type Role = string
+
   export type Password = string
 
   /**
@@ -62,6 +64,18 @@ export namespace schemas {
       openedConnections: number
       schemaVersion: number
     }
+  }
+
+  export interface AuthResponse {
+    accessToken: string
+    refreshToken: string
+  }
+
+  export interface AuthIdentity {
+    id: domain.Uuid
+    name: domain.Name
+    email: domain.Email
+    role: domain.Role
   }
 
   export type AppointmentStatus = number
@@ -115,9 +129,16 @@ export namespace schemas {
     cnpj?: domain.Cnpj
   }
 
-  export type ServiceAvailable = any
+  export interface ServiceAvailable {
+    id: domain.Uuid
+    name: domain.Name
+    items: Array<{
+        id: domain.Uuid
+        name: domain.Name
+      }>
+  }
 
-  export interface Service {
+  export interface ServiceEnriched {
     id: domain.Uuid
     serviceName: domain.Name
     serviceNameId: domain.Uuid
@@ -125,6 +146,14 @@ export namespace schemas {
     specialistId: domain.Uuid
     specialization: domain.Name
     specializationId: domain.Uuid
+    price: domain.Price
+    duration: domain.Duration
+  }
+
+  export interface Service {
+    id: domain.Uuid
+    serviceNameId: domain.Uuid
+    specialistId: domain.Uuid
     price: domain.Price
     duration: domain.Duration
   }
@@ -166,6 +195,7 @@ export namespace schemas {
     name: domain.Name
   }
 }
+
 export namespace body {
   export interface AuthLogin {
     email: domain.Email

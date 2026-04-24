@@ -52,7 +52,7 @@ func (h *api) getCustomer(w http.ResponseWriter, r *http.Request) {
 // @Param        phone     query string  false "Phone"
 // @Success      200 {object}  []dtos.Customer
 // @Router       /customers [get]
-func (h *api) getCustomers(w http.ResponseWriter, r *http.Request) {
+func (h *api) listCustomers(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
 	query := r.URL.Query()
 	page := ParseIntOrDefault(query.Get("page"), 0)

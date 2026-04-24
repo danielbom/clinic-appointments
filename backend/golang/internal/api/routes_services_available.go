@@ -11,8 +11,8 @@ import (
 	"github.com/go-chi/render"
 )
 
-func (h *api) getServicesAvailable(w http.ResponseWriter, r *http.Request) {
-	h.getServiceGroups(w, r)
+func (h *api) listServicesAvailable(w http.ResponseWriter, r *http.Request) {
+	h.listServiceGroups(w, r)
 }
 
 func (h *api) getServiceAvailable(w http.ResponseWriter, r *http.Request) {

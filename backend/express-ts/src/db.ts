@@ -4,4 +4,7 @@ import { getDatabaseConfig } from './config'
 
 const config = getDatabaseConfig()
 const adapter = new PrismaPg({ connectionString: config.connectionString })
-export const db = new PrismaClient({ adapter })
+export const db = new PrismaClient({
+  adapter,
+  // log: ['query'],
+})

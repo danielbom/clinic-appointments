@@ -36,25 +36,28 @@
     "/api/auth/login": {
       "post": {
         "operationId": "auth.login",
+        "summary": "Login",
         "tags": ["Auth"]
       }
     },
     "/api/auth/refresh": {
       "post": {
         "operationId": "auth.refresh",
+        "summary": "Refresh",
         "tags": ["Auth"]
       }
     },
     "/api/auth/me": {
       "get": {
         "operationId": "auth.me",
+        "summary": "Get user identity",
         "tags": ["Auth"]
       }
     },
 
     "/api/appointments": {
       "get": {
-        "operationId": "appointments.getAll",
+        "operationId": "appointments.listAppointments",
         "summary": "Get all appointments",
         "tags": ["Appointments"],
         "parameters": [
@@ -73,7 +76,8 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Appointment"
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Appointment" }
                 }
               }
             }
@@ -81,7 +85,7 @@
         }
       },
       "post": {
-        "operationId": "appointments.create",
+        "operationId": "appointments.createAppointment",
         "summary": "Create an appointment",
         "tags": ["Appointments"],
         "requestBody": {
@@ -110,7 +114,7 @@
     },
     "/api/appointments/count": {
       "get": {
-        "operationId": "appointments.count",
+        "operationId": "appointments.countAppointments",
         "summary": "Count appointments",
         "tags": ["Appointments"],
         "parameters": [
@@ -137,7 +141,7 @@
     },
     "/api/appointments/calendar": {
       "get": {
-        "operationId": "appointments.getCalendar",
+        "operationId": "appointments.getAppointmentsCalendar",
         "summary": "Get appointments calendar",
         "tags": ["Appointments"],
         "parameters": [{ "$ref": "#/components/query/StartDate" }, { "$ref": "#/components/query/EndDate" }],
@@ -147,7 +151,8 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Appointment"
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Appointment" }
                 }
               }
             }
@@ -157,7 +162,7 @@
     },
     "/api/appointments/calendar/count": {
       "get": {
-        "operationId": "appointments.getCalendarCount",
+        "operationId": "appointments.getAppointmentsCalendarCount",
         "summary": "Get appointments calendar count",
         "tags": ["Appointments"],
         "parameters": [{ "$ref": "#/components/query/StartDate" }, { "$ref": "#/components/query/EndDate" }],
@@ -177,7 +182,7 @@
     },
     "/api/appointments/{id}": {
       "get": {
-        "operationId": "appointments.getById",
+        "operationId": "appointments.getAppointmentById",
         "summary": "Get appointment by id",
         "tags": ["Appointments"],
         "parameters": [
@@ -199,7 +204,7 @@
         }
       },
       "put": {
-        "operationId": "appointments.update",
+        "operationId": "appointments.updateAppointment",
         "summary": "Update an appointment",
         "tags": ["Appointments"],
         "requestBody": {
@@ -226,7 +231,7 @@
         }
       },
       "delete": {
-        "operationId": "appointments.delete",
+        "operationId": "appointments.deleteAppointment",
         "summary": "Delete an appointment",
         "tags": ["Appointments"],
         "responses": {
@@ -239,7 +244,7 @@
 
     "/api/customers": {
       "get": {
-        "operationId": "customers.getAll",
+        "operationId": "customers.listCustomers",
         "summary": "Get all customers",
         "tags": ["Customers"],
         "parameters": [],
@@ -249,7 +254,8 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Customer"
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Customer" }
                 }
               }
             }
@@ -257,8 +263,8 @@
         }
       },
       "post": {
-        "operationId": "customers.create",
-        "summary": "Create an customer",
+        "operationId": "customers.createCustomer",
+        "summary": "Create a customer",
         "tags": ["Customers"],
         "requestBody": {
           "required": true,
@@ -286,7 +292,7 @@
     },
     "/api/customers/count": {
       "get": {
-        "operationId": "customers.count",
+        "operationId": "customers.countCustomers",
         "summary": "Count customers",
         "tags": ["Customers"],
         "parameters": [],
@@ -306,7 +312,7 @@
     },
     "/api/customers/{id}": {
       "get": {
-        "operationId": "customers.getById",
+        "operationId": "customers.getCustomerById",
         "summary": "Get customer by id",
         "tags": ["Customers"],
         "parameters": [
@@ -328,7 +334,7 @@
         }
       },
       "put": {
-        "operationId": "customers.update",
+        "operationId": "customers.updateCustomer",
         "summary": "Update an customer",
         "tags": ["Customers"],
         "requestBody": {
@@ -355,7 +361,7 @@
         }
       },
       "delete": {
-        "operationId": "customers.delete",
+        "operationId": "customers.deleteCustomer",
         "summary": "Delete an customer",
         "tags": ["Customers"],
         "responses": {
@@ -368,7 +374,7 @@
 
     "/api/secretaries": {
       "get": {
-        "operationId": "secretaries.getAll",
+        "operationId": "secretaries.listSecretaries",
         "summary": "Get all secretaries",
         "tags": ["Secretaries"],
         "parameters": [],
@@ -378,7 +384,8 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Secretary"
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Secretary" }
                 }
               }
             }
@@ -386,8 +393,8 @@
         }
       },
       "post": {
-        "operationId": "secretaries.create",
-        "summary": "Create an secretaries",
+        "operationId": "secretaries.createSecretary",
+        "summary": "Create a secretary",
         "tags": ["Secretaries"],
         "requestBody": {
           "required": true,
@@ -415,7 +422,7 @@
     },
     "/api/secretaries/count": {
       "get": {
-        "operationId": "secretaries.count",
+        "operationId": "secretaries.countSecretaries",
         "summary": "Count secretaries",
         "tags": ["Secretaries"],
         "parameters": [],
@@ -435,7 +442,7 @@
     },
     "/api/secretaries/{id}": {
       "get": {
-        "operationId": "secretaries.getById",
+        "operationId": "secretaries.getSecretaryById",
         "summary": "Get secretaries by id",
         "tags": ["Secretaries"],
         "parameters": [
@@ -457,7 +464,7 @@
         }
       },
       "put": {
-        "operationId": "secretaries.update",
+        "operationId": "secretaries.updateSecretary",
         "summary": "Update an secretaries",
         "tags": ["Secretaries"],
         "requestBody": {
@@ -484,7 +491,7 @@
         }
       },
       "delete": {
-        "operationId": "secretaries.delete",
+        "operationId": "secretaries.deleteSecretary",
         "summary": "Delete an secretaries",
         "tags": ["Secretaries"],
         "responses": {
@@ -497,7 +504,7 @@
 
     "/api/services-available": {
       "get": {
-        "operationId": "servicesAvailable.getAll",
+        "operationId": "servicesAvailable.listServicesAvailable",
         "summary": "Get all services available",
         "tags": ["Services Available"],
         "parameters": [],
@@ -507,7 +514,8 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ServiceAvailable"
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ServiceAvailable" }
                 }
               }
             }
@@ -515,7 +523,7 @@
         }
       },
       "post": {
-        "operationId": "servicesAvailable.create",
+        "operationId": "servicesAvailable.createServiceAvailable",
         "summary": "Create a service available",
         "tags": ["Services Available"],
         "requestBody": {
@@ -544,7 +552,7 @@
     },
     "/api/services-available/{id}": {
       "get": {
-        "operationId": "servicesAvailable.getById",
+        "operationId": "servicesAvailable.getServiceAvailableById",
         "summary": "Get a service available by id",
         "tags": ["Services Available"],
         "parameters": [
@@ -566,7 +574,7 @@
         }
       },
       "put": {
-        "operationId": "servicesAvailable.update",
+        "operationId": "servicesAvailable.updateServiceAvailable",
         "summary": "Update an service available",
         "tags": ["Services Available"],
         "requestBody": {
@@ -593,7 +601,7 @@
         }
       },
       "delete": {
-        "operationId": "servicesAvailable.delete",
+        "operationId": "servicesAvailable.deleteServiceAvailable",
         "summary": "Delete a service available",
         "tags": ["Services Available"],
         "responses": {
@@ -606,7 +614,7 @@
 
     "/api/services": {
       "get": {
-        "operationId": "services.getAll",
+        "operationId": "services.listServices",
         "summary": "Get all services",
         "tags": ["Services"],
         "parameters": [],
@@ -616,7 +624,8 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Service"
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ServiceEnriched" }
                 }
               }
             }
@@ -624,8 +633,8 @@
         }
       },
       "post": {
-        "operationId": "services.create",
-        "summary": "Create a services",
+        "operationId": "services.createService",
+        "summary": "Create a service",
         "tags": ["Services"],
         "requestBody": {
           "required": true,
@@ -643,7 +652,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Service"
+                  "$ref": "#/components/schemas/ServiceEnriched"
                 }
               }
             }
@@ -653,7 +662,7 @@
     },
     "/api/services/count": {
       "get": {
-        "operationId": "services.count",
+        "operationId": "services.countServices",
         "summary": "Count services",
         "tags": ["Services"],
         "parameters": [],
@@ -673,7 +682,7 @@
     },
     "/api/services/{id}": {
       "get": {
-        "operationId": "services.getById",
+        "operationId": "services.getServiceById",
         "summary": "Get services by id",
         "tags": ["Services"],
         "parameters": [
@@ -687,7 +696,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Service"
+                  "$ref": "#/components/schemas/ServiceEnriched"
                 }
               }
             }
@@ -695,7 +704,7 @@
         }
       },
       "put": {
-        "operationId": "services.update",
+        "operationId": "services.updateService",
         "summary": "Update a services",
         "tags": ["Services"],
         "requestBody": {
@@ -722,7 +731,7 @@
         }
       },
       "delete": {
-        "operationId": "services.delete",
+        "operationId": "services.deleteService",
         "summary": "Delete a services",
         "tags": ["Services"],
         "responses": {
@@ -735,7 +744,7 @@
 
     "/api/service-groups": {
       "get": {
-        "operationId": "serviceGroups.getAll",
+        "operationId": "serviceGroups.listServiceGroups",
         "summary": "Get all services grouped by specification",
         "tags": ["Service Groups"],
         "parameters": [],
@@ -757,7 +766,7 @@
 
     "/api/specialists": {
       "get": {
-        "operationId": "specialists.getAll",
+        "operationId": "specialists.listSpecialists",
         "summary": "Get all specialists",
         "tags": ["Specialists"],
         "parameters": [],
@@ -767,7 +776,8 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Specialist"
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Specialist" }
                 }
               }
             }
@@ -775,8 +785,8 @@
         }
       },
       "post": {
-        "operationId": "specialists.create",
-        "summary": "Create a specialists",
+        "operationId": "specialists.createSpecialist",
+        "summary": "Create a specialist",
         "tags": ["Specialists"],
         "requestBody": {
           "required": true,
@@ -804,7 +814,7 @@
     },
     "/api/specialists/count": {
       "get": {
-        "operationId": "specialists.count",
+        "operationId": "specialists.countSpecialists",
         "summary": "Count specialists",
         "tags": ["Specialists"],
         "parameters": [],
@@ -824,7 +834,8 @@
     },
     "/api/specialists/{id}/services": {
       "get": {
-        "operationId": "specialists.getServices",
+        "operationId": "specialists.getSpecialistServices",
+        "summary": "Get specialist services",
         "tags": ["Specialists"],
         "parameters": [
           {
@@ -839,7 +850,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Service"
+                    "$ref": "#/components/schemas/ServiceEnriched"
                   }
                 }
               }
@@ -850,7 +861,8 @@
     },
     "/api/specialists/{id}/specializations": {
       "get": {
-        "operationId": "specialists.getSpecializations",
+        "operationId": "specialists.getSpecialistSpecializations",
+        "summary": "Get specialist specializations",
         "tags": ["Specialists"],
         "parameters": [
           {
@@ -876,7 +888,8 @@
     },
     "/api/specialists/{id}/appointments": {
       "get": {
-        "operationId": "specialists.getAppointments",
+        "operationId": "specialists.getSpecialistAppointments",
+        "summary": "Get specialist appointments",
         "tags": ["Specialists"],
         "parameters": [
           {
@@ -902,7 +915,8 @@
     },
     "/api/specialists/{id}/services/{service_id}": {
       "get": {
-        "operationId": "specialists.getService",
+        "operationId": "specialists.getSpecialistService",
+        "summary": "Get specialist service",
         "tags": ["Specialists"],
         "parameters": [
           {
@@ -923,7 +937,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Service"
+                  "$ref": "#/components/schemas/ServiceEnriched"
                 }
               }
             }
@@ -933,7 +947,7 @@
     },
     "/api/specialists/{id}": {
       "get": {
-        "operationId": "specialists.getById",
+        "operationId": "specialists.getSpecialistById",
         "summary": "Get specialists by id",
         "tags": ["Specialists"],
         "parameters": [
@@ -955,7 +969,7 @@
         }
       },
       "put": {
-        "operationId": "specialists.update",
+        "operationId": "specialists.updateSpecialist",
         "summary": "Update a specialists",
         "tags": ["Specialists"],
         "requestBody": {
@@ -982,7 +996,7 @@
         }
       },
       "delete": {
-        "operationId": "specialists.delete",
+        "operationId": "specialists.deleteSpecialist",
         "summary": "Delete a specialists",
         "tags": ["Specialists"],
         "responses": {
@@ -995,7 +1009,7 @@
 
     "/api/specializations": {
       "get": {
-        "operationId": "specializations.getAll",
+        "operationId": "specializations.listSpecializations",
         "summary": "Get all specializations",
         "tags": ["Specializations"],
         "parameters": [],
@@ -1005,7 +1019,8 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Specialization"
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Specialization" }
                 }
               }
             }
@@ -1013,8 +1028,8 @@
         }
       },
       "post": {
-        "operationId": "specializations.create",
-        "summary": "Create a specializations",
+        "operationId": "specializations.createSpecialization",
+        "summary": "Create a specialization",
         "tags": ["Specializations"],
         "requestBody": {
           "required": true,
@@ -1042,7 +1057,7 @@
     },
     "/api/specializations/{id}": {
       "put": {
-        "operationId": "specializations.update",
+        "operationId": "specializations.updateSpecialization",
         "summary": "Update an specializations",
         "tags": ["Specializations"],
         "requestBody": {
@@ -1069,7 +1084,7 @@
         }
       },
       "delete": {
-        "operationId": "specializations.delete",
+        "operationId": "specializations.deleteSpecialization",
         "summary": "Delete a specializations",
         "tags": ["Specializations"],
         "responses": {
@@ -1082,21 +1097,24 @@
 
     "/api/test/init": {
       "get": {
-        "operationId": "test.init",
+        "operationId": "test.initTest",
+        "summary": "Init tests",
         "tags": ["Test"],
         "description": "Available only in TEST environments"
       }
     },
     "/api/test/stats": {
       "get": {
-        "operationId": "test.stats",
+        "operationId": "test.statsTest",
+        "summary": "Stats in test",
         "tags": ["Test"],
         "description": "Available only in TEST environments"
       }
     },
     "/api/test/debug-claims": {
       "get": {
-        "operationId": "test.debugClaims",
+        "operationId": "test.debugClaimsTest",
+        "summary": "Debug claims in test",
         "tags": ["Test"],
         "description": "Available only in TEST environments"
       }
@@ -1165,7 +1183,8 @@
         "name": "page",
         "schema": {
           "type": "number",
-          "format": "integer"
+          "format": "integer",
+          "minimum": 0
         }
       },
       "PageSize": {
@@ -1173,7 +1192,8 @@
         "name": "pageSize",
         "schema": {
           "type": "number",
-          "format": "integer"
+          "format": "integer",
+          "minimum": 1
         }
       }
     },
@@ -1197,6 +1217,9 @@
         "type": "string",
         "format": "email"
       },
+      "Role": {
+        "type": "string"
+      },
       "Password": {
         "type": "string"
       },
@@ -1214,7 +1237,8 @@
       },
       "Name": {
         "type": "string",
-        "description": "Non empty string"
+        "description": "Non empty string",
+        "minLength": 1
       }
     },
 
@@ -1305,7 +1329,7 @@
           "specialization": { "type": "string" },
           "specializationId": { "$ref": "#/components/domain/Uuid" }
         },
-        "required": "name"
+        "required": ["name"]
       },
       "ServiceAvailableUpdateBody": {
         "type": "object",
@@ -1422,9 +1446,30 @@
         "required": ["status", "updatedAt", "environment"]
       },
 
+      "AuthResponse": {
+        "type": "object",
+        "properties": {
+          "accessToken": { "type": "string" },
+          "refreshToken": { "type": "string" }
+        },
+        "required": ["accessToken", "refreshToken"]
+      },
+
+      "AuthIdentity": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "name": { "$ref": "#/components/domain/Name" },
+          "email": { "$ref": "#/components/domain/Email" },
+          "role": { "$ref": "#/components/domain/Role" }
+        },
+        "required": ["id", "name", "email", "role"]
+      },
+
       "AppointmentStatus": {
         "type": "number",
-        "description": "0: None 1: Pending 2: Realized 3: Canceled"
+        "description": "0: None 1: Pending 2: Realized 3: Canceled",
+        "enum": [0, 1, 2, 3]
       },
       "Appointment": {
         "type": "object",
@@ -1509,9 +1554,27 @@
         "required": ["id", "name", "email", "phone", "birthdate", "cpf"]
       },
 
-      "ServiceAvailable": {},
+      "ServiceAvailable": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "name": { "$ref": "#/components/domain/Name" },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "$ref": "#/components/domain/Uuid" },
+                "name": { "$ref": "#/components/domain/Name" }
+              },
+              "required": ["id", "name"]
+            }
+          }
+        },
+        "required": ["id", "name", "items"]
+      },
 
-      "Service": {
+      "ServiceEnriched": {
         "type": "object",
         "properties": {
           "id": { "$ref": "#/components/domain/Uuid" },
@@ -1532,6 +1595,24 @@
           "specialistId",
           "specialization",
           "specializationId",
+          "price",
+          "duration"
+        ]
+      },
+
+      "Service": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "serviceNameId": { "$ref": "#/components/domain/Uuid" },
+          "specialistId": { "$ref": "#/components/domain/Uuid" },
+          "price": { "$ref": "#/components/domain/Price" },
+          "duration": { "$ref": "#/components/domain/Duration" }
+        },
+        "required": [
+          "id",
+          "serviceNameId",
+          "specialistId",
           "price",
           "duration"
         ]

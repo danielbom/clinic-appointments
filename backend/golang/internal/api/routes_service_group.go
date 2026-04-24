@@ -9,7 +9,7 @@ import (
 	"github.com/go-chi/render"
 )
 
-func (h *api) getServiceGroups(w http.ResponseWriter, r *http.Request) {
+func (h *api) listServiceGroups(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
 
 	// Validate e execute the usecase

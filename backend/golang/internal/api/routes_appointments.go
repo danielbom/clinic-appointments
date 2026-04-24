@@ -51,7 +51,7 @@ func (h *api) getAppointment(w http.ResponseWriter, r *http.Request) {
 // @Param        endDate   query string  false "End date"
 // @Success      200 {object}  []dtos.Appointment
 // @Router       /appointments [get]
-func (h *api) getAppointments(w http.ResponseWriter, r *http.Request) {
+func (h *api) listAppointments(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
 	query := r.URL.Query()
 	page := ParseIntOrDefault(query.Get("page"), 0)

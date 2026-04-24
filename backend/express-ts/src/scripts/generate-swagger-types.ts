@@ -103,6 +103,7 @@ function generateSwaggerTypes(w: Writable) {
     count++
   }
   w.write('}\n')
+  w.write('\n')
   count = 0
   w.write('export namespace body {\n')
   for (const key in openApiJson.components.body) {

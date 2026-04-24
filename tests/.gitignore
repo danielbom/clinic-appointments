@@ -1,3 +1,4 @@
 node_modules/
 coverage/
 snapshot.log
+snapshot.actual.txt

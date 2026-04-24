@@ -59,7 +59,7 @@ func NewApi(pool *pgxpool.Pool, auth *jwtauth.JWTAuth) http.Handler {
 	r.With(h.JWT).Post("/api/auth/refresh", h.authRefresh)
 	r.With(h.JWT).Get("/api/auth/me", h.authMe)
 
-	r.With(h.JWT).Get("/api/appointments", h.getAppointments)
+	r.With(h.JWT).Get("/api/appointments", h.listAppointments)
 	r.With(h.JWT).Get("/api/appointments/count", h.countAppointments)
 	r.With(h.JWT).Get("/api/appointments/calendar", h.getAppointmentsCalendar)
 	r.With(h.JWT).Get("/api/appointments/calendar/count", h.getAppointmentsCalendarCount)
@@ -68,14 +68,14 @@ func NewApi(pool *pgxpool.Pool, auth *jwtauth.JWTAuth) http.Handler {
 	r.With(h.JWT).Put("/api/appointments/{appointment_id}", h.updateAppointment)
 	r.With(h.JWT).Delete("/api/appointments/{appointment_id}", h.deleteAppointment)
 
-	r.With(h.JWT).Get("/api/customers", h.getCustomers)
+	r.With(h.JWT).Get("/api/customers", h.listCustomers)
 	r.With(h.JWT).Get("/api/customers/count", h.countCustomers)
 	r.With(h.JWT).Get("/api/customers/{customer_id}", h.getCustomer)
 	r.With(h.JWT).Post("/api/customers", h.createCustomer)
 	r.With(h.JWT).Put("/api/customers/{customer_id}", h.updateCustomer)
 	r.With(h.JWT).Delete("/api/customers/{customer_id}", h.deleteCustomer)
 
-	r.With(h.JWT).Get("/api/secretaries", h.getSecretaries)
+	r.With(h.JWT).Get("/api/secretaries", h.listSecretaries)
 	r.With(h.JWT).Get("/api/secretaries/count", h.countSecretaries)
 	r.With(h.JWT).Get("/api/secretaries/{secretary_id}", h.getSecretary)
 	r.With(h.JWT).Post("/api/secretaries", h.createSecretary)
@@ -93,21 +93,21 @@ func NewApi(pool *pgxpool.Pool, auth *jwtauth.JWTAuth) http.Handler {
 	r.With(h.JWT).Put("/api/specialists/{specialist_id}", h.updateSpecialist)
 	r.With(h.JWT).Delete("/api/specialists/{specialist_id}", h.deleteSpecialist)
 
-	r.With(h.JWT).Get("/api/specializations", h.getSpecializations)
+	r.With(h.JWT).Get("/api/specializations", h.listSpecializations)
 	r.With(h.JWT).Post("/api/specializations", h.createSpecialization)
 	r.With(h.JWT).Put("/api/specializations/{specialization_id}", h.updateSpecialization)
 	r.With(h.JWT).Delete("/api/specializations/{specialization_id}", h.deleteSpecialization)
 
-	r.With(h.JWT).Get("/api/service-groups", h.getServiceGroups)
+	r.With(h.JWT).Get("/api/service-groups", h.listServiceGroups)
 
-	r.With(h.JWT).Get("/api/services", h.getServices)
+	r.With(h.JWT).Get("/api/services", h.listServices)
 	r.With(h.JWT).Get("/api/services/count", h.countServices)
 	r.With(h.JWT).Get("/api/services/{service_id}", h.getService)
 	r.With(h.JWT).Post("/api/services", h.createService)
 	r.With(h.JWT).Put("/api/services/{service_id}", h.updateService)
 	r.With(h.JWT).Delete("/api/services/{service_id}", h.deleteService)
 
-	r.With(h.JWT).Get("/api/services-available", h.getServicesAvailable)
+	r.With(h.JWT).Get("/api/services-available", h.listServicesAvailable)
 	// r.With(h.JWT).Get("/api/services-available/count", h.countAvailableServices)
 	r.With(h.JWT).Get("/api/services-available/{service_id}", h.getServiceAvailable)
 	r.With(h.JWT).Post("/api/services-available", h.createServiceAvailable)

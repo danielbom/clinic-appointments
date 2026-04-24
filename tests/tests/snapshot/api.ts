@@ -16,7 +16,8 @@ import { Random, rng } from '../../src/lib/rng'
 const random = new Random(rng.mulberry32(12345))
 
 export function getSimilarity(a: string, b: string): number {
-  const distance = levenshtein.get(a, b)
+  const minLength = Math.min(a.length, b.length)
+  const distance = levenshtein.get(a.slice(0, minLength), b.slice(0, minLength))
   const maxLength = Math.max(a.length, b.length)
 
   if (maxLength === 0) return 100
@@ -111,11 +112,9 @@ function redactResponse(response: AxiosResponse | undefined): any {
 }
 
 const ACTUAL_SNAPSHOT_PATH = Path.from(import.meta.dirname).append('snapshot.actual.txt')
-const SNAPSHOT_LOG_PATH = Path.from(import.meta.dirname).append('snapshot.log')
 const CURRENT_SNAPSHOT_PATH = Path.from(import.meta.dirname).append('snapshot.txt')
 
 const output = new WriteStr()
-const logger = SNAPSHOT_LOG_PATH.open('w')
 const w = new WriteCombined([output])
 
 class SimpleAxiosError extends Error {
@@ -139,17 +138,34 @@ class SimpleAxiosError extends Error {
   }
 }
 
+function findInStack(targets: string[]) {
+  const stack = new Error().stack
+  if (!stack) return '<>'
+
+  const lines = stack.split('\n')
+
+  const result: string[] = []
+  for (const line of lines) {
+    if (targets.every((target) => line.includes(target))) {
+      result.push('- ' + line.trim())
+    }
+  }
+
+  return result.join('\n')
+}
+
 let WRITE_RESPONSE = true
+let count = 0
 
 api._config.instance.interceptors.response.use(
   (response) => {
     if (WRITE_RESPONSE) writeResponse(w, redactResponse(response))
-    writeResponse(logger, response)
+    console.log(`[${new Date().toISOString()}] ${count++} request`)
+    console.log(findInStack(['api.ts', 'async run']))
     return response
   },
   (error) => {
     if (WRITE_RESPONSE) writeResponse(w, redactResponse(error.response))
-    writeResponse(logger, error.response)
     throw new SimpleAxiosError(error)
   },
 )
@@ -527,7 +543,7 @@ async function run(args: Args) {
     // [secretaries]
     for (let i = 0; i < 20; i++) {
       const res = await api.secretaries.create({
-        name: `Secretary ${i}`,
+        name: `Secretary ${i.toString().padStart(4, '0')}`,
         email: `secretary-${i}@test.com`,
         password: '123@mudaR',
         birthdate: random.date(1980, 2010),
@@ -542,7 +558,7 @@ async function run(args: Args) {
     // [specializations]
     for (let i = 0; i < 10; i++) {
       const res = await api.specializations.create({
-        name: `Specialization ${i}`,
+        name: `Specialization ${i.toString().padStart(4, '0')}`,
       })
       if (res.status !== 200) throw new Error(`specializations ${i}: ${JSON.stringify(res.data)}`)
       state.specializationIds.push(res.data.id)
@@ -553,7 +569,7 @@ async function run(args: Args) {
       const specializationId = state.specializationIds[ix]
       for (let i = 0; i < 5; i++) {
         const res = await api.servicesAvailable.create({
-          name: `Service Available ${ix}-${i}`,
+          name: `Service Available ${ix}-${i.toString().padStart(4, '0')}`,
           specializationId: specializationId,
         })
         if (res.status !== 200) throw new Error(`servicesAvailable ${i}: ${JSON.stringify(res.data)}`)
@@ -564,7 +580,7 @@ async function run(args: Args) {
     // [specialists]
     for (let i = 0; i < 50; i++) {
       const res = await api.specialists.create({
-        name: `Specialist ${i}`,
+        name: `Specialist ${i.toString().padStart(4, '0')}`,
         email: `specialist-${i}@test.com`,
         phone: '219876543210',
         cnpj: '16833374000128',
@@ -599,7 +615,7 @@ async function run(args: Args) {
     // [customers]
     for (let i = 0; i < 150; i++) {
       const res = await api.customers.create({
-        name: `Customer ${i}`,
+        name: `Customer ${i.toString().padStart(4, '0')}`,
         email: `customer-${i}@test.com`,
         cpf: '11431287962',
         birthdate: random.date(1960, 2010),
@@ -711,8 +727,9 @@ async function run(args: Args) {
 }
 
 const startAt = new Date()
-const timeMessage = `[${startAt.toISOString()}] Time`
-console.time(timeMessage)
+const timeMessage = `[${startAt.toISOString()}]`
+console.log(timeMessage + ' Start')
+console.time(timeMessage + ' Time')
 
 run({ record: process.argv[2] === 'record' })
   .catch((error) => {
@@ -720,6 +737,6 @@ run({ record: process.argv[2] === 'record' })
     throw error
   })
   .finally(() => {
-    console.timeEnd(timeMessage)
-    logger.close()
+    console.log(timeMessage + ' End')
+    console.timeEnd(timeMessage + ' Time')
   })
