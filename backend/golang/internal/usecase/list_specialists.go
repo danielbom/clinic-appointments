@@ -23,6 +23,10 @@ func ListSpecialists(state State, args ListSpecialistsArgs) ([]infra.Specialist,
 	specializations, err := state.Queries().ListSpecialists(state.Context(), infra.ListSpecialistsParams{
 		Limit:  args.PaginationArgs.PageSize,
 		Offset: args.PaginationArgs.Page * args.PaginationArgs.PageSize,
+		Name:   args.CountArgs.Name,
+		Cpf:    args.CountArgs.Cpf,
+		Cnpj:   args.CountArgs.Cnpj,
+		Phone:  args.CountArgs.Phone,
 	})
 	if err != nil {
 		return nil, NewUnexpectedError(err)

@@ -6,7 +6,8 @@ import (
 	"strconv"
 
 	"github.com/go-chi/chi"
-	"github.com/google/uuid"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 func InvalidJson(w http.ResponseWriter) {
@@ -18,19 +19,27 @@ func SomethingWentWrong(w http.ResponseWriter, err error) {
 	http.Error(w, "something went wrong", http.StatusInternalServerError)
 }
 
-func GetAndParseUuidParam(w http.ResponseWriter, r *http.Request, paramName string) (uuid.UUID, bool) {
+func GetAndParseUuidParam(w http.ResponseWriter, r *http.Request, paramName string) (pgtype.UUID, bool) {
 	rawId := chi.URLParam(r, paramName)
 	return ParseUuidParam(w, rawId, paramName)
 }
 
-func ParseUuidParam(w http.ResponseWriter, rawID string, paramName string) (uuid.UUID, bool) {
-	id, err := uuid.Parse(rawID)
+func ParseUuid(rawID string) (pgtype.UUID, bool) {
+	var result pgtype.UUID
+	err := result.Scan(rawID)
 	if err != nil {
+		return result, false
+	}
+	return result, true
+}
+
+func ParseUuidParam(w http.ResponseWriter, rawID string, paramName string) (pgtype.UUID, bool) {
+	result, ok := ParseUuid(rawID)
+	if !ok {
 		slog.Warn("invalid param", paramName, rawID)
 		http.Error(w, "invalid uuid param: "+paramName, http.StatusBadRequest)
-		return uuid.Nil, false
 	}
-	return id, true
+	return result, ok
 }
 
 func ParseIntOrDefault(text string, defaultValue int32) int32 {

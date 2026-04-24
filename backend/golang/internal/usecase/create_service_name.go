@@ -1,22 +1,23 @@
 package usecase
 
 import (
-	"backend/internal/infra"
 	"strings"
 
-	"github.com/google/uuid"
+	"backend/internal/infra"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type CreateServiceNameArgs struct {
 	Name                string
 	Specialization      string
 	SpecializationIDRaw string
-	SpecializationID    uuid.UUID
+	SpecializationID    pgtype.UUID
 }
 
 func (args *CreateServiceNameArgs) Validate() *UsecaseError {
 	args.Name = strings.TrimSpace(args.Name)
-	if args.Specialization == "" && args.SpecializationID == uuid.Nil {
+	if args.Specialization == "" && !args.SpecializationID.Valid {
 		if err := args.SpecializationID.Scan(args.SpecializationIDRaw); err != nil {
 			return NewInvalidArgumentError(ErrInvalidUuid).InField("specializationId")
 		}
@@ -27,7 +28,7 @@ func (args *CreateServiceNameArgs) Validate() *UsecaseError {
 	return nil
 }
 
-func ServiceWithNameExists(state State, name string, exceptId uuid.UUID) (bool, error) {
+func ServiceWithNameExists(state State, name string, exceptId pgtype.UUID) (bool, error) {
 	service, err := state.Queries().GetServiceNameByName(state.Context(), name)
 	if ErrorIsNoRows(err) {
 		return false, nil
@@ -41,30 +42,45 @@ func ServiceWithNameExists(state State, name string, exceptId uuid.UUID) (bool, 
 	return true, nil
 }
 
-func CreateServiceName(state State, args CreateServiceNameArgs) (uuid.UUID, *UsecaseError) {
-	exists, err := ServiceWithNameExists(state, args.Name, uuid.Nil)
+func CreateServiceName(state State, args CreateServiceNameArgs) (pgtype.UUID, *UsecaseError) {
+	var none pgtype.UUID
+	exists, err := ServiceWithNameExists(state, args.Name, none)
 	if err != nil {
-		return uuid.Nil, NewUnexpectedError(err)
+		return none, NewUnexpectedError(err)
 	}
 	if exists {
-		return uuid.Nil, NewResourceAlreadyExistsError("service_name")
+		return none, NewResourceAlreadyExistsError("service_name")
 	}
 
 	if args.Specialization != "" {
-		specializationId, err := state.Queries().CreateSpecialization(state.Context(), args.Specialization)
+		id, err := NewUuid()
 		if err != nil {
-			return uuid.Nil, NewUnexpectedError(err)
+			return none, NewUnexpectedError(err)
+		}
+
+		params := infra.CreateSpecializationParams{
+			ID:   id,
+			Name: args.Specialization,
+		}
+		specializationId, err := state.Queries().CreateSpecialization(state.Context(), params)
+		if err != nil {
+			return none, NewUnexpectedError(err)
 		}
 		args.SpecializationID = specializationId
 	}
 
+	id, err := NewUuid()
+	if err != nil {
+		return none, NewUnexpectedError(err)
+	}
 	params := infra.CreateServiceNameParams{
+		ID:               id,
 		Name:             args.Name,
 		SpecializationId: args.SpecializationID,
 	}
-	id, err := state.Queries().CreateServiceName(state.Context(), params)
+	_, err = state.Queries().CreateServiceName(state.Context(), params)
 	if err != nil {
-		return uuid.Nil, NewUnexpectedError(err)
+		return none, NewUnexpectedError(err)
 	}
 	return id, nil
 }

@@ -3,17 +3,17 @@ package usecase
 import (
 	"backend/internal/infra"
 
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type ListSpecialistAppointmentsArgs struct {
-	SpecialistID    uuid.UUID
+	SpecialistID    pgtype.UUID
 	SpecialistIDRaw string
 	DateRaw         string
 }
 
 func (args *ListSpecialistAppointmentsArgs) Validate() *UsecaseError {
-	if args.SpecialistID == uuid.Nil {
+	if !args.SpecialistID.Valid {
 		if err := args.SpecialistID.Scan(args.SpecialistIDRaw); err != nil {
 			return NewInvalidArgumentError(ErrInvalidUuid).InField("specialistId")
 		}

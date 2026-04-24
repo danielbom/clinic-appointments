@@ -5,20 +5,20 @@ import { type Id } from './types'
 export class SpecializationsEndpoint {
   constructor(public _config: Config) {}
 
-  getAll(): Promise<AxiosResponse<Specialization[]>> {
-    return this._config.instance.get(`/api/specializations`)
+  async getAll(): Promise<AxiosResponse<Specialization[]>> {
+    return await this._config.instance.get(`/api/specializations`)
   }
 
-  create(data: SpecializationCreateBody): Promise<AxiosResponse<Id>> {
-    return this._config.instance.post(`/api/specializations`, data)
+  async create(data: SpecializationCreateBody): Promise<AxiosResponse<Id>> {
+    return await this._config.instance.post(`/api/specializations`, data)
   }
 
-  update(id: string, data: SpecializationUpdateBody): Promise<AxiosResponse<Id>> {
-    return this._config.instance.put(`/api/specializations/${id}`, data)
+  async update(id: string, data: SpecializationUpdateBody): Promise<AxiosResponse<Id>> {
+    return await this._config.instance.put(`/api/specializations/${id}`, data)
   }
 
-  delete(id: string): Promise<AxiosResponse<void>> {
-    return this._config.instance.delete(`/api/specializations/${id}`)
+  async delete(id: string): Promise<AxiosResponse<void>> {
+    return await this._config.instance.delete(`/api/specializations/${id}`)
   }
 }
 

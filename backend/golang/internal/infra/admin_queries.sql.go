@@ -8,27 +8,34 @@ package infra
 import (
 	"context"
 
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createAdmin = `-- name: CreateAdmin :one
-INSERT INTO "admins" ("name", "email", "password")
+INSERT INTO "admins" ("id", "name", "email", "password")
 VALUES ( $1
        , $2
        , $3
+       , $4
        )
 RETURNING "id"
 `
 
 type CreateAdminParams struct {
+	ID       pgtype.UUID
 	Name     string
 	Email    string
 	Password string
 }
 
-func (q *Queries) CreateAdmin(ctx context.Context, arg CreateAdminParams) (uuid.UUID, error) {
-	row := q.db.QueryRow(ctx, createAdmin, arg.Name, arg.Email, arg.Password)
-	var id uuid.UUID
+func (q *Queries) CreateAdmin(ctx context.Context, arg CreateAdminParams) (pgtype.UUID, error) {
+	row := q.db.QueryRow(ctx, createAdmin,
+		arg.ID,
+		arg.Name,
+		arg.Email,
+		arg.Password,
+	)
+	var id pgtype.UUID
 	err := row.Scan(&id)
 	return id, err
 }

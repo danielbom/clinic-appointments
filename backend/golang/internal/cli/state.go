@@ -7,7 +7,6 @@ import (
 	"backend/internal/env"
 	"backend/internal/infra"
 
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"golang.org/x/crypto/bcrypt"
@@ -56,15 +55,6 @@ func (s *State) Context() context.Context {
 
 func (c *State) Close() {
 	c.pool.Close()
-}
-
-func (s *State) CreateAdmin(params infra.CreateAdminParams) (uuid.UUID, error) {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(params.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return uuid.Nil, err
-	}
-	params.Password = string(hashedPassword)
-	return s.q.CreateAdmin(s.ctx, params)
 }
 
 func (s *State) GetIdentity(email, password string) (infra.GetIdentityByEmailRow, error) {

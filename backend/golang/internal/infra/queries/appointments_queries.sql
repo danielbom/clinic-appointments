@@ -1,6 +1,7 @@
 -- name: CreateAppointment :one
-INSERT INTO "appointments" ("customer_id", "specialist_id", "service_name_id", "price", "duration", "date", "time", "status")
-VALUES ( sqlc.arg('customerId')
+INSERT INTO "appointments" ("id", "customer_id", "specialist_id", "service_name_id", "price", "duration", "date", "time", "status")
+VALUES ( sqlc.arg('id')
+       , sqlc.arg('customerId')
        , sqlc.arg('specialistId')
        , sqlc.arg('serviceNameId')
        , sqlc.arg('price')

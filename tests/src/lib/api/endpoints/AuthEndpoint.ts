@@ -4,20 +4,20 @@ import { type Config } from '../Config'
 export class AuthEndpoint {
   constructor(public _config: Config) {}
 
-  login(data: AuthLoginBody): Promise<AxiosResponse<AuthLoginResponse>> {
-    return this._config.instance.post(`/api/auth/login`, data)
+  async login(data: AuthLoginBody): Promise<AxiosResponse<AuthLoginResponse>> {
+    return await this._config.instance.post(`/api/auth/login`, data)
   }
 
-  refresh(refreshToken: string): Promise<AxiosResponse<AuthLoginResponse>> {
-    return this._config.instance.post(`/api/auth/refresh`, null, {
+  async refresh(refreshToken: string): Promise<AxiosResponse<AuthLoginResponse>> {
+    return await this._config.instance.post(`/api/auth/refresh`, null, {
       headers: {
         Authorization: `Bearer ${refreshToken}`,
       },
     })
   }
 
-  me(): Promise<AxiosResponse<Identity>> {
-    return this._config.instance.get(`/api/auth/me`)
+  async me(): Promise<AxiosResponse<Identity>> {
+    return await this._config.instance.get(`/api/auth/me`)
   }
 }
 

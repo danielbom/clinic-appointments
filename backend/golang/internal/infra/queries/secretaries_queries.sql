@@ -1,6 +1,7 @@
 -- name: CreateSecretary :one
-INSERT INTO "secretaries" ("name", "email", "password", "phone", "birthdate", "cpf", "cnpj")
-VALUES ( sqlc.arg('name')
+INSERT INTO "secretaries" ("id", "name", "email", "password", "phone", "birthdate", "cpf", "cnpj")
+VALUES ( sqlc.arg('id')
+       , sqlc.arg('name')
        , sqlc.arg('email')
        , sqlc.arg('password')
        , sqlc.arg('phone')

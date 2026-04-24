@@ -3,10 +3,10 @@ package usecase
 import (
 	"backend/internal/infra"
 
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
-func GetCustomer(state State, id uuid.UUID) (infra.Customer, *UsecaseError) {
+func GetCustomer(state State, id pgtype.UUID) (infra.Customer, *UsecaseError) {
 	customer, err := state.Queries().GetCustomerByID(state.Context(), id)
 	if err == nil {
 		return customer, nil

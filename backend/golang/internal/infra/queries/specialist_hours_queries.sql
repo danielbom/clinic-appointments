@@ -1,6 +1,7 @@
 -- name: CreateSpecialistHour :one
-INSERT INTO specialist_hours ("specialist_id", "weekday", "start_time", "end_time")
-VALUES ( sqlc.arg('specialistId')
+INSERT INTO specialist_hours ("id", "specialist_id", "weekday", "start_time", "end_time")
+VALUES ( sqlc.arg('id')
+       , sqlc.arg('specialistId')
        , sqlc.arg('weekday')
        , sqlc.arg('startTime')
        , sqlc.arg('endTime')

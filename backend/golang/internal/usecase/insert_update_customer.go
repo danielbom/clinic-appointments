@@ -4,7 +4,6 @@ import (
 	"backend/internal/infra"
 	"backend/internal/validate"
 
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -44,7 +43,7 @@ func (args *CustomerInfoArgs) Validate() *UsecaseError {
 	return nil
 }
 
-func CustomerWithPhoneExists(state State, phone string, exceptId uuid.UUID) (bool, error) {
+func CustomerWithPhoneExists(state State, phone string, exceptId pgtype.UUID) (bool, error) {
 	customer, err := state.Queries().GetCustomerByPhone(state.Context(), phone)
 	if ErrorIsNoRows(err) {
 		return false, nil
@@ -60,14 +59,20 @@ func CustomerWithPhoneExists(state State, phone string, exceptId uuid.UUID) (boo
 
 func CreateCustomer(state State, args CustomerInfoArgs) (infra.Customer, *UsecaseError) {
 	var none infra.Customer
-	exists, err := CustomerWithPhoneExists(state, args.Phone, uuid.Nil)
+	exists, err := CustomerWithPhoneExists(state, args.Phone, pgtype.UUID{})
 	if err != nil {
 		return none, NewUnexpectedError(err)
 	}
 	if exists {
 		return none, NewResourceAlreadyExistsError("customer.phone")
 	}
+	id, err := NewUuid()
+	if err != nil {
+		return none, NewUnexpectedError(err)
+	}
+
 	params := infra.CreateCustomerParams{
+		ID:        id,
 		Name:      args.Name,
 		Email:     args.EmailText,
 		Phone:     args.Phone,
@@ -81,7 +86,7 @@ func CreateCustomer(state State, args CustomerInfoArgs) (infra.Customer, *Usecas
 	return customer, nil
 }
 
-func UpdateCustomer(state State, customerId uuid.UUID, args CustomerInfoArgs) (infra.Customer, *UsecaseError) {
+func UpdateCustomer(state State, customerId pgtype.UUID, args CustomerInfoArgs) (infra.Customer, *UsecaseError) {
 	var none infra.Customer
 	exists, err := CustomerWithPhoneExists(state, args.Phone, customerId)
 	if err != nil {

@@ -8,25 +8,27 @@ package infra
 import (
 	"context"
 
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createServiceName = `-- name: CreateServiceName :one
-INSERT INTO "service_names" ("name", "specialization_id")
+INSERT INTO "service_names" ("id", "name", "specialization_id")
 VALUES ( $1
        , $2
+       , $3
        )
 RETURNING "id"
 `
 
 type CreateServiceNameParams struct {
+	ID               pgtype.UUID
 	Name             string
-	SpecializationId uuid.UUID
+	SpecializationId pgtype.UUID
 }
 
-func (q *Queries) CreateServiceName(ctx context.Context, arg CreateServiceNameParams) (uuid.UUID, error) {
-	row := q.db.QueryRow(ctx, createServiceName, arg.Name, arg.SpecializationId)
-	var id uuid.UUID
+func (q *Queries) CreateServiceName(ctx context.Context, arg CreateServiceNameParams) (pgtype.UUID, error) {
+	row := q.db.QueryRow(ctx, createServiceName, arg.ID, arg.Name, arg.SpecializationId)
+	var id pgtype.UUID
 	err := row.Scan(&id)
 	return id, err
 }
@@ -36,7 +38,7 @@ DELETE FROM "service_names"
 WHERE "id" = $1
 `
 
-func (q *Queries) DeleteServiceNameByID(ctx context.Context, servicenameid uuid.UUID) (int64, error) {
+func (q *Queries) DeleteServiceNameByID(ctx context.Context, servicenameid pgtype.UUID) (int64, error) {
 	result, err := q.db.Exec(ctx, deleteServiceNameByID, servicenameid)
 	if err != nil {
 		return 0, err
@@ -50,7 +52,7 @@ FROM "service_names"
 WHERE "id" = $1
 `
 
-func (q *Queries) GetServiceNameByID(ctx context.Context, servicenameid uuid.UUID) (ServiceName, error) {
+func (q *Queries) GetServiceNameByID(ctx context.Context, servicenameid pgtype.UUID) (ServiceName, error) {
 	row := q.db.QueryRow(ctx, getServiceNameByID, servicenameid)
 	var i ServiceName
 	err := row.Scan(&i.ID, &i.Name, &i.SpecializationID)
@@ -106,12 +108,12 @@ RETURNING "id"
 
 type UpdateServiceNameParams struct {
 	Name string
-	ID   uuid.UUID
+	ID   pgtype.UUID
 }
 
-func (q *Queries) UpdateServiceName(ctx context.Context, arg UpdateServiceNameParams) (uuid.UUID, error) {
+func (q *Queries) UpdateServiceName(ctx context.Context, arg UpdateServiceNameParams) (pgtype.UUID, error) {
 	row := q.db.QueryRow(ctx, updateServiceName, arg.Name, arg.ID)
-	var id uuid.UUID
+	var id pgtype.UUID
 	err := row.Scan(&id)
 	return id, err
 }

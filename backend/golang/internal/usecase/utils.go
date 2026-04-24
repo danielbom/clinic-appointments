@@ -3,6 +3,7 @@ package usecase
 import (
 	"time"
 
+	"github.com/gofrs/uuid/v5"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/pkg/errors"
@@ -27,4 +28,18 @@ func DateFromISOString(result *pgtype.Date, isoDate string) error {
 
 func ErrorIsNoRows(err error) bool {
 	return errors.Is(err, pgx.ErrNoRows)
+}
+
+func NewUuid() (pgtype.UUID, error) {
+	var none pgtype.UUID
+	u, err := uuid.NewV7()
+	if err != nil {
+		return none, err
+	}
+
+	result := pgtype.UUID{
+		Bytes: u,
+		Valid: true,
+	}
+	return result, nil
 }

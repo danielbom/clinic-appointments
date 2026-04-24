@@ -1,6 +1,7 @@
 -- name: CreateSpecialist :one
-INSERT INTO specialists ("name", "email", "phone", "birthdate", "cpf", "cnpj")
-VALUES ( sqlc.arg('name')
+INSERT INTO specialists ("id", "name", "email", "phone", "birthdate", "cpf", "cnpj")
+VALUES ( sqlc.arg('id')
+       , sqlc.arg('name')
        , sqlc.arg('email')
        , sqlc.arg('phone')
        , sqlc.arg('birthdate')
@@ -50,7 +51,6 @@ WHERE true
   AND (sqlc.arg('cpf')::text = ''   OR "cpf" = sqlc.arg('cpf'))
   AND (sqlc.arg('cnpj')::text = ''  OR "cnpj" = sqlc.arg('cnpj'))
   AND (sqlc.arg('phone')::text = '' OR "phone" = sqlc.arg('phone'))
-ORDER BY "name"
 LIMIT sqlc.arg('limit')::integer
 OFFSET sqlc.arg('offset')::integer;
 

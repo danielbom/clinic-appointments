@@ -1,10 +1,11 @@
 package usecase
 
 import (
-	"backend/internal/infra"
 	"strings"
 
-	"github.com/google/uuid"
+	"backend/internal/infra"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type SpecializationInfoArgs struct {
@@ -19,7 +20,7 @@ func (args *SpecializationInfoArgs) Validate() *UsecaseError {
 	return nil
 }
 
-func SpecializationWithNameExists(state State, name string, exceptId uuid.UUID) (bool, error) {
+func SpecializationWithNameExists(state State, name string, exceptId pgtype.UUID) (bool, error) {
 	specialization, err := state.Queries().GetSpecializationByName(state.Context(), name)
 	if ErrorIsNoRows(err) {
 		return false, nil
@@ -33,29 +34,39 @@ func SpecializationWithNameExists(state State, name string, exceptId uuid.UUID) 
 	return true, nil
 }
 
-func CreateSpecialization(state State, args SpecializationInfoArgs) (uuid.UUID, *UsecaseError) {
-	exists, err := SpecializationWithNameExists(state, args.Name, uuid.Nil)
+func CreateSpecialization(state State, args SpecializationInfoArgs) (pgtype.UUID, *UsecaseError) {
+	var none pgtype.UUID
+	exists, err := SpecializationWithNameExists(state, args.Name, pgtype.UUID{})
 	if err != nil {
-		return uuid.Nil, NewUnexpectedError(err)
+		return none, NewUnexpectedError(err)
 	}
 	if exists {
-		return uuid.Nil, NewResourceAlreadyExistsError("specialization.name")
+		return none, NewResourceAlreadyExistsError("specialization.name")
 	}
 
-	id, err := state.Queries().CreateSpecialization(state.Context(), args.Name)
+	id, err := NewUuid()
 	if err != nil {
-		return uuid.Nil, NewUnexpectedError(err)
+		return none, NewUnexpectedError(err)
+	}
+
+	_, err = state.Queries().CreateSpecialization(state.Context(), infra.CreateSpecializationParams{
+		ID:   id,
+		Name: args.Name,
+	})
+	if err != nil {
+		return none, NewUnexpectedError(err)
 	}
 	return id, nil
 }
 
-func UpdateSpecialization(state State, specializationId uuid.UUID, args SpecializationInfoArgs) (uuid.UUID, *UsecaseError) {
+func UpdateSpecialization(state State, specializationId pgtype.UUID, args SpecializationInfoArgs) (pgtype.UUID, *UsecaseError) {
+	var none pgtype.UUID
 	exists, err := SpecializationWithNameExists(state, args.Name, specializationId)
 	if err != nil {
-		return uuid.Nil, NewUnexpectedError(err)
+		return none, NewUnexpectedError(err)
 	}
 	if exists {
-		return uuid.Nil, NewResourceAlreadyExistsError("specialization.name")
+		return none, NewResourceAlreadyExistsError("specialization.name")
 	}
 
 	id, err := state.Queries().UpdateSpecialization(state.Context(), infra.UpdateSpecializationParams{
@@ -63,7 +74,7 @@ func UpdateSpecialization(state State, specializationId uuid.UUID, args Speciali
 		Name: args.Name,
 	})
 	if err != nil {
-		return uuid.Nil, NewUnexpectedError(err)
+		return none, NewUnexpectedError(err)
 	}
 	return id, nil
 }

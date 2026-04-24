@@ -3,10 +3,10 @@ package usecase
 import (
 	"backend/internal/infra"
 
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
-func GetSpecialistService(state State, specialistId, serviceNameId uuid.UUID) (infra.Service, *UsecaseError) {
+func GetSpecialistService(state State, specialistId, serviceNameId pgtype.UUID) (infra.Service, *UsecaseError) {
 	service, err := state.Queries().GetService(state.Context(), infra.GetServiceParams{
 		SpecialistId:  specialistId,
 		ServiceNameId: serviceNameId,

@@ -5,33 +5,32 @@
 package infra
 
 import (
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Admin struct {
-	ID       uuid.UUID
+	ID       pgtype.UUID
 	Name     string
 	Email    string
 	Password string
 }
 
 type Appointment struct {
-	ID            uuid.UUID
-	CustomerID    uuid.UUID
-	SpecialistID  uuid.UUID
-	ServiceNameID uuid.UUID
+	ID            pgtype.UUID
+	CustomerID    pgtype.UUID
+	SpecialistID  pgtype.UUID
+	ServiceNameID pgtype.UUID
 	Price         int32
 	Duration      int32
 	Date          pgtype.Date
 	Time          pgtype.Time
 	Status        int32
 	NotifiedAt    pgtype.Timestamptz
-	NotifiedBy    uuid.UUID
+	NotifiedBy    pgtype.UUID
 }
 
 type Customer struct {
-	ID        uuid.UUID
+	ID        pgtype.UUID
 	Name      string
 	Email     pgtype.Text
 	Phone     string
@@ -40,7 +39,7 @@ type Customer struct {
 }
 
 type Secretary struct {
-	ID        uuid.UUID
+	ID        pgtype.UUID
 	Name      string
 	Email     string
 	Password  string
@@ -51,21 +50,21 @@ type Secretary struct {
 }
 
 type Service struct {
-	ID            uuid.UUID
-	ServiceNameID uuid.UUID
-	SpecialistID  uuid.UUID
+	ID            pgtype.UUID
+	ServiceNameID pgtype.UUID
+	SpecialistID  pgtype.UUID
 	Price         int32
 	Duration      int32
 }
 
 type ServiceName struct {
-	ID               uuid.UUID
+	ID               pgtype.UUID
 	Name             string
-	SpecializationID uuid.UUID
+	SpecializationID pgtype.UUID
 }
 
 type Specialist struct {
-	ID        uuid.UUID
+	ID        pgtype.UUID
 	Name      string
 	Email     string
 	Phone     string
@@ -75,14 +74,14 @@ type Specialist struct {
 }
 
 type SpecialistHour struct {
-	ID           uuid.UUID
-	SpecialistID uuid.UUID
+	ID           pgtype.UUID
+	SpecialistID pgtype.UUID
 	Weekday      int32
 	StartTime    pgtype.Time
 	EndTime      pgtype.Time
 }
 
 type Specialization struct {
-	ID   uuid.UUID
+	ID   pgtype.UUID
 	Name string
 }

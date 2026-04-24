@@ -8,7 +8,6 @@ package infra
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -26,7 +25,7 @@ LIMIT 1
 
 type AppointmentsIntersectsParams struct {
 	Date         pgtype.Date
-	SpecialistId uuid.UUID
+	SpecialistId pgtype.UUID
 	Time         pgtype.Time
 	Duration     int32
 }
@@ -82,7 +81,7 @@ func (q *Queries) CountAppointments(ctx context.Context, arg CountAppointmentsPa
 }
 
 const createAppointment = `-- name: CreateAppointment :one
-INSERT INTO "appointments" ("customer_id", "specialist_id", "service_name_id", "price", "duration", "date", "time", "status")
+INSERT INTO "appointments" ("id", "customer_id", "specialist_id", "service_name_id", "price", "duration", "date", "time", "status")
 VALUES ( $1
        , $2
        , $3
@@ -91,14 +90,16 @@ VALUES ( $1
        , $6
        , $7
        , $8
+       , $9
        )
 RETURNING "id"
 `
 
 type CreateAppointmentParams struct {
-	CustomerId    uuid.UUID
-	SpecialistId  uuid.UUID
-	ServiceNameId uuid.UUID
+	ID            pgtype.UUID
+	CustomerId    pgtype.UUID
+	SpecialistId  pgtype.UUID
+	ServiceNameId pgtype.UUID
 	Price         int32
 	Duration      int32
 	Date          pgtype.Date
@@ -106,8 +107,9 @@ type CreateAppointmentParams struct {
 	Status        int32
 }
 
-func (q *Queries) CreateAppointment(ctx context.Context, arg CreateAppointmentParams) (uuid.UUID, error) {
+func (q *Queries) CreateAppointment(ctx context.Context, arg CreateAppointmentParams) (pgtype.UUID, error) {
 	row := q.db.QueryRow(ctx, createAppointment,
+		arg.ID,
 		arg.CustomerId,
 		arg.SpecialistId,
 		arg.ServiceNameId,
@@ -117,7 +119,7 @@ func (q *Queries) CreateAppointment(ctx context.Context, arg CreateAppointmentPa
 		arg.Time,
 		arg.Status,
 	)
-	var id uuid.UUID
+	var id pgtype.UUID
 	err := row.Scan(&id)
 	return id, err
 }
@@ -127,7 +129,7 @@ DELETE FROM "appointments"
 WHERE "id" = $1
 `
 
-func (q *Queries) DeleteAppointment(ctx context.Context, appointmentid uuid.UUID) (int64, error) {
+func (q *Queries) DeleteAppointment(ctx context.Context, appointmentid pgtype.UUID) (int64, error) {
 	result, err := q.db.Exec(ctx, deleteAppointment, appointmentid)
 	if err != nil {
 		return 0, err
@@ -141,7 +143,7 @@ FROM "appointments"
 WHERE "id" = $1
 `
 
-func (q *Queries) GetAppointmentByID(ctx context.Context, id uuid.UUID) (Appointment, error) {
+func (q *Queries) GetAppointmentByID(ctx context.Context, id pgtype.UUID) (Appointment, error) {
 	row := q.db.QueryRow(ctx, getAppointmentByID, id)
 	var i Appointment
 	err := row.Scan(
@@ -173,23 +175,23 @@ WHERE "a"."id" = $1
 `
 
 type GetAppointmentEnrichedByIDRow struct {
-	ID             uuid.UUID
+	ID             pgtype.UUID
 	Price          int32
 	Duration       int32
 	Date           pgtype.Date
 	Time           pgtype.Time
 	Status         int32
 	NotifiedAt     pgtype.Timestamptz
-	NotifiedBy     uuid.UUID
-	CustomerID     uuid.UUID
+	NotifiedBy     pgtype.UUID
+	CustomerID     pgtype.UUID
 	CustomerName   string
-	SpecialistID   uuid.UUID
+	SpecialistID   pgtype.UUID
 	SpecialistName string
-	ServiceNameID  uuid.UUID
+	ServiceNameID  pgtype.UUID
 	ServiceName    string
 }
 
-func (q *Queries) GetAppointmentEnrichedByID(ctx context.Context, id uuid.UUID) (GetAppointmentEnrichedByIDRow, error) {
+func (q *Queries) GetAppointmentEnrichedByID(ctx context.Context, id pgtype.UUID) (GetAppointmentEnrichedByIDRow, error) {
 	row := q.db.QueryRow(ctx, getAppointmentEnrichedByID, id)
 	var i GetAppointmentEnrichedByIDRow
 	err := row.Scan(
@@ -244,19 +246,19 @@ type ListAppointmentsParams struct {
 }
 
 type ListAppointmentsRow struct {
-	ID             uuid.UUID
+	ID             pgtype.UUID
 	Price          int32
 	Duration       int32
 	Date           pgtype.Date
 	Time           pgtype.Time
 	Status         int32
 	NotifiedAt     pgtype.Timestamptz
-	NotifiedBy     uuid.UUID
-	CustomerID     uuid.UUID
+	NotifiedBy     pgtype.UUID
+	CustomerID     pgtype.UUID
 	CustomerName   string
-	SpecialistID   uuid.UUID
+	SpecialistID   pgtype.UUID
 	SpecialistName string
-	ServiceNameID  uuid.UUID
+	ServiceNameID  pgtype.UUID
 	ServiceName    string
 }
 
@@ -356,22 +358,22 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
 `
 
 type ListAppointmentsBySpecialistIDParams struct {
-	SpecialistId uuid.UUID
+	SpecialistId pgtype.UUID
 	Date         string
 }
 
 type ListAppointmentsBySpecialistIDRow struct {
-	ID            uuid.UUID
+	ID            pgtype.UUID
 	Price         int32
 	Duration      int32
 	Date          pgtype.Date
 	Time          pgtype.Time
 	Status        int32
 	NotifiedAt    pgtype.Timestamptz
-	NotifiedBy    uuid.UUID
-	CustomerID    uuid.UUID
+	NotifiedBy    pgtype.UUID
+	CustomerID    pgtype.UUID
 	CustomerName  string
-	ServiceNameID uuid.UUID
+	ServiceNameID pgtype.UUID
 	ServiceName   string
 }
 
@@ -423,7 +425,7 @@ type ListAppointmentsCalendarParams struct {
 }
 
 type ListAppointmentsCalendarRow struct {
-	ID             uuid.UUID
+	ID             pgtype.UUID
 	Date           pgtype.Date
 	Time           pgtype.Time
 	Status         int32
@@ -511,7 +513,7 @@ type UpdateAppointmentParams struct {
 	Date   pgtype.Date
 	Time   pgtype.Time
 	Status int32
-	ID     uuid.UUID
+	ID     pgtype.UUID
 }
 
 func (q *Queries) UpdateAppointment(ctx context.Context, arg UpdateAppointmentParams) (Appointment, error) {

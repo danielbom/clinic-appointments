@@ -3,10 +3,10 @@ package usecase
 import (
 	"backend/internal/infra"
 
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
-func GetAppointment(state State, id uuid.UUID) (infra.ListAppointmentsRow, *UsecaseError) {
+func GetAppointment(state State, id pgtype.UUID) (infra.ListAppointmentsRow, *UsecaseError) {
 	appointmentEnriched, err := state.Queries().GetAppointmentEnrichedByID(state.Context(), id)
 	appointment := infra.ListAppointmentsRow(appointmentEnriched) /* synced with `ListAppointments` */
 	if err == nil {

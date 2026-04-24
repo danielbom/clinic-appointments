@@ -7,7 +7,7 @@ import { API_URL } from '../config'
 import { Api, AppointmentStatus, Config } from '../../src/lib/api'
 import { getDatePart, getHourPart } from '../../src/lib/date-fns-ext'
 
-import { Writable, WriteStr, WriteCombined } from '../../src/lib/writable'
+import { Writable, WriteStr, WriteCombined, WriteStdout } from '../../src/lib/writable'
 import { Path } from '../../src/lib/path'
 import { createTracker } from '../../src/lib/tracker'
 import levenshtein from 'fast-levenshtein'
@@ -111,6 +111,10 @@ function redactResponse(response: AxiosResponse | undefined): any {
   return newResponse
 }
 
+const SNAPSHOT_LOG_PATH = Path.from(import.meta.dirname).append('snapshot.log')
+const snapshotLog = SNAPSHOT_LOG_PATH.open('w')
+const logger = new WriteCombined([snapshotLog, new WriteStdout()])
+
 const ACTUAL_SNAPSHOT_PATH = Path.from(import.meta.dirname).append('snapshot.actual.txt')
 const CURRENT_SNAPSHOT_PATH = Path.from(import.meta.dirname).append('snapshot.txt')
 
@@ -157,16 +161,25 @@ function findInStack(targets: string[]) {
 let WRITE_RESPONSE = true
 let count = 0
 
+api._config.instance.interceptors.request.use((config) => {
+  ;(config as any).metadata = { startTime: performance.now() }
+  return config
+})
+
 api._config.instance.interceptors.response.use(
   (response) => {
+    const endTime = performance.now()
     if (WRITE_RESPONSE) writeResponse(w, redactResponse(response))
-    console.log(`[${new Date().toISOString()}] ${count++} request`)
-    console.log(findInStack(['api.ts', 'async run']))
+    const startTime = (response.config as any).metadata.startTime
+    const ms = (endTime - startTime).toFixed(3)
+    logger.write(`[${new Date().toISOString()}] ${count++} request [${ms} ms]\n`)
+    logger.write(findInStack(['api.ts', 'async run']) + '\n')
+    logger.write(findInStack(['endpoints', 'Endpoint.ts']) + '\n')
     return response
   },
   (error) => {
     if (WRITE_RESPONSE) writeResponse(w, redactResponse(error.response))
-    throw new SimpleAxiosError(error)
+    return Promise.reject(new SimpleAxiosError(error))
   },
 )
 
@@ -739,4 +752,5 @@ run({ record: process.argv[2] === 'record' })
   .finally(() => {
     console.log(timeMessage + ' End')
     console.timeEnd(timeMessage + ' Time')
+    snapshotLog.close()
   })

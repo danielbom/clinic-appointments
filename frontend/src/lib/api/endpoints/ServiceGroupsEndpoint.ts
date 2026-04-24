@@ -4,8 +4,8 @@ import { type Config } from '../Config'
 export class ServiceGroupsEndpoint {
   constructor(public _config: Config) {}
 
-  getAll(): Promise<AxiosResponse<ServiceGroup[]>> {
-    return this._config.instance.get(`/api/service-groups`)
+  async getAll(): Promise<AxiosResponse<ServiceGroup[]>> {
+    return await this._config.instance.get(`/api/service-groups`)
   }
 }
 

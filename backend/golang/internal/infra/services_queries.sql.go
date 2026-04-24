@@ -8,34 +8,37 @@ package infra
 import (
 	"context"
 
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createService = `-- name: CreateService :one
-INSERT INTO services ("service_name_id", "specialist_id", "price", "duration")
+INSERT INTO services ("id", "service_name_id", "specialist_id", "price", "duration")
 VALUES ( $1
        , $2
        , $3
        , $4
+       , $5
        )
 RETURNING "id"
 `
 
 type CreateServiceParams struct {
-	ServiceNameId uuid.UUID
-	SpecialistId  uuid.UUID
+	ID            pgtype.UUID
+	ServiceNameId pgtype.UUID
+	SpecialistId  pgtype.UUID
 	Price         int32
 	Duration      int32
 }
 
-func (q *Queries) CreateService(ctx context.Context, arg CreateServiceParams) (uuid.UUID, error) {
+func (q *Queries) CreateService(ctx context.Context, arg CreateServiceParams) (pgtype.UUID, error) {
 	row := q.db.QueryRow(ctx, createService,
+		arg.ID,
 		arg.ServiceNameId,
 		arg.SpecialistId,
 		arg.Price,
 		arg.Duration,
 	)
-	var id uuid.UUID
+	var id pgtype.UUID
 	err := row.Scan(&id)
 	return id, err
 }
@@ -45,7 +48,7 @@ DELETE FROM "services"
 WHERE "id" = $1
 `
 
-func (q *Queries) DeleteService(ctx context.Context, serviceid uuid.UUID) (int64, error) {
+func (q *Queries) DeleteService(ctx context.Context, serviceid pgtype.UUID) (int64, error) {
 	result, err := q.db.Exec(ctx, deleteService, serviceid)
 	if err != nil {
 		return 0, err
@@ -60,8 +63,8 @@ WHERE "service_name_id" = $1 AND "specialist_id" = $2
 `
 
 type GetServiceParams struct {
-	ServiceNameId uuid.UUID
-	SpecialistId  uuid.UUID
+	ServiceNameId pgtype.UUID
+	SpecialistId  pgtype.UUID
 }
 
 func (q *Queries) GetService(ctx context.Context, arg GetServiceParams) (Service, error) {
@@ -83,7 +86,7 @@ FROM services
 WHERE "id" = $1
 `
 
-func (q *Queries) GetServiceByID(ctx context.Context, serviceid uuid.UUID) (Service, error) {
+func (q *Queries) GetServiceByID(ctx context.Context, serviceid pgtype.UUID) (Service, error) {
 	row := q.db.QueryRow(ctx, getServiceByID, serviceid)
 	var i Service
 	err := row.Scan(
@@ -108,12 +111,12 @@ RETURNING "id"
 type UpdateServiceParams struct {
 	Price    int32
 	Duration int32
-	ID       uuid.UUID
+	ID       pgtype.UUID
 }
 
-func (q *Queries) UpdateService(ctx context.Context, arg UpdateServiceParams) (uuid.UUID, error) {
+func (q *Queries) UpdateService(ctx context.Context, arg UpdateServiceParams) (pgtype.UUID, error) {
 	row := q.db.QueryRow(ctx, updateService, arg.Price, arg.Duration, arg.ID)
-	var id uuid.UUID
+	var id pgtype.UUID
 	err := row.Scan(&id)
 	return id, err
 }

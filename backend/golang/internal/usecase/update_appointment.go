@@ -3,7 +3,6 @@ package usecase
 import (
 	"backend/internal/infra"
 
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -33,11 +32,10 @@ func (args *UpdateAppointmentArgs) Validate() *UsecaseError {
 	return nil
 }
 
-func UpdateAppointment(state State, appointmentId uuid.UUID, args UpdateAppointmentArgs) (infra.Appointment, *UsecaseError) {
+func UpdateAppointment(state State, appointmentId pgtype.UUID, args UpdateAppointmentArgs) (infra.Appointment, *UsecaseError) {
 	var none infra.Appointment
 	_, err := state.Queries().GetAppointmentByID(state.Context(), appointmentId)
 	if ErrorIsNoRows(err) {
-		// TODO: Check this path
 		return none, NewNotFoundError(ErrResourceNotFound).InField("appointment")
 	}
 	if err != nil {

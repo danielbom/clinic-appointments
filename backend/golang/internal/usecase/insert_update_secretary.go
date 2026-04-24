@@ -4,7 +4,6 @@ import (
 	"backend/internal/infra"
 	"backend/internal/validate"
 
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -66,7 +65,7 @@ func (args *SecretaryInfoArgs) Validate() *UsecaseError {
 	return nil
 }
 
-func SecretaryWithEmailExists(state State, email string, exceptId uuid.UUID) (infra.Secretary, bool, error) {
+func SecretaryWithEmailExists(state State, email string, exceptId pgtype.UUID) (infra.Secretary, bool, error) {
 	secretary, err := state.Queries().GetSecretaryByEmail(state.Context(), email)
 	if ErrorIsNoRows(err) {
 		return secretary, false, nil
@@ -82,7 +81,7 @@ func SecretaryWithEmailExists(state State, email string, exceptId uuid.UUID) (in
 
 func CreateSecretary(state State, args SecretaryInfoArgs) (infra.Secretary, *UsecaseError) {
 	var none infra.Secretary
-	_, exists, err := SecretaryWithEmailExists(state, args.Email, uuid.Nil)
+	_, exists, err := SecretaryWithEmailExists(state, args.Email, pgtype.UUID{})
 	if err != nil {
 		return none, NewUnexpectedError(err)
 	}
@@ -96,7 +95,13 @@ func CreateSecretary(state State, args SecretaryInfoArgs) (infra.Secretary, *Use
 	}
 	args.Password = string(hashedPassword)
 
+	id, err := NewUuid()
+	if err != nil {
+		return none, NewUnexpectedError(err)
+	}
+
 	params := infra.CreateSecretaryParams{
+		ID:        id,
 		Name:      args.Name,
 		Email:     args.Email,
 		Phone:     args.Phone,
@@ -112,7 +117,7 @@ func CreateSecretary(state State, args SecretaryInfoArgs) (infra.Secretary, *Use
 	return secretary, nil
 }
 
-func UpdateSecretary(state State, secretaryId uuid.UUID, args SecretaryInfoArgs) (infra.Secretary, *UsecaseError) {
+func UpdateSecretary(state State, secretaryId pgtype.UUID, args SecretaryInfoArgs) (infra.Secretary, *UsecaseError) {
 	var none infra.Secretary
 	secretary0, exists, err := SecretaryWithEmailExists(state, args.Email, secretaryId)
 	if err != nil {

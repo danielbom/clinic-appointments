@@ -5,28 +5,28 @@ import { type Id } from './types'
 export class CustomersEndpoint {
   constructor(public _config: Config) {}
 
-  getAll(query: CustomersGetAllQuery = {}): Promise<AxiosResponse<Customer[]>> {
-    return this._config.instance.get(`/api/customers`, { params: query })
+  async getAll(query: CustomersGetAllQuery = {}): Promise<AxiosResponse<Customer[]>> {
+    return await this._config.instance.get(`/api/customers`, { params: query })
   }
 
-  count(query: CustomersCountAllQuery = {}): Promise<AxiosResponse<number>> {
-    return this._config.instance.get(`/api/customers/count`, { params: query })
+  async count(query: CustomersCountAllQuery = {}): Promise<AxiosResponse<number>> {
+    return await this._config.instance.get(`/api/customers/count`, { params: query })
   }
 
-  getById(id: string): Promise<AxiosResponse<Customer>> {
-    return this._config.instance.get(`/api/customers/${id}`)
+  async getById(id: string): Promise<AxiosResponse<Customer>> {
+    return await this._config.instance.get(`/api/customers/${id}`)
   }
 
-  create(data: CustomerCreateBody): Promise<AxiosResponse<Id>> {
-    return this._config.instance.post(`/api/customers`, data)
+  async create(data: CustomerCreateBody): Promise<AxiosResponse<Id>> {
+    return await this._config.instance.post(`/api/customers`, data)
   }
 
-  update(id: string, data: CustomerUpdateBody): Promise<AxiosResponse<Id>> {
-    return this._config.instance.put(`/api/customers/${id}`, data)
+  async update(id: string, data: CustomerUpdateBody): Promise<AxiosResponse<Id>> {
+    return await this._config.instance.put(`/api/customers/${id}`, data)
   }
 
-  delete(id: string): Promise<AxiosResponse<void>> {
-    return this._config.instance.delete(`/api/customers/${id}`)
+  async delete(id: string): Promise<AxiosResponse<void>> {
+    return await this._config.instance.delete(`/api/customers/${id}`)
   }
 }
 

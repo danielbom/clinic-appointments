@@ -10,7 +10,6 @@ import (
 	"backend/internal/usecase"
 
 	"github.com/go-chi/render"
-	"github.com/google/uuid"
 )
 
 func (h *api) authLogin(w http.ResponseWriter, r *http.Request) {
@@ -75,9 +74,9 @@ func (h *api) authRefresh(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, err1 := uuid.Parse(jwtData.UserID)
-	if err1 != nil {
-		SomethingWentWrong(w, err1)
+	userID, ok := ParseUuid(jwtData.UserID)
+	if !ok {
+		SomethingWentWrong(w, fmt.Errorf("invalid token: userId"))
 		return
 	}
 
@@ -86,7 +85,7 @@ func (h *api) authRefresh(w http.ResponseWriter, r *http.Request) {
 
 	identity, err := usecase.AuthMe(rs, userID)
 	if err != nil {
-		http.Error(w, "invalid token", http.StatusBadRequest)
+		SomethingWentWrong(w, fmt.Errorf("invalid token: identity"))
 		return
 	}
 
@@ -119,9 +118,9 @@ func (h *api) authMe(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userID, err1 := uuid.Parse(jwtData.UserID)
-	if err1 != nil {
-		SomethingWentWrong(w, err1)
+	userID, ok := ParseUuid(jwtData.UserID)
+	if !ok {
+		SomethingWentWrong(w, fmt.Errorf("invalid token.userId"))
 		return
 	}
 

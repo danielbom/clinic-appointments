@@ -5,28 +5,28 @@ import { type Id } from './types'
 export class SecretariesEndpoint {
   constructor(public _config: Config) {}
 
-  getAll(query: SecretariesGetAllQuery = {}): Promise<AxiosResponse<Secretary[]>> {
-    return this._config.instance.get(`/api/secretaries`, { params: query })
+  async getAll(query: SecretariesGetAllQuery = {}): Promise<AxiosResponse<Secretary[]>> {
+    return await this._config.instance.get(`/api/secretaries`, { params: query })
   }
 
-  count(query: SecretariesCountAllQuery = {}): Promise<AxiosResponse<number>> {
-    return this._config.instance.get(`/api/secretaries/count`, { params: query })
+  async count(query: SecretariesCountAllQuery = {}): Promise<AxiosResponse<number>> {
+    return await this._config.instance.get(`/api/secretaries/count`, { params: query })
   }
 
-  getById(id: string): Promise<AxiosResponse<Secretary>> {
-    return this._config.instance.get(`/api/secretaries/${id}`)
+  async getById(id: string): Promise<AxiosResponse<Secretary>> {
+    return await this._config.instance.get(`/api/secretaries/${id}`)
   }
 
-  create(data: SecretaryCreateBody): Promise<AxiosResponse<Id>> {
-    return this._config.instance.post(`/api/secretaries`, data)
+  async create(data: SecretaryCreateBody): Promise<AxiosResponse<Id>> {
+    return await this._config.instance.post(`/api/secretaries`, data)
   }
 
-  update(id: string, data: SecretaryUpdateBody): Promise<AxiosResponse<Id>> {
-    return this._config.instance.put(`/api/secretaries/${id}`, data)
+  async update(id: string, data: SecretaryUpdateBody): Promise<AxiosResponse<Id>> {
+    return await this._config.instance.put(`/api/secretaries/${id}`, data)
   }
 
-  delete(id: string): Promise<AxiosResponse<void>> {
-    return this._config.instance.delete(`/api/secretaries/${id}`)
+  async delete(id: string): Promise<AxiosResponse<void>> {
+    return await this._config.instance.delete(`/api/secretaries/${id}`)
   }
 }
 

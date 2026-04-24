@@ -8,7 +8,6 @@ package infra
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -35,17 +34,19 @@ func (q *Queries) CountCustomers(ctx context.Context, arg CountCustomersParams) 
 }
 
 const createCustomer = `-- name: CreateCustomer :one
-INSERT INTO "customers" ("name", "email", "phone", "birthdate", "cpf")
+INSERT INTO "customers" ("id", "name", "email", "phone", "birthdate", "cpf")
 VALUES ( $1
        , $2
        , $3
        , $4
        , $5
+       , $6
        )
 RETURNING "id", "name", "email", "phone", "birthdate", "cpf"
 `
 
 type CreateCustomerParams struct {
+	ID        pgtype.UUID
 	Name      string
 	Email     pgtype.Text
 	Phone     string
@@ -55,6 +56,7 @@ type CreateCustomerParams struct {
 
 func (q *Queries) CreateCustomer(ctx context.Context, arg CreateCustomerParams) (Customer, error) {
 	row := q.db.QueryRow(ctx, createCustomer,
+		arg.ID,
 		arg.Name,
 		arg.Email,
 		arg.Phone,
@@ -78,7 +80,7 @@ DELETE FROM "customers"
 WHERE "id" = $1
 `
 
-func (q *Queries) DeleteCustomerByID(ctx context.Context, customerid uuid.UUID) (int64, error) {
+func (q *Queries) DeleteCustomerByID(ctx context.Context, customerid pgtype.UUID) (int64, error) {
 	result, err := q.db.Exec(ctx, deleteCustomerByID, customerid)
 	if err != nil {
 		return 0, err
@@ -93,7 +95,7 @@ WHERE "id" = $1
 LIMIT 1
 `
 
-func (q *Queries) GetCustomerByID(ctx context.Context, customerid uuid.UUID) (Customer, error) {
+func (q *Queries) GetCustomerByID(ctx context.Context, customerid pgtype.UUID) (Customer, error) {
 	row := q.db.QueryRow(ctx, getCustomerByID, customerid)
 	var i Customer
 	err := row.Scan(
@@ -135,6 +137,7 @@ WHERE true
   AND ($1::text = ''  OR "name" ILIKE '%' || $1 || '%')
   AND ($2::text = ''   OR "cpf" = $2)
   AND ($3::text = '' OR "phone" = $3)
+ORDER BY "name"
 LIMIT $5::integer
 OFFSET $4::integer
 `
@@ -198,7 +201,7 @@ type UpdateCustomerParams struct {
 	Phone     string
 	Birthdate pgtype.Date
 	Cpf       string
-	ID        uuid.UUID
+	ID        pgtype.UUID
 }
 
 func (q *Queries) UpdateCustomer(ctx context.Context, arg UpdateCustomerParams) (Customer, error) {

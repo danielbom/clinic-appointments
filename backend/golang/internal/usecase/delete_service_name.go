@@ -1,10 +1,10 @@
 package usecase
 
 import (
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
-func DeleteServiceName(state State, id uuid.UUID) *UsecaseError {
+func DeleteServiceName(state State, id pgtype.UUID) *UsecaseError {
 	count, err := state.Queries().DeleteServiceNameByID(state.Context(), id)
 	if err != nil {
 		return NewError(ErrorKindUnexpected, err)

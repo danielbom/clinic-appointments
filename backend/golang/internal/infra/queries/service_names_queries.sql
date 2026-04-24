@@ -1,6 +1,7 @@
 -- name: CreateServiceName :one
-INSERT INTO "service_names" ("name", "specialization_id")
-VALUES ( sqlc.arg('name')
+INSERT INTO "service_names" ("id", "name", "specialization_id")
+VALUES ( sqlc.arg('id')
+       , sqlc.arg('name')
        , sqlc.arg('specializationId')
        )
 RETURNING "id";

@@ -3,7 +3,8 @@ package usecase
 import (
 	"backend/internal/infra"
 
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -29,15 +30,22 @@ func (args *CreateAdminArgs) Validate() *UsecaseError {
 	return nil
 }
 
-func CreateAdmin(state State, args CreateAdminArgs) (uuid.UUID, *UsecaseError) {
+func CreateAdmin(state State, args CreateAdminArgs) (pgtype.UUID, *UsecaseError) {
+	var none pgtype.UUID
 	_, err := state.Queries().GetIdentityByEmail(state.Context(), args.Email)
 	if err == nil {
-		return uuid.Nil, NewResourceAlreadyExistsError("identity")
+		return none, NewResourceAlreadyExistsError("identity")
 	} else if !ErrorIsNoRows(err) {
-		return uuid.Nil, NewUnexpectedError(err)
+		return none, NewUnexpectedError(err)
+	}
+
+	id, err := NewUuid()
+	if err != nil {
+		return none, NewUnexpectedError(err)
 	}
 
 	params := infra.CreateAdminParams{
+		ID:       id,
 		Name:     args.Name,
 		Email:    args.Email,
 		Password: args.Password,
@@ -45,13 +53,13 @@ func CreateAdmin(state State, args CreateAdminArgs) (uuid.UUID, *UsecaseError) {
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(params.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return uuid.Nil, NewUnexpectedError(err)
+		return none, NewUnexpectedError(err)
 	}
 	params.Password = string(hashedPassword)
 
-	id, err := state.Queries().CreateAdmin(state.Context(), params)
+	_, err = state.Queries().CreateAdmin(state.Context(), params)
 	if err != nil {
-		return uuid.Nil, NewUnexpectedError(err)
+		return none, NewUnexpectedError(err)
 	}
 	return id, nil
 }

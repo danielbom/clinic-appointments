@@ -1,6 +1,8 @@
 -- name: CreateSpecialization :one
-INSERT INTO "specializations" ("name")
-VALUES (sqlc.arg('name'))
+INSERT INTO "specializations" ("id", "name")
+VALUES ( sqlc.arg('id')
+			 , sqlc.arg('name')
+			 )
 RETURNING "id";
 
 -- name: UpdateSpecialization :one

@@ -4,15 +4,15 @@ import { type Config } from '../Config'
 export class TestEndpoint {
   constructor(public _config: Config) {}
 
-  stats(): Promise<AxiosResponse<any>> {
-    return this._config.instance.get(`/api/test/stats`)
+  async stats(): Promise<AxiosResponse<any>> {
+    return await this._config.instance.get(`/api/test/stats`)
   }
 
-  init(): Promise<AxiosResponse<any>> {
-    return this._config.instance.get(`/api/test/init`)
+  async init(): Promise<AxiosResponse<any>> {
+    return await this._config.instance.get(`/api/test/init`)
   }
 
-  debugClaims(): Promise<AxiosResponse<any>> {
-    return this._config.instance.get(`/api/test/debug-claims`)
+  async debugClaims(): Promise<AxiosResponse<any>> {
+    return await this._config.instance.get(`/api/test/debug-claims`)
   }
 }

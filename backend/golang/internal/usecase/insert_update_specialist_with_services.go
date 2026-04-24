@@ -3,7 +3,7 @@ package usecase
 import (
 	"backend/internal/infra"
 
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type SpecialistWithServicesInfoArgs struct {
@@ -25,8 +25,8 @@ func (args *SpecialistWithServicesInfoArgs) Validate() *UsecaseError {
 }
 
 // OBS: Should be in a transaction
-func CreateSpecialistWithServices(state State, args SpecialistWithServicesInfoArgs) (uuid.UUID, *UsecaseError) {
-	var specialistID uuid.UUID
+func CreateSpecialistWithServices(state State, args SpecialistWithServicesInfoArgs) (pgtype.UUID, *UsecaseError) {
+	var specialistID pgtype.UUID
 	{
 		id, err := CreateSpecialist(state, args.Specialist)
 		if err != nil {
@@ -47,7 +47,7 @@ func CreateSpecialistWithServices(state State, args SpecialistWithServicesInfoAr
 }
 
 // OBS: Should be in a transaction
-func UpdateSpecialistWithServices(state State, specialistID uuid.UUID, args SpecialistWithServicesInfoArgs) (infra.Specialist, *UsecaseError) {
+func UpdateSpecialistWithServices(state State, specialistID pgtype.UUID, args SpecialistWithServicesInfoArgs) (infra.Specialist, *UsecaseError) {
 	var none infra.Specialist
 	specialist, err := UpdateSpecialist(state, specialistID, args.Specialist)
 	if err != nil {

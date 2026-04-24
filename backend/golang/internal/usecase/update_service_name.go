@@ -3,7 +3,7 @@ package usecase
 import (
 	"backend/internal/infra"
 
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type UpdateServiceNameArgs struct {
@@ -17,13 +17,14 @@ func (args *UpdateServiceNameArgs) Validate() *UsecaseError {
 	return nil
 }
 
-func UpdateServiceName(state State, serviceId uuid.UUID, args UpdateServiceNameArgs) (uuid.UUID, *UsecaseError) {
+func UpdateServiceName(state State, serviceId pgtype.UUID, args UpdateServiceNameArgs) (pgtype.UUID, *UsecaseError) {
+	var none pgtype.UUID
 	exists, err := ServiceWithNameExists(state, args.Name, serviceId)
 	if err != nil {
-		return uuid.Nil, NewUnexpectedError(err)
+		return none, NewUnexpectedError(err)
 	}
 	if exists {
-		return uuid.Nil, NewResourceAlreadyExistsError("service_name")
+		return none, NewResourceAlreadyExistsError("service_name")
 	}
 
 	params := infra.UpdateServiceNameParams{
@@ -32,7 +33,7 @@ func UpdateServiceName(state State, serviceId uuid.UUID, args UpdateServiceNameA
 	}
 	id, err := state.Queries().UpdateServiceName(state.Context(), params)
 	if err != nil {
-		return uuid.Nil, NewUnexpectedError(err)
+		return none, NewUnexpectedError(err)
 	}
 	return id, nil
 }

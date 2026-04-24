@@ -8,35 +8,37 @@ package infra
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createSpecialistHour = `-- name: CreateSpecialistHour :one
-INSERT INTO specialist_hours ("specialist_id", "weekday", "start_time", "end_time")
+INSERT INTO specialist_hours ("id", "specialist_id", "weekday", "start_time", "end_time")
 VALUES ( $1
        , $2
        , $3
        , $4
+       , $5
        )
 RETURNING "id"
 `
 
 type CreateSpecialistHourParams struct {
-	SpecialistId uuid.UUID
+	ID           pgtype.UUID
+	SpecialistId pgtype.UUID
 	Weekday      int32
 	StartTime    pgtype.Time
 	EndTime      pgtype.Time
 }
 
-func (q *Queries) CreateSpecialistHour(ctx context.Context, arg CreateSpecialistHourParams) (uuid.UUID, error) {
+func (q *Queries) CreateSpecialistHour(ctx context.Context, arg CreateSpecialistHourParams) (pgtype.UUID, error) {
 	row := q.db.QueryRow(ctx, createSpecialistHour,
+		arg.ID,
 		arg.SpecialistId,
 		arg.Weekday,
 		arg.StartTime,
 		arg.EndTime,
 	)
-	var id uuid.UUID
+	var id pgtype.UUID
 	err := row.Scan(&id)
 	return id, err
 }
@@ -55,7 +57,7 @@ ORDER BY "start_time" ASC
 `
 
 type ListSpecialistHoursIntersectingParams struct {
-	SpecialistId uuid.UUID
+	SpecialistId pgtype.UUID
 	Weekday      int32
 	StartTime    pgtype.Time
 	EndTime      pgtype.Time
@@ -102,7 +104,7 @@ WHERE "id" = $3
 type UpdateSpecialistHourStartAndEndTimeParams struct {
 	StartTime         pgtype.Time
 	EndTime           pgtype.Time
-	SpecialistHoursId uuid.UUID
+	SpecialistHoursId pgtype.UUID
 }
 
 func (q *Queries) UpdateSpecialistHourStartAndEndTime(ctx context.Context, arg UpdateSpecialistHourStartAndEndTimeParams) error {
