@@ -499,23 +499,47 @@ export default {
       }
 
       // Validate e execute the usecase
-      const row = await db.appointments.findMany({
-        where: {
-          AND: [
-            { date: { gt: startDate } }, //
-            { date: { lt: endDate } }, //
-          ],
-        },
-        orderBy: [{ date: 'desc' }, { time: 'desc' }],
-        include: { specialists: {} },
-      })
+
+      // -- Just with client.previewFeatures = ["relationJoins"] enabled
+      // const row = await dbLog.appointments.findMany({
+      //   relationLoadStrategy: 'join',
+      //   select: {
+      //     id: true,
+      //     date: true,
+      //     time: true,
+      //     status: true,
+      //     specialists: { select: { name: true } },
+      //   },
+      //   where: {
+      //     AND: [
+      //       { date: { gt: startDate } }, //
+      //       { date: { lt: endDate } }, //
+      //     ],
+      //   },
+      //   orderBy: [{ date: 'desc' }, { time: 'desc' }],
+      // })
+
+      type CalendarRow = {
+        id: string
+        date: Date
+        time: Date
+        status: number
+        specialist_name: string
+      }
+      const row = await db.$queryRaw<CalendarRow[]>`
+SELECT "a"."id", "a"."date", "a"."time", "a"."status", "s"."name" AS "specialist_name"
+FROM "appointments" "a"
+JOIN "specialists" "s" ON "a"."specialist_id" = "s"."id"
+WHERE "a"."date" >= ${startDate} AND "a"."date" <= ${endDate}
+ORDER BY "a"."date" DESC, "a"."time" DESC
+      `
 
       // Format the response
       const response: types.schemas.AppointmentCalendar[] = row.map((row) => ({
         id: row.id,
         date: getDatePart(row.date.toISOString()),
         time: getTimePart(row.time.toISOString()),
-        specialistName: row.specialists.name,
+        specialistName: row.specialist_name,
         status: row.status,
       }))
       res.send(response)
@@ -1142,7 +1166,7 @@ export default {
           ],
         },
         include: { service_names: { include: { specializations: {} } }, specialists: {} },
-        // orderBy: [{ service_names: { specializations: { name: 'asc' } } }, { specialists: { name: 'asc' } }],
+        orderBy: [{ service_names: { specializations: { name: 'desc' } } }, { service_names: { name: 'desc' } }],
         take: pageSize,
         skip: page * pageSize,
       })
