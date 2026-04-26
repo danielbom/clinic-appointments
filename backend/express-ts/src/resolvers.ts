@@ -1512,7 +1512,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
           ],
         },
         include: { service_names: { include: { specializations: {} } }, specialists: {} },
-        orderBy: [{ service_names: { specializations: { name: 'desc' } } }, { service_names: { name: 'desc' } }],
+        // orderBy: [{ service_names: { specializations: { name: 'desc' } } }, { service_names: { name: 'desc' } }],
         take: pageSize,
         skip: page * pageSize,
       })

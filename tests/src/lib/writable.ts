@@ -9,7 +9,7 @@ export class WriteStr implements Writable {
     this.buffer.push(text)
   }
 
-  toString(): string {
+  value(): string {
     return this.buffer.join('')
   }
 }

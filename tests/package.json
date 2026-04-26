@@ -6,8 +6,7 @@
   "scripts": {
     "format": "prettier --write ./src ./tests",
     "typecheck": "tsc --noEmit",
-    "snapshot:replay": "tsx ./tests/snapshot/api.ts replay",
-    "snapshot:record": "tsx ./tests/snapshot/api.ts record",
+    "snapshot:api": "tsx ./tests/snapshot/api.ts",
     "test": "vitest run",
     "test:dev": "vitest",
     "test:coverage": "vitest run --coverage"
