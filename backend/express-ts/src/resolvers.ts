@@ -31,8 +31,8 @@ async function getJwtDataFromRequest(req: Request) {
   if (!accessToken) return null
   const jwtData = await getJwtData(accessToken)
   if (isRefreshToken(jwtData)) return null
-  const [ok] = parseUuid(jwtData.userId)
-  if (!ok) return null
+  const userId = parseUuid(jwtData.userId)
+  if (!userId) return null
   return jwtData
 }
 
@@ -48,19 +48,10 @@ type Brand<T, B> = T & { readonly __brand: B }
 
 type UUID = Brand<string, 'UUID'>
 
-type Res<T> = [true, T] | [false, string]
-
-function parseUuid(value: unknown): Res<UUID> {
-  if (typeof value != 'string') return [false, 'uuid must be a string']
-  if (!isUuid(value)) return [false, 'invalid uuid format']
-  return [true, value as UUID]
-}
-
-function getAndParseUuidParam(req: Request, res: Response, paramName: string): UUID | null {
-  const [ok, value] = parseUuid(req.params[paramName])
-  if (ok) return value
-  res.status(400).send('invalid uuid param: ' + paramName)
-  return null
+function parseUuid(value: unknown): UUID | null {
+  if (typeof value != 'string') return null
+  if (!isUuid(value)) return null
+  return value as UUID
 }
 
 async function getIdentity(where: { email: string } | { id: string }) {
@@ -89,6 +80,14 @@ async function getIdentity(where: { email: string } | { id: string }) {
   }
 
   return null
+}
+
+function replier<R extends Record<number, unknown>>(res: Response) {
+  return {
+    send<K extends keyof R & number>(key: K, value: R[K]) {
+      res.status(key).send(value)
+    },
+  }
 }
 
 const AppointmentStatus = {
@@ -245,6 +244,8 @@ const presenter = {
 export default {
   health: {
     async healthCheck(req: Request, res: Response) {
+      const reply = replier<types.api.health.healthCheck.responses>(res)
+
       const resourcesCheck: Record<string, (() => Promise<any>) | undefined> = {
         app: async () => {},
         jwt: async () => {},
@@ -305,29 +306,40 @@ export default {
       }
 
       // Format the response
-      res.json(response)
+      return reply.send(200, response)
     },
   },
   auth: {
     async login(req: Request, res: Response) {
+      const reply = replier<types.api.auth.login.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const args: types.body.AuthLogin = {
+      const args: types.api.auth.login.body = {
         email: req.body.email,
         password: req.body.password,
       }
 
       // Validate e execute the usecase
       const identity = await getIdentity({ email: args.email })
-
       if (!identity) {
-        res.send('invalid credentials\n')
-        return
+        return reply.send(400, {
+          error: {
+            code: 'auth_error',
+            location: 'auth',
+            message: 'invalid credentials',
+          },
+        })
       }
 
       const validPassword = await verifyPassword(args.password, identity.password)
       if (!validPassword) {
-        res.send('invalid credentials\n')
-        return
+        return reply.send(400, {
+          error: {
+            code: 'auth_error',
+            location: 'auth',
+            message: 'invalid credentials',
+          },
+        })
       }
 
       const data: JwtData = {
@@ -339,35 +351,57 @@ export default {
       const refreshToken = generateRefreshJWT(data)
 
       // Format the response
-      const response: types.schemas.AuthResponse = { accessToken, refreshToken }
-      res.json(response)
+      return reply.send(200, { accessToken, refreshToken })
     },
     async refresh(req: Request, res: Response) {
+      const reply = replier<types.api.auth.refresh.responses>(res)
+
       // Collect query parameters, path parameters, and request body
       const refreshToken = getAccessTokenFromRequest(req)
       if (!refreshToken) {
-        res.status(400).send('invalid token\n')
-        return
+        return reply.send(400, {
+          error: {
+            code: 'auth_error',
+            location: 'auth',
+            message: 'invalid token',
+          },
+        })
       }
 
       const jwtData = await getJwtData(refreshToken).catch(() => null)
       if (!jwtData || !isRefreshToken(jwtData)) {
-        res.status(400).send('invalid token\n')
-        return
+        return reply.send(400, {
+          error: {
+            code: 'auth_error',
+            location: 'auth',
+            message: 'invalid token',
+          },
+        })
       }
 
-      const [ok, userIdOrError] = parseUuid(jwtData.userId)
-      if (!ok) {
-        console.error('ERROR:', userIdOrError)
-        res.status(400).send('something went wrong\n')
-        return
+      const id = parseUuid(jwtData.userId)
+      if (!id) {
+        console.error('jwt userId is not an uuid')
+        return reply.send(500, {
+          error: {
+            code: 'internal_error',
+            location: 'auth',
+            message: 'jwt userId is not an uuid',
+          },
+        })
       }
 
       // Validate e execute the usecase
-      const identity = await getIdentity({ id: userIdOrError })
+      const identity = await getIdentity({ id })
       if (!identity) {
-        res.status(400).send('invalid token\n')
-        return
+        console.error('jwt userId without identity:', id)
+        return reply.send(500, {
+          error: {
+            code: 'internal_error',
+            location: 'auth',
+            message: 'jwt userId without identity',
+          },
+        })
       }
 
       const data: JwtData = {
@@ -378,36 +412,49 @@ export default {
       const accessToken = generateAccessJWT(data)
 
       // Format the response
-      const response: types.schemas.AuthResponse = { accessToken, refreshToken }
-      res.json(response)
+      return reply.send(200, { accessToken, refreshToken })
     },
     async me(req: Request, res: Response) {
+      const reply = replier<types.api.auth.me.responses>(res)
+
       // Collect query parameters, path parameters, and request body
       const jwtData = await getJwtDataFromRequest(req)
       if (!jwtData) {
-        res.status(400).send('invalid token\n')
-        return
+        return reply.send(400, {
+          error: {
+            code: 'auth_error',
+            location: 'auth',
+            message: 'invalid token',
+          },
+        })
       }
 
       // Validate e execute the usecase
       const identity = await getIdentity({ id: jwtData.userId })
       if (!identity) {
-        res.status(400).send('invalid token\n')
-        return
+        console.error('jwt userId without identity:', jwtData.userId)
+        return reply.send(400, {
+          error: {
+            code: 'auth_error',
+            location: 'auth',
+            message: 'jwt userId without identity',
+          },
+        })
       }
 
       // Format the response
-      const response: types.schemas.AuthIdentity = {
+      return reply.send(200, {
         id: identity.id,
         name: identity.name,
         email: identity.email,
         role: identity.role,
-      }
-      res.json(response)
+      })
     },
   },
   appointments: {
     async listAppointments(req: Request, res: Response) {
+      const reply = replier<types.api.appointments.listAppointments.responses>(res)
+
       // Collect query parameters, path parameters, and request body
       const page = getIntParam(req.query.page, 0)
       const pageSize = getIntParam(req.query.pageSize, 10)
@@ -441,24 +488,35 @@ export default {
       })
 
       // Format the response
-      const response: types.schemas.Appointment[] = rows.map((row) => presenter.appointment(row))
-      res.json(response)
+      return reply.send(
+        200,
+        rows.map((row) => presenter.appointment(row)),
+      )
     },
     async createAppointment(req: Request, res: Response) {
-      const args: types.body.AppointmentsCreateBody = {
+      const reply = replier<types.api.appointments.createAppointment.responses>(res)
+
+      // Collect query parameters, path parameters, and request body
+      const args: types.api.appointments.createAppointment.body = {
         customerId: req.body.customerId,
         date: req.body.date,
         serviceId: req.body.serviceId,
         time: req.body.time,
       }
 
+      // Validate e execute the usecase
       const service = await db.services.findUnique({
         where: { id: args.serviceId },
       })
 
       if (!service) {
-        res.status(400).send('service: resource not found\n')
-        return
+        return reply.send(404, {
+          error: {
+            code: 'resource_not_found',
+            resource: 'service',
+            message: 'service not found',
+          },
+        })
       }
 
       const row = await db.appointments.create({
@@ -475,27 +533,62 @@ export default {
         },
       })
 
-      const response: types.schemas.Id = { id: row.id }
-      res.json(response)
+      // Format the response
+      return reply.send(200, { id: row.id })
     },
     async countAppointments(req: Request, res: Response) {
+      const reply = replier<types.api.appointments.countAppointments.responses>(res)
+
       // Collect query parameters, path parameters, and request body
+      const startDate = getDateParam(req.query.startDate)
+      const endDate = getDateParam(req.query.endDate)
+      const serviceName = getStringParam(req.query.serviceName)
+      const specialist = getStringParam(req.query.specialist)
+      const customer = getStringParam(req.query.customer)
 
       // Validate e execute the usecase
-      const count = await db.appointments.count({})
+      const count = await db.appointments.count({
+        where: {
+          AND: [
+            ...(startDate ? [{ date: { gte: startDate } }] : []),
+            ...(endDate ? [{ date: { lte: endDate } }] : []),
+            ...(serviceName
+              ? [{ service_names: { name: { contains: serviceName, mode: 'insensitive' } } } as const]
+              : []), //
+            ...(specialist ? [{ specialists: { name: { contains: specialist, mode: 'insensitive' } } } as const] : []), //
+            ...(customer ? [{ customers: { name: { contains: customer, mode: 'insensitive' } } } as const] : []), //
+          ],
+        },
+      })
 
       // Format the response
-      res.send(count)
+      return reply.send(200, count)
     },
     async getAppointmentsCalendar(req: Request, res: Response) {
+      const reply = replier<types.api.appointments.getAppointmentsCalendar.responses>(res)
+
       // Collect query parameters, path parameters, and request body
       const startDate = getDateParam(req.query.startDate)
       if (!startDate) {
-        return res.status(400).send('invalid date param: startDate\n')
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'query',
+            key: 'startDate',
+            message: 'invalid date format',
+          },
+        })
       }
       const endDate = getDateParam(req.query.endDate)
       if (!endDate) {
-        return res.status(400).send('invalid date param: endDate\n')
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'query',
+            key: 'endDate',
+            message: 'invalid date format',
+          },
+        })
       }
 
       // Validate e execute the usecase
@@ -535,24 +628,42 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       `
 
       // Format the response
-      const response: types.schemas.AppointmentCalendar[] = row.map((row) => ({
-        id: row.id,
-        date: getDatePart(row.date.toISOString()),
-        time: getTimePart(row.time.toISOString()),
-        specialistName: row.specialist_name,
-        status: row.status,
-      }))
-      res.send(response)
+      return reply.send(
+        200,
+        row.map((row) => ({
+          id: row.id,
+          date: getDatePart(row.date.toISOString()),
+          time: getTimePart(row.time.toISOString()),
+          specialistName: row.specialist_name,
+          status: row.status,
+        })),
+      )
     },
     async getAppointmentsCalendarCount(req: Request, res: Response) {
+      const reply = replier<types.api.appointments.getAppointmentsCalendarCount.responses>(res)
+
       // Collect query parameters, path parameters, and request body
       const startDate = getDateParam(req.query.startDate)
       if (!startDate) {
-        return res.status(400).send('invalid date param: startDate\n')
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'query',
+            key: 'startDate',
+            message: 'invalid date',
+          },
+        })
       }
       const endDate = getDateParam(req.query.endDate)
       if (!endDate) {
-        return res.status(400).send('invalid date param: endDate\n')
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'query',
+            key: 'endDate',
+            message: 'invalid date',
+          },
+        })
       }
 
       // Validate e execute the usecase
@@ -592,12 +703,23 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
         }
       })
 
-      res.send(response)
+      return reply.send(200, response)
     },
     async getAppointmentById(req: Request, res: Response) {
+      const reply = replier<types.api.appointments.getAppointmentById.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const id = getAndParseUuidParam(req, res, 'id')
-      if (!id) return
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
 
       // Validate e execute the usecase
       const row = await db.appointments.findFirst({
@@ -610,23 +732,39 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        res.status(400).send('appointment: resource not found\n')
-        return
+        return reply.send(404, {
+          error: {
+            code: 'resource_not_found',
+            resource: 'appointment',
+            message: 'appointment not found',
+          },
+        })
       }
 
       // Format the response
-      res.json(presenter.appointment(row))
+      return reply.send(200, presenter.appointment(row))
     },
     async updateAppointment(req: Request, res: Response) {
+      const reply = replier<types.api.appointments.updateAppointment.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const args: types.body.AppointmentsUpdateBody = {
+      const args: types.api.appointments.updateAppointment.body = {
         date: req.body.date,
         status: req.body.status,
         time: req.body.time,
       }
 
-      const id = getAndParseUuidParam(req, res, 'id')
-      if (!id) return
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
 
       // Validate e execute the usecase
       const row = await db.appointments.update({
@@ -639,13 +777,23 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      const response: types.schemas.Id = { id: row.id }
-      res.json(response)
+      return reply.send(200, { id: row.id })
     },
     async deleteAppointment(req: Request, res: Response) {
+      const reply = replier<types.api.appointments.deleteAppointment.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const id = getAndParseUuidParam(req, res, 'id')
-      if (!id) return
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
 
       // Validate e execute the usecase
       const row = await db.appointments.delete({
@@ -653,16 +801,23 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        res.status(400).send('appointment: resource not found\n')
-        return
+        return reply.send(404, {
+          error: {
+            code: 'resource_not_found',
+            resource: 'appointment',
+            message: 'appointment not found',
+          },
+        })
       }
 
       // Format the response
-      res.status(204).send('')
+      return reply.send(204, '')
     },
   },
   customers: {
     async listCustomers(req: Request, res: Response) {
+      const reply = replier<types.api.customers.listCustomers.responses>(res)
+
       // Collect query parameters, path parameters, and request body
       const page = getIntParam(req.query.page, 0)
       const pageSize = getIntParam(req.query.pageSize, 10)
@@ -685,12 +840,16 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      const response = rows.map((row) => presenter.customer(row))
-      res.json(response)
+      return reply.send(
+        200,
+        rows.map((row) => presenter.customer(row)),
+      )
     },
     async createCustomer(req: Request, res: Response) {
+      const reply = replier<types.api.customers.createCustomer.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const args: types.body.CustomerCreateBody = {
+      const args: types.api.customers.createCustomer.body = {
         birthdate: req.body.birthdate,
         cpf: req.body.cpf,
         email: req.body.email,
@@ -711,10 +870,11 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      const response: types.schemas.Id = { id: row.id }
-      res.json(response)
+      return reply.send(200, { id: row.id })
     },
     async countCustomers(req: Request, res: Response) {
+      const reply = replier<types.api.customers.countCustomers.responses>(res)
+
       // Collect query parameters, path parameters, and request body
       const name = getStringParam(req.query.name, '')
       const cpf = getStringParam(req.query.cpf, '')
@@ -732,12 +892,23 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      res.send(count)
+      return reply.send(200, count)
     },
     async getCustomerById(req: Request, res: Response) {
+      const reply = replier<types.api.customers.getCustomerById.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const id = getAndParseUuidParam(req, res, 'id')
-      if (!id) return
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
 
       // Validate e execute the usecase
       const row = await db.customers.findFirst({
@@ -745,16 +916,23 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        res.status(400).send('customer: resource not found\n')
-        return
+        return reply.send(404, {
+          error: {
+            code: 'resource_not_found',
+            resource: 'customer',
+            message: 'customer not found',
+          },
+        })
       }
 
       // Format the response
-      res.json(presenter.customer(row))
+      return reply.send(200, presenter.customer(row))
     },
     async updateCustomer(req: Request, res: Response) {
+      const reply = replier<types.api.customers.updateCustomer.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const args: types.body.CustomerUpdateBody = {
+      const args: types.api.customers.updateCustomer.body = {
         name: req.body.name,
         email: req.body.email,
         phone: req.body.phone,
@@ -762,8 +940,17 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
         cpf: req.body.cpf,
       }
 
-      const id = getAndParseUuidParam(req, res, 'id')
-      if (!id) return
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
 
       const data = {
         name: args.name,
@@ -780,13 +967,23 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      const response: types.schemas.Id = { id: row.id }
-      res.json(response)
+      return reply.send(200, { id: row.id })
     },
     async deleteCustomer(req: Request, res: Response) {
+      const reply = replier<types.api.customers.deleteCustomer.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const id = getAndParseUuidParam(req, res, 'id')
-      if (!id) return
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
 
       // Validate e execute the usecase
       const row = await db.customers.delete({
@@ -794,16 +991,23 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        res.status(400).send('customer: resource not found\n')
-        return
+        return reply.send(404, {
+          error: {
+            code: 'resource_not_found',
+            resource: 'customer',
+            message: 'customer not found',
+          },
+        })
       }
 
       // Format the response
-      res.status(204).send('')
+      return reply.send(204, '')
     },
   },
   secretaries: {
     async listSecretaries(req: Request, res: Response) {
+      const reply = replier<types.api.secretaries.listSecretaries.responses>(res)
+
       // Collect query parameters, path parameters, and request body
       const page = getIntParam(req.query.page, 0)
       const pageSize = getIntParam(req.query.pageSize, 10)
@@ -828,12 +1032,16 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      const response = rows.map((row) => presenter.secretary(row))
-      res.json(response)
+      return reply.send(
+        200,
+        rows.map((row) => presenter.secretary(row)),
+      )
     },
     async createSecretary(req: Request, res: Response) {
+      const reply = replier<types.api.secretaries.createSecretary.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const args: types.body.SecretaryCreateBody = {
+      const args: types.api.secretaries.createSecretary.body = {
         birthdate: req.body.birthdate,
         cpf: req.body.cpf,
         email: req.body.email,
@@ -849,8 +1057,14 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (exists) {
-        res.status(400).send('secretary.email: resource already exists\n')
-        return
+        return reply.send(422, {
+          error: {
+            code: 'resource_already_exists',
+            resource: 'secretary',
+            key: 'email',
+            message: 'secretary.email already exists',
+          },
+        })
       }
 
       const row = await db.secretaries.create({
@@ -867,10 +1081,11 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      const response: types.schemas.Id = { id: row.id }
-      res.json(response)
+      return reply.send(200, { id: row.id })
     },
     async countSecretaries(req: Request, res: Response) {
+      const reply = replier<types.api.secretaries.countSecretaries.responses>(res)
+
       // Collect query parameters, path parameters, and request body
       const name = getStringParam(req.query.name, '')
       const cpf = getStringParam(req.query.cpf, '')
@@ -890,12 +1105,23 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      res.send(count)
+      return reply.send(200, count)
     },
     async getSecretaryById(req: Request, res: Response) {
+      const reply = replier<types.api.secretaries.getSecretaryById.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const id = getAndParseUuidParam(req, res, 'id')
-      if (!id) return
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
 
       // Validate e execute the usecase
       const row = await db.secretaries.findFirst({
@@ -903,16 +1129,23 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        res.status(400).send('secretary: resource not found\n')
-        return
+        return reply.send(404, {
+          error: {
+            code: 'resource_not_found',
+            resource: 'secretary',
+            message: 'secretary not found',
+          },
+        })
       }
 
       // Format the response
-      res.json(presenter.secretary(row))
+      return reply.send(200, presenter.secretary(row))
     },
     async updateSecretary(req: Request, res: Response) {
+      const reply = replier<types.api.secretaries.updateSecretary.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const args: types.body.SecretaryUpdateBody = {
+      const args: types.api.secretaries.updateSecretary.body = {
         name: req.body.name,
         email: req.body.email,
         phone: req.body.phone,
@@ -922,8 +1155,17 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
         password: req.body.password,
       }
 
-      const id = getAndParseUuidParam(req, res, 'id')
-      if (!id) return
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
 
       const data = {
         name: args.name,
@@ -941,8 +1183,13 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        res.status(400).send('secretary: resource not found\n')
-        return
+        return reply.send(404, {
+          error: {
+            code: 'resource_not_found',
+            resource: 'secretary',
+            message: 'secretary not found',
+          },
+        })
       }
 
       if (row.email !== data.email) {
@@ -951,8 +1198,14 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
         })
 
         if (exists) {
-          res.status(400).send('secretary.email: resource already exists\n')
-          return
+          return reply.send(422, {
+            error: {
+              code: 'resource_already_exists',
+              resource: 'secretary',
+              key: 'email',
+              message: 'secretary.email already exists',
+            },
+          })
         }
       }
 
@@ -962,13 +1215,23 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      const response: types.schemas.Id = { id: row.id }
-      res.json(response)
+      return reply.send(200, { id: row.id })
     },
     async deleteSecretary(req: Request, res: Response) {
+      const reply = replier<types.api.secretaries.deleteSecretary.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const id = getAndParseUuidParam(req, res, 'id')
-      if (!id) return
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
 
       // Validate e execute the usecase
       const row = await db.secretaries.delete({
@@ -976,16 +1239,23 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        res.status(400).send('secretary: resource not found\n')
-        return
+        return reply.send(404, {
+          error: {
+            code: 'resource_not_found',
+            resource: 'secretary',
+            message: 'secretary not found',
+          },
+        })
       }
 
       // Format the response
-      res.status(204).send('')
+      return reply.send(204, '')
     },
   },
   servicesAvailable: {
     async listServicesAvailable(req: Request, res: Response) {
+      const reply = replier<types.api.servicesAvailable.listServicesAvailable.responses>(res)
+
       // Collect query parameters, path parameters, and request body
       const page = getIntParam(req.query.page, 0)
       const pageSize = getIntParam(req.query.pageSize, 10)
@@ -1001,24 +1271,30 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      const response: types.schemas.ServiceAvailable[] = rows.map((row) => ({
-        id: row.id,
-        name: row.name,
-        items: row.service_names.map((s) => ({ id: s.id, name: s.name })),
-      }))
-      res.json(response)
+      return reply.send(
+        200,
+        rows.map((row) => presenter.serviceGroup(row)),
+      )
     },
     async createServiceAvailable(req: Request, res: Response) {
+      const reply = replier<types.api.servicesAvailable.createServiceAvailable.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const args: types.body.ServiceAvailableCreateBody = {
+      const args: types.api.servicesAvailable.createServiceAvailable.body = {
         name: req.body.name,
         specialization: req.body.specialization,
         specializationId: req.body.specializationId,
       }
 
       if (args.name.length === 0) {
-        res.status(400).send('invalid argument: name: field is required\n')
-        return
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'body',
+            key: 'name',
+            message: 'name is required',
+          },
+        })
       }
 
       // Validate e execute the usecase
@@ -1027,18 +1303,29 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (exists) {
-        res.status(400).send('service_names.name: resource already exists\n')
-        return
+        return reply.send(422, {
+          error: {
+            code: 'resource_already_exists',
+            resource: 'service_names',
+            key: 'name',
+            message: 'service_names.name already exists',
+          },
+        })
       }
 
       if (args.specialization) {
-        res.send('TODO')
-        return
+        throw new Error('TODO')
       }
 
       if (!args.specializationId) {
-        res.status(400).send('invalid argument: specializationId: field is required\n')
-        return
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'body',
+            key: 'specializationId',
+            message: 'specializationId is required',
+          },
+        })
       }
 
       const row = await db.service_names.create({
@@ -1050,13 +1337,23 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      const response: types.schemas.Id = { id: row.id }
-      res.json(response)
+      return reply.send(200, { id: row.id })
     },
     async getServiceAvailableById(req: Request, res: Response) {
+      const reply = replier<types.api.servicesAvailable.getServiceAvailableById.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const id = getAndParseUuidParam(req, res, 'id')
-      if (!id) return
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
 
       // Validate e execute the usecase
       const row = await db.service_names.findUnique({
@@ -1067,12 +1364,17 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        res.status(400).send('service_name: resource not found\n')
-        return
+        return reply.send(404, {
+          error: {
+            code: 'resource_not_found',
+            resource: 'service_name',
+            message: 'service_name not found',
+          },
+        })
       }
 
       // Format the response
-      res.json({
+      return reply.send(200, {
         serviceName: row.name,
         serviceNameId: row.id,
         specialization: row.specializations.name,
@@ -1080,17 +1382,34 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
     },
     async updateServiceAvailable(req: Request, res: Response) {
-      // Collect query parameters, path parameters, and request body
-      const id = getAndParseUuidParam(req, res, 'id')
-      if (!id) return
+      const reply = replier<types.api.servicesAvailable.updateServiceAvailable.responses>(res)
 
-      const args: types.body.ServiceAvailableUpdateBody = {
+      // Collect query parameters, path parameters, and request body
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
+
+      const args: types.api.servicesAvailable.updateServiceAvailable.body = {
         name: req.body.name,
       }
 
       if (args.name.length === 0) {
-        res.status(400).send('invalid argument: name: field is required\n')
-        return
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'body',
+            key: 'name',
+            message: 'name is required',
+          },
+        })
       }
 
       // Validate e execute the usecase
@@ -1099,13 +1418,17 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        res.status(400).send('service_name: resource not found\n')
-        return
+        return reply.send(404, {
+          error: {
+            code: 'resource_not_found',
+            resource: 'service_name',
+            message: 'service_name not found',
+          },
+        })
       }
 
       if (row.name === args.name) {
-        res.json({ id: row.id })
-        return
+        return reply.send(200, { id: row.id })
       }
 
       const exists = await db.service_names.findUnique({
@@ -1113,8 +1436,14 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (exists) {
-        res.status(400).send('service_names.name: resource already exists\n')
-        return
+        return reply.send(404, {
+          error: {
+            code: 'resource_not_found',
+            resource: 'service_name',
+            key: 'name',
+            message: 'service_name.name not found',
+          },
+        })
       }
 
       await db.service_names.update({
@@ -1123,13 +1452,23 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      const response: types.schemas.Id = { id: row.id }
-      res.json(response)
+      return reply.send(200, { id: row.id })
     },
     async deleteServiceAvailable(req: Request, res: Response) {
+      const reply = replier<types.api.servicesAvailable.deleteServiceAvailable.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const id = getAndParseUuidParam(req, res, 'id')
-      if (!id) return
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
 
       // Validate e execute the usecase
       const row = await db.service_names.delete({
@@ -1137,16 +1476,23 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        res.status(400).send('service_name: resource not found\n')
-        return
+        return reply.send(404, {
+          error: {
+            code: 'resource_not_found',
+            resource: 'service_name',
+            message: 'service_name not found',
+          },
+        })
       }
 
       // Format the response
-      res.status(204).send('')
+      return reply.send(204, '')
     },
   },
   services: {
     async listServices(req: Request, res: Response) {
+      const reply = replier<types.api.services.listServices.responses>(res)
+
       // Collect query parameters, path parameters, and request body
       const page = getIntParam(req.query.page, 0)
       const pageSize = getIntParam(req.query.pageSize, 10)
@@ -1172,12 +1518,16 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      const response: types.schemas.ServiceEnriched[] = rows.map((row) => presenter.service(row))
-      res.json(response)
+      return reply.send(
+        200,
+        rows.map((row) => presenter.service(row)),
+      )
     },
     async createService(req: Request, res: Response) {
+      const reply = replier<types.api.services.createService.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const args: types.body.ServiceCreateBody = {
+      const args: types.api.services.createService.body = {
         duration: req.body.duration,
         price: req.body.price,
         serviceNameId: req.body.serviceNameId,
@@ -1196,22 +1546,34 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      const response: types.schemas.Id = { id: row.id }
-      res.json(response)
+      return reply.send(200, { id: row.id })
     },
     async countServices(req: Request, res: Response) {
+      const reply = replier<types.api.services.countServices.responses>(res)
+
       // Collect query parameters, path parameters, and request body
 
       // Validate e execute the usecase
       const count = await db.services.count({})
 
       // Format the response
-      res.send(count)
+      return reply.send(200, count)
     },
     async getServiceById(req: Request, res: Response) {
+      const reply = replier<types.api.services.getServiceById.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const id = getAndParseUuidParam(req, res, 'id')
-      if (!id) return
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
 
       // Validate e execute the usecase
       const row = await db.services.findUnique({
@@ -1219,26 +1581,41 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        res.status(400).send('service: resource not found\n')
-        return
+        return reply.send(404, {
+          error: {
+            code: 'resource_not_found',
+            resource: 'service',
+            message: 'service not found',
+          },
+        })
       }
 
       // Format the response
-      const response: types.schemas.Service = {
+      return reply.send(200, {
         id: row.id,
         specialistId: row.specialist_id,
         serviceNameId: row.service_name_id,
         price: row.price,
         duration: row.duration,
-      }
-      res.send(response)
+      })
     },
     async updateService(req: Request, res: Response) {
-      // Collect query parameters, path parameters, and request body
-      const id = getAndParseUuidParam(req, res, 'id')
-      if (!id) return
+      const reply = replier<types.api.services.updateService.responses>(res)
 
-      const args: types.body.ServiceUpdateBody = {
+      // Collect query parameters, path parameters, and request body
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
+
+      const args: types.api.services.updateService.body = {
         duration: req.body.duration,
         price: req.body.price,
       }
@@ -1253,18 +1630,33 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        res.status(400).send('service: resource not found\n')
-        return
+        return reply.send(404, {
+          error: {
+            code: 'resource_not_found',
+            resource: 'service',
+            message: 'service not found',
+          },
+        })
       }
 
       // Format the response
-      const response: types.schemas.Id = { id: row.id }
-      res.json(response)
+      return reply.send(200, { id: row.id })
     },
     async deleteService(req: Request, res: Response) {
+      const reply = replier<types.api.services.deleteService.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const id = getAndParseUuidParam(req, res, 'id')
-      if (!id) return
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
 
       // Validate e execute the usecase
       const row = await db.services.delete({
@@ -1272,16 +1664,23 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        res.status(400).send('service: resource not found\n')
-        return
+        return reply.send(404, {
+          error: {
+            code: 'resource_not_found',
+            resource: 'service',
+            message: 'service not found',
+          },
+        })
       }
 
       // Format the response
-      res.status(204).send('')
+      return reply.send(204, '')
     },
   },
   serviceGroups: {
     async listServiceGroups(req: Request, res: Response) {
+      const reply = replier<types.api.serviceGroups.listServiceGroups.responses>(res)
+
       // Collect query parameters, path parameters, and request body
 
       // Validate e execute the usecase
@@ -1290,12 +1689,16 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      const response: types.schemas.ServiceGroup[] = rows.map((row) => presenter.serviceGroup(row))
-      res.json(response)
+      return reply.send(
+        200,
+        rows.map((row) => presenter.serviceGroup(row)),
+      )
     },
   },
   specialists: {
     async listSpecialists(req: Request, res: Response) {
+      const reply = replier<types.api.specialists.listSpecialists.responses>(res)
+
       // Collect query parameters, path parameters, and request body
       const page = getIntParam(req.query.page, 0)
       const pageSize = getIntParam(req.query.pageSize, 10)
@@ -1320,12 +1723,16 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      const response: types.schemas.Specialist[] = rows.map((row) => presenter.specialist(row))
-      res.json(response)
+      return reply.send(
+        200,
+        rows.map((row) => presenter.specialist(row)),
+      )
     },
     async createSpecialist(req: Request, res: Response) {
+      const reply = replier<types.api.specialists.createSpecialist.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const args: types.body.SpecialistCreateBody = {
+      const args: types.api.specialists.createSpecialist.body = {
         name: req.body.name.trim(),
         birthdate: req.body.birthdate,
         cnpj: req.body.cnpj,
@@ -1341,8 +1748,14 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (exists) {
-        res.status(400).send('specialist.email: resource already exists\n')
-        return
+        return reply.send(422, {
+          error: {
+            code: 'resource_already_exists',
+            resource: 'specialist',
+            key: 'email',
+            message: 'specialist.email already exists',
+          },
+        })
       }
 
       const row = await db.$transaction(async (tx) => {
@@ -1372,10 +1785,11 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      const response: types.schemas.Id = { id: row.id }
-      res.json(response)
+      return reply.send(200, { id: row.id })
     },
     async countSpecialists(req: Request, res: Response) {
+      const reply = replier<types.api.specialists.countSpecialists.responses>(res)
+
       // Collect query parameters, path parameters, and request body
       const name = getStringParam(req.query.name)
       const cpf = getStringParam(req.query.cpf)
@@ -1395,40 +1809,85 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      res.send(count)
+      return reply.send(200, count)
     },
     async getSpecialistById(req: Request, res: Response) {
-      const id = getAndParseUuidParam(req, res, 'id')
-      if (!id) return
+      const reply = replier<types.api.specialists.getSpecialistById.responses>(res)
 
+      // Collect query parameters, path parameters, and request body
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
+
+      // Validate e execute the usecase
       const row = await db.specialists.findUnique({
         where: { id },
       })
 
       if (!row) {
-        res.status(400).send('specialist: resource not found\n')
-        return
+        return reply.send(404, {
+          error: {
+            code: 'resource_not_found',
+            resource: 'specialist',
+            message: 'specialist not found',
+          },
+        })
       }
 
-      const response: types.schemas.Specialist = presenter.specialist(row)
-      res.json(response)
+      // Format the response
+      return reply.send(200, presenter.specialist(row))
     },
     async getSpecialistServices(req: Request, res: Response) {
-      const id = getAndParseUuidParam(req, res, 'id')
-      if (!id) return
+      const reply = replier<types.api.specialists.getSpecialistServices.responses>(res)
 
+      // Collect query parameters, path parameters, and request body
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
+
+      // Validate e execute the usecase
       const rows = await db.services.findMany({
         where: { specialist_id: id },
         include: { service_names: {} },
       })
 
-      const response = rows.map((row) => presenter.specialistService(row))
-      res.json(response)
+      // Format the response
+      return reply.send(
+        200,
+        rows.map((row) => presenter.specialistService(row)),
+      )
     },
     async getSpecialistSpecializations(req: Request, res: Response) {
+      const reply = replier<types.api.specialists.getSpecialistSpecializations.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const id = getAndParseUuidParam(req, res, 'id')
-      if (!id) return
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
 
       // Validate e execute the usecase
       const rows = await db.specializations.findMany({
@@ -1436,13 +1895,23 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      const response: types.schemas.Specialization[] = rows
-      res.json(response)
+      return reply.send(200, rows)
     },
     async getSpecialistAppointments(req: Request, res: Response) {
+      const reply = replier<types.api.specialists.getSpecialistAppointments.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const id = getAndParseUuidParam(req, res, 'id')
-      if (!id) return
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
 
       // Validate e execute the usecase
       const rows = await db.appointments.findMany({
@@ -1451,15 +1920,37 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      const response = rows.map((row) => presenter.specialistAppointment(row))
-      res.json(response)
+      return reply.send(
+        200,
+        rows.map((row) => presenter.specialistAppointment(row)),
+      )
     },
     async getSpecialistService(req: Request, res: Response) {
+      const reply = replier<types.api.specialists.getSpecialistService.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const id = getAndParseUuidParam(req, res, 'id')
-      if (!id) return
-      const serviceId = getAndParseUuidParam(req, res, 'service_id')
-      if (!serviceId) return
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
+      const serviceId = parseUuid(req.params.service_id)
+      if (!serviceId) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'service_id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
 
       // Validate e execute the usecase
       const row = await db.services.findFirst({
@@ -1467,26 +1958,41 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        res.status(400).send('service: resource not found\n')
-        return
+        return reply.send(404, {
+          error: {
+            code: 'resource_not_found',
+            resource: 'service',
+            message: 'service not found',
+          },
+        })
       }
 
       // Format the response
-      const response: types.schemas.Service = {
+      return reply.send(200, {
         id: row.id,
         specialistId: row.specialist_id,
         serviceNameId: row.service_name_id,
         price: row.price,
         duration: row.duration,
-      }
-      res.json(response)
+      })
     },
     async updateSpecialist(req: Request, res: Response) {
-      // Collect query parameters, path parameters, and request body
-      const id = getAndParseUuidParam(req, res, 'id')
-      if (!id) return
+      const reply = replier<types.api.specialists.updateSpecialist.responses>(res)
 
-      const args: types.body.SpecialistUpdateBody = {
+      // Collect query parameters, path parameters, and request body
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
+
+      const args: types.api.specialists.updateSpecialist.body = {
         name: req.body.name.trim(),
         birthdate: req.body.birthdate,
         cnpj: req.body.cnpj,
@@ -1497,8 +2003,14 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       }
 
       if (args.name.length === 0) {
-        res.status(400).send('invalid argument: name: field is required\n')
-        return
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'body',
+            key: 'name',
+            message: 'name is required',
+          },
+        })
       }
 
       // Validate e execute the usecase
@@ -1515,13 +2027,23 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      const response: types.schemas.Id = { id: row.id }
-      res.json(response)
+      return reply.send(200, { id: row.id })
     },
     async deleteSpecialist(req: Request, res: Response) {
+      const reply = replier<types.api.specialists.deleteSpecialist.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const id = getAndParseUuidParam(req, res, 'id')
-      if (!id) return
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
 
       // Validate e execute the usecase
       const row = await db.specialists.delete({
@@ -1529,16 +2051,23 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        res.status(400).send('specialist: resource not found\n')
-        return
+        return reply.send(404, {
+          error: {
+            code: 'resource_not_found',
+            resource: 'specialist',
+            message: 'specialist not found',
+          },
+        })
       }
 
       // Format the response
-      res.status(204).send('')
+      return reply.send(204, '')
     },
   },
   specializations: {
     async listSpecializations(req: Request, res: Response) {
+      const reply = replier<types.api.specializations.listSpecializations.responses>(res)
+
       // Collect query parameters, path parameters, and request body
 
       // Validate e execute the usecase
@@ -1547,17 +2076,25 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      res.json(rows)
+      return reply.send(200, rows)
     },
     async createSpecialization(req: Request, res: Response) {
+      const reply = replier<types.api.specializations.createSpecialization.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const args: types.body.SpecializationCreateBody = {
+      const args: types.api.specializations.createSpecialization.body = {
         name: req.body.name?.trim(),
       }
 
       if (!args.name) {
-        res.status(400).send('invalid argument: name: field is required\n')
-        return
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'body',
+            key: 'name',
+            message: 'name is required',
+          },
+        })
       }
 
       // Validate e execute the usecase
@@ -1566,8 +2103,14 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (exists) {
-        res.status(400).send('specialization.name: resource already exists\n')
-        return
+        return reply.send(422, {
+          error: {
+            code: 'resource_already_exists',
+            resource: 'specialization',
+            key: 'name',
+            message: 'specialization.name already exists',
+          },
+        })
       }
 
       const row = await db.specializations.create({
@@ -1578,21 +2121,37 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      const response: types.schemas.Id = { id: row.id }
-      res.json(response)
+      return reply.send(200, { id: row.id })
     },
     async updateSpecialization(req: Request, res: Response) {
-      // Collect query parameters, path parameters, and request body
-      const id = getAndParseUuidParam(req, res, 'id')
-      if (!id) return
+      const reply = replier<types.api.specializations.updateSpecialization.responses>(res)
 
-      const args: types.body.SpecializationUpdateBody = {
+      // Collect query parameters, path parameters, and request body
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
+
+      const args: types.api.specializations.updateSpecialization.body = {
         name: req.body.name?.trim(),
       }
 
       if (!args.name) {
-        res.status(400).send('invalid argument: name: field is required\n')
-        return
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'body',
+            key: 'name',
+            message: 'name is required',
+          },
+        })
       }
 
       // Validate e execute the usecase
@@ -1602,18 +2161,33 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        res.status(400).send('specialization: resource not found\n')
-        return
+        return reply.send(404, {
+          error: {
+            code: 'resource_not_found',
+            resource: 'specialization',
+            message: 'specialization not found',
+          },
+        })
       }
 
       // Format the response
-      const response: types.schemas.Id = { id: row.id }
-      res.json(response)
+      return reply.send(200, { id: row.id })
     },
     async deleteSpecialization(req: Request, res: Response) {
+      const reply = replier<types.api.specializations.deleteSpecialization.responses>(res)
+
       // Collect query parameters, path parameters, and request body
-      const id = getAndParseUuidParam(req, res, 'id')
-      if (!id) return
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.send(400, {
+          error: {
+            code: 'validation_error',
+            location: 'path',
+            key: 'id',
+            message: 'invalid uuid format',
+          },
+        })
+      }
 
       // Validate e execute the usecase
       const row = await db.specializations.delete({
@@ -1621,16 +2195,23 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        res.status(400).send('specialization: resource not found\n')
-        return
+        return reply.send(404, {
+          error: {
+            code: 'resource_not_found',
+            resource: 'specialization',
+            message: 'specialization not found',
+          },
+        })
       }
 
       // Format the response
-      res.status(204).send('')
+      return reply.send(204, '')
     },
   },
   test: {
     async initTest(req: Request, res: Response) {
+      const reply = replier<types.api.test.initTest.responses>(res)
+
       await db.$transaction(async (tx) => {
         await tx.admins.deleteMany()
         await tx.appointments.deleteMany()
@@ -1651,17 +2232,21 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
           },
         })
       })
-      res.send('System initialized to be tested')
+      return reply.send(200, 'System initialized to be tested')
     },
     async statsTest(req: Request, res: Response) {
+      const reply = replier<types.api.test.statsTest.responses>(res)
+
       const dbConfig = getDatabaseConfig()
-      res.json({
+      return reply.send(200, {
         database: `user=${dbConfig.user} password=${dbConfig.password} host=${dbConfig.host} port=${dbConfig.port} dbname=${dbConfig.name}`,
         message: 'Environment: TEST',
       })
     },
     async debugClaimsTest(req: Request, res: Response) {
-      res.send('OK')
+      const reply = replier<types.api.test.debugClaimsTest.responses>(res)
+
+      return reply.send(200, 'OK')
     },
   },
 }

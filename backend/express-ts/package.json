@@ -7,7 +7,7 @@
   "scripts": {
     "start": "npx tsx src/index.ts",
     "dev": "npx tsx watch src/index.ts",
-    "generate:swagger-types": "pnpx tsx ./src/scripts/generate-swagger-types.ts"
+    "generate:swagger-types": "npx tsx ./src/scripts/generate-swagger-types.ts"
   },
   "keywords": [],
   "author": "",

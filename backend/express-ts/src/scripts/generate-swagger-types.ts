@@ -6,6 +6,40 @@ function formatRef(ref: string) {
   return ref.replace('#/components/', '').replace('/', '.')
 }
 
+function generateString(w: Writable, ident: string, item: any) {
+  if (item.type !== 'string') throw new Error()
+
+  if (item.enum && item.enum.length > 0) {
+    const values: string[] = item.enum
+    if (values.length > 5) {
+      let count = 0
+      w.write('//\n')
+      for (const value of values) {
+        w.write(ident)
+        w.write(`  | '${value}'`)
+        if (count === 0) {
+          w.write(' //')
+        }
+        if (count + 1 < values.length) {
+          w.write('\n')
+        }
+        count++
+      }
+    } else {
+      let count = 0
+      for (const value of values) {
+        if (count > 0) {
+          w.write(' | ')
+        }
+        w.write(`'${value}'`)
+        count++
+      }
+    }
+  } else {
+    w.write(item.type)
+  }
+}
+
 function generateType(w: Writable, ident: string, item: any) {
   if (item.$ref) {
     w.write(formatRef(item.$ref))
@@ -33,11 +67,13 @@ function generateType(w: Writable, ident: string, item: any) {
         w.write('[]')
       } else if (item.items.type === 'object') {
         w.write('Array<')
-        generateType(w, ident + '  ', item.items)
+        generateType(w, ident, item.items)
         w.write('>')
       } else {
         w.write('any[]')
       }
+    } else if (item.type === 'string') {
+      generateString(w, ident, item)
     } else {
       w.write(item.type)
     }
@@ -62,6 +98,27 @@ function generateRootType(w: Writable, name: string, item: any) {
   } else {
     w.write(`  export type ${name} = any`)
   }
+}
+
+function collectApi() {
+  const api: Record<string, { actions: Record<string, { body: any | undefined; responses: Record<string, any> }> }> = {}
+  for (const pathUrl in openApiJson.paths) {
+    const path = (openApiJson.paths as any)[pathUrl]
+    openApiJson.paths['/api/appointments'].get.responses
+    for (const method in path) {
+      const endpoint = path[method]
+      const [resource, action] = endpoint.operationId.split('.')
+      if (!api[resource]) api[resource] = { actions: {} }
+      if (!api[resource].actions[action]) api[resource].actions[action] = { body: undefined, responses: {} }
+      for (const status in endpoint.responses) {
+        api[resource].actions[action].responses[status] = endpoint.responses[status]
+      }
+      if (endpoint.requestBody) {
+        api[resource].actions[action].body = endpoint.requestBody
+      }
+    }
+  }
+  return api
 }
 
 function generateSwaggerTypes(w: Writable) {
@@ -92,6 +149,19 @@ function generateSwaggerTypes(w: Writable) {
   w.write('}\n')
   w.write('\n')
   count = 0
+  w.write('export namespace errors {\n')
+  for (const key in openApiJson.components.errors) {
+    if (count > 0) {
+      w.write('\n')
+    }
+    const item = (openApiJson.components.errors as any)[key]
+    generateRootType(w, key, item)
+    w.write('\n')
+    count++
+  }
+  w.write('}\n')
+  w.write('\n')
+  count = 0
   w.write('export namespace schemas {\n')
   for (const key in openApiJson.components.schemas) {
     if (count > 0) {
@@ -113,6 +183,66 @@ function generateSwaggerTypes(w: Writable) {
     const item = (openApiJson.components.body as any)[key]
     generateRootType(w, key, item)
     w.write('\n')
+    count++
+  }
+  w.write('}\n')
+  w.write('\n')
+
+  const api = collectApi()
+
+  count = 0
+  w.write('export namespace api {\n')
+  for (const resource in api) {
+    const route = api[resource]
+
+    if (count > 0) {
+      w.write('\n')
+    }
+
+    let countResource = 0
+    w.write(`  export namespace ${resource} {\n`)
+    for (const action in route.actions) {
+      const endpoint = route.actions[action]
+      if (countResource > 0) {
+        w.write('\n')
+      }
+
+      w.write(`    export namespace ${action} {\n`)
+
+      if (endpoint.body) {
+        const schema = endpoint.body?.content?.['application/json']?.schema
+        if (schema) {
+          w.write(`      export type body = `)
+          generateType(w, '        ', schema)
+          w.write('\n')
+        } else {
+          w.write(`      export type body = any\n`)
+        }
+        w.write('\n')
+      }
+
+      w.write(`      export type responses = {\n`)
+      for (const status in endpoint.responses) {
+        const response = endpoint.responses[status]
+        const schema = response?.content?.['application/json']?.schema
+        if (response.description) {
+          w.write('        /**\n')
+          w.write('         * ' + response.description + '\n')
+          w.write('         */\n')
+        }
+        if (schema) {
+          w.write(`        ${status}: `)
+          generateType(w, '        ', schema)
+          w.write('\n')
+        } else {
+          w.write(`        ${status}: any\n`)
+        }
+      }
+      w.write('      }\n')
+      w.write('    }\n')
+      countResource++
+    }
+    w.write('  }\n')
     count++
   }
   w.write('}\n')

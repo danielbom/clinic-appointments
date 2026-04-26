@@ -366,6 +366,7 @@ async function run(args: Args) {
   for (const servicesAvailableId of state.servicesAvailableIds) {
     await api.servicesAvailable.delete(servicesAvailableId)
   }
+  await api.servicesAvailable.getById(state.servicesAvailableIds[0])
   state.servicesAvailableIds.length = 0
   await api.servicesAvailable.getAll()
 
@@ -454,6 +455,7 @@ async function run(args: Args) {
   await api.services.getById(state.serviceId)
   await api.services.getAll()
   await api.services.delete(state.serviceId)
+  await api.services.getById(state.serviceId)
   await api.services.getAll()
   await api.services.count()
 
@@ -484,6 +486,7 @@ async function run(args: Args) {
   await api.customers.getAll()
   await api.customers.count()
   await api.customers.delete(state.customerId)
+  await api.customers.getById(state.customerId)
   await api.customers.getAll()
   await api.customers.count()
 
@@ -519,6 +522,7 @@ async function run(args: Args) {
   await api.appointments.getById(state.appointmentId)
   await api.appointments.getAll()
   await api.appointments.delete(state.appointmentId)
+  await api.appointments.getById(state.appointmentId)
   await api.appointments.getAll()
   await api.appointments.count()
 
@@ -735,6 +739,10 @@ async function run(args: Args) {
 
   await api.appointments.getCalendar({ startDate: '2031-01-01', endDate: '2031-12-31' })
   await api.appointments.getCalendarCount({ startDate: '2031-01-01', endDate: '2031-12-31' })
+
+  // TODO: limit startDate and endDate range
+  // await api.appointments.getCalendar({ startDate: '2031-01-01', endDate: '2031-01-31' })
+  // await api.appointments.getCalendarCount({ startDate: '2031-01-01', endDate: '2031-01-31' })
 
   complete(args)
 }

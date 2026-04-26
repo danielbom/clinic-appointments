@@ -37,21 +37,100 @@
       "post": {
         "operationId": "auth.login",
         "summary": "Login",
-        "tags": ["Auth"]
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/AuthLogin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/auth/refresh": {
       "post": {
         "operationId": "auth.refresh",
         "summary": "Refresh",
-        "tags": ["Auth"]
+        "tags": ["Auth"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/InternalError"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/auth/me": {
       "get": {
         "operationId": "auth.me",
         "summary": "Get user identity",
-        "tags": ["Auth"]
+        "tags": ["Auth"],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthIdentity"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          }
+        }
       }
     },
 
@@ -72,12 +151,20 @@
         ],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": { "$ref": "#/components/schemas/Appointment" }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
                 }
               }
             }
@@ -100,11 +187,28 @@
         },
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Appointment"
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFound"
                 }
               }
             }
@@ -127,11 +231,19 @@
         ],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Count"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
                 }
               }
             }
@@ -147,12 +259,20 @@
         "parameters": [{ "$ref": "#/components/query/StartDate" }, { "$ref": "#/components/query/EndDate" }],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/Appointment" }
+                  "items": { "$ref": "#/components/schemas/AppointmentCalendar" }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
                 }
               }
             }
@@ -168,11 +288,20 @@
         "parameters": [{ "$ref": "#/components/query/StartDate" }, { "$ref": "#/components/query/EndDate" }],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AppointmentCalendarCount"
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/AppointmentCalendarCount" }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
                 }
               }
             }
@@ -192,11 +321,28 @@
         ],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Appointment"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFound"
                 }
               }
             }
@@ -219,11 +365,19 @@
         },
         "responses": {
           "200": {
-            "description": "Item updated successfully",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
                 }
               }
             }
@@ -237,6 +391,24 @@
         "responses": {
           "204": {
             "description": "Item deleted successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFound"
+                }
+              }
+            }
           }
         }
       }
@@ -250,12 +422,20 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": { "$ref": "#/components/schemas/Customer" }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
                 }
               }
             }
@@ -278,11 +458,19 @@
         },
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Customer"
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
                 }
               }
             }
@@ -298,11 +486,19 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Count"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
                 }
               }
             }
@@ -322,11 +518,28 @@
         ],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Customer"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFound"
                 }
               }
             }
@@ -349,11 +562,19 @@
         },
         "responses": {
           "200": {
-            "description": "Item updated successfully",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
                 }
               }
             }
@@ -367,6 +588,24 @@
         "responses": {
           "204": {
             "description": "Item deleted successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFound"
+                }
+              }
+            }
           }
         }
       }
@@ -380,12 +619,20 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": { "$ref": "#/components/schemas/Secretary" }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
                 }
               }
             }
@@ -408,11 +655,28 @@
         },
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Secretary"
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AlreadyExists"
                 }
               }
             }
@@ -428,11 +692,19 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Count"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
                 }
               }
             }
@@ -452,11 +724,28 @@
         ],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Customer"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFound"
                 }
               }
             }
@@ -479,11 +768,37 @@
         },
         "responses": {
           "200": {
-            "description": "Item updated successfully",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFound"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AlreadyExists"
                 }
               }
             }
@@ -497,6 +812,24 @@
         "responses": {
           "204": {
             "description": "Item deleted successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFound"
+                }
+              }
+            }
           }
         }
       }
@@ -510,12 +843,20 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/ServiceAvailable" }
+                  "items": { "$ref": "#/components/schemas/ServiceGroup" }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
                 }
               }
             }
@@ -538,11 +879,28 @@
         },
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ServiceAvailable"
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AlreadyExists"
                 }
               }
             }
@@ -562,11 +920,28 @@
         ],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ServiceAvailable"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFound"
                 }
               }
             }
@@ -589,11 +964,28 @@
         },
         "responses": {
           "200": {
-            "description": "Item updated successfully",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFound"
                 }
               }
             }
@@ -607,6 +999,24 @@
         "responses": {
           "204": {
             "description": "Item deleted successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFound"
+                }
+              }
+            }
           }
         }
       }
@@ -620,12 +1030,20 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": { "$ref": "#/components/schemas/ServiceEnriched" }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
                 }
               }
             }
@@ -648,11 +1066,19 @@
         },
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ServiceEnriched"
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
                 }
               }
             }
@@ -668,11 +1094,19 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Count"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
                 }
               }
             }
@@ -692,11 +1126,28 @@
         ],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ServiceEnriched"
+                  "$ref": "#/components/schemas/Service"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFound"
                 }
               }
             }
@@ -719,11 +1170,28 @@
         },
         "responses": {
           "200": {
-            "description": "Item updated successfully",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFound"
                 }
               }
             }
@@ -737,6 +1205,24 @@
         "responses": {
           "204": {
             "description": "Item deleted successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFound"
+                }
+              }
+            }
           }
         }
       }
@@ -750,12 +1236,20 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": { "$ref": "#/components/schemas/ServiceGroup" }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
                 }
               }
             }
@@ -772,12 +1266,20 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": { "$ref": "#/components/schemas/Specialist" }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
                 }
               }
             }
@@ -800,11 +1302,28 @@
         },
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Specialist"
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AlreadyExists"
                 }
               }
             }
@@ -820,11 +1339,19 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Count"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
                 }
               }
             }
@@ -844,14 +1371,31 @@
         ],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ServiceEnriched"
+                    "$ref": "#/components/schemas/SpecialistService"
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFound"
                 }
               }
             }
@@ -871,7 +1415,6 @@
         ],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
@@ -879,6 +1422,24 @@
                   "items": {
                     "$ref": "#/components/schemas/Specialization"
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFound"
                 }
               }
             }
@@ -898,7 +1459,6 @@
         ],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
@@ -906,6 +1466,24 @@
                   "items": {
                     "$ref": "#/components/schemas/SpecialistAppointment"
                   }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFound"
                 }
               }
             }
@@ -933,11 +1511,28 @@
         ],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ServiceEnriched"
+                  "$ref": "#/components/schemas/Service"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFound"
                 }
               }
             }
@@ -957,11 +1552,28 @@
         ],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Specialist"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFound"
                 }
               }
             }
@@ -984,11 +1596,28 @@
         },
         "responses": {
           "200": {
-            "description": "Item updated successfully",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFound"
                 }
               }
             }
@@ -1002,6 +1631,24 @@
         "responses": {
           "204": {
             "description": "Item deleted successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFound"
+                }
+              }
+            }
           }
         }
       }
@@ -1015,12 +1662,20 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": { "$ref": "#/components/schemas/Specialization" }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
                 }
               }
             }
@@ -1043,11 +1698,28 @@
         },
         "responses": {
           "200": {
-            "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Specialization"
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AlreadyExists"
                 }
               }
             }
@@ -1072,11 +1744,28 @@
         },
         "responses": {
           "200": {
-            "description": "Item updated successfully",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFound"
                 }
               }
             }
@@ -1090,6 +1779,24 @@
         "responses": {
           "204": {
             "description": "Item deleted successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFound"
+                }
+              }
+            }
           }
         }
       }
@@ -1100,7 +1807,10 @@
         "operationId": "test.initTest",
         "summary": "Init tests",
         "tags": ["Test"],
-        "description": "Available only in TEST environments"
+        "description": "Available only in TEST environments",
+        "responses": {
+          "200": {}
+        }
       }
     },
     "/api/test/stats": {
@@ -1108,7 +1818,10 @@
         "operationId": "test.statsTest",
         "summary": "Stats in test",
         "tags": ["Test"],
-        "description": "Available only in TEST environments"
+        "description": "Available only in TEST environments",
+        "responses": {
+          "200": {}
+        }
       }
     },
     "/api/test/debug-claims": {
@@ -1116,12 +1829,133 @@
         "operationId": "test.debugClaimsTest",
         "summary": "Debug claims in test",
         "tags": ["Test"],
-        "description": "Available only in TEST environments"
+        "description": "Available only in TEST environments",
+        "responses": {
+          "200": {}
+        }
       }
     }
   },
 
   "components": {
+    "errors": {
+      "BadRequest": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": ["auth_error", "validation_error", "unknown error"]
+              },
+              "location": {
+                "type": "string",
+                "enum": ["auth", "query", "path", "body", "execution"]
+              },
+              "message": {
+                "type": "string"
+              },
+              "key": {
+                "type": "string"
+              },
+              "stack": {
+                "type": "string",
+                "description": "Available only in DEV environments"
+              }
+            },
+            "required": ["code", "location", "message"]
+          }
+        },
+        "required": ["error"]
+      },
+      "NotFound": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": ["resource_not_found"]
+              },
+              "resource": {
+                "$ref": "#/components/domain/Resource"
+              },
+              "message": {
+                "type": "string"
+              },
+              "key": {
+                "type": "string"
+              },
+              "stack": {
+                "type": "string",
+                "description": "Available only in DEV environments"
+              }
+            },
+            "required": ["code", "location", "message"]
+          }
+        },
+        "required": ["error"]
+      },
+      "AlreadyExists": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": ["resource_already_exists"]
+              },
+              "resource": {
+                "$ref": "#/components/domain/Resource"
+              },
+              "message": {
+                "type": "string"
+              },
+              "key": {
+                "type": "string"
+              },
+              "stack": {
+                "type": "string",
+                "description": "Available only in DEV environments"
+              }
+            },
+            "required": ["code", "location", "message"]
+          }
+        },
+        "required": ["error"]
+      },
+      "InternalError": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": ["internal_error"]
+              },
+              "location": {
+                "type": "string",
+                "enum": ["auth", "query", "path", "body", "execution"]
+              },
+              "message": {
+                "type": "string"
+              },
+              "stack": {
+                "type": "string",
+                "description": "Available only in DEV environments"
+              }
+            },
+            "required": ["code", "location", "message"]
+          }
+        },
+        "required": ["error"]
+      }
+    },
+
     "parameters": {
       "Id": {
         "name": "id",
@@ -1239,6 +2073,10 @@
         "type": "string",
         "description": "Non empty string",
         "minLength": 1
+      },
+      "Resource": {
+        "type": "string",
+        "enum": ["appointment", "customer", "secretary", "service", "service_name", "specialist", "specialization"]
       }
     },
 
@@ -1557,19 +2395,10 @@
       "ServiceAvailable": {
         "type": "object",
         "properties": {
-          "id": { "$ref": "#/components/domain/Uuid" },
-          "name": { "$ref": "#/components/domain/Name" },
-          "items": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "id": { "$ref": "#/components/domain/Uuid" },
-                "name": { "$ref": "#/components/domain/Name" }
-              },
-              "required": ["id", "name"]
-            }
-          }
+          "serviceNameId": { "$ref": "#/components/domain/Uuid" },
+          "serviceName": { "$ref": "#/components/domain/Name" },
+          "specializationId": { "$ref": "#/components/domain/Uuid" },
+          "specialization": { "$ref": "#/components/domain/Name" }
         },
         "required": ["id", "name", "items"]
       },
@@ -1609,13 +2438,7 @@
           "price": { "$ref": "#/components/domain/Price" },
           "duration": { "$ref": "#/components/domain/Duration" }
         },
-        "required": [
-          "id",
-          "serviceNameId",
-          "specialistId",
-          "price",
-          "duration"
-        ]
+        "required": ["id", "serviceNameId", "specialistId", "price", "duration"]
       },
 
       "ServiceGroup": {
@@ -1677,6 +2500,19 @@
           "time",
           "status"
         ]
+      },
+
+      "SpecialistService": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "specializationId": { "$ref": "#/components/domain/Uuid" },
+          "serviceName": { "$ref": "#/components/domain/Name" },
+          "serviceNameId": { "$ref": "#/components/domain/Uuid" },
+          "price": { "$ref": "#/components/domain/Price" },
+          "duration": { "$ref": "#/components/domain/Duration" }
+        },
+        "required": ["id", "specializationId", "serviceName", "serviceNameId", "price", "duration"]
       },
 
       "Specialization": {
