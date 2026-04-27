@@ -143,7 +143,9 @@ function generateSwaggerTypes(w: Writable) {
       }
       w.write('   */\n')
     }
-    w.write(`  export type ${key} = ${item.type}\n`)
+    w.write(`  export type ${key} = `)
+    generateType(w, '  ', item)
+    w.write('\n')
     count++
   }
   w.write('}\n')
@@ -246,7 +248,6 @@ function generateSwaggerTypes(w: Writable) {
     count++
   }
   w.write('}\n')
-  w.write('\n')
 }
 
 const DEBUG = false
@@ -255,12 +256,13 @@ if (DEBUG) {
   const w = new WriteStdout()
   generateSwaggerTypes(w)
 } else {
-  const path = Path.from(import.meta.dirname)
+  const swaggerTypesPath = Path.from(import.meta.dirname)
     .parent()
     .append('swagger-types.ts')
-  const file = path.open('w')
+  const file = swaggerTypesPath.open('w')
   try {
     generateSwaggerTypes(file)
+    console.log(`INFO: ${swaggerTypesPath} generated`)
   } finally {
     file.close()
   }

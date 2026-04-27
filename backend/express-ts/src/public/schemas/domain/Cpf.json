@@ -1,0 +1,7 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/domain/Cpf.json",
+  "type": "string",
+  "format": "cpf",
+  "minLength": 11,
+  "maxLength": 11
+}

@@ -1,13 +1,13 @@
 import { AxiosResponse } from 'axios'
 
-const ids = {
-  items: {} as Record<string, number>,
-  current: 1,
-  get(id: string) {
-    ids.items[id] = ids.items[id] || this.current++
-    return ids.items[id]
-  },
-}
+// const ids = {
+//   items: {} as Record<string, number>,
+//   current: 1,
+//   get(id: string) {
+//     ids.items[id] = ids.items[id] || this.current++
+//     return ids.items[id]
+//   },
+// }
 
 const UUID_REGEX = /\/(\w\w\w\w\w\w\w\w-\w\w\w\w-\w\w\w\w-\w\w\w\w-\w\w\w\w\w\w\w\w\w\w\w\w)/g
 
@@ -17,14 +17,14 @@ export function redactResponse(response: AxiosResponse | undefined): any {
     if (!data) return data
     if (Array.isArray(data)) return data.map(redactData)
     const newData = { ...data }
-    if (newData.accessToken) newData.accessToken = ids.get(newData.accessToken)
-    if (newData.refreshToken) newData.refreshToken = ids.get(newData.refreshToken)
+    if (newData.accessToken) newData.accessToken = '[access-token]'
+    if (newData.refreshToken) newData.refreshToken = '[access-token]'
     if (newData.createdAt) newData.createdAt = '[temporal]'
     if (newData.updatedAt) newData.updatedAt = '[temporal]'
-    if (newData.id) newData.id = ids.get(newData.id)
+    if (newData.id) newData.id = '[uuid]'
     for (const key in newData) {
       if (key.endsWith('Id')) {
-        newData[key] = ids.get(newData[key])
+        newData[key] = '[uuid]'
       } else {
         newData[key] = redactData(newData[key])
       }
@@ -40,7 +40,7 @@ export function redactResponse(response: AxiosResponse | undefined): any {
     newResponse.config.data = redactData(JSON.parse(config.data))
   }
   for (const match of newResponse.config.url.matchAll(UUID_REGEX)) {
-    newResponse.config.url = newResponse.config.url.replace(match[1], ids.get(match[1]).toString())
+    newResponse.config.url = newResponse.config.url.replace(match[1], '[uuid]')
   }
   return newResponse
 }

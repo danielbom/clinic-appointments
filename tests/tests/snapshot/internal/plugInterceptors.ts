@@ -9,6 +9,7 @@ let writeResponses = true
 let count = 0
 
 export function plugInterceptors(
+  fileName: string,
   axiosInstance: AxiosInstance,
   {
     writter = new WriteStdout(), //
@@ -27,7 +28,7 @@ export function plugInterceptors(
       const startTime = (response.config as any).metadata.startTime
       const ms = (endTime - startTime).toFixed(3)
       logger.write(`[${new Date().toISOString()}] ${count++} request [${ms} ms]\n`)
-      logger.write(findInStack(['api.ts', 'async run']) + '\n')
+      logger.write(findInStack([fileName, 'async run']) + '\n')
       logger.write(findInStack(['endpoints', 'Endpoint.ts']) + '\n')
       return response
     },

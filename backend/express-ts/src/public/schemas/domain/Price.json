@@ -1,0 +1,7 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/domain/Price.json",
+  "type": "number",
+  "format": "integer",
+  "description": "in cents",
+  "minimum": 0
+}

@@ -1,0 +1,27 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/schemas/AppointmentCalendarCount.json",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "month": {
+        "type": "number"
+      },
+      "pendingCount": {
+        "type": "number"
+      },
+      "realizedCount": {
+        "type": "number"
+      },
+      "canceledCount": {
+        "type": "number"
+      }
+    },
+    "required": [
+      "month",
+      "pendingCount",
+      "realizedCount",
+      "canceledCount"
+    ]
+  }
+}

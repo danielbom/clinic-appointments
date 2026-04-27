@@ -6,6 +6,7 @@ import { validate as isUuid, v7 as generateId } from 'uuid'
 import { generateAccessJWT, generateRefreshJWT, getJwtData, isRefreshToken, JwtData } from './jwt'
 import { getDateParam, getIntParam, getStringParam } from './utils'
 import * as types from './swagger-types'
+import { validations } from './validations'
 
 const saltRounds = 10
 
@@ -241,6 +242,27 @@ const presenter = {
   },
 }
 
+function validationError(error: { instancePath: string; message?: string | undefined }) {
+  const instancePath = error.instancePath
+  const message = error.message ?? 'invalid type'
+  let key = ''
+  if (instancePath) {
+    key = instancePath.slice(1).replaceAll(/\//g, '.')
+  }
+  const match = message.match(/'(\w+)'/)
+  if (match) {
+    key = match[1]
+  }
+  return {
+    error: {
+      code: 'validation_error',
+      location: 'body',
+      key: key || undefined,
+      message,
+    },
+  } as const
+}
+
 export default {
   health: {
     async healthCheck(req: Request, res: Response) {
@@ -314,10 +336,10 @@ export default {
       const reply = replier<types.api.auth.login.responses>(res)
 
       // Collect query parameters, path parameters, and request body
-      const args: types.api.auth.login.body = {
-        email: req.body.email,
-        password: req.body.password,
+      if (!validations.auth.login.body(req.body)) {
+        return reply.send(400, validationError(validations.auth.login.body.errors![0]))
       }
+      const args: types.api.auth.login.body = req.body
 
       // Validate e execute the usecase
       const identity = await getIdentity({ email: args.email })
@@ -497,12 +519,10 @@ export default {
       const reply = replier<types.api.appointments.createAppointment.responses>(res)
 
       // Collect query parameters, path parameters, and request body
-      const args: types.api.appointments.createAppointment.body = {
-        customerId: req.body.customerId,
-        date: req.body.date,
-        serviceId: req.body.serviceId,
-        time: req.body.time,
+      if (!validations.appointments.createAppointment.body(req.body)) {
+        return reply.send(400, validationError(validations.appointments.createAppointment.body.errors![0]))
       }
+      const args: types.api.appointments.createAppointment.body = req.body
 
       // Validate e execute the usecase
       const service = await db.services.findUnique({
@@ -748,11 +768,10 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       const reply = replier<types.api.appointments.updateAppointment.responses>(res)
 
       // Collect query parameters, path parameters, and request body
-      const args: types.api.appointments.updateAppointment.body = {
-        date: req.body.date,
-        status: req.body.status,
-        time: req.body.time,
+      if (!validations.appointments.updateAppointment.body(req.body)) {
+        return reply.send(400, validationError(validations.appointments.updateAppointment.body.errors![0]))
       }
+      const args: types.api.appointments.updateAppointment.body = req.body
 
       const id = parseUuid(req.params.id)
       if (!id) {
@@ -849,13 +868,10 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       const reply = replier<types.api.customers.createCustomer.responses>(res)
 
       // Collect query parameters, path parameters, and request body
-      const args: types.api.customers.createCustomer.body = {
-        birthdate: req.body.birthdate,
-        cpf: req.body.cpf,
-        email: req.body.email,
-        name: req.body.name,
-        phone: req.body.phone,
+      if (!validations.customers.createCustomer.body(req.body)) {
+        return reply.send(400, validationError(validations.customers.createCustomer.body.errors![0]))
       }
+      const args: types.api.customers.createCustomer.body = req.body
 
       // Validate e execute the usecase
       const row = await db.customers.create({
@@ -932,13 +948,10 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       const reply = replier<types.api.customers.updateCustomer.responses>(res)
 
       // Collect query parameters, path parameters, and request body
-      const args: types.api.customers.updateCustomer.body = {
-        name: req.body.name,
-        email: req.body.email,
-        phone: req.body.phone,
-        birthdate: req.body.birthdate,
-        cpf: req.body.cpf,
+      if (!validations.customers.updateCustomer.body(req.body)) {
+        return reply.send(400, validationError(validations.customers.updateCustomer.body.errors![0]))
       }
+      const args: types.api.customers.updateCustomer.body = req.body
 
       const id = parseUuid(req.params.id)
       if (!id) {
@@ -1041,15 +1054,10 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       const reply = replier<types.api.secretaries.createSecretary.responses>(res)
 
       // Collect query parameters, path parameters, and request body
-      const args: types.api.secretaries.createSecretary.body = {
-        birthdate: req.body.birthdate,
-        cpf: req.body.cpf,
-        email: req.body.email,
-        name: req.body.name,
-        password: req.body.password,
-        phone: req.body.phone,
-        cnpj: req.body.cnpj,
+      if (!validations.secretaries.createSecretary.body(req.body)) {
+        return reply.send(400, validationError(validations.secretaries.createSecretary.body.errors![0]))
       }
+      const args: types.api.secretaries.createSecretary.body = req.body
 
       // Validate e execute the usecase
       const exists = await db.secretaries.findUnique({
@@ -1057,12 +1065,12 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (exists) {
-        return reply.send(422, {
+        return reply.send(409, {
           error: {
             code: 'resource_already_exists',
             resource: 'secretary',
             key: 'email',
-            message: 'secretary.email already exists',
+            message: 'A secretary with this email already exists',
           },
         })
       }
@@ -1145,15 +1153,10 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       const reply = replier<types.api.secretaries.updateSecretary.responses>(res)
 
       // Collect query parameters, path parameters, and request body
-      const args: types.api.secretaries.updateSecretary.body = {
-        name: req.body.name,
-        email: req.body.email,
-        phone: req.body.phone,
-        birthdate: req.body.birthdate,
-        cpf: req.body.cpf,
-        cnpj: req.body.cnpj,
-        password: req.body.password,
+      if (!validations.secretaries.updateSecretary.body(req.body)) {
+        return reply.send(400, validationError(validations.secretaries.updateSecretary.body.errors![0]))
       }
+      const args: types.api.secretaries.updateSecretary.body = req.body
 
       const id = parseUuid(req.params.id)
       if (!id) {
@@ -1198,12 +1201,12 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
         })
 
         if (exists) {
-          return reply.send(422, {
+          return reply.send(409, {
             error: {
               code: 'resource_already_exists',
               resource: 'secretary',
               key: 'email',
-              message: 'secretary.email already exists',
+              message: 'A secretary with this email already exists',
             },
           })
         }
@@ -1280,22 +1283,10 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       const reply = replier<types.api.servicesAvailable.createServiceAvailable.responses>(res)
 
       // Collect query parameters, path parameters, and request body
-      const args: types.api.servicesAvailable.createServiceAvailable.body = {
-        name: req.body.name,
-        specialization: req.body.specialization,
-        specializationId: req.body.specializationId,
+      if (!validations.servicesAvailable.createServiceAvailable.body(req.body)) {
+        return reply.send(400, validationError(validations.servicesAvailable.createServiceAvailable.body.errors![0]))
       }
-
-      if (args.name.length === 0) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'body',
-            key: 'name',
-            message: 'name is required',
-          },
-        })
-      }
+      const args: types.api.servicesAvailable.createServiceAvailable.body = req.body
 
       // Validate e execute the usecase
       const exists = await db.service_names.findUnique({
@@ -1303,12 +1294,12 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (exists) {
-        return reply.send(422, {
+        return reply.send(409, {
           error: {
             code: 'resource_already_exists',
-            resource: 'service_names',
+            resource: 'service_name',
             key: 'name',
-            message: 'service_names.name already exists',
+            message: 'A service_name with this name already exists',
           },
         })
       }
@@ -1397,20 +1388,10 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
         })
       }
 
-      const args: types.api.servicesAvailable.updateServiceAvailable.body = {
-        name: req.body.name,
+      if (!validations.servicesAvailable.updateServiceAvailable.body(req.body)) {
+        return reply.send(400, validationError(validations.servicesAvailable.updateServiceAvailable.body.errors![0]))
       }
-
-      if (args.name.length === 0) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'body',
-            key: 'name',
-            message: 'name is required',
-          },
-        })
-      }
+      const args: types.api.servicesAvailable.updateServiceAvailable.body = req.body
 
       // Validate e execute the usecase
       const row = await db.service_names.findUnique({
@@ -1527,12 +1508,10 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       const reply = replier<types.api.services.createService.responses>(res)
 
       // Collect query parameters, path parameters, and request body
-      const args: types.api.services.createService.body = {
-        duration: req.body.duration,
-        price: req.body.price,
-        serviceNameId: req.body.serviceNameId,
-        specialistId: req.body.specialistId,
+      if (!validations.services.createService.body(req.body)) {
+        return reply.send(400, validationError(validations.services.createService.body.errors![0]))
       }
+      const args: types.api.services.createService.body = req.body
 
       // Validate e execute the usecase
       const row = await db.services.create({
@@ -1615,10 +1594,10 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
         })
       }
 
-      const args: types.api.services.updateService.body = {
-        duration: req.body.duration,
-        price: req.body.price,
+      if (!validations.services.updateService.body(req.body)) {
+        return reply.send(400, validationError(validations.services.updateService.body.errors![0]))
       }
+      const args: types.api.services.updateService.body = req.body
 
       // Validate e execute the usecase
       const row = await db.services.update({
@@ -1732,15 +1711,10 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       const reply = replier<types.api.specialists.createSpecialist.responses>(res)
 
       // Collect query parameters, path parameters, and request body
-      const args: types.api.specialists.createSpecialist.body = {
-        name: req.body.name.trim(),
-        birthdate: req.body.birthdate,
-        cnpj: req.body.cnpj,
-        cpf: req.body.cpf,
-        email: req.body.email,
-        phone: req.body.phone,
-        services: req.body.services,
+      if (!validations.specialists.createSpecialist.body(req.body)) {
+        return reply.send(400, validationError(validations.specialists.createSpecialist.body.errors![0]))
       }
+      const args: types.api.specialists.createSpecialist.body = req.body
 
       // Validate e execute the usecase
       const exists = await db.specialists.findUnique({
@@ -1748,12 +1722,12 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (exists) {
-        return reply.send(422, {
+        return reply.send(409, {
           error: {
             code: 'resource_already_exists',
             resource: 'specialist',
             key: 'email',
-            message: 'specialist.email already exists',
+            message: 'A specialist with this email already exists',
           },
         })
       }
@@ -1992,26 +1966,10 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
         })
       }
 
-      const args: types.api.specialists.updateSpecialist.body = {
-        name: req.body.name.trim(),
-        birthdate: req.body.birthdate,
-        cnpj: req.body.cnpj,
-        cpf: req.body.cpf,
-        email: req.body.email,
-        phone: req.body.phone,
-        services: req.body.services,
+      if (!validations.specialists.updateSpecialist.body(req.body)) {
+        return reply.send(400, validationError(validations.specialists.updateSpecialist.body.errors![0]))
       }
-
-      if (args.name.length === 0) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'body',
-            key: 'name',
-            message: 'name is required',
-          },
-        })
-      }
+      const args: types.api.specialists.updateSpecialist.body = req.body
 
       // Validate e execute the usecase
       const row = await db.specialists.update({
@@ -2082,20 +2040,10 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       const reply = replier<types.api.specializations.createSpecialization.responses>(res)
 
       // Collect query parameters, path parameters, and request body
-      const args: types.api.specializations.createSpecialization.body = {
-        name: req.body.name?.trim(),
+      if (!validations.specializations.createSpecialization.body(req.body)) {
+        return reply.send(400, validationError(validations.specializations.createSpecialization.body.errors![0]))
       }
-
-      if (!args.name) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'body',
-            key: 'name',
-            message: 'name is required',
-          },
-        })
-      }
+      const args: types.api.specializations.createSpecialization.body = req.body
 
       // Validate e execute the usecase
       const exists = await db.specializations.findUnique({
@@ -2103,12 +2051,12 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (exists) {
-        return reply.send(422, {
+        return reply.send(409, {
           error: {
             code: 'resource_already_exists',
             resource: 'specialization',
             key: 'name',
-            message: 'specialization.name already exists',
+            message: 'A specialization with this name already exists',
           },
         })
       }
@@ -2139,20 +2087,10 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
         })
       }
 
-      const args: types.api.specializations.updateSpecialization.body = {
-        name: req.body.name?.trim(),
+      if (!validations.specializations.updateSpecialization.body(req.body)) {
+        return reply.send(400, validationError(validations.specializations.updateSpecialization.body.errors![0]))
       }
-
-      if (!args.name) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'body',
-            key: 'name',
-            message: 'name is required',
-          },
-        })
-      }
+      const args: types.api.specializations.createSpecialization.body = req.body
 
       // Validate e execute the usecase
       const row = await db.specializations.update({

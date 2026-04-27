@@ -7,6 +7,7 @@
     "format": "prettier --write ./src ./tests",
     "typecheck": "tsc --noEmit",
     "snapshot:api": "tsx ./tests/snapshot/api.ts",
+    "snapshot:errors": "tsx ./tests/snapshot/errors.ts",
     "test": "vitest run",
     "test:dev": "vitest",
     "test:coverage": "vitest run --coverage"

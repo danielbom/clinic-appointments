@@ -1,5 +1,6 @@
 export namespace domain {
   /**
+   * @description: Example: 019dcd01-5a4a-736f-9407-8e69aa9433bc
    * @format: uuid
    */
   export type Uuid = string
@@ -45,7 +46,26 @@ export namespace domain {
    */
   export type Name = string
 
-  export type Resource = string
+  /**
+   * @description: date only string in format YYYY-MM-DD
+   * @format: date
+   */
+  export type Date = string
+
+  /**
+   * @description: time only string in format HH-MM-SS
+   * @format: time
+   */
+  export type Time = string
+
+  export type Resource = //
+    | 'appointment' //
+    | 'customer'
+    | 'secretary'
+    | 'service'
+    | 'service_name'
+    | 'specialist'
+    | 'specialization'
 }
 
 export namespace errors {
@@ -133,8 +153,8 @@ export namespace schemas {
     specialistId: domain.Uuid
     price: domain.Price
     duration: domain.Duration
-    date: string
-    time: string
+    date: domain.Date
+    time: domain.Time
     status: schemas.AppointmentStatus
   }
 
@@ -147,8 +167,8 @@ export namespace schemas {
 
   export interface AppointmentCalendar {
     id: domain.Uuid
-    date: string
-    time: string
+    date: domain.Date
+    time: domain.Time
     specialistName: domain.Name
     status: schemas.AppointmentStatus
   }
@@ -158,7 +178,7 @@ export namespace schemas {
     name: domain.Name
     email?: domain.Email
     phone: domain.Phone
-    birthdate: string
+    birthdate: domain.Date
     cpf: domain.Cpf
   }
 
@@ -167,7 +187,7 @@ export namespace schemas {
     name: domain.Name
     email: domain.Email
     phone: domain.Phone
-    birthdate: string
+    birthdate: domain.Date
     cpf: domain.Cpf
     cnpj?: domain.Cnpj
   }
@@ -213,7 +233,7 @@ export namespace schemas {
     name: domain.Name
     email: domain.Email
     phone: domain.Phone
-    birthdate: string
+    birthdate: domain.Date
     cpf: domain.Cpf
     cnpj?: domain.Cnpj
   }
@@ -226,8 +246,8 @@ export namespace schemas {
     serviceNameId: domain.Uuid
     price: domain.Price
     duration: domain.Duration
-    date: string
-    time: string
+    date: domain.Date
+    time: domain.Time
     status: schemas.AppointmentStatus
   }
 
@@ -255,60 +275,60 @@ export namespace body {
   export interface AppointmentsCreateBody {
     customerId: domain.Uuid
     serviceId: domain.Uuid
-    date: string
-    time: string
+    date: domain.Date
+    time: domain.Time
   }
 
   export interface AppointmentsUpdateBody {
-    date: string
-    time: string
+    date: domain.Date
+    time: domain.Time
     status: schemas.AppointmentStatus
   }
 
   export interface CustomerCreateBody {
-    name: string
+    name: domain.Name
     email: domain.Email
     phone: domain.Phone
-    birthdate: string
+    birthdate: domain.Date
     cpf: domain.Cpf
   }
 
   export interface CustomerUpdateBody {
-    name: string
+    name: domain.Name
     email: domain.Email
     phone: domain.Phone
-    birthdate: string
+    birthdate: domain.Date
     cpf: domain.Cpf
   }
 
   export interface SecretaryCreateBody {
-    name: string
+    name: domain.Name
     email: domain.Email
     phone: domain.Phone
-    birthdate: string
-    password: string
+    birthdate: domain.Date
+    password: domain.Password
     cpf: domain.Cpf
     cnpj: domain.Cnpj
   }
 
   export interface SecretaryUpdateBody {
-    name: string
+    name: domain.Name
     email: domain.Email
     phone: domain.Phone
-    birthdate: string
-    password?: string
+    birthdate: domain.Date
+    password?: domain.Password
     cpf: domain.Cpf
     cnpj: domain.Cnpj
   }
 
   export interface ServiceAvailableCreateBody {
-    name: string
-    specialization?: string
+    name: domain.Name
+    specialization?: domain.Name
     specializationId?: domain.Uuid
   }
 
   export interface ServiceAvailableUpdateBody {
-    name: string
+    name: domain.Name
   }
 
   export interface ServiceCreateBody {
@@ -330,31 +350,31 @@ export namespace body {
   }
 
   export interface SpecialistCreateBody {
-    name: string
+    name: domain.Name
     email: domain.Email
     phone: domain.Phone
-    birthdate: string
+    birthdate: domain.Date
     cpf: domain.Cpf
     cnpj: domain.Cnpj
     services: body.SpecialistsCreateBodyService[]
   }
 
   export interface SpecialistUpdateBody {
-    name: string
+    name: domain.Name
     email: domain.Email
     phone: domain.Phone
-    birthdate: string
+    birthdate: domain.Date
     cpf: domain.Cpf
     cnpj: domain.Cnpj
     services: body.SpecialistsCreateBodyService[]
   }
 
   export interface SpecializationCreateBody {
-    name?: string
+    name: domain.Name
   }
 
   export interface SpecializationUpdateBody {
-    name?: string
+    name: domain.Name
   }
 }
 
@@ -531,7 +551,7 @@ export namespace api {
       export type responses = {
         200: schemas.Id
         400: errors.BadRequest
-        422: errors.AlreadyExists
+        409: errors.AlreadyExists
       }
     }
 
@@ -557,7 +577,7 @@ export namespace api {
         200: schemas.Id
         400: errors.BadRequest
         404: errors.NotFound
-        422: errors.AlreadyExists
+        409: errors.AlreadyExists
       }
     }
 
@@ -587,7 +607,7 @@ export namespace api {
       export type responses = {
         200: schemas.Id
         400: errors.BadRequest
-        422: errors.AlreadyExists
+        409: errors.AlreadyExists
       }
     }
 
@@ -698,7 +718,7 @@ export namespace api {
       export type responses = {
         200: schemas.Id
         400: errors.BadRequest
-        422: errors.AlreadyExists
+        409: errors.AlreadyExists
       }
     }
 
@@ -785,7 +805,7 @@ export namespace api {
       export type responses = {
         200: schemas.Id
         400: errors.BadRequest
-        422: errors.AlreadyExists
+        409: errors.AlreadyExists
       }
     }
 
@@ -831,4 +851,3 @@ export namespace api {
     }
   }
 }
-

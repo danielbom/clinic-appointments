@@ -1,0 +1,47 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/errors/BadRequest.json",
+  "type": "object",
+  "properties": {
+    "error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "auth_error",
+            "validation_error",
+            "unknown error"
+          ]
+        },
+        "location": {
+          "type": "string",
+          "enum": [
+            "auth",
+            "query",
+            "path",
+            "body",
+            "execution"
+          ]
+        },
+        "message": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "stack": {
+          "type": "string",
+          "description": "Available only in DEV environments"
+        }
+      },
+      "required": [
+        "code",
+        "location",
+        "message"
+      ]
+    }
+  },
+  "required": [
+    "error"
+  ]
+}

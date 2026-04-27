@@ -1,0 +1,7 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/domain/Name.json",
+  "type": "string",
+  "description": "Non empty string",
+  "minLength": 1,
+  "maxLength": 200
+}

@@ -1,0 +1,18 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/body/ServiceAvailableCreateBody.json",
+  "type": "object",
+  "properties": {
+    "name": {
+      "$ref": "https://dev-clinic-appointments.com.br/schemas/domain/Name.json"
+    },
+    "specialization": {
+      "$ref": "https://dev-clinic-appointments.com.br/schemas/domain/Name.json"
+    },
+    "specializationId": {
+      "$ref": "https://dev-clinic-appointments.com.br/schemas/domain/Uuid.json"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

@@ -7,7 +7,7 @@ import { API_URL } from '../config'
 import { Api, AppointmentStatus, Config } from '../../src/lib/api'
 import { getDatePart, getHourPart } from '../../src/lib/date-fns-ext'
 
-import { WriteStr, WriteCombined, WriteStdout, Writable } from '../../src/lib/writable'
+import { WriteStr, WriteCombined, WriteStdout } from '../../src/lib/writable'
 import { Path } from '../../src/lib/path'
 import { createTracker } from '../../src/lib/tracker'
 import { Random, rng } from '../../src/lib/rng'
@@ -544,7 +544,7 @@ function main() {
 
   const w = new WriteStr()
 
-  plugInterceptors(baseApi._config.instance, {
+  plugInterceptors('api.ts', baseApi._config.instance, {
     writter: w,
     logger,
   })

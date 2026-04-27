@@ -26,4 +26,6 @@ export function complete(actual: string, args: Args) {
   args.actualSnapshotPath.writeText(actual)
   const similarity = getSimilarity(actual, expected).toFixed(2)
   console.log(`ERROR: Snapshot mismatch: ${similarity === '100.00' ? '99.99' : similarity}%`)
+  console.log(`- actual:   ${args.actualSnapshotPath}`)
+  console.log(`- expected: ${args.currentSnapshotPath}`)
 }

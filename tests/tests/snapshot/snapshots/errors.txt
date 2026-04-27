@@ -1,0 +1,384 @@
+Request: GET /api/health 200
+Response: {
+  "status": true,
+  "updatedAt": "[temporal]",
+  "environment": "test",
+  "database": {
+    "status": "connected",
+    "version": "16.10 (Debian 16.10-1.pgdg13+1)",
+    "maxConnections": 100,
+    "openedConnections": 1,
+    "schemaVersion": 11
+  }
+}
+
+Request: GET /api/test/stats 200
+Response: {
+  "database": "user=test_user password=test_password host=localhost port=5432 dbname=test_db",
+  "message": "Environment: TEST"
+}
+
+Request: GET /api/test/init 200
+Response: "System initialized to be tested"
+
+Request: POST /api/auth/login 400
+Response: {
+  "error": {
+    "code": "validation_error",
+    "location": "body",
+    "message": "must be object"
+  }
+}
+
+Request: POST /api/auth/login 400
+Body: {}
+Response: {
+  "error": {
+    "code": "validation_error",
+    "location": "body",
+    "key": "email",
+    "message": "must have required property 'email'"
+  }
+}
+
+Request: POST /api/auth/login 400
+Body: {
+  "email": null,
+  "password": null
+}
+Response: {
+  "error": {
+    "code": "validation_error",
+    "location": "body",
+    "key": "email",
+    "message": "must be string"
+  }
+}
+
+Request: POST /api/auth/login 400
+Body: {
+  "email": null,
+  "password": ""
+}
+Response: {
+  "error": {
+    "code": "validation_error",
+    "location": "body",
+    "key": "email",
+    "message": "must be string"
+  }
+}
+
+Request: POST /api/auth/login 400
+Body: {
+  "email": "",
+  "password": null
+}
+Response: {
+  "error": {
+    "code": "validation_error",
+    "location": "body",
+    "key": "email",
+    "message": "must NOT have fewer than 3 characters"
+  }
+}
+
+Request: POST /api/auth/login 400
+Body: {
+  "email": "",
+  "password": ""
+}
+Response: {
+  "error": {
+    "code": "validation_error",
+    "location": "body",
+    "key": "email",
+    "message": "must NOT have fewer than 3 characters"
+  }
+}
+
+Request: GET /api/auth/me 400
+Response: {
+  "error": {
+    "code": "auth_error",
+    "location": "auth",
+    "message": "invalid token"
+  }
+}
+
+Request: POST /api/auth/login 200
+Body: {
+  "email": "admin@test.com",
+  "password": "123mudar"
+}
+Response: {
+  "accessToken": "[access-token]",
+  "refreshToken": "[access-token]"
+}
+
+Request: POST /api/secretaries 400
+Response: {
+  "error": {
+    "code": "validation_error",
+    "location": "body",
+    "message": "must be object"
+  }
+}
+
+Request: POST /api/secretaries 400
+Body: {}
+Response: {
+  "error": {
+    "code": "validation_error",
+    "location": "body",
+    "key": "name",
+    "message": "must have required property 'name'"
+  }
+}
+
+Request: POST /api/secretaries 400
+Body: {
+  "name": null,
+  "cnpj": "08130896000135",
+  "cpf": "72730805001",
+  "phone": "119876543210",
+  "email": "secretary@test.com",
+  "password": "456@Mudar"
+}
+Response: {
+  "error": {
+    "code": "validation_error",
+    "location": "body",
+    "key": "birthdate",
+    "message": "must have required property 'birthdate'"
+  }
+}
+
+Request: POST /api/secretaries 400
+Body: {
+  "name": "Secretary Test",
+  "cnpj": "08130896000135",
+  "cpf": "72730805001",
+  "phone": "119876543210",
+  "email": "secretary@test.com",
+  "password": "456@Mudar"
+}
+Response: {
+  "error": {
+    "code": "validation_error",
+    "location": "body",
+    "key": "birthdate",
+    "message": "must have required property 'birthdate'"
+  }
+}
+
+Request: POST /api/specializations 400
+Response: {
+  "error": {
+    "code": "validation_error",
+    "location": "body",
+    "message": "must be object"
+  }
+}
+
+Request: POST /api/specializations 400
+Body: {}
+Response: {
+  "error": {
+    "code": "validation_error",
+    "location": "body",
+    "key": "name",
+    "message": "must have required property 'name'"
+  }
+}
+
+Request: POST /api/specializations 200
+Body: {
+  "name": "Specialization"
+}
+Response: {
+  "id": "[uuid]"
+}
+
+Request: POST /api/specializations 409
+Body: {
+  "name": "Specialization"
+}
+Response: {
+  "error": {
+    "code": "resource_already_exists",
+    "resource": "specialization",
+    "key": "name",
+    "message": "A specialization with this name already exists"
+  }
+}
+
+Request: POST /api/services-available 400
+Response: {
+  "error": {
+    "code": "validation_error",
+    "location": "body",
+    "message": "must be object"
+  }
+}
+
+Request: POST /api/services-available 400
+Body: {}
+Response: {
+  "error": {
+    "code": "validation_error",
+    "location": "body",
+    "key": "name",
+    "message": "must have required property 'name'"
+  }
+}
+
+Request: POST /api/services-available 400
+Body: {
+  "name": null,
+  "specializationId": "[uuid]"
+}
+Response: {
+  "error": {
+    "code": "validation_error",
+    "location": "body",
+    "key": "name",
+    "message": "must be string"
+  }
+}
+
+Request: POST /api/services-available 400
+Body: {
+  "name": null,
+  "specializationId": "[uuid]"
+}
+Response: {
+  "error": {
+    "code": "validation_error",
+    "location": "body",
+    "key": "name",
+    "message": "must be string"
+  }
+}
+
+Request: POST /api/services-available 400
+Body: {
+  "name": null,
+  "specializationId": "[uuid]"
+}
+Response: {
+  "error": {
+    "code": "validation_error",
+    "location": "body",
+    "key": "name",
+    "message": "must be string"
+  }
+}
+
+Request: POST /api/services-available 400
+Body: {
+  "name": "",
+  "specializationId": "[uuid]"
+}
+Response: {
+  "error": {
+    "code": "validation_error",
+    "location": "body",
+    "key": "name",
+    "message": "must NOT have fewer than 1 characters"
+  }
+}
+
+Request: POST /api/services-available 400
+Body: {
+  "name": "",
+  "specializationId": "[uuid]"
+}
+Response: {
+  "error": {
+    "code": "validation_error",
+    "location": "body",
+    "key": "name",
+    "message": "must NOT have fewer than 1 characters"
+  }
+}
+
+Request: POST /api/services-available 400
+Body: {
+  "name": "",
+  "specializationId": "[uuid]"
+}
+Response: {
+  "error": {
+    "code": "validation_error",
+    "location": "body",
+    "key": "name",
+    "message": "must NOT have fewer than 1 characters"
+  }
+}
+
+Request: POST /api/services-available 400
+Body: {
+  "name": "Service Available",
+  "specializationId": "[uuid]"
+}
+Response: {
+  "error": {
+    "code": "validation_error",
+    "location": "body",
+    "key": "specializationId",
+    "message": "must be string"
+  }
+}
+
+Request: POST /api/services-available 400
+Body: {
+  "name": "Service Available",
+  "specializationId": "[uuid]"
+}
+Response: {
+  "error": {
+    "code": "validation_error",
+    "location": "body",
+    "key": "specializationId",
+    "message": "must match format \"uuid\""
+  }
+}
+
+Request: POST /api/services-available 200
+Body: {
+  "name": "Service Available",
+  "specializationId": "[uuid]"
+}
+Response: {
+  "id": "[uuid]"
+}
+
+Request: POST /api/services-available 409
+Body: {
+  "name": "Service Available",
+  "specializationId": "[uuid]"
+}
+Response: {
+  "error": {
+    "code": "resource_already_exists",
+    "resource": "service_name",
+    "key": "name",
+    "message": "A service_name with this name already exists"
+  }
+}
+
+Request: POST /api/services-available 409
+Body: {
+  "name": "Service Available",
+  "specializationId": "[uuid]"
+}
+Response: {
+  "error": {
+    "code": "resource_already_exists",
+    "resource": "service_name",
+    "key": "name",
+    "message": "A service_name with this name already exists"
+  }
+}
+

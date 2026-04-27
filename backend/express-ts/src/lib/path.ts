@@ -100,6 +100,11 @@ export class Path {
     return this.getStats().isFile()
   }
 
+  listDir() {
+    const files = fs.readdirSync(this.path)
+    return files.map((file) => Path.from(this.path).append(file))
+  }
+
   isDir() {
     return this.getStats().isDirectory()
   }

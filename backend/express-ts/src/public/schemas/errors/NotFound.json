@@ -1,0 +1,38 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/errors/NotFound.json",
+  "type": "object",
+  "properties": {
+    "error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "resource_not_found"
+          ]
+        },
+        "resource": {
+          "$ref": "https://dev-clinic-appointments.com.br/schemas/domain/Resource.json"
+        },
+        "message": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "stack": {
+          "type": "string",
+          "description": "Available only in DEV environments"
+        }
+      },
+      "required": [
+        "code",
+        "location",
+        "message"
+      ]
+    }
+  },
+  "required": [
+    "error"
+  ]
+}

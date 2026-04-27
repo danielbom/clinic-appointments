@@ -672,7 +672,7 @@
               }
             }
           },
-          "422": {
+          "409": {
             "content": {
               "application/json": {
                 "schema": {
@@ -794,7 +794,7 @@
               }
             }
           },
-          "422": {
+          "409": {
             "content": {
               "application/json": {
                 "schema": {
@@ -896,7 +896,7 @@
               }
             }
           },
-          "422": {
+          "409": {
             "content": {
               "application/json": {
                 "schema": {
@@ -1319,7 +1319,7 @@
               }
             }
           },
-          "422": {
+          "409": {
             "content": {
               "application/json": {
                 "schema": {
@@ -1715,7 +1715,7 @@
               }
             }
           },
-          "422": {
+          "409": {
             "content": {
               "application/json": {
                 "schema": {
@@ -1973,7 +1973,7 @@
         "name": "startDate",
         "schema": {
           "type": "string",
-          "format": "date-time"
+          "format": "datetime"
         }
       },
       "EndDate": {
@@ -1981,7 +1981,7 @@
         "name": "endDate",
         "schema": {
           "type": "string",
-          "format": "date-time"
+          "format": "datetime"
         }
       },
       "ServiceName": {
@@ -2035,44 +2035,74 @@
     "domain": {
       "Uuid": {
         "type": "string",
-        "format": "uuid"
+        "format": "uuid",
+        "description": "Example: 019dcd01-5a4a-736f-9407-8e69aa9433bc",
+        "maxLength": 36
       },
       "Price": {
         "type": "number",
         "format": "integer",
-        "description": "in cents"
+        "description": "in cents",
+        "minimum": 0
       },
       "Duration": {
         "type": "number",
         "format": "integer",
-        "description": "in minutes"
+        "description": "in minutes",
+        "minimum": 0,
+        "maximum": 600
       },
       "Email": {
         "type": "string",
-        "format": "email"
+        "format": "email",
+        "minLength": 3,
+        "maxLength": 200
       },
       "Role": {
-        "type": "string"
+        "type": "string",
+        "maxLength": 36
       },
       "Password": {
-        "type": "string"
+        "type": "string",
+        "minLength": 5,
+        "maxLength": 30
       },
       "Phone": {
         "type": "string",
-        "format": "phone"
+        "format": "phone",
+        "maxLength": 20
       },
       "Cpf": {
         "type": "string",
-        "format": "cpf"
+        "format": "cpf",
+        "minLength": 11,
+        "maxLength": 11
       },
       "Cnpj": {
         "type": "string",
-        "format": "cnpj"
+        "format": "cnpj",
+        "minLength": 14,
+        "maxLength": 14
       },
       "Name": {
         "type": "string",
         "description": "Non empty string",
-        "minLength": 1
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "Date": {
+        "type": "string",
+        "format": "date",
+        "minLength": 10,
+        "maxLength": 10,
+        "description": "date only string in format YYYY-MM-DD"
+      },
+      "Time": {
+        "type": "string",
+        "format": "time",
+        "minLength": 8,
+        "maxLength": 8,
+        "description": "time only string in format HH-MM-SS"
       },
       "Resource": {
         "type": "string",
@@ -2095,16 +2125,16 @@
         "properties": {
           "customerId": { "$ref": "#/components/domain/Uuid" },
           "serviceId": { "$ref": "#/components/domain/Uuid" },
-          "date": { "type": "string", "format": "date" },
-          "time": { "type": "string", "format": "time" }
+          "date": { "$ref": "#/components/domain/Date" },
+          "time": { "$ref": "#/components/domain/Time" }
         },
         "required": ["customerId", "serviceId", "date", "time"]
       },
       "AppointmentsUpdateBody": {
         "type": "object",
         "properties": {
-          "date": { "type": "string", "format": "date" },
-          "time": { "type": "string", "format": "time" },
+          "date": { "$ref": "#/components/domain/Date" },
+          "time": { "$ref": "#/components/domain/Time" },
           "status": { "$ref": "#/components/schemas/AppointmentStatus" }
         },
         "required": ["date", "time", "status"]
@@ -2113,10 +2143,10 @@
       "CustomerCreateBody": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" },
+          "name": { "$ref": "#/components/domain/Name" },
           "email": { "$ref": "#/components/domain/Email" },
           "phone": { "$ref": "#/components/domain/Phone" },
-          "birthdate": { "type": "string", "format": "date" },
+          "birthdate": { "$ref": "#/components/domain/Date" },
           "cpf": { "$ref": "#/components/domain/Cpf" }
         },
         "required": ["name", "email", "phone", "birthdate", "cpf"]
@@ -2124,10 +2154,10 @@
       "CustomerUpdateBody": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" },
+          "name": { "$ref": "#/components/domain/Name" },
           "email": { "$ref": "#/components/domain/Email" },
           "phone": { "$ref": "#/components/domain/Phone" },
-          "birthdate": { "type": "string", "format": "date" },
+          "birthdate": { "$ref": "#/components/domain/Date" },
           "cpf": { "$ref": "#/components/domain/Cpf" }
         },
         "required": ["name", "email", "phone", "birthdate", "cpf"]
@@ -2136,11 +2166,11 @@
       "SecretaryCreateBody": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" },
+          "name": { "$ref": "#/components/domain/Name" },
           "email": { "$ref": "#/components/domain/Email" },
           "phone": { "$ref": "#/components/domain/Phone" },
-          "birthdate": { "type": "string", "format": "date" },
-          "password": { "type": "string" },
+          "birthdate": { "$ref": "#/components/domain/Date" },
+          "password": { "$ref": "#/components/domain/Password" },
           "cpf": { "$ref": "#/components/domain/Cpf" },
           "cnpj": { "$ref": "#/components/domain/Cnpj" }
         },
@@ -2149,11 +2179,11 @@
       "SecretaryUpdateBody": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" },
+          "name": { "$ref": "#/components/domain/Name" },
           "email": { "$ref": "#/components/domain/Email" },
           "phone": { "$ref": "#/components/domain/Phone" },
-          "birthdate": { "type": "string", "format": "date" },
-          "password": { "type": "string" },
+          "birthdate": { "$ref": "#/components/domain/Date" },
+          "password": { "$ref": "#/components/domain/Password" },
           "cpf": { "$ref": "#/components/domain/Cpf" },
           "cnpj": { "$ref": "#/components/domain/Cnpj" }
         },
@@ -2163,8 +2193,8 @@
       "ServiceAvailableCreateBody": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" },
-          "specialization": { "type": "string" },
+          "name": { "$ref": "#/components/domain/Name" },
+          "specialization": { "$ref": "#/components/domain/Name" },
           "specializationId": { "$ref": "#/components/domain/Uuid" }
         },
         "required": ["name"]
@@ -2172,9 +2202,9 @@
       "ServiceAvailableUpdateBody": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" }
+          "name": { "$ref": "#/components/domain/Name" }
         },
-        "required": "name"
+        "required": ["name"]
       },
 
       "ServiceCreateBody": {
@@ -2208,10 +2238,10 @@
       "SpecialistCreateBody": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" },
+          "name": { "$ref": "#/components/domain/Name" },
           "email": { "$ref": "#/components/domain/Email" },
           "phone": { "$ref": "#/components/domain/Phone" },
-          "birthdate": { "type": "string", "format": "date" },
+          "birthdate": { "$ref": "#/components/domain/Date" },
           "cpf": { "$ref": "#/components/domain/Cpf" },
           "cnpj": { "$ref": "#/components/domain/Cnpj" },
           "services": {
@@ -2224,10 +2254,10 @@
       "SpecialistUpdateBody": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" },
+          "name": { "$ref": "#/components/domain/Name" },
           "email": { "$ref": "#/components/domain/Email" },
           "phone": { "$ref": "#/components/domain/Phone" },
-          "birthdate": { "type": "string", "format": "date" },
+          "birthdate": { "$ref": "#/components/domain/Date" },
           "cpf": { "$ref": "#/components/domain/Cpf" },
           "cnpj": { "$ref": "#/components/domain/Cnpj" },
           "services": {
@@ -2241,14 +2271,16 @@
       "SpecializationCreateBody": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" }
-        }
+          "name": { "$ref": "#/components/domain/Name" }
+        },
+        "required": ["name"]
       },
       "SpecializationUpdateBody": {
         "type": "object",
         "properties": {
-          "name": { "type": "string" }
-        }
+          "name": { "$ref": "#/components/domain/Name" }
+        },
+        "required": ["name"]
       }
     },
 
@@ -2267,7 +2299,7 @@
         "type": "object",
         "properties": {
           "status": { "type": "boolean" },
-          "updatedAt": { "type": "string", "format": "date-time" },
+          "updatedAt": { "type": "string", "format": "datetime" },
           "environment": { "type": "string" },
           "database": {
             "type": "object",
@@ -2321,8 +2353,8 @@
           "specialistId": { "$ref": "#/components/domain/Uuid" },
           "price": { "$ref": "#/components/domain/Price" },
           "duration": { "$ref": "#/components/domain/Duration" },
-          "date": { "type": "string", "format": "date" },
-          "time": { "type": "string", "format": "time" },
+          "date": { "$ref": "#/components/domain/Date" },
+          "time": { "$ref": "#/components/domain/Time" },
           "status": { "$ref": "#/components/schemas/AppointmentStatus" }
         },
         "required": [
@@ -2357,8 +2389,8 @@
         "type": "object",
         "properties": {
           "id": { "$ref": "#/components/domain/Uuid" },
-          "date": { "type": "string", "format": "date" },
-          "time": { "type": "string", "format": "time" },
+          "date": { "$ref": "#/components/domain/Date" },
+          "time": { "$ref": "#/components/domain/Time" },
           "specialistName": { "$ref": "#/components/domain/Name" },
           "status": { "$ref": "#/components/schemas/AppointmentStatus" }
         },
@@ -2372,7 +2404,7 @@
           "name": { "$ref": "#/components/domain/Name" },
           "email": { "$ref": "#/components/domain/Email" },
           "phone": { "$ref": "#/components/domain/Phone" },
-          "birthdate": { "type": "string" },
+          "birthdate": { "$ref": "#/components/domain/Date" },
           "cpf": { "$ref": "#/components/domain/Cpf" }
         },
         "required": ["id", "name", "phone", "birthdate", "cpf"]
@@ -2385,7 +2417,7 @@
           "name": { "$ref": "#/components/domain/Name" },
           "email": { "$ref": "#/components/domain/Email" },
           "phone": { "$ref": "#/components/domain/Phone" },
-          "birthdate": { "type": "string" },
+          "birthdate": { "$ref": "#/components/domain/Date" },
           "cpf": { "$ref": "#/components/domain/Cpf" },
           "cnpj": { "$ref": "#/components/domain/Cnpj" }
         },
@@ -2468,7 +2500,7 @@
           "name": { "$ref": "#/components/domain/Name" },
           "email": { "$ref": "#/components/domain/Email" },
           "phone": { "$ref": "#/components/domain/Phone" },
-          "birthdate": { "type": "string" },
+          "birthdate": { "$ref": "#/components/domain/Date" },
           "cpf": { "$ref": "#/components/domain/Cpf" },
           "cnpj": { "$ref": "#/components/domain/Cnpj" }
         },
@@ -2484,8 +2516,8 @@
           "serviceNameId": { "$ref": "#/components/domain/Uuid" },
           "price": { "$ref": "#/components/domain/Price" },
           "duration": { "$ref": "#/components/domain/Duration" },
-          "date": { "type": "string", "format": "date" },
-          "time": { "type": "string", "format": "time" },
+          "date": { "$ref": "#/components/domain/Date" },
+          "time": { "$ref": "#/components/domain/Time" },
           "status": { "$ref": "#/components/schemas/AppointmentStatus" }
         },
         "required": [

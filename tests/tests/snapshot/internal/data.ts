@@ -35,4 +35,3 @@ export const baseData = {
     phone: '21987654321',
   },
 }
-

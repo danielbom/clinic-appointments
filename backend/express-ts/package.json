@@ -5,9 +5,12 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "format": "prettier --write ./src",
     "start": "npx tsx src/index.ts",
     "dev": "npx tsx watch src/index.ts",
-    "generate:swagger-types": "npx tsx ./src/scripts/generate-swagger-types.ts"
+    "generate": "npx tsx ./src/scripts/generate.ts",
+    "generate:swagger-types": "npx tsx ./src/scripts/generate-swagger-types.ts",
+    "generate:swagger-ajv": "npx tsx ./src/scripts/generate-swagger-ajv.ts"
   },
   "keywords": [],
   "author": "",
@@ -20,6 +23,7 @@
     "@types/node": "^25.5.0",
     "@types/swagger-ui-express": "^4.1.8",
     "dotenv": "^17.3.1",
+    "prettier": "^3.3.2",
     "prisma": "^7.8.0",
     "tsx": "^4.21.0",
     "typescript": "6"
@@ -28,6 +32,7 @@
     "@prisma/adapter-pg": "^7.6.0",
     "@prisma/client": "^7.8.0",
     "@types/bcrypt": "^6.0.0",
+    "ajv": "^8.20.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "express": "^5.2.1",

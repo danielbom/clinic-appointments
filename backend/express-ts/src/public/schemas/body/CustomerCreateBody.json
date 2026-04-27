@@ -1,0 +1,28 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/body/CustomerCreateBody.json",
+  "type": "object",
+  "properties": {
+    "name": {
+      "$ref": "https://dev-clinic-appointments.com.br/schemas/domain/Name.json"
+    },
+    "email": {
+      "$ref": "https://dev-clinic-appointments.com.br/schemas/domain/Email.json"
+    },
+    "phone": {
+      "$ref": "https://dev-clinic-appointments.com.br/schemas/domain/Phone.json"
+    },
+    "birthdate": {
+      "$ref": "https://dev-clinic-appointments.com.br/schemas/domain/Date.json"
+    },
+    "cpf": {
+      "$ref": "https://dev-clinic-appointments.com.br/schemas/domain/Cpf.json"
+    }
+  },
+  "required": [
+    "name",
+    "email",
+    "phone",
+    "birthdate",
+    "cpf"
+  ]
+}

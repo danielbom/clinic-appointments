@@ -1,0 +1,5 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/domain/Role.json",
+  "type": "string",
+  "maxLength": 36
+}

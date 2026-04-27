@@ -1,0 +1,13 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/domain/Resource.json",
+  "type": "string",
+  "enum": [
+    "appointment",
+    "customer",
+    "secretary",
+    "service",
+    "service_name",
+    "specialist",
+    "specialization"
+  ]
+}
