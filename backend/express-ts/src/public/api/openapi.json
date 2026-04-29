@@ -62,7 +62,16 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -89,7 +98,16 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -98,7 +116,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/InternalError"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -125,7 +143,16 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -164,7 +191,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -199,7 +226,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -208,7 +235,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/NotFound"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -243,7 +270,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -272,7 +299,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -301,7 +328,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -333,7 +360,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -342,7 +369,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/NotFound"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -377,7 +404,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -396,7 +423,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -405,7 +432,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/NotFound"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -435,7 +462,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -470,7 +497,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -498,7 +525,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -530,7 +557,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -539,7 +566,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/NotFound"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -574,7 +601,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -593,7 +620,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -602,7 +629,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/NotFound"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -632,7 +659,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -667,7 +694,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -676,7 +703,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/AlreadyExists"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -704,7 +731,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -736,7 +763,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -745,7 +772,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/NotFound"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -780,7 +807,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -789,7 +816,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/NotFound"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -798,7 +825,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/AlreadyExists"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -817,7 +844,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -826,7 +853,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/NotFound"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -856,7 +883,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -891,7 +918,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -900,7 +927,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/AlreadyExists"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -932,7 +959,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -941,7 +968,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/NotFound"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -976,7 +1003,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -985,7 +1012,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/NotFound"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1004,7 +1031,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1013,7 +1040,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/NotFound"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1043,7 +1070,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1078,7 +1105,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1106,7 +1133,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1138,7 +1165,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1147,7 +1174,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/NotFound"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1182,7 +1209,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1191,7 +1218,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/NotFound"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1210,7 +1237,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1219,7 +1246,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/NotFound"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1249,7 +1276,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1279,7 +1306,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1314,7 +1341,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1323,7 +1350,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/AlreadyExists"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1351,7 +1378,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1386,7 +1413,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1395,7 +1422,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/NotFound"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1430,7 +1457,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1439,7 +1466,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/NotFound"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1474,7 +1501,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1483,7 +1510,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/NotFound"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1523,7 +1550,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1532,7 +1559,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/NotFound"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1564,7 +1591,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1573,7 +1600,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/NotFound"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1608,7 +1635,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1617,7 +1644,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/NotFound"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1636,7 +1663,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1645,7 +1672,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/NotFound"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1675,7 +1702,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1710,7 +1737,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1719,7 +1746,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/AlreadyExists"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1756,7 +1783,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1765,7 +1792,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/NotFound"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1784,7 +1811,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/BadRequest"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1793,7 +1820,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/errors/NotFound"
+                  "$ref": "#/components/schemas/ProblemDetails"
                 }
               }
             }
@@ -1838,124 +1865,6 @@
   },
 
   "components": {
-    "errors": {
-      "BadRequest": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "object",
-            "properties": {
-              "code": {
-                "type": "string",
-                "enum": ["auth_error", "validation_error", "unknown error"]
-              },
-              "location": {
-                "type": "string",
-                "enum": ["auth", "query", "path", "body", "execution"]
-              },
-              "message": {
-                "type": "string"
-              },
-              "key": {
-                "type": "string"
-              },
-              "stack": {
-                "type": "string",
-                "description": "Available only in DEV environments"
-              }
-            },
-            "required": ["code", "location", "message"]
-          }
-        },
-        "required": ["error"]
-      },
-      "NotFound": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "object",
-            "properties": {
-              "code": {
-                "type": "string",
-                "enum": ["resource_not_found"]
-              },
-              "resource": {
-                "$ref": "#/components/domain/Resource"
-              },
-              "message": {
-                "type": "string"
-              },
-              "key": {
-                "type": "string"
-              },
-              "stack": {
-                "type": "string",
-                "description": "Available only in DEV environments"
-              }
-            },
-            "required": ["code", "location", "message"]
-          }
-        },
-        "required": ["error"]
-      },
-      "AlreadyExists": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "object",
-            "properties": {
-              "code": {
-                "type": "string",
-                "enum": ["resource_already_exists"]
-              },
-              "resource": {
-                "$ref": "#/components/domain/Resource"
-              },
-              "message": {
-                "type": "string"
-              },
-              "key": {
-                "type": "string"
-              },
-              "stack": {
-                "type": "string",
-                "description": "Available only in DEV environments"
-              }
-            },
-            "required": ["code", "location", "message"]
-          }
-        },
-        "required": ["error"]
-      },
-      "InternalError": {
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "object",
-            "properties": {
-              "code": {
-                "type": "string",
-                "enum": ["internal_error"]
-              },
-              "location": {
-                "type": "string",
-                "enum": ["auth", "query", "path", "body", "execution"]
-              },
-              "message": {
-                "type": "string"
-              },
-              "stack": {
-                "type": "string",
-                "description": "Available only in DEV environments"
-              }
-            },
-            "required": ["code", "location", "message"]
-          }
-        },
-        "required": ["error"]
-      }
-    },
-
     "parameters": {
       "Id": {
         "name": "id",
@@ -2285,6 +2194,68 @@
     },
 
     "schemas": {
+      "ProblemDetails": {
+        "type": "object",
+        "description": "Standard error response based on RFC 7807.",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "A machine-readable, domain-specific error code used by clients to implement conditional logic.",
+            "enum": ["auth_error", "validation_error", "resource_not_found", "resource_conflict", "internal_error"]
+          },
+          "type": {
+            "type": "string",
+            "format": "uri",
+            "description": "A URI reference that identifies the error type. Ideally points to documentation describing the error."
+          },
+          "title": {
+            "type": "string",
+            "description": "A short, human-readable summary of the problem type."
+          },
+          "status": {
+            "type": "number",
+            "description": "The HTTP status code generated by the origin server for this occurrence of the problem."
+          },
+          "detail": {
+            "type": "string",
+            "description": "A human-readable explanation specific to this occurrence of the problem."
+          },
+          "instance": {
+            "type": "string",
+            "description": "A URI reference that identifies the specific occurrence of the problem (e.g., the request path or a correlation URI)."
+          },
+          "traceId": {
+            "type": "string",
+            "description": "A unique identifier for tracing the request across systems."
+          },
+          "source": {
+            "type": "object",
+            "properties": {
+              "in": {
+                "type": "string",
+                "enum": ["body", "path", "query"]
+              },
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": ["in", "path"]
+          },
+          "errors": {
+            "type": "object",
+            "description": "A dictionary of validation errors where each key is a field or parameter name and the value is an array of error messages associated with that field.",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "description": "A validation error message for the associated field.",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": ["title", "status"]
+      },
+
       "Id": {
         "type": "object",
         "properties": {

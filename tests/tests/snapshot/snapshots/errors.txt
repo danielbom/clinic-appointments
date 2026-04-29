@@ -23,22 +23,35 @@ Response: "System initialized to be tested"
 
 Request: POST /api/auth/login 400
 Response: {
-  "error": {
-    "code": "validation_error",
-    "location": "body",
-    "message": "must be object"
-  }
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "detail": "body is required",
+  "status": 400,
+  "source": {
+    "in": "body",
+    "path": "/"
+  },
+  "traceId": "[trace-id]"
 }
 
 Request: POST /api/auth/login 400
 Body: {}
 Response: {
-  "error": {
-    "code": "validation_error",
-    "location": "body",
-    "key": "email",
-    "message": "must have required property 'email'"
-  }
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "status": 400,
+  "source": {
+    "in": "body",
+    "path": "email"
+  },
+  "errors": {
+    "email": [
+      "is required"
+    ]
+  },
+  "traceId": "[trace-id]"
 }
 
 Request: POST /api/auth/login 400
@@ -47,12 +60,20 @@ Body: {
   "password": null
 }
 Response: {
-  "error": {
-    "code": "validation_error",
-    "location": "body",
-    "key": "email",
-    "message": "must be string"
-  }
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "status": 400,
+  "source": {
+    "in": "body",
+    "path": "email"
+  },
+  "errors": {
+    "email": [
+      "must be string"
+    ]
+  },
+  "traceId": "[trace-id]"
 }
 
 Request: POST /api/auth/login 400
@@ -61,12 +82,20 @@ Body: {
   "password": ""
 }
 Response: {
-  "error": {
-    "code": "validation_error",
-    "location": "body",
-    "key": "email",
-    "message": "must be string"
-  }
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "status": 400,
+  "source": {
+    "in": "body",
+    "path": "email"
+  },
+  "errors": {
+    "email": [
+      "must be string"
+    ]
+  },
+  "traceId": "[trace-id]"
 }
 
 Request: POST /api/auth/login 400
@@ -75,12 +104,20 @@ Body: {
   "password": null
 }
 Response: {
-  "error": {
-    "code": "validation_error",
-    "location": "body",
-    "key": "email",
-    "message": "must NOT have fewer than 3 characters"
-  }
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "status": 400,
+  "source": {
+    "in": "body",
+    "path": "email"
+  },
+  "errors": {
+    "email": [
+      "must NOT have fewer than 3 characters"
+    ]
+  },
+  "traceId": "[trace-id]"
 }
 
 Request: POST /api/auth/login 400
@@ -89,21 +126,42 @@ Body: {
   "password": ""
 }
 Response: {
-  "error": {
-    "code": "validation_error",
-    "location": "body",
-    "key": "email",
-    "message": "must NOT have fewer than 3 characters"
-  }
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "status": 400,
+  "source": {
+    "in": "body",
+    "path": "email"
+  },
+  "errors": {
+    "email": [
+      "must NOT have fewer than 3 characters"
+    ]
+  },
+  "traceId": "[trace-id]"
 }
 
-Request: GET /api/auth/me 400
+Request: POST /api/auth/login 401
+Body: {
+  "email": "admin@test.com",
+  "password": "invalid-password"
+}
 Response: {
-  "error": {
-    "code": "auth_error",
-    "location": "auth",
-    "message": "invalid token"
-  }
+  "code": "auth_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/AuthError.json",
+  "title": "Invalid credentials",
+  "status": 401,
+  "traceId": "[trace-id]"
+}
+
+Request: GET /api/auth/me 401
+Response: {
+  "code": "auth_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/AuthError.json",
+  "title": "Invalid token",
+  "status": 401,
+  "traceId": "[trace-id]"
 }
 
 Request: POST /api/auth/login 200
@@ -116,24 +174,133 @@ Response: {
   "refreshToken": "[access-token]"
 }
 
+Request: GET /api/appointments/0 400
+Response: {
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "status": 400,
+  "source": {
+    "in": "path",
+    "path": "id"
+  },
+  "errors": {
+    "id": "[uuid]"
+  },
+  "traceId": "[trace-id]"
+}
+
+Request: GET /api/customers/0 400
+Response: {
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "status": 400,
+  "source": {
+    "in": "path",
+    "path": "id"
+  },
+  "errors": {
+    "id": "[uuid]"
+  },
+  "traceId": "[trace-id]"
+}
+
+Request: GET /api/secretaries/0 400
+Response: {
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "status": 400,
+  "source": {
+    "in": "path",
+    "path": "id"
+  },
+  "errors": {
+    "id": "[uuid]"
+  },
+  "traceId": "[trace-id]"
+}
+
+Request: GET /api/services/0 400
+Response: {
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "status": 400,
+  "source": {
+    "in": "path",
+    "path": "id"
+  },
+  "errors": {
+    "id": "[uuid]"
+  },
+  "traceId": "[trace-id]"
+}
+
+Request: GET /api/services-available/0 400
+Response: {
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "status": 400,
+  "source": {
+    "in": "path",
+    "path": "id"
+  },
+  "errors": {
+    "id": "[uuid]"
+  },
+  "traceId": "[trace-id]"
+}
+
+Request: GET /api/specialists/0 400
+Response: {
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "status": 400,
+  "source": {
+    "in": "path",
+    "path": "id"
+  },
+  "errors": {
+    "id": "[uuid]"
+  },
+  "traceId": "[trace-id]"
+}
+
 Request: POST /api/secretaries 400
 Response: {
-  "error": {
-    "code": "validation_error",
-    "location": "body",
-    "message": "must be object"
-  }
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "detail": "body is required",
+  "status": 400,
+  "source": {
+    "in": "body",
+    "path": "/"
+  },
+  "traceId": "[trace-id]"
 }
 
 Request: POST /api/secretaries 400
 Body: {}
 Response: {
-  "error": {
-    "code": "validation_error",
-    "location": "body",
-    "key": "name",
-    "message": "must have required property 'name'"
-  }
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "status": 400,
+  "source": {
+    "in": "body",
+    "path": "name"
+  },
+  "errors": {
+    "name": [
+      "is required"
+    ]
+  },
+  "traceId": "[trace-id]"
 }
 
 Request: POST /api/secretaries 400
@@ -143,53 +310,71 @@ Body: {
   "cpf": "72730805001",
   "phone": "119876543210",
   "email": "secretary@test.com",
-  "password": "456@Mudar"
+  "password": "456@Mudar",
+  "birthdate": "2000-10-10"
 }
 Response: {
-  "error": {
-    "code": "validation_error",
-    "location": "body",
-    "key": "birthdate",
-    "message": "must have required property 'birthdate'"
-  }
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "status": 400,
+  "source": {
+    "in": "body",
+    "path": "name"
+  },
+  "errors": {
+    "name": [
+      "must be string"
+    ]
+  },
+  "traceId": "[trace-id]"
 }
 
-Request: POST /api/secretaries 400
+Request: POST /api/secretaries 200
 Body: {
   "name": "Secretary Test",
   "cnpj": "08130896000135",
   "cpf": "72730805001",
   "phone": "119876543210",
   "email": "secretary@test.com",
-  "password": "456@Mudar"
+  "password": "456@Mudar",
+  "birthdate": "2000-10-10"
 }
 Response: {
-  "error": {
-    "code": "validation_error",
-    "location": "body",
-    "key": "birthdate",
-    "message": "must have required property 'birthdate'"
-  }
+  "id": "[uuid]"
 }
 
 Request: POST /api/specializations 400
 Response: {
-  "error": {
-    "code": "validation_error",
-    "location": "body",
-    "message": "must be object"
-  }
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "detail": "body is required",
+  "status": 400,
+  "source": {
+    "in": "body",
+    "path": "/"
+  },
+  "traceId": "[trace-id]"
 }
 
 Request: POST /api/specializations 400
 Body: {}
 Response: {
-  "error": {
-    "code": "validation_error",
-    "location": "body",
-    "key": "name",
-    "message": "must have required property 'name'"
-  }
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "status": 400,
+  "source": {
+    "in": "body",
+    "path": "name"
+  },
+  "errors": {
+    "name": [
+      "is required"
+    ]
+  },
+  "traceId": "[trace-id]"
 }
 
 Request: POST /api/specializations 200
@@ -205,144 +390,210 @@ Body: {
   "name": "Specialization"
 }
 Response: {
-  "error": {
-    "code": "resource_already_exists",
-    "resource": "specialization",
-    "key": "name",
-    "message": "A specialization with this name already exists"
-  }
+  "code": "resource_conflict",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceConflict.json",
+  "title": "Resource already exists",
+  "detail": "specialization with this name already exists",
+  "status": 409,
+  "traceId": "[trace-id]"
 }
 
 Request: POST /api/services-available 400
 Response: {
-  "error": {
-    "code": "validation_error",
-    "location": "body",
-    "message": "must be object"
-  }
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "detail": "body is required",
+  "status": 400,
+  "source": {
+    "in": "body",
+    "path": "/"
+  },
+  "traceId": "[trace-id]"
 }
 
 Request: POST /api/services-available 400
 Body: {}
 Response: {
-  "error": {
-    "code": "validation_error",
-    "location": "body",
-    "key": "name",
-    "message": "must have required property 'name'"
-  }
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "status": 400,
+  "source": {
+    "in": "body",
+    "path": "name"
+  },
+  "errors": {
+    "name": [
+      "is required"
+    ]
+  },
+  "traceId": "[trace-id]"
 }
 
 Request: POST /api/services-available 400
 Body: {
   "name": null,
-  "specializationId": "[uuid]"
+  "specializationId": ""
 }
 Response: {
-  "error": {
-    "code": "validation_error",
-    "location": "body",
-    "key": "name",
-    "message": "must be string"
-  }
-}
-
-Request: POST /api/services-available 400
-Body: {
-  "name": null,
-  "specializationId": "[uuid]"
-}
-Response: {
-  "error": {
-    "code": "validation_error",
-    "location": "body",
-    "key": "name",
-    "message": "must be string"
-  }
-}
-
-Request: POST /api/services-available 400
-Body: {
-  "name": null,
-  "specializationId": "[uuid]"
-}
-Response: {
-  "error": {
-    "code": "validation_error",
-    "location": "body",
-    "key": "name",
-    "message": "must be string"
-  }
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "status": 400,
+  "source": {
+    "in": "body",
+    "path": "name"
+  },
+  "errors": {
+    "name": [
+      "must be string"
+    ]
+  },
+  "traceId": "[trace-id]"
 }
 
 Request: POST /api/services-available 400
 Body: {
   "name": "",
-  "specializationId": "[uuid]"
+  "specializationId": ""
 }
 Response: {
-  "error": {
-    "code": "validation_error",
-    "location": "body",
-    "key": "name",
-    "message": "must NOT have fewer than 1 characters"
-  }
-}
-
-Request: POST /api/services-available 400
-Body: {
-  "name": "",
-  "specializationId": "[uuid]"
-}
-Response: {
-  "error": {
-    "code": "validation_error",
-    "location": "body",
-    "key": "name",
-    "message": "must NOT have fewer than 1 characters"
-  }
-}
-
-Request: POST /api/services-available 400
-Body: {
-  "name": "",
-  "specializationId": "[uuid]"
-}
-Response: {
-  "error": {
-    "code": "validation_error",
-    "location": "body",
-    "key": "name",
-    "message": "must NOT have fewer than 1 characters"
-  }
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "status": 400,
+  "source": {
+    "in": "body",
+    "path": "name"
+  },
+  "errors": {
+    "name": [
+      "must NOT have fewer than 1 characters"
+    ]
+  },
+  "traceId": "[trace-id]"
 }
 
 Request: POST /api/services-available 400
 Body: {
   "name": "Service Available",
-  "specializationId": "[uuid]"
+  "specializationId": ""
 }
 Response: {
-  "error": {
-    "code": "validation_error",
-    "location": "body",
-    "key": "specializationId",
-    "message": "must be string"
-  }
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "status": 400,
+  "source": {
+    "in": "body",
+    "path": "specializationId"
+  },
+  "errors": {
+    "specializationId": [
+      "must match format \"uuid\""
+    ]
+  },
+  "traceId": "[trace-id]"
+}
+
+Request: POST /api/services-available 400
+Response: {
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "detail": "body is required",
+  "status": 400,
+  "source": {
+    "in": "body",
+    "path": "/"
+  },
+  "traceId": "[trace-id]"
+}
+
+Request: POST /api/services-available 400
+Body: {}
+Response: {
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "status": 400,
+  "source": {
+    "in": "body",
+    "path": "name"
+  },
+  "errors": {
+    "name": [
+      "is required"
+    ]
+  },
+  "traceId": "[trace-id]"
 }
 
 Request: POST /api/services-available 400
 Body: {
-  "name": "Service Available",
+  "name": "",
+  "specializationId": null
+}
+Response: {
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "status": 400,
+  "source": {
+    "in": "body",
+    "path": "name"
+  },
+  "errors": {
+    "name": [
+      "must NOT have fewer than 1 characters"
+    ]
+  },
+  "traceId": "[trace-id]"
+}
+
+Request: POST /api/services-available 400
+Body: {
+  "name": "",
+  "specializationId": ""
+}
+Response: {
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "status": 400,
+  "source": {
+    "in": "body",
+    "path": "name"
+  },
+  "errors": {
+    "name": [
+      "must NOT have fewer than 1 characters"
+    ]
+  },
+  "traceId": "[trace-id]"
+}
+
+Request: POST /api/services-available 400
+Body: {
+  "name": "",
   "specializationId": "[uuid]"
 }
 Response: {
-  "error": {
-    "code": "validation_error",
-    "location": "body",
-    "key": "specializationId",
-    "message": "must match format \"uuid\""
-  }
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "status": 400,
+  "source": {
+    "in": "body",
+    "path": "name"
+  },
+  "errors": {
+    "name": [
+      "must NOT have fewer than 1 characters"
+    ]
+  },
+  "traceId": "[trace-id]"
 }
 
 Request: POST /api/services-available 200
@@ -360,25 +611,11 @@ Body: {
   "specializationId": "[uuid]"
 }
 Response: {
-  "error": {
-    "code": "resource_already_exists",
-    "resource": "service_name",
-    "key": "name",
-    "message": "A service_name with this name already exists"
-  }
-}
-
-Request: POST /api/services-available 409
-Body: {
-  "name": "Service Available",
-  "specializationId": "[uuid]"
-}
-Response: {
-  "error": {
-    "code": "resource_already_exists",
-    "resource": "service_name",
-    "key": "name",
-    "message": "A service_name with this name already exists"
-  }
+  "code": "resource_conflict",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceConflict.json",
+  "title": "Resource already exists",
+  "detail": "service_name with this name already exists",
+  "status": 409,
+  "traceId": "[trace-id]"
 }
 

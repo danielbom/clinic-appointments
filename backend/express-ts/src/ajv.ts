@@ -6,7 +6,7 @@ export const ajv = new Ajv({})
 
 const SCHEMAS_DIR = Path.from(import.meta.dirname).append('public/schemas')
 
-for (const component of ['domain', 'errors', 'body', 'schemas']) {
+for (const component of ['domain', 'body', 'schemas']) {
   for (const file of SCHEMAS_DIR.append(component).listDir()) {
     const content = file.readText()
     const schema = JSON.parse(content)

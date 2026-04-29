@@ -6,6 +6,26 @@ function formatRef(ref: string) {
   return ref.replace('#/components/', '').replace('/', '.')
 }
 
+function generateDocs(w: Writable, ident: string, item: any) {
+  const docs: string[] = []
+  if (item.description) {
+    docs.push(` * @description: ${item.description}\n`)
+  }
+  if (item.format) {
+    docs.push(` * @format: ${item.format}\n`)
+  }
+  if (docs.length > 0) {
+    w.write(ident)
+    w.write('/**\n')
+    for (const line of docs) {
+      w.write(ident)
+      w.write(line)
+    }
+    w.write(ident)
+    w.write(' */\n')
+  }
+}
+
 function generateString(w: Writable, ident: string, item: any) {
   if (item.type !== 'string') throw new Error()
 
@@ -45,22 +65,29 @@ function generateType(w: Writable, ident: string, item: any) {
     w.write(formatRef(item.$ref))
   } else if (item.type) {
     if (item.type === 'object') {
-      const required: string[] = item.required || []
-      w.write(`{\n`)
-      for (const prop in item.properties) {
-        const value = (item.properties as any)[prop]
-        w.write(ident)
-        w.write(`  ${prop}`)
-        if (required.includes(prop)) {
-          w.write(`: `)
-        } else {
-          w.write(`?: `)
+      if (item.additionalProperties) {
+        w.write('Record<string, ')
+        generateType(w, ident + '  ', item.additionalProperties)
+        w.write('>')
+      } else {
+        const required: string[] = item.required || []
+        w.write(`{\n`)
+        for (const prop in item.properties) {
+          const value = (item.properties as any)[prop]
+          generateDocs(w, ident + '  ', value)
+          w.write(ident)
+          w.write(`  ${prop}`)
+          if (required.includes(prop)) {
+            w.write(`: `)
+          } else {
+            w.write(`?: `)
+          }
+          generateType(w, ident + '  ', value)
+          w.write('\n')
         }
-        generateType(w, ident + '  ', value)
-        w.write('\n')
+        w.write(ident)
+        w.write('}')
       }
-      w.write(ident)
-      w.write('}')
     } else if (item.type === 'array') {
       if (item.items.$ref) {
         w.write(formatRef(item.items.$ref))
@@ -69,6 +96,9 @@ function generateType(w: Writable, ident: string, item: any) {
         w.write('Array<')
         generateType(w, ident, item.items)
         w.write('>')
+      } else if (item.items.type) {
+        w.write(item.items.type)
+        w.write('[]')
       } else {
         w.write('any[]')
       }
@@ -90,11 +120,24 @@ function generateRootType(w: Writable, name: string, item: any) {
     } else if (item.type === 'object') {
       w.write(`  export interface ${name} `)
       generateType(w, '  ', item)
+    } else if (item.type === 'string') {
+      w.write(`  export type ${name} = `)
+      generateString(w, '  ', item)
     } else {
       w.write(`  export type ${name} = ${item.type}`)
     }
   } else if (item.$ref) {
     w.write(`  export type ${name} = ${formatRef(item.$ref)}`)
+  } else if (item.allOf) {
+    w.write(`  export type ${name} = `)
+    let count = 0
+    for (const subItem of item.allOf) {
+      if (count > 0) {
+        w.write(' & ')
+      }
+      generateType(w, '  ', subItem)
+      count++
+    }
   } else {
     w.write(`  export type ${name} = any`)
   }
@@ -121,78 +164,33 @@ function collectApi() {
   return api
 }
 
-function generateSwaggerTypes(w: Writable) {
+function generateNamespace(w: Writable, component: keyof typeof openApiJson.components) {
   let count = 0
-  w.write('export namespace domain {\n')
-  for (const key in openApiJson.components.domain) {
+  w.write(`export namespace ${component} {\n`)
+  for (const key in openApiJson.components[component]) {
     if (count > 0) {
       w.write('\n')
     }
-    const item = (openApiJson.components.domain as any)[key]
-    const docs: string[] = []
-    if (item.description) {
-      docs.push(`   * @description: ${item.description}\n`)
-    }
-    if (item.format) {
-      docs.push(`   * @format: ${item.format}\n`)
-    }
-    if (docs.length > 0) {
-      w.write('  /**\n')
-      for (const line of docs) {
-        w.write(line)
-      }
-      w.write('   */\n')
-    }
-    w.write(`  export type ${key} = `)
-    generateType(w, '  ', item)
-    w.write('\n')
-    count++
-  }
-  w.write('}\n')
-  w.write('\n')
-  count = 0
-  w.write('export namespace errors {\n')
-  for (const key in openApiJson.components.errors) {
-    if (count > 0) {
-      w.write('\n')
-    }
-    const item = (openApiJson.components.errors as any)[key]
+    const item = (openApiJson.components[component] as any)[key]
+    generateDocs(w, '  ', item)
     generateRootType(w, key, item)
     w.write('\n')
     count++
   }
   w.write('}\n')
+}
+
+function generateSwaggerTypes(w: Writable) {
+  generateNamespace(w, 'domain')
   w.write('\n')
-  count = 0
-  w.write('export namespace schemas {\n')
-  for (const key in openApiJson.components.schemas) {
-    if (count > 0) {
-      w.write('\n')
-    }
-    const item = (openApiJson.components.schemas as any)[key]
-    generateRootType(w, key, item)
-    w.write('\n')
-    count++
-  }
-  w.write('}\n')
+  generateNamespace(w, 'schemas')
   w.write('\n')
-  count = 0
-  w.write('export namespace body {\n')
-  for (const key in openApiJson.components.body) {
-    if (count > 0) {
-      w.write('\n')
-    }
-    const item = (openApiJson.components.body as any)[key]
-    generateRootType(w, key, item)
-    w.write('\n')
-    count++
-  }
-  w.write('}\n')
+  generateNamespace(w, 'body')
   w.write('\n')
 
   const api = collectApi()
 
-  count = 0
+  let count = 0
   w.write('export namespace api {\n')
   for (const resource in api) {
     const route = api[resource]

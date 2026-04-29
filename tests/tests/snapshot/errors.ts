@@ -1,13 +1,11 @@
 import axios from 'axios'
 import _ from 'lodash'
-import { addDays, addHours, endOfYear, startOfYear } from 'date-fns'
 
 import { API_URL } from '../config'
 
-import { Api, AppointmentStatus, Config } from '../../src/lib/api'
-import { getDatePart, getHourPart } from '../../src/lib/date-fns-ext'
+import { Api, Config } from '../../src/lib/api'
 
-import { WriteStr, WriteCombined, WriteStdout, Writable } from '../../src/lib/writable'
+import { WriteStr, WriteCombined, WriteStdout } from '../../src/lib/writable'
 import { Path } from '../../src/lib/path'
 import { createTracker } from '../../src/lib/tracker'
 import { plugInterceptors } from './internal/plugInterceptors'
@@ -76,11 +74,20 @@ async function run(w: WriteStr, api: Api, args: Args) {
     await api.auth.login(data as any)
   }
 
+  await api.auth.login({ email: credentials.admin.email, password: 'invalid-password' })
+
   await api.auth.me()
 
   await api.auth.login(credentials.admin).then((res) => {
     apiLogin(res.data.accessToken)
   })
+
+  await api.appointments.getById('0')
+  await api.customers.getById('0')
+  await api.secretaries.getById('0')
+  await api.services.getById('0')
+  await api.servicesAvailable.getById('0')
+  await api.specialists.getById('0')
 
   for (const data of generateObject({
     name: [null, baseData.secretary.name],
@@ -89,6 +96,7 @@ async function run(w: WriteStr, api: Api, args: Args) {
     phone: [baseData.secretary.phone],
     email: [baseData.secretary.email],
     password: [baseData.secretary.password],
+    birthdate: [baseData.secretary.birthdate],
   })) {
     await api.secretaries.create(data as any)
   }
@@ -102,6 +110,13 @@ async function run(w: WriteStr, api: Api, args: Args) {
 
   for (const data of generateObject({
     name: [null, '', 'Service Available'],
+    specializationId: [''],
+  })) {
+    await api.servicesAvailable.create(data as any)
+  }
+
+  for (const data of generateObject({
+    name: [''],
     specializationId: [null, '', state.specializationId],
   })) {
     await api.servicesAvailable.create(data as any)

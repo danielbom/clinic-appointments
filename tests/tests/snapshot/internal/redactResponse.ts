@@ -1,15 +1,7 @@
 import { AxiosResponse } from 'axios'
 
-// const ids = {
-//   items: {} as Record<string, number>,
-//   current: 1,
-//   get(id: string) {
-//     ids.items[id] = ids.items[id] || this.current++
-//     return ids.items[id]
-//   },
-// }
-
-const UUID_REGEX = /\/(\w\w\w\w\w\w\w\w-\w\w\w\w-\w\w\w\w-\w\w\w\w-\w\w\w\w\w\w\w\w\w\w\w\w)/g
+const PATH_UUID_REGEX = /\/(\w\w\w\w\w\w\w\w-\w\w\w\w-\w\w\w\w-\w\w\w\w-\w\w\w\w\w\w\w\w\w\w\w\w)/g
+const UUID_REGEX = /^\w\w\w\w\w\w\w\w-\w\w\w\w/
 
 export function redactResponse(response: AxiosResponse | undefined): any {
   function redactData(data: any): any {
@@ -22,8 +14,9 @@ export function redactResponse(response: AxiosResponse | undefined): any {
     if (newData.createdAt) newData.createdAt = '[temporal]'
     if (newData.updatedAt) newData.updatedAt = '[temporal]'
     if (newData.id) newData.id = '[uuid]'
+    if (newData.traceId) newData.traceId = '[trace-id]'
     for (const key in newData) {
-      if (key.endsWith('Id')) {
+      if (typeof newData[key] === 'string' && newData[key].match(UUID_REGEX)) {
         newData[key] = '[uuid]'
       } else {
         newData[key] = redactData(newData[key])
@@ -39,7 +32,7 @@ export function redactResponse(response: AxiosResponse | undefined): any {
   if (config.data) {
     newResponse.config.data = redactData(JSON.parse(config.data))
   }
-  for (const match of newResponse.config.url.matchAll(UUID_REGEX)) {
+  for (const match of newResponse.config.url.matchAll(PATH_UUID_REGEX)) {
     newResponse.config.url = newResponse.config.url.replace(match[1], '[uuid]')
   }
   return newResponse

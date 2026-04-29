@@ -84,9 +84,13 @@ async function getIdentity(where: { email: string } | { id: string }) {
 }
 
 function replier<R extends Record<number, unknown>>(res: Response) {
+  type Status = keyof R & number
   return {
-    send<K extends keyof R & number>(key: K, value: R[K]) {
+    send<K extends Status>(key: K, value: R[K]) {
       res.status(key).send(value)
+    },
+    fail<T extends { status: Status }>(value: T) {
+      this.send(value.status, { ...value, traceId: (res.req as any).id })
     },
   }
 }
@@ -242,25 +246,111 @@ const presenter = {
   },
 }
 
-function validationError(error: { instancePath: string; message?: string | undefined }) {
-  const instancePath = error.instancePath
-  const message = error.message ?? 'invalid type'
-  let key = ''
-  if (instancePath) {
-    key = instancePath.slice(1).replaceAll(/\//g, '.')
-  }
-  const match = message.match(/'(\w+)'/)
-  if (match) {
-    key = match[1]
-  }
-  return {
-    error: {
-      code: 'validation_error',
-      location: 'body',
-      key: key || undefined,
-      message,
-    },
-  } as const
+const devUrl = 'https://dev-clinic-appointments.com.br'
+const errors = {
+  missingValue(location: 'body' | 'path' | 'query', path = '') {
+    return {
+      code: 'validation_error' as const,
+      type: `${devUrl}/schemas/errors/ValidationError.json`,
+      title: 'Validation error',
+      detail: `${path || location} is required`,
+      status: 400 as const,
+      source: {
+        in: location,
+        path: path || '/',
+      },
+    }
+  },
+  validation(location: 'body' | 'path' | 'query', path: string, reason: string, detail?: string) {
+    return {
+      code: 'validation_error' as const,
+      type: `${devUrl}/schemas/errors/ValidationError.json`,
+      title: 'Validation error',
+      detail,
+      status: 400 as const,
+      source: {
+        in: location,
+        path: path || '/',
+      },
+      errors: {
+        [path || location]: [reason],
+      },
+    }
+  },
+  ajv(error: { instancePath: string; message?: string | undefined }) {
+    const instancePath = error.instancePath
+    let reason = error.message ?? ''
+    let key = ''
+    if (instancePath) {
+      key = instancePath.slice(1).replaceAll(/\//g, '.')
+    }
+    const match = reason.match(/'(\w+)'/)
+    if (match) {
+      key = match[1]
+    }
+    if (reason.startsWith('must have required property ')) {
+      reason = 'is required'
+    }
+    if (!key) {
+      return this.missingValue('body')
+    }
+    return this.validation('body', key, reason)
+  },
+  auth(type: 'invalid_credentials' | 'invalid_token') {
+    let title = ''
+    let detail = ''
+    switch (type) {
+      case 'invalid_credentials': {
+        title = 'Invalid credentials'
+        detail = 'Email or password is incorrect'
+        break
+      }
+      case 'invalid_token': {
+        title = 'Invalid token'
+        detail = 'JWT token is invalid or expired'
+        break
+      }
+    }
+    return {
+      code: 'auth_error' as const,
+      type: `${devUrl}/schemas/errors/AuthError.json`,
+      title,
+      detail,
+      status: 401 as const,
+    }
+  },
+  notFound(resource: types.domain.Resource) {
+    return {
+      code: 'resource_not_found' as const,
+      type: `${devUrl}/schemas/errors/ResourceNotFound.json`,
+      title: 'Resource not found',
+      detail: `${resource} not found`,
+      status: 404 as const,
+    }
+  },
+  alreadyExists(resource: types.domain.Resource, key: string) {
+    return {
+      code: 'resource_conflict' as const,
+      type: `${devUrl}/schemas/errors/ResourceConflict.json`,
+      title: 'Resource already exists',
+      detail: `${resource} with this ${key} already exists`,
+      status: 409 as const,
+    }
+  },
+  internal(title: string, detail?: string) {
+    return {
+      code: 'internal_error' as const,
+      type: `${devUrl}/schemas/errors/InternalError.json`,
+      title,
+      detail,
+      status: 500 as const,
+    }
+  },
+}
+
+{
+  let typecheck: Record<string, (...args: any) => types.schemas.ProblemDetails> = errors
+  typecheck
 }
 
 export default {
@@ -337,31 +427,19 @@ export default {
 
       // Collect query parameters, path parameters, and request body
       if (!validations.auth.login.body(req.body)) {
-        return reply.send(400, validationError(validations.auth.login.body.errors![0]))
+        return reply.fail(errors.ajv(validations.auth.login.body.errors![0]))
       }
       const args: types.api.auth.login.body = req.body
 
       // Validate e execute the usecase
       const identity = await getIdentity({ email: args.email })
       if (!identity) {
-        return reply.send(400, {
-          error: {
-            code: 'auth_error',
-            location: 'auth',
-            message: 'invalid credentials',
-          },
-        })
+        return reply.fail(errors.auth('invalid_credentials'))
       }
 
       const validPassword = await verifyPassword(args.password, identity.password)
       if (!validPassword) {
-        return reply.send(400, {
-          error: {
-            code: 'auth_error',
-            location: 'auth',
-            message: 'invalid credentials',
-          },
-        })
+        return reply.fail(errors.auth('invalid_credentials'))
       }
 
       const data: JwtData = {
@@ -381,49 +459,25 @@ export default {
       // Collect query parameters, path parameters, and request body
       const refreshToken = getAccessTokenFromRequest(req)
       if (!refreshToken) {
-        return reply.send(400, {
-          error: {
-            code: 'auth_error',
-            location: 'auth',
-            message: 'invalid token',
-          },
-        })
+        return reply.fail(errors.auth('invalid_token'))
       }
 
       const jwtData = await getJwtData(refreshToken).catch(() => null)
       if (!jwtData || !isRefreshToken(jwtData)) {
-        return reply.send(400, {
-          error: {
-            code: 'auth_error',
-            location: 'auth',
-            message: 'invalid token',
-          },
-        })
+        return reply.fail(errors.auth('invalid_token'))
       }
 
       const id = parseUuid(jwtData.userId)
       if (!id) {
         console.error('jwt userId is not an uuid')
-        return reply.send(500, {
-          error: {
-            code: 'internal_error',
-            location: 'auth',
-            message: 'jwt userId is not an uuid',
-          },
-        })
+        return reply.fail(errors.internal('Invalid JWT', 'JWT userId is not an uuid'))
       }
 
       // Validate e execute the usecase
       const identity = await getIdentity({ id })
       if (!identity) {
         console.error('jwt userId without identity:', id)
-        return reply.send(500, {
-          error: {
-            code: 'internal_error',
-            location: 'auth',
-            message: 'jwt userId without identity',
-          },
-        })
+        return reply.fail(errors.internal('Invalid JWT', 'JWT userId without identity'))
       }
 
       const data: JwtData = {
@@ -442,26 +496,14 @@ export default {
       // Collect query parameters, path parameters, and request body
       const jwtData = await getJwtDataFromRequest(req)
       if (!jwtData) {
-        return reply.send(400, {
-          error: {
-            code: 'auth_error',
-            location: 'auth',
-            message: 'invalid token',
-          },
-        })
+        return reply.fail(errors.auth('invalid_token'))
       }
 
       // Validate e execute the usecase
       const identity = await getIdentity({ id: jwtData.userId })
       if (!identity) {
         console.error('jwt userId without identity:', jwtData.userId)
-        return reply.send(400, {
-          error: {
-            code: 'auth_error',
-            location: 'auth',
-            message: 'jwt userId without identity',
-          },
-        })
+        return reply.fail(errors.auth('invalid_token'))
       }
 
       // Format the response
@@ -520,7 +562,7 @@ export default {
 
       // Collect query parameters, path parameters, and request body
       if (!validations.appointments.createAppointment.body(req.body)) {
-        return reply.send(400, validationError(validations.appointments.createAppointment.body.errors![0]))
+        return reply.fail(errors.ajv(validations.appointments.createAppointment.body.errors![0]))
       }
       const args: types.api.appointments.createAppointment.body = req.body
 
@@ -530,13 +572,7 @@ export default {
       })
 
       if (!service) {
-        return reply.send(404, {
-          error: {
-            code: 'resource_not_found',
-            resource: 'service',
-            message: 'service not found',
-          },
-        })
+        return reply.fail(errors.notFound('service'))
       }
 
       const row = await db.appointments.create({
@@ -590,25 +626,11 @@ export default {
       // Collect query parameters, path parameters, and request body
       const startDate = getDateParam(req.query.startDate)
       if (!startDate) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'query',
-            key: 'startDate',
-            message: 'invalid date format',
-          },
-        })
+        return reply.fail(errors.validation('query', 'startDate', 'invalid date format'))
       }
       const endDate = getDateParam(req.query.endDate)
       if (!endDate) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'query',
-            key: 'endDate',
-            message: 'invalid date format',
-          },
-        })
+        return reply.fail(errors.validation('query', 'endDate', 'invalid date format'))
       }
 
       // Validate e execute the usecase
@@ -665,25 +687,11 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       // Collect query parameters, path parameters, and request body
       const startDate = getDateParam(req.query.startDate)
       if (!startDate) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'query',
-            key: 'startDate',
-            message: 'invalid date',
-          },
-        })
+        return reply.fail(errors.validation('query', 'startDate', 'invalid date format'))
       }
       const endDate = getDateParam(req.query.endDate)
       if (!endDate) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'query',
-            key: 'endDate',
-            message: 'invalid date',
-          },
-        })
+        return reply.fail(errors.validation('query', 'endDate', 'invalid date format'))
       }
 
       // Validate e execute the usecase
@@ -731,14 +739,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       // Collect query parameters, path parameters, and request body
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
 
       // Validate e execute the usecase
@@ -752,13 +753,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        return reply.send(404, {
-          error: {
-            code: 'resource_not_found',
-            resource: 'appointment',
-            message: 'appointment not found',
-          },
-        })
+        return reply.fail(errors.notFound('appointment'))
       }
 
       // Format the response
@@ -769,20 +764,13 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
 
       // Collect query parameters, path parameters, and request body
       if (!validations.appointments.updateAppointment.body(req.body)) {
-        return reply.send(400, validationError(validations.appointments.updateAppointment.body.errors![0]))
+        return reply.fail(errors.ajv(validations.appointments.updateAppointment.body.errors![0]))
       }
       const args: types.api.appointments.updateAppointment.body = req.body
 
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
 
       // Validate e execute the usecase
@@ -804,14 +792,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       // Collect query parameters, path parameters, and request body
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
 
       // Validate e execute the usecase
@@ -820,13 +801,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        return reply.send(404, {
-          error: {
-            code: 'resource_not_found',
-            resource: 'appointment',
-            message: 'appointment not found',
-          },
-        })
+        return reply.fail(errors.notFound('appointment'))
       }
 
       // Format the response
@@ -869,7 +844,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
 
       // Collect query parameters, path parameters, and request body
       if (!validations.customers.createCustomer.body(req.body)) {
-        return reply.send(400, validationError(validations.customers.createCustomer.body.errors![0]))
+        return reply.fail(errors.ajv(validations.customers.createCustomer.body.errors![0]))
       }
       const args: types.api.customers.createCustomer.body = req.body
 
@@ -916,14 +891,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       // Collect query parameters, path parameters, and request body
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
 
       // Validate e execute the usecase
@@ -932,13 +900,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        return reply.send(404, {
-          error: {
-            code: 'resource_not_found',
-            resource: 'customer',
-            message: 'customer not found',
-          },
-        })
+        return reply.fail(errors.notFound('customer'))
       }
 
       // Format the response
@@ -949,20 +911,13 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
 
       // Collect query parameters, path parameters, and request body
       if (!validations.customers.updateCustomer.body(req.body)) {
-        return reply.send(400, validationError(validations.customers.updateCustomer.body.errors![0]))
+        return reply.fail(errors.ajv(validations.customers.updateCustomer.body.errors![0]))
       }
       const args: types.api.customers.updateCustomer.body = req.body
 
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
 
       const data = {
@@ -988,14 +943,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       // Collect query parameters, path parameters, and request body
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
 
       // Validate e execute the usecase
@@ -1004,13 +952,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        return reply.send(404, {
-          error: {
-            code: 'resource_not_found',
-            resource: 'customer',
-            message: 'customer not found',
-          },
-        })
+        return reply.fail(errors.notFound('customer'))
       }
 
       // Format the response
@@ -1055,7 +997,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
 
       // Collect query parameters, path parameters, and request body
       if (!validations.secretaries.createSecretary.body(req.body)) {
-        return reply.send(400, validationError(validations.secretaries.createSecretary.body.errors![0]))
+        return reply.fail(errors.ajv(validations.secretaries.createSecretary.body.errors![0]))
       }
       const args: types.api.secretaries.createSecretary.body = req.body
 
@@ -1065,14 +1007,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (exists) {
-        return reply.send(409, {
-          error: {
-            code: 'resource_already_exists',
-            resource: 'secretary',
-            key: 'email',
-            message: 'A secretary with this email already exists',
-          },
-        })
+        return reply.fail(errors.alreadyExists('secretary', 'email'))
       }
 
       const row = await db.secretaries.create({
@@ -1121,14 +1056,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       // Collect query parameters, path parameters, and request body
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
 
       // Validate e execute the usecase
@@ -1137,13 +1065,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        return reply.send(404, {
-          error: {
-            code: 'resource_not_found',
-            resource: 'secretary',
-            message: 'secretary not found',
-          },
-        })
+        return reply.fail(errors.notFound('customer'))
       }
 
       // Format the response
@@ -1154,20 +1076,13 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
 
       // Collect query parameters, path parameters, and request body
       if (!validations.secretaries.updateSecretary.body(req.body)) {
-        return reply.send(400, validationError(validations.secretaries.updateSecretary.body.errors![0]))
+        return reply.fail(errors.ajv(validations.secretaries.updateSecretary.body.errors![0]))
       }
       const args: types.api.secretaries.updateSecretary.body = req.body
 
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
 
       const data = {
@@ -1186,13 +1101,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        return reply.send(404, {
-          error: {
-            code: 'resource_not_found',
-            resource: 'secretary',
-            message: 'secretary not found',
-          },
-        })
+        return reply.fail(errors.notFound('secretary'))
       }
 
       if (row.email !== data.email) {
@@ -1201,14 +1110,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
         })
 
         if (exists) {
-          return reply.send(409, {
-            error: {
-              code: 'resource_already_exists',
-              resource: 'secretary',
-              key: 'email',
-              message: 'A secretary with this email already exists',
-            },
-          })
+          return reply.fail(errors.alreadyExists('secretary', 'email'))
         }
       }
 
@@ -1226,14 +1128,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       // Collect query parameters, path parameters, and request body
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
 
       // Validate e execute the usecase
@@ -1242,13 +1137,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        return reply.send(404, {
-          error: {
-            code: 'resource_not_found',
-            resource: 'secretary',
-            message: 'secretary not found',
-          },
-        })
+        return reply.fail(errors.notFound('secretary'))
       }
 
       // Format the response
@@ -1284,7 +1173,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
 
       // Collect query parameters, path parameters, and request body
       if (!validations.servicesAvailable.createServiceAvailable.body(req.body)) {
-        return reply.send(400, validationError(validations.servicesAvailable.createServiceAvailable.body.errors![0]))
+        return reply.fail(errors.ajv(validations.servicesAvailable.createServiceAvailable.body.errors![0]))
       }
       const args: types.api.servicesAvailable.createServiceAvailable.body = req.body
 
@@ -1294,14 +1183,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (exists) {
-        return reply.send(409, {
-          error: {
-            code: 'resource_already_exists',
-            resource: 'service_name',
-            key: 'name',
-            message: 'A service_name with this name already exists',
-          },
-        })
+        return reply.fail(errors.alreadyExists('service_name', 'name'))
       }
 
       if (args.specialization) {
@@ -1309,14 +1191,9 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       }
 
       if (!args.specializationId) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'body',
-            key: 'specializationId',
-            message: 'specializationId is required',
-          },
-        })
+        return reply.fail(
+          errors.validation('body', 'specializationId', "must have required property 'specializationId'"),
+        )
       }
 
       const row = await db.service_names.create({
@@ -1336,14 +1213,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       // Collect query parameters, path parameters, and request body
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
 
       // Validate e execute the usecase
@@ -1355,13 +1225,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        return reply.send(404, {
-          error: {
-            code: 'resource_not_found',
-            resource: 'service_name',
-            message: 'service_name not found',
-          },
-        })
+        return reply.fail(errors.notFound('service_name'))
       }
 
       // Format the response
@@ -1378,18 +1242,11 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       // Collect query parameters, path parameters, and request body
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
 
       if (!validations.servicesAvailable.updateServiceAvailable.body(req.body)) {
-        return reply.send(400, validationError(validations.servicesAvailable.updateServiceAvailable.body.errors![0]))
+        return reply.fail(errors.ajv(validations.servicesAvailable.updateServiceAvailable.body.errors![0]))
       }
       const args: types.api.servicesAvailable.updateServiceAvailable.body = req.body
 
@@ -1399,13 +1256,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        return reply.send(404, {
-          error: {
-            code: 'resource_not_found',
-            resource: 'service_name',
-            message: 'service_name not found',
-          },
-        })
+        return reply.fail(errors.notFound('service_name'))
       }
 
       if (row.name === args.name) {
@@ -1417,14 +1268,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (exists) {
-        return reply.send(404, {
-          error: {
-            code: 'resource_not_found',
-            resource: 'service_name',
-            key: 'name',
-            message: 'service_name.name not found',
-          },
-        })
+        return reply.fail(errors.notFound('service_name'))
       }
 
       await db.service_names.update({
@@ -1441,14 +1285,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       // Collect query parameters, path parameters, and request body
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
 
       // Validate e execute the usecase
@@ -1457,13 +1294,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        return reply.send(404, {
-          error: {
-            code: 'resource_not_found',
-            resource: 'service_name',
-            message: 'service_name not found',
-          },
-        })
+        return reply.fail(errors.notFound('service_name'))
       }
 
       // Format the response
@@ -1509,7 +1340,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
 
       // Collect query parameters, path parameters, and request body
       if (!validations.services.createService.body(req.body)) {
-        return reply.send(400, validationError(validations.services.createService.body.errors![0]))
+        return reply.fail(errors.ajv(validations.services.createService.body.errors![0]))
       }
       const args: types.api.services.createService.body = req.body
 
@@ -1544,14 +1375,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       // Collect query parameters, path parameters, and request body
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
 
       // Validate e execute the usecase
@@ -1560,13 +1384,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        return reply.send(404, {
-          error: {
-            code: 'resource_not_found',
-            resource: 'service',
-            message: 'service not found',
-          },
-        })
+        return reply.fail(errors.notFound('service'))
       }
 
       // Format the response
@@ -1584,18 +1402,11 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       // Collect query parameters, path parameters, and request body
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
 
       if (!validations.services.updateService.body(req.body)) {
-        return reply.send(400, validationError(validations.services.updateService.body.errors![0]))
+        return reply.fail(errors.ajv(validations.services.updateService.body.errors![0]))
       }
       const args: types.api.services.updateService.body = req.body
 
@@ -1609,13 +1420,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        return reply.send(404, {
-          error: {
-            code: 'resource_not_found',
-            resource: 'service',
-            message: 'service not found',
-          },
-        })
+        return reply.fail(errors.notFound('service'))
       }
 
       // Format the response
@@ -1627,14 +1432,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       // Collect query parameters, path parameters, and request body
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
 
       // Validate e execute the usecase
@@ -1643,13 +1441,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        return reply.send(404, {
-          error: {
-            code: 'resource_not_found',
-            resource: 'service',
-            message: 'service not found',
-          },
-        })
+        return reply.fail(errors.notFound('service'))
       }
 
       // Format the response
@@ -1712,7 +1504,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
 
       // Collect query parameters, path parameters, and request body
       if (!validations.specialists.createSpecialist.body(req.body)) {
-        return reply.send(400, validationError(validations.specialists.createSpecialist.body.errors![0]))
+        return reply.fail(errors.ajv(validations.specialists.createSpecialist.body.errors![0]))
       }
       const args: types.api.specialists.createSpecialist.body = req.body
 
@@ -1722,14 +1514,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (exists) {
-        return reply.send(409, {
-          error: {
-            code: 'resource_already_exists',
-            resource: 'specialist',
-            key: 'email',
-            message: 'A specialist with this email already exists',
-          },
-        })
+        return reply.fail(errors.alreadyExists('specialist', 'email'))
       }
 
       const row = await db.$transaction(async (tx) => {
@@ -1791,14 +1576,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       // Collect query parameters, path parameters, and request body
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
 
       // Validate e execute the usecase
@@ -1807,13 +1585,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        return reply.send(404, {
-          error: {
-            code: 'resource_not_found',
-            resource: 'specialist',
-            message: 'specialist not found',
-          },
-        })
+        return reply.fail(errors.notFound('specialist'))
       }
 
       // Format the response
@@ -1825,14 +1597,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       // Collect query parameters, path parameters, and request body
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
 
       // Validate e execute the usecase
@@ -1853,14 +1618,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       // Collect query parameters, path parameters, and request body
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
 
       // Validate e execute the usecase
@@ -1877,14 +1635,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       // Collect query parameters, path parameters, and request body
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
 
       // Validate e execute the usecase
@@ -1905,25 +1656,11 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       // Collect query parameters, path parameters, and request body
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
       const serviceId = parseUuid(req.params.service_id)
       if (!serviceId) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'service_id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'service_id', 'invalid uuid format'))
       }
 
       // Validate e execute the usecase
@@ -1932,13 +1669,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        return reply.send(404, {
-          error: {
-            code: 'resource_not_found',
-            resource: 'service',
-            message: 'service not found',
-          },
-        })
+        return reply.fail(errors.notFound('service'))
       }
 
       // Format the response
@@ -1956,18 +1687,11 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       // Collect query parameters, path parameters, and request body
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
 
       if (!validations.specialists.updateSpecialist.body(req.body)) {
-        return reply.send(400, validationError(validations.specialists.updateSpecialist.body.errors![0]))
+        return reply.fail(errors.ajv(validations.specialists.updateSpecialist.body.errors![0]))
       }
       const args: types.api.specialists.updateSpecialist.body = req.body
 
@@ -1993,14 +1717,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       // Collect query parameters, path parameters, and request body
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
 
       // Validate e execute the usecase
@@ -2009,13 +1726,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        return reply.send(404, {
-          error: {
-            code: 'resource_not_found',
-            resource: 'specialist',
-            message: 'specialist not found',
-          },
-        })
+        return reply.fail(errors.notFound('specialist'))
       }
 
       // Format the response
@@ -2041,7 +1752,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
 
       // Collect query parameters, path parameters, and request body
       if (!validations.specializations.createSpecialization.body(req.body)) {
-        return reply.send(400, validationError(validations.specializations.createSpecialization.body.errors![0]))
+        return reply.fail(errors.ajv(validations.specializations.createSpecialization.body.errors![0]))
       }
       const args: types.api.specializations.createSpecialization.body = req.body
 
@@ -2051,14 +1762,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (exists) {
-        return reply.send(409, {
-          error: {
-            code: 'resource_already_exists',
-            resource: 'specialization',
-            key: 'name',
-            message: 'A specialization with this name already exists',
-          },
-        })
+        return reply.fail(errors.alreadyExists('specialization', 'name'))
       }
 
       const row = await db.specializations.create({
@@ -2077,18 +1781,11 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       // Collect query parameters, path parameters, and request body
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
 
       if (!validations.specializations.updateSpecialization.body(req.body)) {
-        return reply.send(400, validationError(validations.specializations.updateSpecialization.body.errors![0]))
+        return reply.fail(errors.ajv(validations.specializations.updateSpecialization.body.errors![0]))
       }
       const args: types.api.specializations.createSpecialization.body = req.body
 
@@ -2099,13 +1796,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        return reply.send(404, {
-          error: {
-            code: 'resource_not_found',
-            resource: 'specialization',
-            message: 'specialization not found',
-          },
-        })
+        return reply.fail(errors.notFound('specialization'))
       }
 
       // Format the response
@@ -2117,14 +1808,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       // Collect query parameters, path parameters, and request body
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.send(400, {
-          error: {
-            code: 'validation_error',
-            location: 'path',
-            key: 'id',
-            message: 'invalid uuid format',
-          },
-        })
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
 
       // Validate e execute the usecase
@@ -2133,13 +1817,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        return reply.send(404, {
-          error: {
-            code: 'resource_not_found',
-            resource: 'specialization',
-            message: 'specialization not found',
-          },
-        })
+        return reply.fail(errors.notFound('specialization'))
       }
 
       // Format the response

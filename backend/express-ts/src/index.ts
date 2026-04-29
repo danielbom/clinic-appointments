@@ -2,6 +2,7 @@ import 'dotenv/config'
 import openApiJson from './public/api/openapi.json' with { type: 'json' }
 import swaggerUI from 'swagger-ui-express'
 import express, { NextFunction, Request, Response, Router } from 'express'
+import crypto from 'node:crypto'
 import path from 'node:path'
 import cors from 'cors'
 import helmet from 'helmet'
@@ -11,6 +12,13 @@ import { getAppConfig } from './config'
 
 const appConfig = getAppConfig()
 const app = express()
+
+app.use((req, res, next) => {
+  const id = req.header('x-request-id') || crypto.randomUUID()
+  ;(req as any).id = id
+  res.setHeader('X-Request-Id', id)
+  next()
+})
 
 // Security middleware
 app.use(helmet())

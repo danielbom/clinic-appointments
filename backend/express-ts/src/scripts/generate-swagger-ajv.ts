@@ -42,7 +42,6 @@ function generateAllSchemas(schemasDir: Path, { baseUrl }: { baseUrl: string }) 
   schemasDir.mkdir({ existsOk: true })
   generateSchemas(schemasDir, baseUrl, 'domain')
   generateSchemas(schemasDir, baseUrl, 'body')
-  generateSchemas(schemasDir, baseUrl, 'errors')
   generateSchemas(schemasDir, baseUrl, 'schemas')
 }
 
