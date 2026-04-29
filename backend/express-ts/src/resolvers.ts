@@ -5,9 +5,9 @@ import { getAppConfig, getDatabaseConfig, listConfiguredResources } from './conf
 import { validate as isUuid, v7 as generateId } from 'uuid'
 import { extractJwtData, generateAccessJWT, generateRefreshJWT, isRefreshToken, JwtData, verifyJWT } from './jwt'
 import { getDateParam, getIntParam, getStringParam } from './utils'
-import * as types from './swagger-types'
 import { validations } from './validations'
 import { context } from './context'
+import * as types from './swagger-types'
 
 const saltRounds = 10
 
@@ -93,7 +93,11 @@ function replier<R extends Record<number, unknown>>(res: Response) {
       res.status(key).send(value)
     },
     fail<T extends { status: Status }>(value: T) {
-      this.send(value.status, { ...value, traceId: context.get(res.req, 'id') })
+      this.send(value.status, {
+        ...value,
+        instance: res.req.url.toString(),
+        traceId: context.get(res.req, 'id'),
+      })
     },
   }
 }
@@ -264,12 +268,11 @@ const errors = {
       },
     }
   },
-  validation(location: 'body' | 'path' | 'query', path: string, reason: string, detail?: string) {
+  validation(location: 'body' | 'path' | 'query', path: string, reason: string) {
     return {
       code: 'validation_error' as const,
       type: `${devUrl}/schemas/errors/ValidationError.json`,
       title: 'Validation error',
-      detail,
       status: 400 as const,
       source: {
         in: location,

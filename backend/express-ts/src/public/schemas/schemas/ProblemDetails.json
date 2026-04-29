@@ -73,6 +73,8 @@
     }
   },
   "required": [
+    "code",
+    "type",
     "title",
     "status"
   ]

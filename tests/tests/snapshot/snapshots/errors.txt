@@ -46,6 +46,7 @@ Response: {
     "in": "body",
     "path": "/"
   },
+  "instance": "/api/auth/login",
   "traceId": "[trace-id]"
 }
 
@@ -65,6 +66,7 @@ Response: {
       "is required"
     ]
   },
+  "instance": "/api/auth/login",
   "traceId": "[trace-id]"
 }
 
@@ -87,6 +89,7 @@ Response: {
       "must be string"
     ]
   },
+  "instance": "/api/auth/login",
   "traceId": "[trace-id]"
 }
 
@@ -109,6 +112,7 @@ Response: {
       "must be string"
     ]
   },
+  "instance": "/api/auth/login",
   "traceId": "[trace-id]"
 }
 
@@ -131,6 +135,7 @@ Response: {
       "must NOT have fewer than 3 characters"
     ]
   },
+  "instance": "/api/auth/login",
   "traceId": "[trace-id]"
 }
 
@@ -153,6 +158,7 @@ Response: {
       "must NOT have fewer than 3 characters"
     ]
   },
+  "instance": "/api/auth/login",
   "traceId": "[trace-id]"
 }
 
@@ -167,6 +173,7 @@ Response: {
   "title": "Invalid credentials",
   "detail": "Email or password is incorrect",
   "status": 401,
+  "instance": "/api/auth/login",
   "traceId": "[trace-id]"
 }
 
@@ -177,6 +184,7 @@ Response: {
   "title": "Invalid token",
   "detail": "JWT token is invalid or expired",
   "status": 401,
+  "instance": "/api/auth/me",
   "traceId": "[trace-id]"
 }
 
@@ -201,6 +209,7 @@ Response: {
   "title": "Invalid token",
   "detail": "JWT token is invalid or expired",
   "status": 401,
+  "instance": "/api/auth/refresh",
   "traceId": "[trace-id]"
 }
 
@@ -219,6 +228,7 @@ Response: {
   "errors": {
     "id": "[uuid]"
   },
+  "instance": "/api/appointments/0",
   "traceId": "[trace-id]"
 }
 
@@ -235,6 +245,7 @@ Response: {
   "errors": {
     "id": "[uuid]"
   },
+  "instance": "/api/customers/0",
   "traceId": "[trace-id]"
 }
 
@@ -251,6 +262,7 @@ Response: {
   "errors": {
     "id": "[uuid]"
   },
+  "instance": "/api/secretaries/0",
   "traceId": "[trace-id]"
 }
 
@@ -267,6 +279,7 @@ Response: {
   "errors": {
     "id": "[uuid]"
   },
+  "instance": "/api/services/0",
   "traceId": "[trace-id]"
 }
 
@@ -283,6 +296,7 @@ Response: {
   "errors": {
     "id": "[uuid]"
   },
+  "instance": "/api/services-available/0",
   "traceId": "[trace-id]"
 }
 
@@ -299,6 +313,7 @@ Response: {
   "errors": {
     "id": "[uuid]"
   },
+  "instance": "/api/specialists/0",
   "traceId": "[trace-id]"
 }
 
@@ -315,6 +330,7 @@ Response: {
     "in": "body",
     "path": "/"
   },
+  "instance": "/api/secretaries",
   "traceId": "[trace-id]"
 }
 
@@ -334,6 +350,7 @@ Response: {
       "is required"
     ]
   },
+  "instance": "/api/secretaries",
   "traceId": "[trace-id]"
 }
 
@@ -361,6 +378,7 @@ Response: {
       "must be string"
     ]
   },
+  "instance": "/api/secretaries",
   "traceId": "[trace-id]"
 }
 
@@ -391,6 +409,7 @@ Response: {
     "in": "body",
     "path": "/"
   },
+  "instance": "/api/specializations",
   "traceId": "[trace-id]"
 }
 
@@ -410,6 +429,7 @@ Response: {
       "is required"
     ]
   },
+  "instance": "/api/specializations",
   "traceId": "[trace-id]"
 }
 
@@ -431,6 +451,7 @@ Response: {
   "title": "Resource already exists",
   "detail": "specialization with this name already exists",
   "status": 409,
+  "instance": "/api/specializations",
   "traceId": "[trace-id]"
 }
 
@@ -447,6 +468,7 @@ Response: {
     "in": "body",
     "path": "/"
   },
+  "instance": "/api/services-available",
   "traceId": "[trace-id]"
 }
 
@@ -466,6 +488,7 @@ Response: {
       "is required"
     ]
   },
+  "instance": "/api/services-available",
   "traceId": "[trace-id]"
 }
 
@@ -488,6 +511,7 @@ Response: {
       "must be string"
     ]
   },
+  "instance": "/api/services-available",
   "traceId": "[trace-id]"
 }
 
@@ -510,6 +534,7 @@ Response: {
       "must NOT have fewer than 1 characters"
     ]
   },
+  "instance": "/api/services-available",
   "traceId": "[trace-id]"
 }
 
@@ -532,6 +557,7 @@ Response: {
       "must match format \"uuid\""
     ]
   },
+  "instance": "/api/services-available",
   "traceId": "[trace-id]"
 }
 
@@ -546,6 +572,7 @@ Response: {
     "in": "body",
     "path": "/"
   },
+  "instance": "/api/services-available",
   "traceId": "[trace-id]"
 }
 
@@ -565,6 +592,7 @@ Response: {
       "is required"
     ]
   },
+  "instance": "/api/services-available",
   "traceId": "[trace-id]"
 }
 
@@ -587,6 +615,7 @@ Response: {
       "must NOT have fewer than 1 characters"
     ]
   },
+  "instance": "/api/services-available",
   "traceId": "[trace-id]"
 }
 
@@ -609,6 +638,7 @@ Response: {
       "must NOT have fewer than 1 characters"
     ]
   },
+  "instance": "/api/services-available",
   "traceId": "[trace-id]"
 }
 
@@ -631,6 +661,7 @@ Response: {
       "must NOT have fewer than 1 characters"
     ]
   },
+  "instance": "/api/services-available",
   "traceId": "[trace-id]"
 }
 
@@ -654,6 +685,7 @@ Response: {
   "title": "Resource already exists",
   "detail": "service_name with this name already exists",
   "status": 409,
+  "instance": "/api/services-available",
   "traceId": "[trace-id]"
 }
 
@@ -666,6 +698,7 @@ Response: {
   "title": "Invalid token",
   "detail": "JWT token is invalid or expired",
   "status": 401,
+  "instance": "/api/auth/me",
   "traceId": "[trace-id]"
 }
 
@@ -676,6 +709,7 @@ Response: {
   "title": "Invalid token",
   "detail": "JWT token is invalid or expired",
   "status": 401,
+  "instance": "/api/auth/refresh",
   "traceId": "[trace-id]"
 }
 
@@ -686,6 +720,7 @@ Response: {
   "title": "Invalid token",
   "detail": "JWT token is invalid or expired",
   "status": 401,
+  "instance": "/api/auth/refresh",
   "traceId": "[trace-id]"
 }
 

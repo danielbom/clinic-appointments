@@ -76,12 +76,12 @@ export namespace schemas {
     /**
      * @description: A machine-readable, domain-specific error code used by clients to implement conditional logic.
      */
-    code?: 'auth_error' | 'validation_error' | 'resource_not_found' | 'resource_conflict' | 'internal_error'
+    code: 'auth_error' | 'validation_error' | 'resource_not_found' | 'resource_conflict' | 'internal_error'
     /**
      * @description: A URI reference that identifies the error type. Ideally points to documentation describing the error.
      * @format: uri
      */
-    type?: string
+    type: string
     /**
      * @description: A short, human-readable summary of the problem type.
      */

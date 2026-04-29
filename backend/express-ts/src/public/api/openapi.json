@@ -2253,7 +2253,7 @@
             }
           }
         },
-        "required": ["title", "status"]
+        "required": ["code", "type", "title", "status"]
       },
 
       "Id": {
