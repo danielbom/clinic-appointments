@@ -47,6 +47,11 @@ function* generateObject(obj: any) {
   yield* go(0, {})
 }
 
+const delay = (ms: number) => {
+  console.log(`[${new Date().toISOString()}] Delay ${ms} ms`)
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
 async function run(w: WriteStr, api: Api, args: Args) {
   if (!args.record) {
     if (!args.currentSnapshotPath.exists()) {
@@ -55,6 +60,15 @@ async function run(w: WriteStr, api: Api, args: Args) {
   }
 
   const state = {
+    longAuth: {
+      accessToken: '',
+      refreshToken: '',
+    },
+    shortAuth: {
+      accessToken: '',
+      refreshToken: '',
+      time: 0,
+    },
     specializationId: '',
     serviceAvailableId: '',
   }
@@ -70,6 +84,21 @@ async function run(w: WriteStr, api: Api, args: Args) {
   await api.test.stats()
   await api.test.init()
 
+  w.write('# api.auth.login: Short expiration time\n\n')
+  await api.auth
+    .login(credentials.admin, {
+      headers: {
+        'x-access-token-expires-in': 1,
+        'x-refresh-token-expires-in': 1,
+      },
+    })
+    .then((res) => {
+      state.shortAuth.time = Date.now()
+      state.shortAuth.accessToken = res.data.accessToken
+      state.shortAuth.refreshToken = res.data.refreshToken
+    })
+
+  w.write('# api.auth.login: Invalid body\n\n')
   for (const data of generateObject({ email: [null, ''], password: [null, ''] })) {
     await api.auth.login(data as any)
   }
@@ -78,10 +107,17 @@ async function run(w: WriteStr, api: Api, args: Args) {
 
   await api.auth.me()
 
+  w.write('# api.auth.login: Long expiration time\n\n')
   await api.auth.login(credentials.admin).then((res) => {
     apiLogin(res.data.accessToken)
+    state.longAuth.accessToken = res.data.accessToken
+    state.longAuth.refreshToken = res.data.refreshToken
   })
 
+  w.write('# api.auth.refresh: Long accessToken auth\n\n')
+  await api.auth.refresh(state.longAuth.accessToken)
+
+  w.write('# Invalid uuid when calling any .getById(id)\n\n')
   await api.appointments.getById('0')
   await api.customers.getById('0')
   await api.secretaries.getById('0')
@@ -89,6 +125,7 @@ async function run(w: WriteStr, api: Api, args: Args) {
   await api.servicesAvailable.getById('0')
   await api.specialists.getById('0')
 
+  w.write('# api.secretaries.create\n\n')
   for (const data of generateObject({
     name: [null, baseData.secretary.name],
     cnpj: [baseData.secretary.cnpj],
@@ -101,6 +138,7 @@ async function run(w: WriteStr, api: Api, args: Args) {
     await api.secretaries.create(data as any)
   }
 
+  w.write('# api.specializations.create\n\n')
   for (const data of generateObject({ name: [] })) {
     await api.specializations.create(data as any)
   }
@@ -108,6 +146,7 @@ async function run(w: WriteStr, api: Api, args: Args) {
   await api.specializations.create({ name: 'Specialization' }).then((res) => (state.specializationId = res.data.id))
   await api.specializations.create({ name: 'Specialization' })
 
+  w.write('# api.servicesAvailable.create\n\n')
   for (const data of generateObject({
     name: [null, '', 'Service Available'],
     specializationId: [''],
@@ -126,6 +165,16 @@ async function run(w: WriteStr, api: Api, args: Args) {
     .create({ name: 'Service Available', specializationId: state.specializationId })
     .then((res) => (state.serviceAvailableId = res.data.id))
   await api.servicesAvailable.create({ name: 'Service Available', specializationId: state.specializationId })
+
+  // token expired
+  w.write('# Token expired\n\n')
+  {
+    await delay(Math.max(Date.now() - state.shortAuth.time + 10, 0))
+    apiLogin(state.shortAuth.accessToken)
+    await api.auth.me()
+    await api.auth.refresh(state.shortAuth.accessToken)
+    await api.auth.refresh(state.shortAuth.refreshToken)
+  }
 
   complete(w.value(), args)
 }

@@ -9,13 +9,14 @@ import helmet from 'helmet'
 import morgan from 'morgan'
 import plugOpenApiResolvers from './plug-resolvers'
 import { getAppConfig } from './config'
+import { context } from './context'
 
 const appConfig = getAppConfig()
 const app = express()
 
 app.use((req, res, next) => {
   const id = req.header('x-request-id') || crypto.randomUUID()
-  ;(req as any).id = id
+  context.set(req, 'id', id)
   res.setHeader('X-Request-Id', id)
   next()
 })
@@ -40,6 +41,7 @@ app.use(morgan(':method :url :status :response-time ms - :res[content-length]'))
   api.use('/api', express.static(path.join(import.meta.dirname, 'public/api')))
   plugOpenApiResolvers(api, openApiJson)
   api.use('/api/docs', swaggerUI.serve, swaggerUI.setup(openApiJson))
+  api.use('/api/schemas', express.static(path.join(import.meta.dirname, 'public/schemas')))
   api.use('/api/redoc', express.static(path.join(import.meta.dirname, 'public/redoc')))
   app.use(api)
 }

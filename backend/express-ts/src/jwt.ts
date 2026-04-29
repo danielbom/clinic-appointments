@@ -11,28 +11,31 @@ export type JwtData = {
 interface JwtPayload {
   sub: string // subject
   role: string
-  iat?: number // issued at
-  exp?: number // expires in
+  iat?: number // issued at in seconds
+  exp?: number // expires in in seconds -> TokenExpiredError
+  nbf?: number // not before in seconds -> NotBeforeError
 }
 
-export function generateAccessJWT(data: JwtData) {
+export function generateAccessJWT(data: JwtData, exp = 0) {
+  const now = Math.floor(Date.now() / 1000)
   const payload: JwtPayload = {
     sub: data.userId,
     role: data.role,
-    exp: Date.now() + 10 * 60 * 1000,
-    iat: Date.now(),
+    exp: now + (exp || 10 * 60),
+    iat: now,
   }
   return jwt.sign(payload, jwtConfig.secret, {
     algorithm: 'HS256',
   })
 }
 
-export function generateRefreshJWT(data: JwtData) {
+export function generateRefreshJWT(data: JwtData, exp = 0) {
+  const now = Math.floor(Date.now() / 1000)
   const payload: JwtPayload = {
     sub: data.userId,
     role: '',
-    exp: Date.now() + 24 * 60 * 60 * 1000,
-    iat: Date.now(),
+    exp: now + (exp || 24 * 60 * 60),
+    iat: now,
   }
   return jwt.sign(payload, jwtConfig.secret, {
     algorithm: 'HS256',
@@ -59,8 +62,8 @@ export function verifyJWT(token: string): Promise<JwtPayload> {
   })
 }
 
-export function getJwtData(token: string): Promise<JwtData> {
-  return verifyJWT(token).then((payload) => ({ userId: payload.sub, role: payload.role }))
+export function extractJwtData(payload: JwtPayload): JwtData {
+  return { userId: payload.sub, role: payload.role }
 }
 
 export function isRefreshToken(data: JwtData): boolean {

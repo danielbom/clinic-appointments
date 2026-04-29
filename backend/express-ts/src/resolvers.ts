@@ -3,10 +3,11 @@ import { type Request, type Response } from 'express'
 import { db } from './db'
 import { getAppConfig, getDatabaseConfig, listConfiguredResources } from './config'
 import { validate as isUuid, v7 as generateId } from 'uuid'
-import { generateAccessJWT, generateRefreshJWT, getJwtData, isRefreshToken, JwtData } from './jwt'
+import { extractJwtData, generateAccessJWT, generateRefreshJWT, isRefreshToken, JwtData, verifyJWT } from './jwt'
 import { getDateParam, getIntParam, getStringParam } from './utils'
 import * as types from './swagger-types'
 import { validations } from './validations'
+import { context } from './context'
 
 const saltRounds = 10
 
@@ -30,7 +31,9 @@ function getAccessTokenFromRequest(req: Request) {
 async function getJwtDataFromRequest(req: Request) {
   const accessToken = getAccessTokenFromRequest(req)
   if (!accessToken) return null
-  const jwtData = await getJwtData(accessToken)
+  const jwtPayload = await verifyJWT(accessToken).catch(() => null)
+  if (!jwtPayload) return null
+  const jwtData = extractJwtData(jwtPayload)
   if (isRefreshToken(jwtData)) return null
   const userId = parseUuid(jwtData.userId)
   if (!userId) return null
@@ -90,7 +93,7 @@ function replier<R extends Record<number, unknown>>(res: Response) {
       res.status(key).send(value)
     },
     fail<T extends { status: Status }>(value: T) {
-      this.send(value.status, { ...value, traceId: (res.req as any).id })
+      this.send(value.status, { ...value, traceId: context.get(res.req, 'id') })
     },
   }
 }
@@ -425,6 +428,16 @@ export default {
     async login(req: Request, res: Response) {
       const reply = replier<types.api.auth.login.responses>(res)
 
+      const appConfig = getAppConfig()
+
+      const validEnvironemnts: Array<typeof appConfig.environemnt> = ['development', 'test']
+      let accessTokenExpireIn = 0
+      let refreshTokenExpireIn = 0
+      if (validEnvironemnts.includes(appConfig.environemnt)) {
+        accessTokenExpireIn = getIntParam(req.header('x-access-token-expires-in'), 0)
+        refreshTokenExpireIn = getIntParam(req.header('x-refresh-token-expires-in'), 0)
+      }
+
       // Collect query parameters, path parameters, and request body
       if (!validations.auth.login.body(req.body)) {
         return reply.fail(errors.ajv(validations.auth.login.body.errors![0]))
@@ -447,8 +460,8 @@ export default {
         role: identity.role,
       }
 
-      const accessToken = generateAccessJWT(data)
-      const refreshToken = generateRefreshJWT(data)
+      const accessToken = generateAccessJWT(data, accessTokenExpireIn)
+      const refreshToken = generateRefreshJWT(data, refreshTokenExpireIn)
 
       // Format the response
       return reply.send(200, { accessToken, refreshToken })
@@ -462,7 +475,9 @@ export default {
         return reply.fail(errors.auth('invalid_token'))
       }
 
-      const jwtData = await getJwtData(refreshToken).catch(() => null)
+      const jwtData = await verifyJWT(refreshToken)
+        .then(extractJwtData)
+        .catch(() => null)
       if (!jwtData || !isRefreshToken(jwtData)) {
         return reply.fail(errors.auth('invalid_token'))
       }

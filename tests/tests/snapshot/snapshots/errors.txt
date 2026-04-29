@@ -21,6 +21,20 @@ Response: {
 Request: GET /api/test/init 200
 Response: "System initialized to be tested"
 
+# api.auth.login: Short expiration time
+
+Request: POST /api/auth/login 200
+Body: {
+  "email": "admin@test.com",
+  "password": "123mudar"
+}
+Response: {
+  "accessToken": "[access-token]",
+  "refreshToken": "[access-token]"
+}
+
+# api.auth.login: Invalid body
+
 Request: POST /api/auth/login 400
 Response: {
   "code": "validation_error",
@@ -151,6 +165,7 @@ Response: {
   "code": "auth_error",
   "type": "https://dev-clinic-appointments.com.br/schemas/errors/AuthError.json",
   "title": "Invalid credentials",
+  "detail": "Email or password is incorrect",
   "status": 401,
   "traceId": "[trace-id]"
 }
@@ -160,9 +175,12 @@ Response: {
   "code": "auth_error",
   "type": "https://dev-clinic-appointments.com.br/schemas/errors/AuthError.json",
   "title": "Invalid token",
+  "detail": "JWT token is invalid or expired",
   "status": 401,
   "traceId": "[trace-id]"
 }
+
+# api.auth.login: Long expiration time
 
 Request: POST /api/auth/login 200
 Body: {
@@ -173,6 +191,20 @@ Response: {
   "accessToken": "[access-token]",
   "refreshToken": "[access-token]"
 }
+
+# api.auth.refresh: Long accessToken auth
+
+Request: POST /api/auth/refresh 401
+Response: {
+  "code": "auth_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/AuthError.json",
+  "title": "Invalid token",
+  "detail": "JWT token is invalid or expired",
+  "status": 401,
+  "traceId": "[trace-id]"
+}
+
+# Invalid uuid when calling any .getById(id)
 
 Request: GET /api/appointments/0 400
 Response: {
@@ -270,6 +302,8 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+# api.secretaries.create
+
 Request: POST /api/secretaries 400
 Response: {
   "code": "validation_error",
@@ -344,6 +378,8 @@ Response: {
   "id": "[uuid]"
 }
 
+# api.specializations.create
+
 Request: POST /api/specializations 400
 Response: {
   "code": "validation_error",
@@ -397,6 +433,8 @@ Response: {
   "status": 409,
   "traceId": "[trace-id]"
 }
+
+# api.servicesAvailable.create
 
 Request: POST /api/services-available 400
 Response: {
@@ -616,6 +654,38 @@ Response: {
   "title": "Resource already exists",
   "detail": "service_name with this name already exists",
   "status": 409,
+  "traceId": "[trace-id]"
+}
+
+# Token expired
+
+Request: GET /api/auth/me 401
+Response: {
+  "code": "auth_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/AuthError.json",
+  "title": "Invalid token",
+  "detail": "JWT token is invalid or expired",
+  "status": 401,
+  "traceId": "[trace-id]"
+}
+
+Request: POST /api/auth/refresh 401
+Response: {
+  "code": "auth_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/AuthError.json",
+  "title": "Invalid token",
+  "detail": "JWT token is invalid or expired",
+  "status": 401,
+  "traceId": "[trace-id]"
+}
+
+Request: POST /api/auth/refresh 401
+Response: {
+  "code": "auth_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/AuthError.json",
+  "title": "Invalid token",
+  "detail": "JWT token is invalid or expired",
+  "status": 401,
   "traceId": "[trace-id]"
 }
 
