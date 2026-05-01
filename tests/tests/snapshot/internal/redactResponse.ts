@@ -14,6 +14,11 @@ export function redactResponse(response: AxiosResponse | undefined): any {
     if (newData.createdAt) newData.createdAt = '[temporal]'
     if (newData.updatedAt) newData.updatedAt = '[temporal]'
     if (newData.traceId) newData.traceId = '[trace-id]'
+    if (newData.instance) {
+      for (const match of newData.instance.matchAll(PATH_UUID_REGEX)) {
+        newData.instance = newData.instance.replace(match[1], '[uuid]')
+      }
+    }
     for (const key in newData) {
       if (typeof newData[key] === 'string' && newData[key].match(UUID_REGEX)) {
         newData[key] = '[uuid]'

@@ -76,7 +76,13 @@ export namespace schemas {
     /**
      * @description: A machine-readable, domain-specific error code used by clients to implement conditional logic.
      */
-    code: 'auth_error' | 'validation_error' | 'resource_not_found' | 'resource_conflict' | 'internal_error'
+    code: //
+      | 'auth_error' //
+      | 'forbidden_error'
+      | 'validation_error'
+      | 'resource_not_found'
+      | 'resource_conflict'
+      | 'internal_error'
     /**
      * @description: A URI reference that identifies the error type. Ideally points to documentation describing the error.
      * @format: uri
@@ -439,7 +445,7 @@ export namespace api {
       export type body = body.AppointmentsCreateBody
 
       export type responses = {
-        200: schemas.Id
+        201: schemas.Id
         400: schemas.ProblemDetails
         404: schemas.ProblemDetails
       }
@@ -507,7 +513,7 @@ export namespace api {
       export type body = body.CustomerCreateBody
 
       export type responses = {
-        200: schemas.Id
+        201: schemas.Id
         400: schemas.ProblemDetails
       }
     }
@@ -560,7 +566,7 @@ export namespace api {
       export type body = body.SecretaryCreateBody
 
       export type responses = {
-        200: schemas.Id
+        201: schemas.Id
         400: schemas.ProblemDetails
         409: schemas.ProblemDetails
       }
@@ -616,7 +622,7 @@ export namespace api {
       export type body = body.ServiceAvailableCreateBody
 
       export type responses = {
-        200: schemas.Id
+        201: schemas.Id
         400: schemas.ProblemDetails
         409: schemas.ProblemDetails
       }
@@ -664,7 +670,7 @@ export namespace api {
       export type body = body.ServiceCreateBody
 
       export type responses = {
-        200: schemas.Id
+        201: schemas.Id
         400: schemas.ProblemDetails
       }
     }
@@ -727,7 +733,7 @@ export namespace api {
       export type body = body.SpecialistCreateBody
 
       export type responses = {
-        200: schemas.Id
+        201: schemas.Id
         400: schemas.ProblemDetails
         409: schemas.ProblemDetails
       }
@@ -814,7 +820,7 @@ export namespace api {
       export type body = body.SpecializationCreateBody
 
       export type responses = {
-        200: schemas.Id
+        201: schemas.Id
         400: schemas.ProblemDetails
         409: schemas.ProblemDetails
       }

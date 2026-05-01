@@ -8,6 +8,7 @@
       "description": "A machine-readable, domain-specific error code used by clients to implement conditional logic.",
       "enum": [
         "auth_error",
+        "forbidden_error",
         "validation_error",
         "resource_not_found",
         "resource_conflict",

@@ -353,7 +353,7 @@ async function run(w: WriteStr, api: Api, args: Args) {
         cpf: '72730805001',
         phone: '119876543210',
       })
-      if (res.status !== 200) throw new Error(`secretaries ${i}: ${JSON.stringify(res.data)}`)
+      if (res.status !== 201) throw new Error(`secretaries ${i}: ${JSON.stringify(res.data)}`)
       state.secretaryIds.push(res.data.id)
     }
 
@@ -362,7 +362,7 @@ async function run(w: WriteStr, api: Api, args: Args) {
       const res = await api.specializations.create({
         name: `Specialization ${i.toString().padStart(4, '0')}`,
       })
-      if (res.status !== 200) throw new Error(`specializations ${i}: ${JSON.stringify(res.data)}`)
+      if (res.status !== 201) throw new Error(`specializations ${i}: ${JSON.stringify(res.data)}`)
       state.specializationIds.push(res.data.id)
     }
 
@@ -374,7 +374,7 @@ async function run(w: WriteStr, api: Api, args: Args) {
           name: `Service Available ${ix}-${i.toString().padStart(4, '0')}`,
           specializationId: specializationId,
         })
-        if (res.status !== 200) throw new Error(`servicesAvailable ${i}: ${JSON.stringify(res.data)}`)
+        if (res.status !== 201) throw new Error(`servicesAvailable ${i}: ${JSON.stringify(res.data)}`)
         state.servicesAvailableIds.push(res.data.id)
       }
     }
@@ -390,7 +390,7 @@ async function run(w: WriteStr, api: Api, args: Args) {
         birthdate: random.date(1980, 2000),
         services: [],
       })
-      if (res.status !== 200) throw new Error(`specialists ${i}: ${JSON.stringify(res.data)}`)
+      if (res.status !== 201) throw new Error(`specialists ${i}: ${JSON.stringify(res.data)}`)
       state.specialistIds.push(res.data.id)
     }
 
@@ -407,7 +407,7 @@ async function run(w: WriteStr, api: Api, args: Args) {
           serviceNameId,
           specialistId,
         })
-        if (res.status !== 200) throw new Error(`services ${ix}: i: ${JSON.stringify(res.data)}`)
+        if (res.status !== 201) throw new Error(`services ${ix}: i: ${JSON.stringify(res.data)}`)
         state.specialistServiceIds[specialistId] = state.specialistServiceIds[specialistId] || []
         state.specialistServiceIds[specialistId].push({ serviceNameId, serviceId: res.data.id })
         state.serviceIds.push(res.data.id)
@@ -423,7 +423,7 @@ async function run(w: WriteStr, api: Api, args: Args) {
         birthdate: random.date(1960, 2010),
         phone: `21987654${i.toString().padStart(3, '0')}`,
       })
-      if (res.status !== 200) throw new Error(`customers ${i}: ${JSON.stringify(res.data)}`)
+      if (res.status !== 201) throw new Error(`customers ${i}: ${JSON.stringify(res.data)}`)
       state.customerIds.push(res.data.id)
     }
 
@@ -454,7 +454,7 @@ async function run(w: WriteStr, api: Api, args: Args) {
             customerId: random.choice(state.customerIds),
             serviceId: random.choice(state.specialistServiceIds[specialistIds[ix]]).serviceId,
           })
-          if (res.status !== 200) throw new Error(`appointments ${ix}: ${JSON.stringify(res.data)}`)
+          if (res.status !== 201) throw new Error(`appointments ${ix}: ${JSON.stringify(res.data)}`)
           state.appointmentIds.push(res.data.id)
         }
       },

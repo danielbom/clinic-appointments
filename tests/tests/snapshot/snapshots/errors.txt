@@ -394,7 +394,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-Request: POST /api/secretaries 200
+Request: POST /api/secretaries 201
 Body: {
   "name": "Secretary Test",
   "cnpj": "08130896000135",
@@ -445,7 +445,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-Request: POST /api/specializations 200
+Request: POST /api/specializations 201
 Body: {
   "name": "Specialization"
 }
@@ -677,7 +677,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-Request: POST /api/services-available 200
+Request: POST /api/services-available 201
 Body: {
   "name": "Service Available",
   "specializationId": "[uuid]"

@@ -47,7 +47,7 @@ Request: GET /api/secretaries 200
 Params: {}
 Response: []
 
-Request: POST /api/secretaries 200
+Request: POST /api/secretaries 201
 Body: {
   "name": "Secretary Test",
   "email": "secretary@test.com",
@@ -72,12 +72,13 @@ Body: {
   "phone": "119876543210"
 }
 Response: {
-  "error": {
-    "code": "resource_already_exists",
-    "resource": "secretary",
-    "key": "email",
-    "message": "A secretary with this email already exists"
-  }
+  "code": "resource_conflict",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceConflict.json",
+  "title": "Resource already exists",
+  "detail": "secretary with this email already exists",
+  "status": 409,
+  "instance": "/api/secretaries",
+  "traceId": "[trace-id]"
 }
 
 Request: GET /api/secretaries/count 200
@@ -138,11 +139,13 @@ Response: ""
 
 Request: GET /api/secretaries/[uuid] 404
 Response: {
-  "error": {
-    "code": "resource_not_found",
-    "resource": "secretary",
-    "message": "secretary not found"
-  }
+  "code": "resource_not_found",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceNotFound.json",
+  "title": "Resource not found",
+  "detail": "customer not found",
+  "status": 404,
+  "instance": "/api/secretaries/[uuid]",
+  "traceId": "[trace-id]"
 }
 
 Request: GET /api/secretaries/count 200
@@ -153,7 +156,7 @@ Request: GET /api/secretaries 200
 Params: {}
 Response: []
 
-Request: POST /api/secretaries 200
+Request: POST /api/secretaries 201
 Body: {
   "name": "Secretary Test",
   "email": "secretary@test.com",
@@ -188,7 +191,7 @@ Response: {
 Request: GET /api/specializations 200
 Response: []
 
-Request: POST /api/specializations 200
+Request: POST /api/specializations 201
 Body: {
   "name": "Specialization A"
 }
@@ -196,7 +199,7 @@ Response: {
   "id": "[uuid]"
 }
 
-Request: POST /api/specializations 200
+Request: POST /api/specializations 201
 Body: {
   "name": "Specialization B"
 }
@@ -209,12 +212,13 @@ Body: {
   "name": "Specialization A"
 }
 Response: {
-  "error": {
-    "code": "resource_already_exists",
-    "resource": "specialization",
-    "key": "name",
-    "message": "A specialization with this name already exists"
-  }
+  "code": "resource_conflict",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceConflict.json",
+  "title": "Resource already exists",
+  "detail": "specialization with this name already exists",
+  "status": 409,
+  "instance": "/api/specializations",
+  "traceId": "[trace-id]"
 }
 
 Request: POST /api/specializations 400
@@ -222,12 +226,21 @@ Body: {
   "name": ""
 }
 Response: {
-  "error": {
-    "code": "validation_error",
-    "location": "body",
-    "key": "name",
-    "message": "must NOT have fewer than 1 characters"
-  }
+  "code": "validation_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationError.json",
+  "title": "Validation error",
+  "status": 400,
+  "source": {
+    "in": "body",
+    "path": "name"
+  },
+  "errors": {
+    "name": [
+      "must NOT have fewer than 1 characters"
+    ]
+  },
+  "instance": "/api/specializations",
+  "traceId": "[trace-id]"
 }
 
 Request: GET /api/specializations 200
@@ -271,7 +284,7 @@ Response: ""
 Request: GET /api/specializations 200
 Response: []
 
-Request: POST /api/specializations 200
+Request: POST /api/specializations 201
 Body: {
   "name": "Specialization A"
 }
@@ -279,7 +292,7 @@ Response: {
   "id": "[uuid]"
 }
 
-Request: POST /api/specializations 200
+Request: POST /api/specializations 201
 Body: {
   "name": "Specialization B"
 }
@@ -301,7 +314,7 @@ Response: [
   }
 ]
 
-Request: POST /api/services-available 200
+Request: POST /api/services-available 201
 Body: {
   "name": "Service Available A",
   "specializationId": "[uuid]"
@@ -310,7 +323,7 @@ Response: {
   "id": "[uuid]"
 }
 
-Request: POST /api/services-available 200
+Request: POST /api/services-available 201
 Body: {
   "name": "Service Available B",
   "specializationId": "[uuid]"
@@ -319,7 +332,7 @@ Response: {
   "id": "[uuid]"
 }
 
-Request: POST /api/services-available 200
+Request: POST /api/services-available 201
 Body: {
   "name": "Service Available 1",
   "specializationId": "[uuid]"
@@ -328,7 +341,7 @@ Response: {
   "id": "[uuid]"
 }
 
-Request: POST /api/services-available 200
+Request: POST /api/services-available 201
 Body: {
   "name": "Service Available 2",
   "specializationId": "[uuid]"
@@ -463,11 +476,13 @@ Response: ""
 
 Request: GET /api/services-available/[uuid] 404
 Response: {
-  "error": {
-    "code": "resource_not_found",
-    "resource": "service_name",
-    "message": "service_name not found"
-  }
+  "code": "resource_not_found",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceNotFound.json",
+  "title": "Resource not found",
+  "detail": "service_name not found",
+  "status": 404,
+  "instance": "/api/services-available/[uuid]",
+  "traceId": "[trace-id]"
 }
 
 Request: GET /api/services-available 200
@@ -484,7 +499,7 @@ Response: [
   }
 ]
 
-Request: POST /api/services-available 200
+Request: POST /api/services-available 201
 Body: {
   "name": "Service Available A",
   "specializationId": "[uuid]"
@@ -493,7 +508,7 @@ Response: {
   "id": "[uuid]"
 }
 
-Request: POST /api/services-available 200
+Request: POST /api/services-available 201
 Body: {
   "name": "Service Available B",
   "specializationId": "[uuid]"
@@ -502,7 +517,7 @@ Response: {
   "id": "[uuid]"
 }
 
-Request: POST /api/services-available 200
+Request: POST /api/services-available 201
 Body: {
   "name": "Service Available 1",
   "specializationId": "[uuid]"
@@ -511,7 +526,7 @@ Response: {
   "id": "[uuid]"
 }
 
-Request: POST /api/services-available 200
+Request: POST /api/services-available 201
 Body: {
   "name": "Service Available 2",
   "specializationId": "[uuid]"
@@ -560,7 +575,7 @@ Request: GET /api/specialists/count 200
 Params: {}
 Response: 0
 
-Request: POST /api/specialists 200
+Request: POST /api/specialists 201
 Body: {
   "name": "Specialist Test",
   "email": "specialist@test.com",
@@ -659,7 +674,7 @@ Request: GET /api/specialists/count 200
 Params: {}
 Response: 0
 
-Request: POST /api/specialists 200
+Request: POST /api/specialists 201
 Body: {
   "name": "Specialist Test",
   "email": "specialist@test.com",
@@ -730,7 +745,7 @@ Response: [
 Request: DELETE /api/specialists/[uuid] 204
 Response: ""
 
-Request: POST /api/specialists 200
+Request: POST /api/specialists 201
 Body: {
   "name": "Specialist Test",
   "email": "specialist@test.com",
@@ -786,7 +801,7 @@ Request: GET /api/services/count 200
 Params: {}
 Response: 2
 
-Request: POST /api/services 200
+Request: POST /api/services 201
 Body: {
   "duration": 60,
   "price": 1000,
@@ -910,11 +925,13 @@ Response: ""
 
 Request: GET /api/services/[uuid] 404
 Response: {
-  "error": {
-    "code": "resource_not_found",
-    "resource": "service",
-    "message": "service not found"
-  }
+  "code": "resource_not_found",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceNotFound.json",
+  "title": "Resource not found",
+  "detail": "service not found",
+  "status": 404,
+  "instance": "/api/services/[uuid]",
+  "traceId": "[trace-id]"
 }
 
 Request: GET /api/services 200
@@ -948,7 +965,7 @@ Request: GET /api/services/count 200
 Params: {}
 Response: 2
 
-Request: POST /api/services 200
+Request: POST /api/services 201
 Body: {
   "duration": 60,
   "price": 1000,
@@ -967,7 +984,7 @@ Request: GET /api/customers/count 200
 Params: {}
 Response: 0
 
-Request: POST /api/customers 200
+Request: POST /api/customers 201
 Body: {
   "name": "Customer Test",
   "email": "customer@test.com",
@@ -1050,11 +1067,13 @@ Response: ""
 
 Request: GET /api/customers/[uuid] 404
 Response: {
-  "error": {
-    "code": "resource_not_found",
-    "resource": "customer",
-    "message": "customer not found"
-  }
+  "code": "resource_not_found",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceNotFound.json",
+  "title": "Resource not found",
+  "detail": "customer not found",
+  "status": 404,
+  "instance": "/api/customers/[uuid]",
+  "traceId": "[trace-id]"
 }
 
 Request: GET /api/customers 200
@@ -1065,7 +1084,7 @@ Request: GET /api/customers/count 200
 Params: {}
 Response: 0
 
-Request: POST /api/customers 200
+Request: POST /api/customers 201
 Body: {
   "name": "Customer Test",
   "email": "customer@test.com",
@@ -1085,7 +1104,7 @@ Request: GET /api/appointments/count 200
 Params: {}
 Response: 0
 
-Request: POST /api/appointments 200
+Request: POST /api/appointments 201
 Body: {
   "date": "2030-01-02",
   "time": "03:00:00",
@@ -1280,11 +1299,13 @@ Response: ""
 
 Request: GET /api/appointments/[uuid] 404
 Response: {
-  "error": {
-    "code": "resource_not_found",
-    "resource": "appointment",
-    "message": "appointment not found"
-  }
+  "code": "resource_not_found",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceNotFound.json",
+  "title": "Resource not found",
+  "detail": "appointment not found",
+  "status": 404,
+  "instance": "/api/appointments/[uuid]",
+  "traceId": "[trace-id]"
 }
 
 Request: GET /api/appointments 200
@@ -1295,7 +1316,7 @@ Request: GET /api/appointments/count 200
 Params: {}
 Response: 0
 
-Request: POST /api/appointments 200
+Request: POST /api/appointments 201
 Body: {
   "date": "2030-01-02",
   "time": "03:00:00",

@@ -303,7 +303,7 @@ export default {
       })
 
       // Format the response
-      return reply.send(200, { id: row.id })
+      return reply.send(201, { id: row.id })
     },
     async countAppointments(req: Request, res: Response) {
       const reply = replier<types.api.appointments.countAppointments.responses>(res)
@@ -574,7 +574,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      return reply.send(200, { id: row.id })
+      return reply.send(201, { id: row.id })
     },
     async countCustomers(req: Request, res: Response) {
       const reply = replier<types.api.customers.countCustomers.responses>(res)
@@ -737,7 +737,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      return reply.send(200, { id: row.id })
+      return reply.send(201, { id: row.id })
     },
     async countSecretaries(req: Request, res: Response) {
       const reply = replier<types.api.secretaries.countSecretaries.responses>(res)
@@ -918,7 +918,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      return reply.send(200, { id: row.id })
+      return reply.send(201, { id: row.id })
     },
     async getServiceAvailableById(req: Request, res: Response) {
       const reply = replier<types.api.servicesAvailable.getServiceAvailableById.responses>(res)
@@ -1069,7 +1069,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      return reply.send(200, { id: row.id })
+      return reply.send(201, { id: row.id })
     },
     async countServices(req: Request, res: Response) {
       const reply = replier<types.api.services.countServices.responses>(res)
@@ -1257,7 +1257,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      return reply.send(200, { id: row.id })
+      return reply.send(201, { id: row.id })
     },
     async countSpecialists(req: Request, res: Response) {
       const reply = replier<types.api.specialists.countSpecialists.responses>(res)
@@ -1486,7 +1486,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       // Format the response
-      return reply.send(200, { id: row.id })
+      return reply.send(201, { id: row.id })
     },
     async updateSpecialization(req: Request, res: Response) {
       const reply = replier<types.api.specializations.updateSpecialization.responses>(res)

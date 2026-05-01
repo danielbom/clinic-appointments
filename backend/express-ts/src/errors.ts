@@ -81,6 +81,15 @@ export const errors = {
       status: 401 as const,
     }
   },
+  invalidAccess(detail: string) {
+    return {
+      code: 'forbidden_error' as const,
+      type: `${devUrl}/schemas/errors/ForbiddenError.json`,
+      title: 'ForbiddenError',
+      detail,
+      status: 403 as const,
+    }
+  },
   notFound(resource: types.domain.Resource) {
     return {
       code: 'resource_not_found' as const,

@@ -213,7 +213,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "content": {
               "application/json": {
                 "schema": {
@@ -484,7 +484,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "content": {
               "application/json": {
                 "schema": {
@@ -681,7 +681,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "content": {
               "application/json": {
                 "schema": {
@@ -905,7 +905,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "content": {
               "application/json": {
                 "schema": {
@@ -1092,7 +1092,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "content": {
               "application/json": {
                 "schema": {
@@ -1328,7 +1328,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "content": {
               "application/json": {
                 "schema": {
@@ -1724,7 +1724,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "content": {
               "application/json": {
                 "schema": {
@@ -2201,7 +2201,7 @@
           "code": {
             "type": "string",
             "description": "A machine-readable, domain-specific error code used by clients to implement conditional logic.",
-            "enum": ["auth_error", "validation_error", "resource_not_found", "resource_conflict", "internal_error"]
+            "enum": ["auth_error", "forbidden_error", "validation_error", "resource_not_found", "resource_conflict", "internal_error"]
           },
           "type": {
             "type": "string",
