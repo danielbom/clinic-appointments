@@ -24,12 +24,15 @@ export function plugInterceptors(
   axiosInstance.interceptors.response.use(
     (response) => {
       const endTime = performance.now()
-      if (writeResponses) writeResponse(writter, redactResponse(response))
+      const location = findInStack([fileName, 'async run']) + '\n'
+      if (writeResponses) {
+        writter.write(location)
+        writeResponse(writter, redactResponse(response))
+      }
       const startTime = (response.config as any).metadata.startTime
       const ms = (endTime - startTime).toFixed(3)
       logger.write(`[${new Date().toISOString()}] ${count++} request [${ms} ms]\n`)
-      logger.write(findInStack([fileName, 'async run']) + '\n')
-      logger.write(findInStack(['endpoints', 'Endpoint.ts']) + '\n')
+      logger.write(location)
       return response
     },
     (error) => {

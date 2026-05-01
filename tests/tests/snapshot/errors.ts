@@ -211,7 +211,7 @@ function main() {
       throw error
     })
     .finally(() => {
-      console.log(timeMessage + ' End')
+      console.log(timeMessage + ` End errors snapshot: ${API_URL}`)
       console.timeEnd(timeMessage + ' Time')
       snapshotLog.close()
     })

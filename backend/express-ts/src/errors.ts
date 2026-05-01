@@ -16,6 +16,11 @@ export const errors = {
     }
   },
   validation(location: 'body' | 'path' | 'query', path: string, reason: string) {
+    if (reason === 'must NOT have fewer than 1 characters') {
+      reason = 'is required'
+    } else if (reason.startsWith('must be ')) {
+      reason = 'is required'
+    }
     return {
       code: 'validation_error' as const,
       type: `${devUrl}/schemas/errors/ValidationError.json`,

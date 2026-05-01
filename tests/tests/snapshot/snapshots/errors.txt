@@ -1,3 +1,4 @@
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:76:3)
 Request: GET /api/health 200
 Response: {
   "status": true,
@@ -12,17 +13,20 @@ Response: {
   }
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:84:3)
 Request: GET /api/test/stats 200
 Response: {
   "database": "user=test_user password=test_password host=localhost port=5432 dbname=test_db",
   "message": "Environment: TEST"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:85:3)
 Request: GET /api/test/init 200
 Response: "System initialized to be tested"
 
 # api.auth.login: Short expiration time
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:88:3)
 Request: POST /api/auth/login 200
 Body: {
   "email": "admin@test.com",
@@ -35,6 +39,7 @@ Response: {
 
 # api.auth.login: Invalid body
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:103:5)
 Request: POST /api/auth/login 400
 Response: {
   "code": "validation_error",
@@ -50,6 +55,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:103:5)
 Request: POST /api/auth/login 400
 Body: {}
 Response: {
@@ -70,6 +76,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:103:5)
 Request: POST /api/auth/login 400
 Body: {
   "email": null,
@@ -86,13 +93,14 @@ Response: {
   },
   "errors": {
     "email": [
-      "must be string"
+      "is required"
     ]
   },
   "instance": "/api/auth/login",
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:103:5)
 Request: POST /api/auth/login 400
 Body: {
   "email": null,
@@ -109,13 +117,14 @@ Response: {
   },
   "errors": {
     "email": [
-      "must be string"
+      "is required"
     ]
   },
   "instance": "/api/auth/login",
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:103:5)
 Request: POST /api/auth/login 400
 Body: {
   "email": "",
@@ -139,6 +148,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:103:5)
 Request: POST /api/auth/login 400
 Body: {
   "email": "",
@@ -162,6 +172,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:106:3)
 Request: POST /api/auth/login 401
 Body: {
   "email": "admin@test.com",
@@ -177,6 +188,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:108:3)
 Request: GET /api/auth/me 401
 Response: {
   "code": "auth_error",
@@ -190,6 +202,7 @@ Response: {
 
 # api.auth.login: Long expiration time
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:111:3)
 Request: POST /api/auth/login 200
 Body: {
   "email": "admin@test.com",
@@ -202,6 +215,7 @@ Response: {
 
 # api.auth.refresh: Long accessToken auth
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:118:3)
 Request: POST /api/auth/refresh 401
 Response: {
   "code": "auth_error",
@@ -215,6 +229,7 @@ Response: {
 
 # Invalid uuid when calling any .getById(id)
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:121:3)
 Request: GET /api/appointments/0 400
 Response: {
   "code": "validation_error",
@@ -234,6 +249,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:122:3)
 Request: GET /api/customers/0 400
 Response: {
   "code": "validation_error",
@@ -253,6 +269,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:123:3)
 Request: GET /api/secretaries/0 400
 Response: {
   "code": "validation_error",
@@ -272,6 +289,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:124:3)
 Request: GET /api/services/0 400
 Response: {
   "code": "validation_error",
@@ -291,6 +309,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:125:3)
 Request: GET /api/services-available/0 400
 Response: {
   "code": "validation_error",
@@ -310,6 +329,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:126:3)
 Request: GET /api/specialists/0 400
 Response: {
   "code": "validation_error",
@@ -331,6 +351,7 @@ Response: {
 
 # api.secretaries.create
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:138:5)
 Request: POST /api/secretaries 400
 Response: {
   "code": "validation_error",
@@ -346,6 +367,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:138:5)
 Request: POST /api/secretaries 400
 Body: {}
 Response: {
@@ -366,6 +388,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:138:5)
 Request: POST /api/secretaries 400
 Body: {
   "name": null,
@@ -387,13 +410,14 @@ Response: {
   },
   "errors": {
     "name": [
-      "must be string"
+      "is required"
     ]
   },
   "instance": "/api/secretaries",
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:138:5)
 Request: POST /api/secretaries 201
 Body: {
   "name": "Secretary Test",
@@ -410,6 +434,7 @@ Response: {
 
 # api.specializations.create
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:143:5)
 Request: POST /api/specializations 400
 Response: {
   "code": "validation_error",
@@ -425,6 +450,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:143:5)
 Request: POST /api/specializations 400
 Body: {}
 Response: {
@@ -445,6 +471,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:146:3)
 Request: POST /api/specializations 201
 Body: {
   "name": "Specialization"
@@ -453,6 +480,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:147:3)
 Request: POST /api/specializations 409
 Body: {
   "name": "Specialization"
@@ -469,6 +497,7 @@ Response: {
 
 # api.servicesAvailable.create
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:154:5)
 Request: POST /api/services-available 400
 Response: {
   "code": "validation_error",
@@ -484,6 +513,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:154:5)
 Request: POST /api/services-available 400
 Body: {}
 Response: {
@@ -504,6 +534,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:154:5)
 Request: POST /api/services-available 400
 Body: {
   "name": null,
@@ -520,13 +551,14 @@ Response: {
   },
   "errors": {
     "name": [
-      "must be string"
+      "is required"
     ]
   },
   "instance": "/api/services-available",
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:154:5)
 Request: POST /api/services-available 400
 Body: {
   "name": "",
@@ -543,13 +575,14 @@ Response: {
   },
   "errors": {
     "name": [
-      "must NOT have fewer than 1 characters"
+      "is required"
     ]
   },
   "instance": "/api/services-available",
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:154:5)
 Request: POST /api/services-available 400
 Body: {
   "name": "Service Available",
@@ -573,6 +606,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:161:5)
 Request: POST /api/services-available 400
 Response: {
   "code": "validation_error",
@@ -588,6 +622,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:161:5)
 Request: POST /api/services-available 400
 Body: {}
 Response: {
@@ -608,6 +643,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:161:5)
 Request: POST /api/services-available 400
 Body: {
   "name": "",
@@ -624,13 +660,14 @@ Response: {
   },
   "errors": {
     "name": [
-      "must NOT have fewer than 1 characters"
+      "is required"
     ]
   },
   "instance": "/api/services-available",
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:161:5)
 Request: POST /api/services-available 400
 Body: {
   "name": "",
@@ -647,13 +684,14 @@ Response: {
   },
   "errors": {
     "name": [
-      "must NOT have fewer than 1 characters"
+      "is required"
     ]
   },
   "instance": "/api/services-available",
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:161:5)
 Request: POST /api/services-available 400
 Body: {
   "name": "",
@@ -670,13 +708,14 @@ Response: {
   },
   "errors": {
     "name": [
-      "must NOT have fewer than 1 characters"
+      "is required"
     ]
   },
   "instance": "/api/services-available",
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:164:3)
 Request: POST /api/services-available 201
 Body: {
   "name": "Service Available",
@@ -686,6 +725,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:167:3)
 Request: POST /api/services-available 409
 Body: {
   "name": "Service Available",
@@ -703,6 +743,7 @@ Response: {
 
 # Token expired
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:174:5)
 Request: GET /api/auth/me 401
 Response: {
   "code": "auth_error",
@@ -714,6 +755,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:175:5)
 Request: POST /api/auth/refresh 401
 Response: {
   "code": "auth_error",
@@ -725,6 +767,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:176:5)
 Request: POST /api/auth/refresh 401
 Response: {
   "code": "auth_error",

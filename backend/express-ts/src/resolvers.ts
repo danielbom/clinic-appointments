@@ -407,17 +407,27 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
         return reply.fail(errors.validation('query', 'endDate', 'invalid date format'))
       }
 
+      type CountByStatus = { month: number; status: number; count: number }
+
       // Validate e execute the usecase
-      const appointmentsCount = await db.appointments.groupBy({
-        where: {
-          AND: [
-            { date: { gt: startDate } }, //
-            { date: { lt: endDate } }, //
-          ],
-        },
-        by: ['date', 'status'],
-        _count: { status: true },
-      })
+      // const appointmentsCount = await db.appointments.groupBy({
+      //   where: {
+      //     AND: [
+      //       { date: { gt: startDate } }, //
+      //       { date: { lt: endDate } }, //
+      //     ],
+      //   },
+      //   by: ['date', 'status'],
+      //   _count: { status: true },
+      // })
+      const appointmentsCount = await db.$queryRaw<CountByStatus[]>`
+SELECT date_part('month', "a"."date")::int AS "month"
+     , "status", COUNT("a"."id")::int AS "count"
+FROM "appointments" "a"
+WHERE "a"."date" >= ${startDate}
+  AND "a"."date" <= ${endDate}
+GROUP BY "month", "status"
+ORDER BY "month" ASC;`
 
       // Format the response
       const response: types.schemas.AppointmentCalendarCount[] = Array.from({ length: 12 }, (_, month) => ({
@@ -427,18 +437,18 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
         canceledCount: 0,
       }))
 
-      appointmentsCount.forEach((count) => {
-        switch (count.status) {
+      appointmentsCount.forEach((countByStatus) => {
+        switch (countByStatus.status) {
           case AppointmentStatus.Pending: {
-            response[count.date.getMonth()].pendingCount += count._count.status
+            response[countByStatus.month - 1].pendingCount += countByStatus.count
             break
           }
           case AppointmentStatus.Realized: {
-            response[count.date.getMonth()].realizedCount += count._count.status
+            response[countByStatus.month - 1].realizedCount += countByStatus.count
             break
           }
           case AppointmentStatus.Canceled: {
-            response[count.date.getMonth()].canceledCount += count._count.status
+            response[countByStatus.month - 1].canceledCount += countByStatus.count
             break
           }
         }
@@ -778,7 +788,7 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       })
 
       if (!row) {
-        return reply.fail(errors.notFound('customer'))
+        return reply.fail(errors.notFound('secretary'))
       }
 
       // Format the response
@@ -1075,9 +1085,22 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       const reply = replier<types.api.services.countServices.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const service = getStringParam(req.query.service).toLowerCase()
+      const specialist = getStringParam(req.query.specialist).toLowerCase()
+      const specialization = getStringParam(req.query.specialization).toLowerCase()
 
       // Validate e execute the usecase
-      const count = await db.services.count({})
+      const count = await db.services.count({
+        where: {
+          AND: [
+            ...(service ? [{ service_names: { name: { contains: service } } } as const] : []), //
+            ...(specialist ? [{ specialists: { name: { contains: specialist } } } as const] : []), //
+            ...(specialization
+              ? [{ service_names: { specializations: { name: { contains: specialization } } } } as const]
+              : []), //
+          ],
+        },
+      })
 
       // Format the response
       return reply.send(200, count)

@@ -507,7 +507,6 @@ async function run(w: WriteStr, api: Api, args: Args) {
   await api.services.getAll({ page: 0, pageSize: 5, specialization: '0' })
 
   await api.services.count({ service: '1' })
-  await api.services.count({ service: '1' })
   await api.services.count({ specialist: '10' })
   await api.services.count({ specialization: '0' })
 
@@ -564,7 +563,7 @@ function main() {
       throw error
     })
     .finally(() => {
-      console.log(timeMessage + ' End')
+      console.log(timeMessage + ` End api snapshot: ${API_URL}`)
       console.timeEnd(timeMessage + ' Time')
       snapshotLog.close()
     })

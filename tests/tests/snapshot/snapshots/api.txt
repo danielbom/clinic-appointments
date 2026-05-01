@@ -1,3 +1,4 @@
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:66:3)
 Request: GET /api/health 200
 Response: {
   "status": true,
@@ -12,15 +13,18 @@ Response: {
   }
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:74:3)
 Request: GET /api/test/stats 200
 Response: {
   "database": "user=test_user password=test_password host=localhost port=5432 dbname=test_db",
   "message": "Environment: TEST"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:75:3)
 Request: GET /api/test/init 200
 Response: "System initialized to be tested"
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:77:3)
 Request: POST /api/auth/login 200
 Body: {
   "email": "admin@test.com",
@@ -31,6 +35,7 @@ Response: {
   "refreshToken": "[access-token]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:81:3)
 Request: GET /api/auth/me 200
 Response: {
   "id": "[uuid]",
@@ -39,14 +44,17 @@ Response: {
   "role": "admin"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:85:3)
 Request: GET /api/secretaries/count 200
 Params: {}
 Response: 0
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:86:3)
 Request: GET /api/secretaries 200
 Params: {}
 Response: []
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:87:3)
 Request: POST /api/secretaries 201
 Body: {
   "name": "Secretary Test",
@@ -61,6 +69,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:88:3)
 Request: POST /api/secretaries 409
 Body: {
   "name": "Secretary Test",
@@ -81,10 +90,12 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:89:3)
 Request: GET /api/secretaries/count 200
 Params: {}
 Response: 1
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:90:3)
 Request: GET /api/secretaries 200
 Params: {}
 Response: [
@@ -99,6 +110,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:91:3)
 Request: GET /api/secretaries/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -110,6 +122,7 @@ Response: {
   "cnpj": "08130896000135"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:92:3)
 Request: PUT /api/secretaries/[uuid] 200
 Body: {
   "name": "Secretary Test Updated",
@@ -123,6 +136,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:101:3)
 Request: GET /api/secretaries/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -134,28 +148,33 @@ Response: {
   "cnpj": "08130896000135"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:102:3)
 Request: DELETE /api/secretaries/[uuid] 204
 Response: ""
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:103:3)
 Request: GET /api/secretaries/[uuid] 404
 Response: {
   "code": "resource_not_found",
   "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceNotFound.json",
   "title": "Resource not found",
-  "detail": "customer not found",
+  "detail": "secretary not found",
   "status": 404,
   "instance": "/api/secretaries/[uuid]",
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:104:3)
 Request: GET /api/secretaries/count 200
 Params: {}
 Response: 0
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:105:3)
 Request: GET /api/secretaries 200
 Params: {}
 Response: []
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:106:3)
 Request: POST /api/secretaries 201
 Body: {
   "name": "Secretary Test",
@@ -170,6 +189,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:108:3)
 Request: POST /api/auth/login 200
 Body: {
   "email": "secretary@test.com",
@@ -180,6 +200,7 @@ Response: {
   "refreshToken": "[access-token]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:109:3)
 Request: GET /api/auth/me 200
 Response: {
   "id": "[uuid]",
@@ -188,9 +209,11 @@ Response: {
   "role": "secretary"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:112:3)
 Request: GET /api/specializations 200
 Response: []
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:113:3)
 Request: POST /api/specializations 201
 Body: {
   "name": "Specialization A"
@@ -199,6 +222,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:114:3)
 Request: POST /api/specializations 201
 Body: {
   "name": "Specialization B"
@@ -207,6 +231,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:115:3)
 Request: POST /api/specializations 409
 Body: {
   "name": "Specialization A"
@@ -221,6 +246,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:116:3)
 Request: POST /api/specializations 400
 Body: {
   "name": ""
@@ -236,13 +262,14 @@ Response: {
   },
   "errors": {
     "name": [
-      "must NOT have fewer than 1 characters"
+      "is required"
     ]
   },
   "instance": "/api/specializations",
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:117:3)
 Request: GET /api/specializations 200
 Response: [
   {
@@ -255,6 +282,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:118:3)
 Request: PUT /api/specializations/[uuid] 200
 Body: {
   "name": "Specialization A Updated"
@@ -263,6 +291,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:119:3)
 Request: GET /api/specializations 200
 Response: [
   {
@@ -275,15 +304,19 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:120:3)
 Request: DELETE /api/specializations/[uuid] 204
 Response: ""
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:121:3)
 Request: DELETE /api/specializations/[uuid] 204
 Response: ""
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:122:3)
 Request: GET /api/specializations 200
 Response: []
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:123:3)
 Request: POST /api/specializations 201
 Body: {
   "name": "Specialization A"
@@ -292,6 +325,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:124:3)
 Request: POST /api/specializations 201
 Body: {
   "name": "Specialization B"
@@ -300,6 +334,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:127:3)
 Request: GET /api/services-available 200
 Response: [
   {
@@ -314,6 +349,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:129:17)
 Request: POST /api/services-available 201
 Body: {
   "name": "Service Available A",
@@ -323,6 +359,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:129:17)
 Request: POST /api/services-available 201
 Body: {
   "name": "Service Available B",
@@ -332,6 +369,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:136:17)
 Request: POST /api/services-available 201
 Body: {
   "name": "Service Available 1",
@@ -341,6 +379,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:136:17)
 Request: POST /api/services-available 201
 Body: {
   "name": "Service Available 2",
@@ -350,6 +389,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:142:3)
 Request: GET /api/services-available 200
 Response: [
   {
@@ -382,6 +422,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:144:5)
 Request: GET /api/services-available/[uuid] 200
 Response: {
   "serviceName": "Service Available A",
@@ -390,6 +431,7 @@ Response: {
   "specializationId": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:144:5)
 Request: GET /api/services-available/[uuid] 200
 Response: {
   "serviceName": "Service Available B",
@@ -398,6 +440,7 @@ Response: {
   "specializationId": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:144:5)
 Request: GET /api/services-available/[uuid] 200
 Response: {
   "serviceName": "Service Available 1",
@@ -406,6 +449,7 @@ Response: {
   "specializationId": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:144:5)
 Request: GET /api/services-available/[uuid] 200
 Response: {
   "serviceName": "Service Available 2",
@@ -414,6 +458,7 @@ Response: {
   "specializationId": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:146:3)
 Request: PUT /api/services-available/[uuid] 200
 Body: {
   "name": "Updated"
@@ -422,6 +467,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:149:3)
 Request: GET /api/services-available 200
 Response: [
   {
@@ -454,6 +500,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:150:3)
 Request: GET /api/services-available/[uuid] 200
 Response: {
   "serviceName": "Updated",
@@ -462,18 +509,23 @@ Response: {
   "specializationId": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:152:5)
 Request: DELETE /api/services-available/[uuid] 204
 Response: ""
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:152:5)
 Request: DELETE /api/services-available/[uuid] 204
 Response: ""
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:152:5)
 Request: DELETE /api/services-available/[uuid] 204
 Response: ""
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:152:5)
 Request: DELETE /api/services-available/[uuid] 204
 Response: ""
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:154:3)
 Request: GET /api/services-available/[uuid] 404
 Response: {
   "code": "resource_not_found",
@@ -485,6 +537,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:156:3)
 Request: GET /api/services-available 200
 Response: [
   {
@@ -499,6 +552,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:159:17)
 Request: POST /api/services-available 201
 Body: {
   "name": "Service Available A",
@@ -508,6 +562,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:159:17)
 Request: POST /api/services-available 201
 Body: {
   "name": "Service Available B",
@@ -517,6 +572,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:166:17)
 Request: POST /api/services-available 201
 Body: {
   "name": "Service Available 1",
@@ -526,6 +582,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:166:17)
 Request: POST /api/services-available 201
 Body: {
   "name": "Service Available 2",
@@ -535,6 +592,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:172:3)
 Request: GET /api/services-available 200
 Response: [
   {
@@ -567,14 +625,17 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:175:3)
 Request: GET /api/specialists 200
 Params: {}
 Response: []
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:176:3)
 Request: GET /api/specialists/count 200
 Params: {}
 Response: 0
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:177:3)
 Request: POST /api/specialists 201
 Body: {
   "name": "Specialist Test",
@@ -589,12 +650,15 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:178:3)
 Request: GET /api/specialists/[uuid]/services 200
 Response: []
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:179:3)
 Request: GET /api/specialists/[uuid]/specializations 200
 Response: []
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:180:3)
 Request: GET /api/specialists 200
 Params: {}
 Response: [
@@ -609,10 +673,12 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:181:3)
 Request: GET /api/specialists/count 200
 Params: {}
 Response: 1
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:182:3)
 Request: GET /api/specialists/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -624,6 +690,7 @@ Response: {
   "cnpj": "16833374000128"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:183:3)
 Request: PUT /api/specialists/[uuid] 200
 Body: {
   "name": "Specialist Test Updated",
@@ -638,6 +705,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:192:3)
 Request: GET /api/specialists/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -649,6 +717,7 @@ Response: {
   "cnpj": "16833374000128"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:193:3)
 Request: GET /api/specialists 200
 Params: {}
 Response: [
@@ -663,17 +732,21 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:194:3)
 Request: DELETE /api/specialists/[uuid] 204
 Response: ""
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:195:3)
 Request: GET /api/specialists 200
 Params: {}
 Response: []
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:196:3)
 Request: GET /api/specialists/count 200
 Params: {}
 Response: 0
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:197:3)
 Request: POST /api/specialists 201
 Body: {
   "name": "Specialist Test",
@@ -699,6 +772,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:206:3)
 Request: GET /api/specialists/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -710,6 +784,7 @@ Response: {
   "cnpj": "16833374000128"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:207:3)
 Request: GET /api/specialists/[uuid]/services 200
 Response: [
   {
@@ -730,6 +805,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:208:3)
 Request: GET /api/specialists/[uuid]/specializations 200
 Response: [
   {
@@ -742,9 +818,11 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:209:3)
 Request: DELETE /api/specialists/[uuid] 204
 Response: ""
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:211:3)
 Request: POST /api/specialists 201
 Body: {
   "name": "Specialist Test",
@@ -770,6 +848,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:222:3)
 Request: GET /api/services 200
 Params: {}
 Response: [
@@ -797,10 +876,12 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:223:3)
 Request: GET /api/services/count 200
 Params: {}
 Response: 2
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:224:3)
 Request: POST /api/services 201
 Body: {
   "duration": 60,
@@ -812,6 +893,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:232:3)
 Request: GET /api/services 200
 Params: {}
 Response: [
@@ -850,10 +932,12 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:233:3)
 Request: GET /api/services/count 200
 Params: {}
 Response: 3
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:234:3)
 Request: GET /api/services/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -863,6 +947,7 @@ Response: {
   "duration": 60
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:235:3)
 Request: PUT /api/services/[uuid] 200
 Body: {
   "duration": 30,
@@ -873,6 +958,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:240:3)
 Request: GET /api/services/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -882,6 +968,7 @@ Response: {
   "duration": 30
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:241:3)
 Request: GET /api/services 200
 Params: {}
 Response: [
@@ -920,9 +1007,11 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:242:3)
 Request: DELETE /api/services/[uuid] 204
 Response: ""
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:243:3)
 Request: GET /api/services/[uuid] 404
 Response: {
   "code": "resource_not_found",
@@ -934,6 +1023,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:244:3)
 Request: GET /api/services 200
 Params: {}
 Response: [
@@ -961,10 +1051,12 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:245:3)
 Request: GET /api/services/count 200
 Params: {}
 Response: 2
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:247:3)
 Request: POST /api/services 201
 Body: {
   "duration": 60,
@@ -976,14 +1068,17 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:257:3)
 Request: GET /api/customers 200
 Params: {}
 Response: []
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:258:3)
 Request: GET /api/customers/count 200
 Params: {}
 Response: 0
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:259:3)
 Request: POST /api/customers 201
 Body: {
   "name": "Customer Test",
@@ -996,6 +1091,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:260:3)
 Request: GET /api/customers/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -1006,6 +1102,7 @@ Response: {
   "cpf": "11431287962"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:261:3)
 Request: GET /api/customers 200
 Params: {}
 Response: [
@@ -1019,10 +1116,12 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:262:3)
 Request: GET /api/customers/count 200
 Params: {}
 Response: 1
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:263:3)
 Request: PUT /api/customers/[uuid] 200
 Body: {
   "name": "Customer Test Updated",
@@ -1035,6 +1134,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:270:3)
 Request: GET /api/customers/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -1045,6 +1145,7 @@ Response: {
   "cpf": "11431287962"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:271:3)
 Request: GET /api/customers 200
 Params: {}
 Response: [
@@ -1058,13 +1159,16 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:272:3)
 Request: GET /api/customers/count 200
 Params: {}
 Response: 1
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:273:3)
 Request: DELETE /api/customers/[uuid] 204
 Response: ""
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:274:3)
 Request: GET /api/customers/[uuid] 404
 Response: {
   "code": "resource_not_found",
@@ -1076,14 +1180,17 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:275:3)
 Request: GET /api/customers 200
 Params: {}
 Response: []
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:276:3)
 Request: GET /api/customers/count 200
 Params: {}
 Response: 0
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:278:3)
 Request: POST /api/customers 201
 Body: {
   "name": "Customer Test",
@@ -1096,14 +1203,17 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:281:3)
 Request: GET /api/appointments 200
 Params: {}
 Response: []
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:282:3)
 Request: GET /api/appointments/count 200
 Params: {}
 Response: 0
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:283:3)
 Request: POST /api/appointments 201
 Body: {
   "date": "2030-01-02",
@@ -1115,6 +1225,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:291:3)
 Request: GET /api/appointments 200
 Params: {}
 Response: [
@@ -1134,10 +1245,12 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:292:3)
 Request: GET /api/appointments/count 200
 Params: {}
 Response: 1
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:293:3)
 Request: GET /api/appointments/calendar/count 200
 Params: {
   "startDate": "2030-01-01",
@@ -1218,6 +1331,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:297:3)
 Request: GET /api/appointments/calendar 200
 Params: {
   "startDate": "2030-01-01",
@@ -1233,6 +1347,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:301:3)
 Request: GET /api/appointments/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -1249,6 +1364,7 @@ Response: {
   "status": 1
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:302:3)
 Request: PUT /api/appointments/[uuid] 200
 Body: {
   "date": "2030-01-04",
@@ -1259,6 +1375,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:307:3)
 Request: GET /api/appointments/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -1275,6 +1392,7 @@ Response: {
   "status": 2
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:308:3)
 Request: GET /api/appointments 200
 Params: {}
 Response: [
@@ -1294,9 +1412,11 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:309:3)
 Request: DELETE /api/appointments/[uuid] 204
 Response: ""
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:310:3)
 Request: GET /api/appointments/[uuid] 404
 Response: {
   "code": "resource_not_found",
@@ -1308,14 +1428,17 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:311:3)
 Request: GET /api/appointments 200
 Params: {}
 Response: []
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:312:3)
 Request: GET /api/appointments/count 200
 Params: {}
 Response: 0
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:314:3)
 Request: POST /api/appointments 201
 Body: {
   "date": "2030-01-02",
@@ -1327,6 +1450,7 @@ Response: {
   "id": "[uuid]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:324:3)
 Request: GET /api/specialists/[uuid]/appointments 200
 Params: {}
 Response: [
@@ -1344,6 +1468,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:326:3)
 Request: GET /api/service-groups 200
 Response: [
   {
@@ -1376,6 +1501,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:328:3)
 Request: GET /api/specialists/[uuid]/services 200
 Response: [
   {
@@ -1404,6 +1530,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:329:3)
 Request: GET /api/specialists/[uuid]/services/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -1470,6 +1597,7 @@ Report:
   "api.test.debugClaims": 0
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:467:3)
 Request: GET /api/customers 200
 Params: {
   "page": 0,
@@ -1478,6 +1606,7 @@ Params: {
 }
 Response: []
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:468:3)
 Request: GET /api/customers 200
 Params: {
   "page": 0,
@@ -1527,6 +1656,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:469:3)
 Request: GET /api/customers 200
 Params: {
   "page": 1,
@@ -1576,6 +1706,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:470:3)
 Request: GET /api/customers 200
 Params: {
   "phone": "21987654002"
@@ -1591,6 +1722,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:471:3)
 Request: GET /api/customers 200
 Params: {
   "page": 0,
@@ -1640,30 +1772,35 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:473:3)
 Request: GET /api/customers/count 200
 Params: {
   "name": "CustomerX"
 }
 Response: 0
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:474:3)
 Request: GET /api/customers/count 200
 Params: {
   "name": "1"
 }
 Response: 69
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:475:3)
 Request: GET /api/customers/count 200
 Params: {
   "phone": "21987654002"
 }
 Response: 1
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:476:3)
 Request: GET /api/customers/count 200
 Params: {
   "cpf": "11431287962"
 }
 Response: 150
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:478:3)
 Request: GET /api/secretaries 200
 Params: {
   "page": 0,
@@ -1672,6 +1809,7 @@ Params: {
 }
 Response: []
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:479:3)
 Request: GET /api/secretaries 200
 Params: {
   "page": 0,
@@ -1726,6 +1864,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:480:3)
 Request: GET /api/secretaries 200
 Params: {
   "page": 1,
@@ -1780,6 +1919,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:481:3)
 Request: GET /api/secretaries 200
 Params: {
   "page": 0,
@@ -1834,6 +1974,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:482:3)
 Request: GET /api/secretaries 200
 Params: {
   "page": 0,
@@ -1888,6 +2029,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:483:3)
 Request: GET /api/secretaries 200
 Params: {
   "page": 0,
@@ -1942,36 +2084,42 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:485:3)
 Request: GET /api/secretaries/count 200
 Params: {
   "name": "SecretaryX"
 }
 Response: 0
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:486:3)
 Request: GET /api/secretaries/count 200
 Params: {
   "name": "1"
 }
 Response: 11
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:487:3)
 Request: GET /api/secretaries/count 200
 Params: {
   "phone": "119876543210"
 }
 Response: 20
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:488:3)
 Request: GET /api/secretaries/count 200
 Params: {
   "cpf": "72730805001"
 }
 Response: 20
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:489:3)
 Request: GET /api/secretaries/count 200
 Params: {
   "cnpj": "08130896000135"
 }
 Response: 20
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:491:3)
 Request: GET /api/specialists 200
 Params: {
   "page": 0,
@@ -1980,6 +2128,7 @@ Params: {
 }
 Response: []
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:492:3)
 Request: GET /api/specialists 200
 Params: {
   "page": 0,
@@ -2034,6 +2183,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:493:3)
 Request: GET /api/specialists 200
 Params: {
   "page": 1,
@@ -2088,6 +2238,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:494:3)
 Request: GET /api/specialists 200
 Params: {
   "page": 0,
@@ -2142,6 +2293,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:495:3)
 Request: GET /api/specialists 200
 Params: {
   "page": 0,
@@ -2196,6 +2348,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:496:3)
 Request: GET /api/specialists 200
 Params: {
   "page": 0,
@@ -2250,36 +2403,42 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:498:3)
 Request: GET /api/specialists/count 200
 Params: {
   "name": "SpecialistX"
 }
 Response: 0
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:499:3)
 Request: GET /api/specialists/count 200
 Params: {
   "name": "1"
 }
 Response: 14
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:500:3)
 Request: GET /api/specialists/count 200
 Params: {
   "phone": "219876543210"
 }
 Response: 50
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:501:3)
 Request: GET /api/specialists/count 200
 Params: {
   "cpf": "96156338012"
 }
 Response: 50
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:502:3)
 Request: GET /api/specialists/count 200
 Params: {
   "cnpj": "16833374000128"
 }
 Response: 50
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:504:3)
 Request: GET /api/services 200
 Params: {
   "page": 0,
@@ -2344,6 +2503,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:505:3)
 Request: GET /api/services 200
 Params: {
   "page": 1,
@@ -2408,6 +2568,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:506:3)
 Request: GET /api/services 200
 Params: {
   "page": 0,
@@ -2461,6 +2622,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:507:3)
 Request: GET /api/services 200
 Params: {
   "page": 0,
@@ -2525,30 +2687,28 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:509:3)
 Request: GET /api/services/count 200
 Params: {
   "service": "1"
 }
-Response: 158
+Response: 43
 
-Request: GET /api/services/count 200
-Params: {
-  "service": "1"
-}
-Response: 158
-
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:510:3)
 Request: GET /api/services/count 200
 Params: {
   "specialist": "10"
 }
-Response: 158
+Response: 4
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:511:3)
 Request: GET /api/services/count 200
 Params: {
   "specialization": "0"
 }
 Response: 158
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:513:3)
 Request: GET /api/appointments 200
 Params: {
   "page": 0,
@@ -2628,6 +2788,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:514:3)
 Request: GET /api/appointments 200
 Params: {
   "page": 1,
@@ -2707,6 +2868,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:515:3)
 Request: GET /api/appointments 200
 Params: {
   "page": 0,
@@ -2787,6 +2949,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:516:3)
 Request: GET /api/appointments 200
 Params: {
   "page": 0,
@@ -2866,6 +3029,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:517:3)
 Request: GET /api/appointments 200
 Params: {
   "page": 0,
@@ -2874,6 +3038,7 @@ Params: {
 }
 Response: []
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:518:3)
 Request: GET /api/appointments 200
 Params: {
   "page": 0,
@@ -2953,6 +3118,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:520:3)
 Request: GET /api/services-available 200
 Response: [
   {
@@ -3217,6 +3383,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:522:3)
 Request: GET /api/specializations 200
 Response: [
   {
@@ -3261,6 +3428,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:524:3)
 Request: GET /api/appointments/calendar 200
 Params: {
   "startDate": "2031-01-01",
@@ -11732,6 +11900,7 @@ Response: [
   }
 ]
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:525:3)
 Request: GET /api/appointments/calendar/count 200
 Params: {
   "startDate": "2031-01-01",
@@ -11752,37 +11921,37 @@ Response: [
   },
   {
     "month": 2,
-    "pendingCount": 104,
+    "pendingCount": 99,
     "realizedCount": 0,
     "canceledCount": 0
   },
   {
     "month": 3,
-    "pendingCount": 100,
+    "pendingCount": 102,
     "realizedCount": 0,
     "canceledCount": 0
   },
   {
     "month": 4,
-    "pendingCount": 98,
+    "pendingCount": 101,
     "realizedCount": 0,
     "canceledCount": 0
   },
   {
     "month": 5,
-    "pendingCount": 104,
+    "pendingCount": 99,
     "realizedCount": 0,
     "canceledCount": 0
   },
   {
     "month": 6,
-    "pendingCount": 108,
+    "pendingCount": 109,
     "realizedCount": 0,
     "canceledCount": 0
   },
   {
     "month": 7,
-    "pendingCount": 96,
+    "pendingCount": 95,
     "realizedCount": 0,
     "canceledCount": 0
   },
@@ -11794,19 +11963,19 @@ Response: [
   },
   {
     "month": 9,
-    "pendingCount": 103,
+    "pendingCount": 108,
     "realizedCount": 0,
     "canceledCount": 0
   },
   {
     "month": 10,
-    "pendingCount": 103,
+    "pendingCount": 97,
     "realizedCount": 0,
     "canceledCount": 0
   },
   {
     "month": 11,
-    "pendingCount": 97,
+    "pendingCount": 103,
     "realizedCount": 0,
     "canceledCount": 0
   }
