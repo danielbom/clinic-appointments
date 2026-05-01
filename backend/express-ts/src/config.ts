@@ -1,6 +1,6 @@
 import { assertNotNull, assertStringEnum } from './utils'
 
-export const config: Record<string, Record<string, string | number | boolean>> = {}
+const config: Record<string, Record<string, string | number | boolean>> = {}
 
 function registerConfig<T>(name: string, getConfig: () => T): T {
   config[name] = config[name] || getConfig()

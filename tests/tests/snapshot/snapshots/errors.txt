@@ -226,7 +226,9 @@ Response: {
     "path": "id"
   },
   "errors": {
-    "id": "[uuid]"
+    "id": [
+      "invalid uuid format"
+    ]
   },
   "instance": "/api/appointments/0",
   "traceId": "[trace-id]"
@@ -243,7 +245,9 @@ Response: {
     "path": "id"
   },
   "errors": {
-    "id": "[uuid]"
+    "id": [
+      "invalid uuid format"
+    ]
   },
   "instance": "/api/customers/0",
   "traceId": "[trace-id]"
@@ -260,7 +264,9 @@ Response: {
     "path": "id"
   },
   "errors": {
-    "id": "[uuid]"
+    "id": [
+      "invalid uuid format"
+    ]
   },
   "instance": "/api/secretaries/0",
   "traceId": "[trace-id]"
@@ -277,7 +283,9 @@ Response: {
     "path": "id"
   },
   "errors": {
-    "id": "[uuid]"
+    "id": [
+      "invalid uuid format"
+    ]
   },
   "instance": "/api/services/0",
   "traceId": "[trace-id]"
@@ -294,7 +302,9 @@ Response: {
     "path": "id"
   },
   "errors": {
-    "id": "[uuid]"
+    "id": [
+      "invalid uuid format"
+    ]
   },
   "instance": "/api/services-available/0",
   "traceId": "[trace-id]"
@@ -311,7 +321,9 @@ Response: {
     "path": "id"
   },
   "errors": {
-    "id": "[uuid]"
+    "id": [
+      "invalid uuid format"
+    ]
   },
   "instance": "/api/specialists/0",
   "traceId": "[trace-id]"

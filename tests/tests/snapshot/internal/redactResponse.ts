@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios'
 
 const PATH_UUID_REGEX = /\/(\w\w\w\w\w\w\w\w-\w\w\w\w-\w\w\w\w-\w\w\w\w-\w\w\w\w\w\w\w\w\w\w\w\w)/g
-const UUID_REGEX = /^\w\w\w\w\w\w\w\w-\w\w\w\w/
+const UUID_REGEX = /^\w\w\w\w\w\w\w\w-\w\w\w\w-\w\w\w\w-\w\w\w\w/
 
 export function redactResponse(response: AxiosResponse | undefined): any {
   function redactData(data: any): any {
@@ -13,7 +13,6 @@ export function redactResponse(response: AxiosResponse | undefined): any {
     if (newData.refreshToken) newData.refreshToken = '[access-token]'
     if (newData.createdAt) newData.createdAt = '[temporal]'
     if (newData.updatedAt) newData.updatedAt = '[temporal]'
-    if (newData.id) newData.id = '[uuid]'
     if (newData.traceId) newData.traceId = '[trace-id]'
     for (const key in newData) {
       if (typeof newData[key] === 'string' && newData[key].match(UUID_REGEX)) {

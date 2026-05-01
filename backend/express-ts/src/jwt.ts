@@ -1,8 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { getJwtConfig } from './config'
 
-const jwtConfig = getJwtConfig()
-
 export type JwtData = {
   userId: string
   role: string
@@ -17,6 +15,7 @@ interface JwtPayload {
 }
 
 export function generateAccessJWT(data: JwtData, exp = 0) {
+  const jwtConfig = getJwtConfig()
   const now = Math.floor(Date.now() / 1000)
   const payload: JwtPayload = {
     sub: data.userId,
@@ -30,6 +29,7 @@ export function generateAccessJWT(data: JwtData, exp = 0) {
 }
 
 export function generateRefreshJWT(data: JwtData, exp = 0) {
+  const jwtConfig = getJwtConfig()
   const now = Math.floor(Date.now() / 1000)
   const payload: JwtPayload = {
     sub: data.userId,
@@ -43,6 +43,7 @@ export function generateRefreshJWT(data: JwtData, exp = 0) {
 }
 
 export function verifyJWT(token: string): Promise<JwtPayload> {
+  const jwtConfig = getJwtConfig()
   return new Promise((resolve, reject) => {
     jwt.verify(token, jwtConfig.secret, (err, decoded) => {
       if (err) {

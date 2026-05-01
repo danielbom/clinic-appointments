@@ -1,62 +1,23 @@
-import bcrypt from 'bcrypt'
 import { type Request, type Response } from 'express'
 import { db } from './db'
 import { getAppConfig, getDatabaseConfig, listConfiguredResources } from './config'
-import { validate as isUuid, v7 as generateId } from 'uuid'
 import { extractJwtData, generateAccessJWT, generateRefreshJWT, isRefreshToken, JwtData, verifyJWT } from './jwt'
-import { getDateParam, getIntParam, getStringParam } from './utils'
+import {
+  generateId,
+  getAccessTokenFromRequest,
+  getDateParam,
+  getIntParam,
+  getJwtDataFromRequest,
+  getStringParam,
+  hashPassword,
+  parseUuid,
+  replier,
+  verifyPassword,
+} from './utils'
 import { validations } from './validations'
-import { context } from './context'
+import { getDatePart, getTimePart, presenter } from './presenter'
+import { errors } from './errors'
 import * as types from './swagger-types'
-
-const saltRounds = 10
-
-async function hashPassword(password: string) {
-  const hash = await bcrypt.hash(password, saltRounds)
-  return hash
-}
-
-async function verifyPassword(password: string, hash: string) {
-  return await bcrypt.compare(password, hash)
-}
-
-function getAccessTokenFromRequest(req: Request) {
-  const bearer = req.header('authorization')
-  if (!bearer) return null
-  const prefix = 'Bearer '
-  if (!bearer.startsWith(prefix)) return null
-  return bearer.slice(prefix.length).trimStart()
-}
-
-async function getJwtDataFromRequest(req: Request) {
-  const accessToken = getAccessTokenFromRequest(req)
-  if (!accessToken) return null
-  const jwtPayload = await verifyJWT(accessToken).catch(() => null)
-  if (!jwtPayload) return null
-  const jwtData = extractJwtData(jwtPayload)
-  if (isRefreshToken(jwtData)) return null
-  const userId = parseUuid(jwtData.userId)
-  if (!userId) return null
-  return jwtData
-}
-
-function getDatePart(isodate: string): string {
-  return isodate.slice(0, 10)
-}
-
-function getTimePart(isodate: string): string {
-  return isodate.slice(11, 19)
-}
-
-type Brand<T, B> = T & { readonly __brand: B }
-
-type UUID = Brand<string, 'UUID'>
-
-function parseUuid(value: unknown): UUID | null {
-  if (typeof value != 'string') return null
-  if (!isUuid(value)) return null
-  return value as UUID
-}
 
 async function getIdentity(where: { email: string } | { id: string }) {
   const admin = await db.admins.findUnique({ where })
@@ -86,277 +47,11 @@ async function getIdentity(where: { email: string } | { id: string }) {
   return null
 }
 
-function replier<R extends Record<number, unknown>>(res: Response) {
-  type Status = keyof R & number
-  return {
-    send<K extends Status>(key: K, value: R[K]) {
-      res.status(key).send(value)
-    },
-    fail<T extends { status: Status }>(value: T) {
-      this.send(value.status, {
-        ...value,
-        instance: res.req.url.toString(),
-        traceId: context.get(res.req, 'id'),
-      })
-    },
-  }
-}
-
 const AppointmentStatus = {
   None: 0,
   Pending: 1,
   Realized: 2,
   Canceled: 3,
-}
-
-const presenter = {
-  appointment(
-    row: Awaited<
-      ReturnType<
-        typeof db.appointments.findMany<{
-          include: {
-            customers: {}
-            service_names: {}
-            specialists: {}
-          }
-        }>
-      >
-    >[number],
-  ): types.schemas.Appointment {
-    return {
-      id: row.id,
-      customerName: row.customers.name,
-      customerId: row.customer_id,
-      serviceName: row.service_names.name,
-      serviceNameId: row.service_names.id,
-      specialistName: row.specialists.name,
-      specialistId: row.specialists.id,
-      price: row.price,
-      duration: row.duration,
-      date: getDatePart(row.date.toISOString()),
-      time: getTimePart(row.time.toISOString()),
-      status: row.status,
-    }
-  },
-  specialistAppointment(
-    row: Awaited<
-      ReturnType<
-        typeof db.appointments.findMany<{
-          include: {
-            customers: {}
-            service_names: {}
-          }
-        }>
-      >
-    >[number],
-  ): types.schemas.SpecialistAppointment {
-    return {
-      id: row.id,
-      customerName: row.customers.name,
-      customerId: row.customer_id,
-      serviceName: row.service_names.name,
-      serviceNameId: row.service_names.id,
-      price: row.price,
-      duration: row.duration,
-      date: getDatePart(row.date.toISOString()),
-      time: getTimePart(row.time.toISOString()),
-      status: row.status,
-    }
-  },
-  secretary(row: Awaited<ReturnType<typeof db.secretaries.findMany<{}>>>[number]): types.schemas.Secretary {
-    return {
-      id: row.id,
-      name: row.name,
-      email: row.email,
-      phone: row.phone,
-      birthdate: getDatePart(row.birthdate.toISOString()),
-      cpf: row.cpf,
-      cnpj: row.cnpj ?? undefined,
-    }
-  },
-  customer(row: Awaited<ReturnType<typeof db.customers.findMany<{}>>>[number]): types.schemas.Customer {
-    return {
-      id: row.id,
-      name: row.name,
-      email: row.email ?? undefined,
-      phone: row.phone,
-      birthdate: getDatePart(row.birthdate.toISOString()),
-      cpf: row.cpf,
-    }
-  },
-  specialist(row: Awaited<ReturnType<typeof db.specialists.findMany<{}>>>[number]): types.schemas.Specialist {
-    return {
-      id: row.id,
-      name: row.name,
-      email: row.email,
-      phone: row.phone,
-      birthdate: getDatePart(row.birthdate.toISOString()),
-      cpf: row.cpf,
-      cnpj: row.cnpj ?? undefined,
-    }
-  },
-  specialistService(
-    row: Awaited<
-      ReturnType<
-        typeof db.services.findMany<{
-          include: {
-            service_names: {}
-          }
-        }>
-      >
-    >[number],
-  ) {
-    return {
-      id: row.id,
-      specializationId: row.service_names.specialization_id,
-      serviceName: row.service_names.name,
-      serviceNameId: row.service_name_id,
-      price: row.price,
-      duration: row.duration,
-    }
-  },
-  service(
-    row: Awaited<
-      ReturnType<
-        typeof db.services.findMany<{
-          include: {
-            service_names: { include: { specializations: {} } }
-            specialists: {}
-          }
-        }>
-      >
-    >[number],
-  ): types.schemas.ServiceEnriched {
-    return {
-      id: row.id,
-      serviceName: row.service_names.name,
-      serviceNameId: row.service_name_id,
-      specialistName: row.specialists.name,
-      specialistId: row.specialists.id,
-      specialization: row.service_names.specializations.name,
-      specializationId: row.service_names.specializations.id,
-      price: row.price,
-      duration: row.duration,
-    }
-  },
-  serviceGroup(
-    row: Awaited<ReturnType<typeof db.specializations.findMany<{ include: { service_names: {} } }>>>[number],
-  ): types.schemas.ServiceGroup {
-    return {
-      id: row.id,
-      name: row.name,
-      items: row.service_names.map((s) => ({
-        id: s.id,
-        name: s.name,
-      })),
-    }
-  },
-}
-
-const devUrl = 'https://dev-clinic-appointments.com.br'
-const errors = {
-  missingValue(location: 'body' | 'path' | 'query', path = '') {
-    return {
-      code: 'validation_error' as const,
-      type: `${devUrl}/schemas/errors/ValidationError.json`,
-      title: 'Validation error',
-      detail: `${path || location} is required`,
-      status: 400 as const,
-      source: {
-        in: location,
-        path: path || '/',
-      },
-    }
-  },
-  validation(location: 'body' | 'path' | 'query', path: string, reason: string) {
-    return {
-      code: 'validation_error' as const,
-      type: `${devUrl}/schemas/errors/ValidationError.json`,
-      title: 'Validation error',
-      status: 400 as const,
-      source: {
-        in: location,
-        path: path || '/',
-      },
-      errors: {
-        [path || location]: [reason],
-      },
-    }
-  },
-  ajv(error: { instancePath: string; message?: string | undefined }) {
-    const instancePath = error.instancePath
-    let reason = error.message ?? ''
-    let key = ''
-    if (instancePath) {
-      key = instancePath.slice(1).replaceAll(/\//g, '.')
-    }
-    const match = reason.match(/'(\w+)'/)
-    if (match) {
-      key = match[1]
-    }
-    if (reason.startsWith('must have required property ')) {
-      reason = 'is required'
-    }
-    if (!key) {
-      return this.missingValue('body')
-    }
-    return this.validation('body', key, reason)
-  },
-  auth(type: 'invalid_credentials' | 'invalid_token') {
-    let title = ''
-    let detail = ''
-    switch (type) {
-      case 'invalid_credentials': {
-        title = 'Invalid credentials'
-        detail = 'Email or password is incorrect'
-        break
-      }
-      case 'invalid_token': {
-        title = 'Invalid token'
-        detail = 'JWT token is invalid or expired'
-        break
-      }
-    }
-    return {
-      code: 'auth_error' as const,
-      type: `${devUrl}/schemas/errors/AuthError.json`,
-      title,
-      detail,
-      status: 401 as const,
-    }
-  },
-  notFound(resource: types.domain.Resource) {
-    return {
-      code: 'resource_not_found' as const,
-      type: `${devUrl}/schemas/errors/ResourceNotFound.json`,
-      title: 'Resource not found',
-      detail: `${resource} not found`,
-      status: 404 as const,
-    }
-  },
-  alreadyExists(resource: types.domain.Resource, key: string) {
-    return {
-      code: 'resource_conflict' as const,
-      type: `${devUrl}/schemas/errors/ResourceConflict.json`,
-      title: 'Resource already exists',
-      detail: `${resource} with this ${key} already exists`,
-      status: 409 as const,
-    }
-  },
-  internal(title: string, detail?: string) {
-    return {
-      code: 'internal_error' as const,
-      type: `${devUrl}/schemas/errors/InternalError.json`,
-      title,
-      detail,
-      status: 500 as const,
-    }
-  },
-}
-
-{
-  let typecheck: Record<string, (...args: any) => types.schemas.ProblemDetails> = errors
-  typecheck
 }
 
 export default {
@@ -488,14 +183,14 @@ export default {
       const id = parseUuid(jwtData.userId)
       if (!id) {
         console.error('jwt userId is not an uuid')
-        return reply.fail(errors.internal('Invalid JWT', 'JWT userId is not an uuid'))
+        return reply.fail(errors.internal('JWT userId is not an uuid'))
       }
 
       // Validate e execute the usecase
       const identity = await getIdentity({ id })
       if (!identity) {
         console.error('jwt userId without identity:', id)
-        return reply.fail(errors.internal('Invalid JWT', 'JWT userId without identity'))
+        return reply.fail(errors.internal('JWT userId without identity'))
       }
 
       const data: JwtData = {
