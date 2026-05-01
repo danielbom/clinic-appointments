@@ -17,7 +17,7 @@ func (h *api) listServicesAvailable(w http.ResponseWriter, r *http.Request) {
 
 func (h *api) getServiceAvailable(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
-	serviceId, ok := GetAndParseUuidParam(w, r, "service_id")
+	serviceId, ok := GetAndParseUuidParam(w, r, "id")
 	if !ok {
 		return
 	}
@@ -27,21 +27,21 @@ func (h *api) getServiceAvailable(w http.ResponseWriter, r *http.Request) {
 
 	service, err := usecase.GetServiceAvailable(rs, serviceId)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := presenter.GetServiceAvailable(service)
+	render.Status(r, http.StatusOK)
 	render.JSON(w, r, response)
-	render.Status(r, http.StatusCreated)
 }
 
 func (h *api) createServiceAvailable(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
 	var body dtos.CreateServiceAvailableBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		InvalidJson(w)
+		InvalidJson(w, r)
 		return
 	}
 
@@ -52,7 +52,7 @@ func (h *api) createServiceAvailable(w http.ResponseWriter, r *http.Request) {
 		SpecializationIDRaw: body.SpecializationID,
 	}
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -60,26 +60,26 @@ func (h *api) createServiceAvailable(w http.ResponseWriter, r *http.Request) {
 
 	id, err := usecase.CreateServiceName(rs, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := dtos.Id{ID: id.String()}
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusCreated)
+	render.JSON(w, r, response)
 }
 
 func (h *api) updateServiceAvailable(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
-	serviceId, ok := GetAndParseUuidParam(w, r, "service_id")
+	serviceId, ok := GetAndParseUuidParam(w, r, "id")
 	if !ok {
 		return
 	}
 
 	var body dtos.UpdateServiceAvailableBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		InvalidJson(w)
+		InvalidJson(w, r)
 		return
 	}
 
@@ -88,7 +88,7 @@ func (h *api) updateServiceAvailable(w http.ResponseWriter, r *http.Request) {
 		Name: body.Name,
 	}
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -96,19 +96,19 @@ func (h *api) updateServiceAvailable(w http.ResponseWriter, r *http.Request) {
 
 	id, err := usecase.UpdateServiceName(rs, serviceId, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := dtos.Id{ID: id.String()}
+	render.Status(r, http.StatusOK)
 	render.JSON(w, r, response)
-	render.Status(r, http.StatusCreated)
 }
 
 func (h *api) deleteServiceAvailable(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
-	serviceId, ok := GetAndParseUuidParam(w, r, "service_id")
+	serviceId, ok := GetAndParseUuidParam(w, r, "id")
 	if !ok {
 		return
 	}
@@ -118,7 +118,7 @@ func (h *api) deleteServiceAvailable(w http.ResponseWriter, r *http.Request) {
 
 	err := usecase.DeleteServiceName(rs, serviceId)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 

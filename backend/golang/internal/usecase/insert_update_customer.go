@@ -25,20 +25,20 @@ func (args *CustomerInfoArgs) Validate() *UsecaseError {
 	}
 	if args.Birthdate != "" {
 		if err := DateFromString(&args.BirthdateDate, args.Birthdate); err != nil {
-			return NewInvalidArgumentError(ErrInvalidDate).InField("birthdate")
+			return NewInvalidArgumentError(ACTION_MUTATION, "birthdate", ErrInvalidDate)
 		}
 	}
 	if args.Name == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("name")
+		return NewInvalidArgumentError(ACTION_MUTATION, "name", ErrFieldIsRequired)
 	}
 	if args.Phone == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("phone")
+		return NewInvalidArgumentError(ACTION_MUTATION, "phone", ErrFieldIsRequired)
 	}
 	if args.Cpf == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("cpf")
+		return NewInvalidArgumentError(ACTION_MUTATION, "cpf", ErrFieldIsRequired)
 	}
 	if !validate.IsCpfValid(args.Cpf) {
-		return NewInvalidArgumentError(ErrInvalidFormat).InField("cpf")
+		return NewInvalidArgumentError(ACTION_MUTATION, "cpf", ErrInvalidFormat)
 	}
 	return nil
 }
@@ -64,7 +64,7 @@ func CreateCustomer(state State, args CustomerInfoArgs) (infra.Customer, *Usecas
 		return none, NewUnexpectedError(err)
 	}
 	if exists {
-		return none, NewResourceAlreadyExistsError("customer.phone")
+		return none, NewResourceAlreadyExistsError("customer", "phone")
 	}
 	id, err := NewUuid()
 	if err != nil {
@@ -93,7 +93,7 @@ func UpdateCustomer(state State, customerId pgtype.UUID, args CustomerInfoArgs) 
 		return none, NewUnexpectedError(err)
 	}
 	if exists {
-		return none, NewResourceAlreadyExistsError("customer.phone")
+		return none, NewResourceAlreadyExistsError("customer", "phone")
 	}
 	params := infra.UpdateCustomerParams{
 		ID:        customerId,

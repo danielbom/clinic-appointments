@@ -13,7 +13,7 @@ import (
 )
 
 func (h *api) getSpecialist(w http.ResponseWriter, r *http.Request) {
-	specialistID, ok := GetAndParseUuidParam(w, r, "specialist_id")
+	specialistID, ok := GetAndParseUuidParam(w, r, "id")
 	if !ok {
 		return
 	}
@@ -23,14 +23,14 @@ func (h *api) getSpecialist(w http.ResponseWriter, r *http.Request) {
 
 	specialist, err := usecase.GetSpecialist(rs, specialistID)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := presenter.GetSpecialist(specialist)
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }
 
 func (h *api) listSpecialists(w http.ResponseWriter, r *http.Request) {
@@ -57,7 +57,7 @@ func (h *api) listSpecialists(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -65,14 +65,14 @@ func (h *api) listSpecialists(w http.ResponseWriter, r *http.Request) {
 
 	specialists, err := usecase.ListSpecialists(rs, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := presenter.ListSpecialists(specialists)
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }
 
 func (h *api) countSpecialists(w http.ResponseWriter, r *http.Request) {
@@ -91,7 +91,7 @@ func (h *api) countSpecialists(w http.ResponseWriter, r *http.Request) {
 		Name:  name,
 	}
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -99,7 +99,7 @@ func (h *api) countSpecialists(w http.ResponseWriter, r *http.Request) {
 
 	count, err := usecase.CountSpecialists(rs, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -112,7 +112,7 @@ func (h *api) createSpecialist(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
 	var body dtos.SpecialistInfoBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		InvalidJson(w)
+		InvalidJson(w, r)
 		return
 	}
 
@@ -137,13 +137,13 @@ func (h *api) createSpecialist(w http.ResponseWriter, r *http.Request) {
 		args.Services = append(args.Services, sArgs)
 	}
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	tx, txErr := h.pool.Begin(r.Context())
 	if txErr != nil {
-		SomethingWentWrong(w, fmt.Errorf("failed to start transaction: %w", txErr))
+		SomethingWentWrong(w, r, fmt.Errorf("failed to start transaction: %w", txErr))
 		return
 	}
 	defer tx.Rollback(r.Context())
@@ -152,27 +152,27 @@ func (h *api) createSpecialist(w http.ResponseWriter, r *http.Request) {
 
 	specialistID, err := usecase.CreateSpecialistWithServices(rs, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 	tx.Commit(r.Context())
 
 	// Format the response
 	response := dtos.Id{ID: specialistID.String()}
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusCreated)
+	render.JSON(w, r, response)
 }
 
 func (h *api) updateSpecialist(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
-	specialistID, ok := GetAndParseUuidParam(w, r, "specialist_id")
+	specialistID, ok := GetAndParseUuidParam(w, r, "id")
 	if !ok {
 		return
 	}
 
 	var body dtos.SpecialistInfoBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		InvalidJson(w)
+		InvalidJson(w, r)
 		return
 	}
 
@@ -198,13 +198,13 @@ func (h *api) updateSpecialist(w http.ResponseWriter, r *http.Request) {
 		args.Services = append(args.Services, sArgs)
 	}
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	tx, txErr := h.pool.Begin(r.Context())
 	if txErr != nil {
-		SomethingWentWrong(w, fmt.Errorf("failed to start transaction: %w", txErr))
+		SomethingWentWrong(w, r, fmt.Errorf("failed to start transaction: %w", txErr))
 		return
 	}
 	defer tx.Rollback(r.Context())
@@ -213,20 +213,20 @@ func (h *api) updateSpecialist(w http.ResponseWriter, r *http.Request) {
 
 	specialist, err := usecase.UpdateSpecialistWithServices(rs, specialistID, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 	tx.Commit(r.Context())
 
 	// Format the response
 	response := dtos.Id{ID: specialist.ID.String()}
+	render.Status(r, http.StatusOK)
 	render.JSON(w, r, response)
-	render.Status(r, http.StatusCreated)
 }
 
 func (h *api) deleteSpecialist(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
-	specialistID, ok := GetAndParseUuidParam(w, r, "specialist_id")
+	specialistID, ok := GetAndParseUuidParam(w, r, "id")
 	if !ok {
 		return
 	}
@@ -236,7 +236,7 @@ func (h *api) deleteSpecialist(w http.ResponseWriter, r *http.Request) {
 
 	err := usecase.DeleteSpecialist(rs, specialistID)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -249,7 +249,7 @@ func (h *api) getSpecialistAppointments(w http.ResponseWriter, r *http.Request) 
 	query := r.URL.Query()
 	date := query.Get("date")
 
-	specialistID, ok := GetAndParseUuidParam(w, r, "specialist_id")
+	specialistID, ok := GetAndParseUuidParam(w, r, "id")
 	if !ok {
 		return
 	}
@@ -262,25 +262,25 @@ func (h *api) getSpecialistAppointments(w http.ResponseWriter, r *http.Request) 
 		DateRaw:      date,
 	}
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	appointments, err := usecase.ListSpecialistAppointments(rs, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := presenter.GetSpecialistAppointments(appointments)
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }
 
 func (h *api) getSpecialistSpecializations(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
-	specialistID, ok := GetAndParseUuidParam(w, r, "specialist_id")
+	specialistID, ok := GetAndParseUuidParam(w, r, "id")
 	if !ok {
 		return
 	}
@@ -290,19 +290,19 @@ func (h *api) getSpecialistSpecializations(w http.ResponseWriter, r *http.Reques
 
 	specializations, err := rs.Queries().ListSpecializationsBySpecialistID(rs.Context(), specialistID)
 	if err != nil {
-		SomethingWentWrong(w, err)
+		SomethingWentWrong(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := presenter.GetSpecialistSpecializations(specializations)
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }
 
 func (h *api) getSpecialistServices(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
-	specialistID, ok := GetAndParseUuidParam(w, r, "specialist_id")
+	specialistID, ok := GetAndParseUuidParam(w, r, "id")
 	if !ok {
 		return
 	}
@@ -312,19 +312,19 @@ func (h *api) getSpecialistServices(w http.ResponseWriter, r *http.Request) {
 
 	services, err := usecase.GetServicesBySpecialistID(rs, specialistID)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := presenter.GetSpecialistServices(services)
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }
 
 func (h *api) getSpecialistService(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
-	specialistID, ok := GetAndParseUuidParam(w, r, "specialist_id")
+	specialistID, ok := GetAndParseUuidParam(w, r, "id")
 	if !ok {
 		return
 	}
@@ -338,12 +338,12 @@ func (h *api) getSpecialistService(w http.ResponseWriter, r *http.Request) {
 
 	service, err := usecase.GetSpecialistService(rs, specialistID, serviceNameId)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := presenter.GetService(service)
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }

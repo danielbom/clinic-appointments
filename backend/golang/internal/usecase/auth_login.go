@@ -12,6 +12,12 @@ type AuthLoginArgs struct {
 }
 
 func (args *AuthLoginArgs) Validate() *UsecaseError {
+	if args.Email == "" {
+		return NewInvalidArgumentError(ACTION_MUTATION, "email", ErrFieldIsRequired)
+	}
+	if args.Password == "" {
+		return NewInvalidArgumentError(ACTION_MUTATION, "password", ErrFieldIsRequired)
+	}
 	return nil
 }
 

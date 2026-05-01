@@ -19,13 +19,13 @@ type CreateAdminArgs struct {
 
 func (args *CreateAdminArgs) Validate() *UsecaseError {
 	if args.Name == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("name")
+		return NewInvalidArgumentError(ACTION_MUTATION, "name", ErrFieldIsRequired)
 	}
 	if args.Email == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("email")
+		return NewInvalidArgumentError(ACTION_MUTATION, "email", ErrFieldIsRequired)
 	}
 	if args.Password == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("password")
+		return NewInvalidArgumentError(ACTION_MUTATION, "password", ErrFieldIsRequired)
 	}
 	return nil
 }
@@ -34,7 +34,7 @@ func CreateAdmin(state State, args CreateAdminArgs) (pgtype.UUID, *UsecaseError)
 	var none pgtype.UUID
 	_, err := state.Queries().GetIdentityByEmail(state.Context(), args.Email)
 	if err == nil {
-		return none, NewResourceAlreadyExistsError("identity")
+		return none, NewResourceAlreadyExistsError("identity", "email")
 	} else if !ErrorIsNoRows(err) {
 		return none, NewUnexpectedError(err)
 	}

@@ -15,7 +15,7 @@ type SpecializationInfoArgs struct {
 func (args *SpecializationInfoArgs) Validate() *UsecaseError {
 	args.Name = strings.TrimSpace(args.Name)
 	if args.Name == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("name")
+		return NewInvalidArgumentError(ACTION_MUTATION, "name", ErrFieldIsRequired)
 	}
 	return nil
 }
@@ -41,7 +41,7 @@ func CreateSpecialization(state State, args SpecializationInfoArgs) (pgtype.UUID
 		return none, NewUnexpectedError(err)
 	}
 	if exists {
-		return none, NewResourceAlreadyExistsError("specialization.name")
+		return none, NewResourceAlreadyExistsError("specialization", "name")
 	}
 
 	id, err := NewUuid()
@@ -66,7 +66,7 @@ func UpdateSpecialization(state State, specializationId pgtype.UUID, args Specia
 		return none, NewUnexpectedError(err)
 	}
 	if exists {
-		return none, NewResourceAlreadyExistsError("specialization.name")
+		return none, NewResourceAlreadyExistsError("specialization", "name")
 	}
 
 	id, err := state.Queries().UpdateSpecialization(state.Context(), infra.UpdateSpecializationParams{

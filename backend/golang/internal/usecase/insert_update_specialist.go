@@ -21,30 +21,30 @@ type SpecialistInfoArgs struct {
 func (args *SpecialistInfoArgs) Validate() *UsecaseError {
 	if !args.BirthdateDate.Valid {
 		if err := args.BirthdateDate.Scan(args.Birthdate); err != nil {
-			return NewInvalidArgumentError(ErrInvalidDate).InField("birthdate")
+			return NewInvalidArgumentError(ACTION_MUTATION, "birthdate", ErrInvalidDate)
 		}
 	}
 	if err := args.CnpjText.Scan(args.Cnpj); err != nil {
-		return NewUnexpectedError(err).InField("cnpj")
+		return NewUnreachableError("SpecialistInfoArgs.Validate: args.CnpjText.Scan")
 	}
 	if args.Name == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("name")
+		return NewInvalidArgumentError(ACTION_MUTATION, "name", ErrFieldIsRequired)
 	}
 	if args.Email == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("email")
+		return NewInvalidArgumentError(ACTION_MUTATION, "email", ErrFieldIsRequired)
 	}
 	if args.Phone == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("phone")
+		return NewInvalidArgumentError(ACTION_MUTATION, "phone", ErrFieldIsRequired)
 	}
 	if args.Cpf == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("cpf")
+		return NewInvalidArgumentError(ACTION_MUTATION, "cpf", ErrFieldIsRequired)
 	}
 	if !validate.IsCpfValid(args.Cpf) {
-		return NewInvalidArgumentError(ErrInvalidFormat).InField("cpf")
+		return NewInvalidArgumentError(ACTION_MUTATION, "cpf", ErrInvalidFormat)
 	}
 	if args.CnpjText.String != "" {
 		if !validate.IsCnpjValid(args.CnpjText.String) {
-			return NewInvalidArgumentError(ErrInvalidFormat).InField("cnpj")
+			return NewInvalidArgumentError(ACTION_MUTATION, "cnpj", ErrInvalidFormat)
 		}
 	}
 	return nil
@@ -71,7 +71,7 @@ func CreateSpecialist(state State, args SpecialistInfoArgs) (pgtype.UUID, *Useca
 		return none, NewUnexpectedError(err)
 	}
 	if exists {
-		return none, NewResourceAlreadyExistsError("specialist.email")
+		return none, NewResourceAlreadyExistsError("specialist", "email")
 	}
 
 	id, err := NewUuid()
@@ -102,7 +102,7 @@ func UpdateSpecialist(state State, specialistId pgtype.UUID, args SpecialistInfo
 		return none, NewUnexpectedError(err)
 	}
 	if exists {
-		return none, NewResourceAlreadyExistsError("specialist.email")
+		return none, NewResourceAlreadyExistsError("specialist", "email")
 	}
 	params := infra.UpdateSpecialistParams{
 		ID:        specialistId,

@@ -13,7 +13,7 @@ func GetAppointment(state State, id pgtype.UUID) (infra.ListAppointmentsRow, *Us
 		return appointment, nil
 	}
 	if ErrorIsNoRows(err) {
-		return appointment, NewNotFoundError(ErrResourceNotFound).InField("appointment")
+		return appointment, NewNotFoundError("appointment")
 	}
 	return appointment, NewUnexpectedError(err)
 }

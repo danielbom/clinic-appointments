@@ -12,7 +12,7 @@ func GetSecretary(state State, id pgtype.UUID) (infra.Secretary, *UsecaseError) 
 		return secretary, nil
 	}
 	if ErrorIsNoRows(err) {
-		return secretary, NewNotFoundError(ErrResourceNotFound).InField("secretary")
+		return secretary, NewNotFoundError("secretary")
 	}
 	return secretary, NewUnexpectedError(err)
 }

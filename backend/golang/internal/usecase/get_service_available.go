@@ -12,7 +12,7 @@ func GetServiceAvailable(state State, id pgtype.UUID) (infra.GetServiceAvailable
 		return service, nil
 	}
 	if ErrorIsNoRows(err) {
-		return service, NewNotFoundError(ErrResourceNotFound).InField("service")
+		return service, NewNotFoundError("service_name")
 	}
 	return service, NewUnexpectedError(err)
 }

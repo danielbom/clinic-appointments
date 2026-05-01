@@ -16,7 +16,7 @@ func (h *api) authLogin(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
 	var body dtos.AuthLoginBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		InvalidJson(w)
+		InvalidJson(w, r)
 		return
 	}
 
@@ -26,7 +26,7 @@ func (h *api) authLogin(w http.ResponseWriter, r *http.Request) {
 		Password: body.Password,
 	}
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -34,7 +34,7 @@ func (h *api) authLogin(w http.ResponseWriter, r *http.Request) {
 
 	identity, err := usecase.AuthLogin(rs, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -45,13 +45,13 @@ func (h *api) authLogin(w http.ResponseWriter, r *http.Request) {
 
 	accessToken, err2 := h.GenerateAccessJWT(data)
 	if err2 != nil {
-		SomethingWentWrong(w, err2)
+		SomethingWentWrong(w, r, err2)
 		return
 	}
 
 	refreshToken, err3 := h.GenerateRefreshJWT(data)
 	if err3 != nil {
-		SomethingWentWrong(w, err3)
+		SomethingWentWrong(w, r, err3)
 		return
 	}
 
@@ -60,8 +60,8 @@ func (h *api) authLogin(w http.ResponseWriter, r *http.Request) {
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }
 
 func (h *api) authRefresh(w http.ResponseWriter, r *http.Request) {
@@ -70,13 +70,13 @@ func (h *api) authRefresh(w http.ResponseWriter, r *http.Request) {
 	jwtData := GetJwtData(r)
 
 	if !jwtData.IsRefreshToken() {
-		http.Error(w, "invalid token", http.StatusBadRequest)
+		AuthError(w, r, presenter.AUTH_INVALID_TOKEN)
 		return
 	}
 
 	userID, ok := ParseUuid(jwtData.UserID)
 	if !ok {
-		SomethingWentWrong(w, fmt.Errorf("invalid token: userId"))
+		SomethingWentWrong(w, r, fmt.Errorf("invalid token: userId"))
 		return
 	}
 
@@ -85,7 +85,7 @@ func (h *api) authRefresh(w http.ResponseWriter, r *http.Request) {
 
 	identity, err := usecase.AuthMe(rs, userID)
 	if err != nil {
-		SomethingWentWrong(w, fmt.Errorf("invalid token: identity"))
+		SomethingWentWrong(w, r, fmt.Errorf("invalid token: identity"))
 		return
 	}
 
@@ -96,7 +96,7 @@ func (h *api) authRefresh(w http.ResponseWriter, r *http.Request) {
 
 	accessToken, err2 := h.GenerateAccessJWT(data)
 	if err2 != nil {
-		SomethingWentWrong(w, err2)
+		SomethingWentWrong(w, r, err2)
 		return
 	}
 
@@ -105,8 +105,8 @@ func (h *api) authRefresh(w http.ResponseWriter, r *http.Request) {
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }
 
 func (h *api) authMe(w http.ResponseWriter, r *http.Request) {
@@ -114,13 +114,13 @@ func (h *api) authMe(w http.ResponseWriter, r *http.Request) {
 	jwtData := GetJwtData(r)
 
 	if jwtData.IsRefreshToken() {
-		SomethingWentWrong(w, fmt.Errorf("invalid token"))
+		SomethingWentWrong(w, r, fmt.Errorf("invalid token"))
 		return
 	}
 
 	userID, ok := ParseUuid(jwtData.UserID)
 	if !ok {
-		SomethingWentWrong(w, fmt.Errorf("invalid token.userId"))
+		SomethingWentWrong(w, r, fmt.Errorf("invalid token.userId"))
 		return
 	}
 
@@ -129,7 +129,7 @@ func (h *api) authMe(w http.ResponseWriter, r *http.Request) {
 
 	identity, err := usecase.AuthMe(rs, userID)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -140,6 +140,6 @@ func (h *api) authMe(w http.ResponseWriter, r *http.Request) {
 		Email: identity.Email,
 		Role:  identity.Role,
 	}
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }

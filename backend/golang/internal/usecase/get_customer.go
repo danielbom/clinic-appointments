@@ -12,7 +12,7 @@ func GetCustomer(state State, id pgtype.UUID) (infra.Customer, *UsecaseError) {
 		return customer, nil
 	}
 	if ErrorIsNoRows(err) {
-		return customer, NewNotFoundError(ErrResourceNotFound).InField("customer")
+		return customer, NewNotFoundError("customer")
 	}
 	return customer, NewUnexpectedError(err)
 }

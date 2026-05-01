@@ -43,6 +43,6 @@ func (h *api) health(w http.ResponseWriter, r *http.Request) {
 			SchemaVersion:     dbSettings.SchemaVersion,
 		},
 	}
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }

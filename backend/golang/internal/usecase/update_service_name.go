@@ -12,7 +12,7 @@ type UpdateServiceNameArgs struct {
 
 func (args *UpdateServiceNameArgs) Validate() *UsecaseError {
 	if args.Name == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("name")
+		return NewInvalidArgumentError(ACTION_MUTATION, "name", ErrFieldIsRequired)
 	}
 	return nil
 }
@@ -24,7 +24,7 @@ func UpdateServiceName(state State, serviceId pgtype.UUID, args UpdateServiceNam
 		return none, NewUnexpectedError(err)
 	}
 	if exists {
-		return none, NewResourceAlreadyExistsError("service_name")
+		return none, NewResourceAlreadyExistsError("service_name", "name")
 	}
 
 	params := infra.UpdateServiceNameParams{

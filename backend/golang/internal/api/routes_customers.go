@@ -17,10 +17,10 @@ import (
 // @Tags         Customers
 // @Produce      json
 // @Success      200 {object}  dtos.Customer
-// @Router       /customers/{customer_id} [get]
+// @Router       /customers/{id} [get]
 func (h *api) getCustomer(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
-	customerId, ok := GetAndParseUuidParam(w, r, "customer_id")
+	customerId, ok := GetAndParseUuidParam(w, r, "id")
 	if !ok {
 		return
 	}
@@ -30,14 +30,14 @@ func (h *api) getCustomer(w http.ResponseWriter, r *http.Request) {
 
 	customer, err := usecase.GetCustomer(rs, customerId)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := presenter.GetCustomer(customer)
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }
 
 // @Summary      List customers
@@ -74,7 +74,7 @@ func (h *api) listCustomers(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -82,14 +82,14 @@ func (h *api) listCustomers(w http.ResponseWriter, r *http.Request) {
 
 	customers, err := usecase.ListCustomers(rs, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := presenter.GetCustomers(customers)
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }
 
 // @Summary      Count customers
@@ -116,7 +116,7 @@ func (h *api) countCustomers(w http.ResponseWriter, r *http.Request) {
 		Name:  name,
 	}
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -124,7 +124,7 @@ func (h *api) countCustomers(w http.ResponseWriter, r *http.Request) {
 
 	count, err := usecase.CountCustomers(rs, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -145,7 +145,7 @@ func (h *api) createCustomer(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
 	var body dtos.CustomerInfoBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		InvalidJson(w)
+		InvalidJson(w, r)
 		return
 	}
 
@@ -158,7 +158,7 @@ func (h *api) createCustomer(w http.ResponseWriter, r *http.Request) {
 		Cpf:       body.Cpf,
 	}
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -166,14 +166,14 @@ func (h *api) createCustomer(w http.ResponseWriter, r *http.Request) {
 
 	customer, err := usecase.CreateCustomer(rs, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := dtos.Id{ID: customer.ID.String()}
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusCreated)
+	render.JSON(w, r, response)
 }
 
 // @Summary      Update customer
@@ -182,16 +182,16 @@ func (h *api) createCustomer(w http.ResponseWriter, r *http.Request) {
 // @Tags         Customers
 // @Produce      json
 // @Success      200 {object}  dtos.Id
-// @Router       /customers/{customer_id} [put]
+// @Router       /customers/{id} [put]
 func (h *api) updateCustomer(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
-	customerId, ok := GetAndParseUuidParam(w, r, "customer_id")
+	customerId, ok := GetAndParseUuidParam(w, r, "id")
 	if !ok {
 		return
 	}
 	var body dtos.CustomerInfoBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		InvalidJson(w)
+		InvalidJson(w, r)
 		return
 	}
 
@@ -204,7 +204,7 @@ func (h *api) updateCustomer(w http.ResponseWriter, r *http.Request) {
 		Cpf:       body.Cpf,
 	}
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -212,14 +212,14 @@ func (h *api) updateCustomer(w http.ResponseWriter, r *http.Request) {
 
 	customer, err := usecase.UpdateCustomer(rs, customerId, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := dtos.Id{ID: customer.ID.String()}
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }
 
 // @Summary      Delete customer
@@ -228,10 +228,10 @@ func (h *api) updateCustomer(w http.ResponseWriter, r *http.Request) {
 // @Tags         Customers
 // @Produce      json
 // @Success      204
-// @Router       /customers/{customer_id} [delete]
+// @Router       /customers/{id} [delete]
 func (h *api) deleteCustomer(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
-	customerId, ok := GetAndParseUuidParam(w, r, "customer_id")
+	customerId, ok := GetAndParseUuidParam(w, r, "id")
 	if !ok {
 		return
 	}
@@ -241,7 +241,7 @@ func (h *api) deleteCustomer(w http.ResponseWriter, r *http.Request) {
 
 	err := usecase.DeleteCustomer(rs, customerId)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 

@@ -25,44 +25,44 @@ type CreateAppointmentArgs struct {
 func (args *CreateAppointmentArgs) Validate() *UsecaseError {
 	if !args.ServiceID.Valid && args.ServiceIDRaw != "" {
 		if err := args.ServiceID.Scan(args.ServiceIDRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidUuid).InField("serviceId")
+			return NewInvalidArgumentError(ACTION_MUTATION, "serviceId", ErrInvalidUuid)
 		}
 	}
 	if !args.SpecialistID.Valid && args.SpecialistIDRaw != "" {
 		if err := args.SpecialistID.Scan(args.SpecialistIDRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidUuid).InField("specialistId")
+			return NewInvalidArgumentError(ACTION_MUTATION, "specialistId", ErrInvalidUuid)
 		}
 	}
 	if !args.ServiceNameID.Valid && args.ServiceNameIDRaw != "" {
 		if err := args.ServiceNameID.Scan(args.ServiceNameIDRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidUuid).InField("serviceNameId")
+			return NewInvalidArgumentError(ACTION_MUTATION, "serviceNameId", ErrInvalidUuid)
 		}
 	}
 	if !args.CustomerID.Valid && args.CustomerIDRaw != "" {
 		if err := args.CustomerID.Scan(args.CustomerIDRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidUuid).InField("customerId")
+			return NewInvalidArgumentError(ACTION_MUTATION, "customerId", ErrInvalidUuid)
 		}
 	}
 	if !args.Date.Valid {
 		if err := args.Date.Scan(args.DateRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidDate).InField("date")
+			return NewInvalidArgumentError(ACTION_MUTATION, "date", ErrInvalidDate)
 		}
 	}
 	if !args.Time.Valid {
 		if err := args.Time.Scan(args.TimeRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidTime).InField("time")
+			return NewInvalidArgumentError(ACTION_MUTATION, "time", ErrInvalidTime)
 		}
 	}
 	if args.Status < 0 || args.Status >= int32(AppointmentStatusCount) {
-		return NewInvalidArgumentError(ErrInvalidAppointmentStatus).InField("status")
+		return NewInvalidArgumentError(ACTION_MUTATION, "status", ErrInvalidAppointmentStatus)
 	}
 	if !args.ServiceNameID.Valid || !args.SpecialistID.Valid {
 		if !args.ServiceID.Valid {
-			return NewInvalidArgumentError(ErrFieldIsRequired).InField("serviceId")
+			return NewInvalidArgumentError(ACTION_MUTATION, "serviceId", ErrFieldIsRequired)
 		}
 	}
 	if !args.CustomerID.Valid {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("customerId")
+		return NewInvalidArgumentError(ACTION_MUTATION, "customerId", ErrFieldIsRequired)
 	}
 
 	return nil
@@ -78,7 +78,7 @@ func CreateAppointment(state State, args CreateAppointmentArgs) (pgtype.UUID, *U
 			SpecialistId:  args.SpecialistID,
 		})
 		if ErrorIsNoRows(err) {
-			return none, NewNotFoundError(ErrResourceNotFound).InField("service")
+			return none, NewNotFoundError("service")
 		}
 		if err != nil {
 			return none, NewUnexpectedError(err)
@@ -87,7 +87,7 @@ func CreateAppointment(state State, args CreateAppointmentArgs) (pgtype.UUID, *U
 	} else {
 		maybeService, err := state.Queries().GetServiceByID(state.Context(), args.ServiceID)
 		if ErrorIsNoRows(err) {
-			return none, NewNotFoundError(ErrResourceNotFound).InField("service")
+			return none, NewNotFoundError("service")
 		}
 		if err != nil {
 			return none, NewUnexpectedError(err)

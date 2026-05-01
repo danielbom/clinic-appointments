@@ -17,23 +17,23 @@ import (
 // @Tags         Secretaries
 // @Produce      json
 // @Success      200 {object}  dtos.Secretary
-// @Router       /secretaries/{secretary_id} [get]
+// @Router       /secretaries/{id} [get]
 func (h *api) getSecretary(w http.ResponseWriter, r *http.Request) {
 	// Authorize access
 	jwtData := GetJwtData(r)
 	if !jwtData.HasAccess("secretary") {
-		http.Error(w, "invalid access", http.StatusForbidden)
+		InvalidAccess(w, r, "Role without access")
 		return
 	}
 
 	// Collect query parameters, path parameters, and request body
-	secretaryId, ok := GetAndParseUuidParam(w, r, "secretary_id")
+	secretaryId, ok := GetAndParseUuidParam(w, r, "id")
 	if !ok {
 		return
 	}
 
 	if jwtData.Role == "secretary" && jwtData.UserID != secretaryId.String() {
-		http.Error(w, "invalid access", http.StatusForbidden)
+		InvalidAccess(w, r, "User without access")
 		return
 	}
 
@@ -42,14 +42,14 @@ func (h *api) getSecretary(w http.ResponseWriter, r *http.Request) {
 
 	secretary, err := usecase.GetSecretary(rs, secretaryId)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := presenter.GetSecretary(secretary)
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }
 
 // @Summary      List secretaries
@@ -68,7 +68,7 @@ func (h *api) listSecretaries(w http.ResponseWriter, r *http.Request) {
 	// Authorize access
 	jwtData := GetJwtData(r)
 	if !jwtData.HasAccess() {
-		http.Error(w, "invalid access", http.StatusForbidden)
+		InvalidAccess(w, r, "Role without access")
 		return
 	}
 
@@ -95,7 +95,7 @@ func (h *api) listSecretaries(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -103,14 +103,14 @@ func (h *api) listSecretaries(w http.ResponseWriter, r *http.Request) {
 
 	secretaries, err := usecase.ListSecretaries(rs, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := presenter.GetSecretaries(secretaries)
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }
 
 // @Summary      Count secretaries
@@ -127,7 +127,7 @@ func (h *api) countSecretaries(w http.ResponseWriter, r *http.Request) {
 	// Authorize access
 	jwtData := GetJwtData(r)
 	if !jwtData.HasAccess() {
-		http.Error(w, "invalid access", http.StatusForbidden)
+		InvalidAccess(w, r, "Role without access")
 		return
 	}
 
@@ -146,7 +146,7 @@ func (h *api) countSecretaries(w http.ResponseWriter, r *http.Request) {
 		Name:  name,
 	}
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -154,7 +154,7 @@ func (h *api) countSecretaries(w http.ResponseWriter, r *http.Request) {
 
 	count, err := usecase.CountSecretaries(rs, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -175,14 +175,14 @@ func (h *api) createSecretary(w http.ResponseWriter, r *http.Request) {
 	// Authorize access
 	jwtData := GetJwtData(r)
 	if !jwtData.HasAccess() {
-		http.Error(w, "invalid access", http.StatusForbidden)
+		InvalidAccess(w, r, "Role without access")
 		return
 	}
 
 	// Collect query parameters, path parameters, and request body
 	var body dtos.SecretaryInfoBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		InvalidJson(w)
+		InvalidJson(w, r)
 		return
 	}
 
@@ -197,7 +197,7 @@ func (h *api) createSecretary(w http.ResponseWriter, r *http.Request) {
 		Cnpj:      body.Cnpj,
 	}
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -205,14 +205,14 @@ func (h *api) createSecretary(w http.ResponseWriter, r *http.Request) {
 
 	secretary, err := usecase.CreateSecretary(rs, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := dtos.Id{ID: secretary.ID.String()}
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusCreated)
+	render.JSON(w, r, response)
 }
 
 // @Summary      Update secretary
@@ -221,29 +221,29 @@ func (h *api) createSecretary(w http.ResponseWriter, r *http.Request) {
 // @Tags         Secretaries
 // @Produce      json
 // @Success      200 {object}  dtos.Id
-// @Router       /secretaries/{secretary_id} [put]
+// @Router       /secretaries/{id} [put]
 func (h *api) updateSecretary(w http.ResponseWriter, r *http.Request) {
 	// Authorize access
 	jwtData := GetJwtData(r)
 	if !jwtData.HasAccess("secretary") {
-		http.Error(w, "invalid access", http.StatusForbidden)
+		InvalidAccess(w, r, "Role without access")
 		return
 	}
 
 	// Collect query parameters, path parameters, and request body
-	secretaryId, ok := GetAndParseUuidParam(w, r, "secretary_id")
+	secretaryId, ok := GetAndParseUuidParam(w, r, "id")
 	if !ok {
 		return
 	}
 
 	if jwtData.Role == "secretary" && jwtData.UserID != secretaryId.String() {
-		http.Error(w, "invalid access", http.StatusForbidden)
+		InvalidAccess(w, r, "Role without access")
 		return
 	}
 
 	var body dtos.SecretaryInfoBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		InvalidJson(w)
+		InvalidJson(w, r)
 		return
 	}
 
@@ -259,7 +259,7 @@ func (h *api) updateSecretary(w http.ResponseWriter, r *http.Request) {
 		Update:    true,
 	}
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -267,14 +267,14 @@ func (h *api) updateSecretary(w http.ResponseWriter, r *http.Request) {
 
 	secretary, err := usecase.UpdateSecretary(rs, secretaryId, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := dtos.Id{ID: secretary.ID.String()}
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }
 
 // @Summary      Delete secretary
@@ -283,17 +283,17 @@ func (h *api) updateSecretary(w http.ResponseWriter, r *http.Request) {
 // @Tags         Secretaries
 // @Produce      json
 // @Success      204
-// @Router       /secretaries/{secretary_id} [delete]
+// @Router       /secretaries/{id} [delete]
 func (h *api) deleteSecretary(w http.ResponseWriter, r *http.Request) {
 	// Authorize access
 	jwtData := GetJwtData(r)
 	if !jwtData.HasAccess() {
-		http.Error(w, "invalid access", http.StatusForbidden)
+		InvalidAccess(w, r, "Role without access")
 		return
 	}
 
 	// Collect query parameters, path parameters, and request body
-	secretaryId, ok := GetAndParseUuidParam(w, r, "secretary_id")
+	secretaryId, ok := GetAndParseUuidParam(w, r, "id")
 	if !ok {
 		return
 	}
@@ -303,7 +303,7 @@ func (h *api) deleteSecretary(w http.ResponseWriter, r *http.Request) {
 
 	err := usecase.DeleteSecretary(rs, secretaryId)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 

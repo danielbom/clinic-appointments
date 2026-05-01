@@ -6,6 +6,13 @@ import (
 	"github.com/pkg/errors"
 )
 
+type ActionType int
+
+const (
+	ACTION_QUERY = iota
+	ACTION_MUTATION
+)
+
 type UsecaseErrorKind int32
 
 const (
@@ -18,54 +25,44 @@ const (
 )
 
 type UsecaseError struct {
-	Error error
-	Kind  UsecaseErrorKind
-}
-
-func NewError(kind UsecaseErrorKind, err error) *UsecaseError {
-	return &UsecaseError{Kind: kind, Error: err}
+	Kind     UsecaseErrorKind
+	Error    error
+	Action   ActionType
+	Resource string
+	Detail   string
+	Key      string
 }
 
 func NewUnexpectedError(err error) *UsecaseError {
-	return NewError(ErrorKindUnexpected, err)
+	return &UsecaseError{Kind: ErrorKindUnexpected, Error: err}
 }
 
-func NewNotFoundError(err error) *UsecaseError {
-	return NewError(ErrorKindNotFound, err)
+func NewUnreachableError(detail string) *UsecaseError {
+	err := fmt.Errorf("unreachable: %s", detail)
+	return &UsecaseError{Kind: ErrorKindUnexpected, Error: err}
 }
 
-func NewInvalidArgumentError(err error) *UsecaseError {
-	return NewError(ErrorKindInvalidArgument, err)
+func NewNotFoundError(resource string) *UsecaseError {
+	return &UsecaseError{Kind: ErrorKindNotFound, Error: ErrResourceNotFound, Resource: resource}
 }
 
-func NewAlreadyExistsError(err error) *UsecaseError {
-	return NewError(ErrorKindAlreadyExists, err)
+func NewInvalidArgumentError(action ActionType, key string, err error) *UsecaseError {
+	return &UsecaseError{Kind: ErrorKindInvalidArgument, Error: err, Key: key, Action: action}
 }
 
-func NewResourceAlreadyExistsError(resource string) *UsecaseError {
-	return NewAlreadyExistsError(ErrResourceAlreadyExists).InField(resource)
-}
-
-func NewUniqueInformationDuplicated(resource string) *UsecaseError {
-	return NewAlreadyExistsError(ErrUniqueInformationDuplicated).InField(resource)
+func NewResourceAlreadyExistsError(resource, key string) *UsecaseError {
+	return &UsecaseError{Kind: ErrorKindAlreadyExists, Error: ErrResourceAlreadyExists, Resource: resource, Key: key}
 }
 
 func NewInvalidStateError(err error) *UsecaseError {
-	return NewError(ErrorKindInvalidState, err)
+	return &UsecaseError{Kind: ErrorKindInvalidState, Error: err}
 }
 
 func NewAuthError(err error) *UsecaseError {
-	return NewError(ErrorKindAuth, err)
-}
-
-func (e *UsecaseError) InField(field string) *UsecaseError {
-	e.Error = fmt.Errorf("%s: %w", field, e.Error)
-	return e
+	return &UsecaseError{Kind: ErrorKindAuth, Error: err}
 }
 
 var (
-	ErrUnreachable = errors.New("unreachable")
-
 	ErrInvalidUuid     = errors.New("invalid uuid")
 	ErrInvalidDate     = errors.New("invalid date")
 	ErrInvalidTime     = errors.New("invalid time")
@@ -77,16 +74,11 @@ var (
 )
 
 var (
-	ErrFieldIsRequired = errors.New("field is required")
+	ErrFieldIsRequired = errors.New("is required")
 
 	ErrInvalidAppointmentStatus = errors.New("invalid appointment status")
 	ErrAppointmentsIntersection = errors.New("appointments intersection")
 
-	ErrResourceNotFound = errors.New("resource not found")
-)
-
-var (
+	ErrResourceNotFound      = errors.New("resource not found")
 	ErrResourceAlreadyExists = errors.New("resource already exists")
-
-	ErrUniqueInformationDuplicated = errors.New("unique information duplicated")
 )

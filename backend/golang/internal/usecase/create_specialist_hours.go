@@ -19,25 +19,25 @@ type CreateSpecialistHoursArgs struct {
 func (args *CreateSpecialistHoursArgs) Validate() *UsecaseError {
 	if !args.SpecialistID.Valid {
 		if err := args.SpecialistID.Scan(args.SpecialistIDRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidUuid).InField("specialistId")
+			return NewInvalidArgumentError(ACTION_MUTATION, "specialistId", ErrInvalidUuid)
 		}
 	}
 	if !args.StartTimeTime.Valid {
 		if err := args.StartTimeTime.Scan(args.StartTime); err != nil {
-			return NewInvalidArgumentError(ErrInvalidTime).InField("startTime")
+			return NewInvalidArgumentError(ACTION_MUTATION, "startTime", ErrInvalidTime)
 		}
 	}
 	if !args.EndTimeTime.Valid {
 		if err := args.EndTimeTime.Scan(args.EndTime); err != nil {
-			return NewInvalidArgumentError(ErrInvalidTime).InField("endTime")
+			return NewInvalidArgumentError(ACTION_MUTATION, "endTime", ErrInvalidTime)
 		}
 	}
 
 	if args.Weekday < 0 || args.Weekday > 6 {
-		return NewInvalidArgumentError(ErrInvalidRange).InField("weekday")
+		return NewInvalidArgumentError(ACTION_MUTATION, "weekday", ErrInvalidRange)
 	}
 	if args.StartTimeTime.Microseconds >= args.EndTimeTime.Microseconds {
-		return NewInvalidArgumentError(ErrInvalidRange).InField("startTime and endTime")
+		return NewInvalidArgumentError(ACTION_MUTATION, "startTime,endTime", ErrInvalidRange)
 	}
 
 	return nil
@@ -79,7 +79,7 @@ func CreateSpecialistHours(state State, args CreateSpecialistHoursArgs) (Usecase
 		}
 
 		if hourToUpdate == nil {
-			return OperationError, none, NewUnexpectedError(ErrUnreachable)
+			return OperationError, none, NewUnreachableError("CreateSpecialistHours: hourToUpdate is nil")
 		}
 
 		params := infra.UpdateSpecialistHourStartAndEndTimeParams{
@@ -93,7 +93,7 @@ func CreateSpecialistHours(state State, args CreateSpecialistHoursArgs) (Usecase
 			params.StartTime = args.StartTimeTime
 			params.EndTime = hourToUpdate.EndTime
 		} else {
-			return OperationError, none, NewUnexpectedError(ErrUnreachable)
+			return OperationError, none, NewUnreachableError("CreateSpecialistHours: invalid inside constraint")
 		}
 
 		err := state.Queries().UpdateSpecialistHourStartAndEndTime(state.Context(), params)

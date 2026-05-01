@@ -17,12 +17,12 @@ func (h *api) listServiceGroups(w http.ResponseWriter, r *http.Request) {
 
 	specializations, serviceNames, err := usecase.ListServiceGroups(rs)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := presenter.GetServiceGroups(specializations, serviceNames)
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }

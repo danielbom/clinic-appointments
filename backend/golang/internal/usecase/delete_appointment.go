@@ -7,10 +7,10 @@ import (
 func DeleteAppointment(state State, id pgtype.UUID) *UsecaseError {
 	count, err := state.Queries().DeleteAppointment(state.Context(), id)
 	if err != nil {
-		return NewError(ErrorKindUnexpected, err)
+		return NewUnexpectedError(err)
 	}
 	if count == 0 {
-		return NewNotFoundError(ErrResourceNotFound).InField("appointment")
+		return NewNotFoundError("appointment")
 	}
 	return nil
 }

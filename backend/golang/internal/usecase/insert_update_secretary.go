@@ -29,37 +29,37 @@ func (args *SecretaryInfoArgs) Validate() *UsecaseError {
 	}
 	if args.Birthdate != "" {
 		if err := DateFromString(&args.BirthdateDate, args.Birthdate); err != nil {
-			return NewInvalidArgumentError(ErrInvalidDate).InField("birthdate")
+			return NewInvalidArgumentError(ACTION_MUTATION, "birthdate", ErrInvalidDate)
 		}
 	}
 	if args.Name == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("name")
+		return NewInvalidArgumentError(ACTION_MUTATION, "name", ErrFieldIsRequired)
 	}
 	if args.Phone == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("phone")
+		return NewInvalidArgumentError(ACTION_MUTATION, "phone", ErrFieldIsRequired)
 	}
 	if args.Cpf == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("cpf")
+		return NewInvalidArgumentError(ACTION_MUTATION, "cpf", ErrFieldIsRequired)
 	}
 	if !validate.IsCpfValid(args.Cpf) {
-		return NewInvalidArgumentError(ErrInvalidFormat).InField("cpf")
+		return NewInvalidArgumentError(ACTION_MUTATION, "cpf", ErrInvalidFormat)
 	}
 	if args.Cnpj == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("cnpj")
+		return NewInvalidArgumentError(ACTION_MUTATION, "cnpj", ErrFieldIsRequired)
 	}
 	if !validate.IsCnpjValid(args.Cnpj) {
-		return NewInvalidArgumentError(ErrInvalidFormat).InField("cnpj")
+		return NewInvalidArgumentError(ACTION_MUTATION, "cnpj", ErrInvalidFormat)
 	}
 	if args.Update {
 		if args.Password != "" && !validate.IsPasswordValid(args.Password) {
-			return NewInvalidArgumentError(ErrInvalidFormat).InField("password")
+			return NewInvalidArgumentError(ACTION_MUTATION, "password", ErrInvalidFormat)
 		}
 	} else {
 		if args.Password == "" {
-			return NewInvalidArgumentError(ErrFieldIsRequired).InField("password")
+			return NewInvalidArgumentError(ACTION_MUTATION, "password", ErrFieldIsRequired)
 		}
 		if !validate.IsPasswordValid(args.Password) {
-			return NewInvalidArgumentError(ErrInvalidFormat).InField("password")
+			return NewInvalidArgumentError(ACTION_MUTATION, "password", ErrInvalidFormat)
 		}
 	}
 	return nil
@@ -86,7 +86,7 @@ func CreateSecretary(state State, args SecretaryInfoArgs) (infra.Secretary, *Use
 		return none, NewUnexpectedError(err)
 	}
 	if exists {
-		return none, NewResourceAlreadyExistsError("secretary.email")
+		return none, NewResourceAlreadyExistsError("secretary", "email")
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(args.Password), bcrypt.DefaultCost)
@@ -124,7 +124,7 @@ func UpdateSecretary(state State, secretaryId pgtype.UUID, args SecretaryInfoArg
 		return none, NewUnexpectedError(err)
 	}
 	if exists {
-		return none, NewResourceAlreadyExistsError("secretary.email")
+		return none, NewResourceAlreadyExistsError("secretary", "email")
 	}
 
 	if args.Password != "" {

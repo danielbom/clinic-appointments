@@ -19,25 +19,25 @@ type SpecialistServiceInfoArgs struct {
 func (args *SpecialistServiceInfoArgs) Validate() *UsecaseError {
 	if !args.ServiceNameID.Valid {
 		if args.ServiceNameIDRaw == "" {
-			return NewInvalidArgumentError(ErrInvalidUuid).InField("serviceNameId")
+			return NewInvalidArgumentError(ACTION_MUTATION, "serviceNameId", ErrInvalidUuid)
 		}
 		if err := args.ServiceNameID.Scan(args.ServiceNameIDRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidUuid).InField("serviceNameId")
+			return NewInvalidArgumentError(ACTION_MUTATION, "serviceNameId", ErrInvalidUuid)
 		}
 	}
 	if args.RequireSpecialist && !args.SpecialistID.Valid {
 		if args.SpecialistIDRaw == "" {
-			return NewInvalidArgumentError(ErrInvalidUuid).InField("specialistId")
+			return NewInvalidArgumentError(ACTION_MUTATION, "specialistId", ErrInvalidUuid)
 		}
 		if err := args.SpecialistID.Scan(args.SpecialistIDRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidUuid).InField("specialistId")
+			return NewInvalidArgumentError(ACTION_MUTATION, "specialistId", ErrInvalidUuid)
 		}
 	}
 	if args.DurationMin <= 0 {
-		return NewInvalidArgumentError(ErrExpectPositiveValue).InField("duration")
+		return NewInvalidArgumentError(ACTION_MUTATION, "duration", ErrExpectPositiveValue)
 	}
 	if args.Price < 0 {
-		return NewInvalidArgumentError(ErrExpectPositiveValue).InField("price")
+		return NewInvalidArgumentError(ACTION_MUTATION, "price", ErrExpectPositiveValue)
 	}
 	return nil
 }
@@ -49,7 +49,7 @@ func CreateSpecialistService(state State, args SpecialistServiceInfoArgs) (pgtyp
 		ServiceNameId: args.ServiceNameID,
 	})
 	if err == nil {
-		return none, NewResourceAlreadyExistsError("service")
+		return none, NewResourceAlreadyExistsError("service", "specialistId,serviceNameId")
 	} else if !ErrorIsNoRows(err) {
 		return none, NewUnexpectedError(err)
 	}

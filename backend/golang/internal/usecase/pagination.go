@@ -11,10 +11,10 @@ func (args *PaginationArgs) Validate() *UsecaseError {
 	}
 
 	if args.PageSize < 0 {
-		return NewInvalidArgumentError(ErrExpectPositiveValue).InField("pageSize")
+		return NewInvalidArgumentError(ACTION_QUERY, "pageSize", ErrExpectPositiveValue)
 	}
 	if args.Page < 0 {
-		return NewInvalidArgumentError(ErrExpectPositiveValue).InField("page")
+		return NewInvalidArgumentError(ACTION_QUERY, "page", ErrExpectPositiveValue)
 	}
 	return nil
 }

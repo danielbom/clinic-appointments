@@ -7,10 +7,10 @@ import (
 func DeleteSpecialist(state State, id pgtype.UUID) *UsecaseError {
 	count, err := state.Queries().DeleteSpecialistByID(state.Context(), id)
 	if err != nil {
-		return NewError(ErrorKindUnexpected, err)
+		return NewUnexpectedError(err)
 	}
 	if count == 0 {
-		return NewNotFoundError(ErrResourceNotFound).InField("specialist")
+		return NewNotFoundError("specialist")
 	}
 	return nil
 }

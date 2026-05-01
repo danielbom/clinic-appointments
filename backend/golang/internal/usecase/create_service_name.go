@@ -19,11 +19,11 @@ func (args *CreateServiceNameArgs) Validate() *UsecaseError {
 	args.Name = strings.TrimSpace(args.Name)
 	if args.Specialization == "" && !args.SpecializationID.Valid {
 		if err := args.SpecializationID.Scan(args.SpecializationIDRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidUuid).InField("specializationId")
+			return NewInvalidArgumentError(ACTION_MUTATION, "specializationId", ErrInvalidUuid)
 		}
 	}
 	if args.Name == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("name")
+		return NewInvalidArgumentError(ACTION_MUTATION, "name", ErrFieldIsRequired)
 	}
 	return nil
 }
@@ -49,7 +49,7 @@ func CreateServiceName(state State, args CreateServiceNameArgs) (pgtype.UUID, *U
 		return none, NewUnexpectedError(err)
 	}
 	if exists {
-		return none, NewResourceAlreadyExistsError("service_name")
+		return none, NewResourceAlreadyExistsError("service_name", "name")
 	}
 
 	if args.Specialization != "" {
