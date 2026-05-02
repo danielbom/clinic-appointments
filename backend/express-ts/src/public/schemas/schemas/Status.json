@@ -16,7 +16,11 @@
       "type": "object",
       "properties": {
         "status": {
-          "type": "string"
+          "type": "string",
+          "enum": [
+            "connected",
+            "disconnected"
+          ]
         },
         "version": {
           "type": "string"

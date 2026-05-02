@@ -2,59 +2,83 @@ export namespace domain {
   /**
    * @description: Example: 019dcd01-5a4a-736f-9407-8e69aa9433bc
    * @format: uuid
+   * @maxLength: 36
    */
   export type Uuid = string
 
   /**
    * @description: in cents
    * @format: integer
+   * @minimum: 0
    */
   export type Price = number
 
   /**
    * @description: in minutes
    * @format: integer
+   * @minimum: 0
+   * @maximum: 600
    */
   export type Duration = number
 
   /**
    * @format: email
+   * @minLength: 1
+   * @maxLength: 200
    */
   export type Email = string
 
+  /**
+   * @maxLength: 36
+   */
   export type Role = string
 
+  /**
+   * @minLength: 1
+   * @maxLength: 30
+   */
   export type Password = string
 
   /**
    * @format: phone
+   * @maxLength: 20
    */
   export type Phone = string
 
   /**
    * @format: cpf
+   * @minLength: 11
+   * @maxLength: 11
    */
   export type Cpf = string
 
   /**
    * @format: cnpj
+   * @minLength: 14
+   * @maxLength: 14
    */
   export type Cnpj = string
 
   /**
    * @description: Non empty string
+   * @minLength: 1
+   * @maxLength: 200
    */
   export type Name = string
 
   /**
    * @description: date only string in format YYYY-MM-DD
    * @format: date
+   * @minLength: 10
+   * @maxLength: 10
    */
   export type Date = string
 
   /**
    * @description: time only string in format HH-MM-SS
    * @format: time
+   * @minLength: 8
+   * @maxLength: 8
    */
   export type Time = string
 
@@ -132,7 +156,7 @@ export namespace schemas {
     updatedAt: string
     environment: string
     database?: {
-      status: string
+      status: 'connected' | 'disconnected'
       version: string
       maxConnections: number
       openedConnections: number
@@ -392,6 +416,46 @@ export namespace body {
   }
 }
 
+export namespace query {
+  export type StartDate = domain.Date
+
+  export type EndDate = domain.Date
+
+  export type ServiceName = domain.Name
+
+  export type Service = domain.Name
+
+  export type Specialist = domain.Name
+
+  export type Specialization = domain.Name
+
+  export type Customer = domain.Name
+
+  export type Status = schemas.AppointmentStatus
+
+  export type Name = domain.Name
+
+  export type Cpf = domain.Cpf
+
+  export type Cnpj = domain.Cnpj
+
+  export type Phone = domain.Phone
+
+  /**
+   * @default: 0
+   * @format: integer
+   * @minimum: 0
+   */
+  export type Page = number
+
+  /**
+   * @default: 10
+   * @format: integer
+   * @minimum: 1
+   */
+  export type PageSize = number
+}
+
 export namespace api {
   export namespace health {
     export namespace healthCheck {
@@ -435,6 +499,17 @@ export namespace api {
 
   export namespace appointments {
     export namespace listAppointments {
+      export type query = {
+        page?: query.Page
+        pageSize?: query.PageSize
+        startDate?: query.StartDate
+        endDate?: query.EndDate
+        serviceName?: query.ServiceName
+        specialist?: query.Specialist
+        customer?: query.Customer
+        status?: query.Status
+      }
+
       export type responses = {
         200: schemas.Appointment[]
         400: schemas.ProblemDetails
@@ -452,6 +527,15 @@ export namespace api {
     }
 
     export namespace countAppointments {
+      export type query = {
+        startDate?: query.StartDate
+        endDate?: query.EndDate
+        serviceName?: query.ServiceName
+        specialist?: query.Specialist
+        customer?: query.Customer
+        status?: query.Status
+      }
+
       export type responses = {
         200: schemas.Count
         400: schemas.ProblemDetails
@@ -459,6 +543,11 @@ export namespace api {
     }
 
     export namespace getAppointmentsCalendar {
+      export type query = {
+        startDate?: query.StartDate
+        endDate?: query.EndDate
+      }
+
       export type responses = {
         200: schemas.AppointmentCalendar[]
         400: schemas.ProblemDetails
@@ -466,6 +555,11 @@ export namespace api {
     }
 
     export namespace getAppointmentsCalendarCount {
+      export type query = {
+        startDate?: query.StartDate
+        endDate?: query.EndDate
+      }
+
       export type responses = {
         200: schemas.AppointmentCalendarCount[]
         400: schemas.ProblemDetails
@@ -503,6 +597,14 @@ export namespace api {
 
   export namespace customers {
     export namespace listCustomers {
+      export type query = {
+        page?: query.Page
+        pageSize?: query.PageSize
+        name?: query.Name
+        cpf?: query.Cpf
+        phone?: query.Phone
+      }
+
       export type responses = {
         200: schemas.Customer[]
         400: schemas.ProblemDetails
@@ -519,6 +621,12 @@ export namespace api {
     }
 
     export namespace countCustomers {
+      export type query = {
+        name?: query.Name
+        cpf?: query.Cpf
+        phone?: query.Phone
+      }
+
       export type responses = {
         200: schemas.Count
         400: schemas.ProblemDetails
@@ -556,6 +664,15 @@ export namespace api {
 
   export namespace secretaries {
     export namespace listSecretaries {
+      export type query = {
+        page?: query.Page
+        pageSize?: query.PageSize
+        name?: query.Name
+        cpf?: query.Cpf
+        cnpj?: query.Cnpj
+        phone?: query.Phone
+      }
+
       export type responses = {
         200: schemas.Secretary[]
         400: schemas.ProblemDetails
@@ -573,6 +690,13 @@ export namespace api {
     }
 
     export namespace countSecretaries {
+      export type query = {
+        name?: query.Name
+        cpf?: query.Cpf
+        cnpj?: query.Cnpj
+        phone?: query.Phone
+      }
+
       export type responses = {
         200: schemas.Count
         400: schemas.ProblemDetails
@@ -612,6 +736,11 @@ export namespace api {
 
   export namespace servicesAvailable {
     export namespace listServicesAvailable {
+      export type query = {
+        page?: query.Page
+        pageSize?: query.PageSize
+      }
+
       export type responses = {
         200: schemas.ServiceGroup[]
         400: schemas.ProblemDetails
@@ -660,6 +789,14 @@ export namespace api {
 
   export namespace services {
     export namespace listServices {
+      export type query = {
+        page?: query.Page
+        pageSize?: query.PageSize
+        service?: query.Service
+        specialist?: query.Specialist
+        specialization?: query.Specialization
+      }
+
       export type responses = {
         200: schemas.ServiceEnriched[]
         400: schemas.ProblemDetails
@@ -676,6 +813,12 @@ export namespace api {
     }
 
     export namespace countServices {
+      export type query = {
+        service?: query.Service
+        specialist?: query.Specialist
+        specialization?: query.Specialization
+      }
+
       export type responses = {
         200: schemas.Count
         400: schemas.ProblemDetails
@@ -723,6 +866,15 @@ export namespace api {
 
   export namespace specialists {
     export namespace listSpecialists {
+      export type query = {
+        page?: query.Page
+        pageSize?: query.PageSize
+        name?: query.Name
+        cpf?: query.Cpf
+        cnpj?: query.Cnpj
+        phone?: query.Phone
+      }
+
       export type responses = {
         200: schemas.Specialist[]
         400: schemas.ProblemDetails
@@ -740,6 +892,13 @@ export namespace api {
     }
 
     export namespace countSpecialists {
+      export type query = {
+        name?: query.Name
+        cpf?: query.Cpf
+        cnpj?: query.Cnpj
+        phone?: query.Phone
+      }
+
       export type responses = {
         200: schemas.Count
         400: schemas.ProblemDetails
@@ -763,6 +922,11 @@ export namespace api {
     }
 
     export namespace getSpecialistAppointments {
+      export type query = {
+        page?: query.Page
+        pageSize?: query.PageSize
+      }
+
       export type responses = {
         200: schemas.SpecialistAppointment[]
         400: schemas.ProblemDetails

@@ -446,7 +446,13 @@
         "operationId": "customers.listCustomers",
         "summary": "Get all customers",
         "tags": ["Customers"],
-        "parameters": [],
+        "parameters": [
+          { "$ref": "#/components/query/Page" },
+          { "$ref": "#/components/query/PageSize" },
+          { "$ref": "#/components/query/Name" },
+          { "$ref": "#/components/query/Cpf" },
+          { "$ref": "#/components/query/Phone" }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -510,7 +516,11 @@
         "operationId": "customers.countCustomers",
         "summary": "Count customers",
         "tags": ["Customers"],
-        "parameters": [],
+        "parameters": [
+          { "$ref": "#/components/query/Name" },
+          { "$ref": "#/components/query/Cpf" },
+          { "$ref": "#/components/query/Phone" }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -643,7 +653,14 @@
         "operationId": "secretaries.listSecretaries",
         "summary": "Get all secretaries",
         "tags": ["Secretaries"],
-        "parameters": [],
+        "parameters": [
+          { "$ref": "#/components/query/Page" },
+          { "$ref": "#/components/query/PageSize" },
+          { "$ref": "#/components/query/Name" },
+          { "$ref": "#/components/query/Cpf" },
+          { "$ref": "#/components/query/Cnpj" },
+          { "$ref": "#/components/query/Phone" }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -716,7 +733,12 @@
         "operationId": "secretaries.countSecretaries",
         "summary": "Count secretaries",
         "tags": ["Secretaries"],
-        "parameters": [],
+        "parameters": [
+          { "$ref": "#/components/query/Name" },
+          { "$ref": "#/components/query/Cpf" },
+          { "$ref": "#/components/query/Cnpj" },
+          { "$ref": "#/components/query/Phone" }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -867,7 +889,7 @@
         "operationId": "servicesAvailable.listServicesAvailable",
         "summary": "Get all services available",
         "tags": ["Services Available"],
-        "parameters": [],
+        "parameters": [{ "$ref": "#/components/query/Page" }, { "$ref": "#/components/query/PageSize" }],
         "responses": {
           "200": {
             "content": {
@@ -1054,7 +1076,13 @@
         "operationId": "services.listServices",
         "summary": "Get all services",
         "tags": ["Services"],
-        "parameters": [],
+        "parameters": [
+          { "$ref": "#/components/query/Page" },
+          { "$ref": "#/components/query/PageSize" },
+          { "$ref": "#/components/query/Service" },
+          { "$ref": "#/components/query/Specialist" },
+          { "$ref": "#/components/query/Specialization" }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -1118,7 +1146,11 @@
         "operationId": "services.countServices",
         "summary": "Count services",
         "tags": ["Services"],
-        "parameters": [],
+        "parameters": [
+          { "$ref": "#/components/query/Service" },
+          { "$ref": "#/components/query/Specialist" },
+          { "$ref": "#/components/query/Specialization" }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -1290,7 +1322,14 @@
         "operationId": "specialists.listSpecialists",
         "summary": "Get all specialists",
         "tags": ["Specialists"],
-        "parameters": [],
+        "parameters": [
+          { "$ref": "#/components/query/Page" },
+          { "$ref": "#/components/query/PageSize" },
+          { "$ref": "#/components/query/Name" },
+          { "$ref": "#/components/query/Cpf" },
+          { "$ref": "#/components/query/Cnpj" },
+          { "$ref": "#/components/query/Phone" }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -1363,7 +1402,12 @@
         "operationId": "specialists.countSpecialists",
         "summary": "Count specialists",
         "tags": ["Specialists"],
-        "parameters": [],
+        "parameters": [
+          { "$ref": "#/components/query/Name" },
+          { "$ref": "#/components/query/Cpf" },
+          { "$ref": "#/components/query/Cnpj" },
+          { "$ref": "#/components/query/Phone" }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -1480,9 +1524,9 @@
         "summary": "Get specialist appointments",
         "tags": ["Specialists"],
         "parameters": [
-          {
-            "$ref": "#/components/parameters/Id"
-          }
+          { "$ref": "#/components/parameters/Id" },
+          { "$ref": "#/components/query/Page" },
+          { "$ref": "#/components/query/PageSize" }
         ],
         "responses": {
           "200": {
@@ -1524,9 +1568,7 @@
         "summary": "Get specialist service",
         "tags": ["Specialists"],
         "parameters": [
-          {
-            "$ref": "#/components/parameters/Id"
-          },
+          { "$ref": "#/components/parameters/Id" },
           {
             "name": "service_id",
             "in": "path",
@@ -1870,9 +1912,13 @@
         "name": "id",
         "in": "path",
         "required": true,
-        "schema": {
-          "$ref": "#/components/domain/Uuid"
-        }
+        "schema": { "$ref": "#/components/domain/Uuid" }
+      },
+      "ServiceId": {
+        "name": "service_id",
+        "in": "path",
+        "required": true,
+        "schema": { "$ref": "#/components/domain/Uuid" }
       }
     },
 
@@ -1880,46 +1926,62 @@
       "StartDate": {
         "in": "query",
         "name": "startDate",
-        "schema": {
-          "type": "string",
-          "format": "datetime"
-        }
+        "schema": { "$ref": "#/components/domain/Date" }
       },
       "EndDate": {
         "in": "query",
         "name": "endDate",
-        "schema": {
-          "type": "string",
-          "format": "datetime"
-        }
+        "schema": { "$ref": "#/components/domain/Date" }
       },
       "ServiceName": {
         "in": "query",
         "name": "serviceName",
-        "schema": {
-          "type": "string"
-        }
+        "schema": { "$ref": "#/components/domain/Name" }
+      },
+      "Service": {
+        "in": "query",
+        "name": "service",
+        "schema": { "$ref": "#/components/domain/Name" }
       },
       "Specialist": {
         "in": "query",
         "name": "specialist",
-        "schema": {
-          "type": "string"
-        }
+        "schema": { "$ref": "#/components/domain/Name" }
+      },
+      "Specialization": {
+        "in": "query",
+        "name": "specialization",
+        "schema": { "$ref": "#/components/domain/Name" }
       },
       "Customer": {
         "in": "query",
         "name": "customer",
-        "schema": {
-          "type": "string"
-        }
+        "schema": { "$ref": "#/components/domain/Name" }
       },
       "Status": {
         "in": "query",
         "name": "status",
-        "schema": {
-          "$ref": "#/components/schemas/AppointmentStatus"
-        }
+        "schema": { "$ref": "#/components/schemas/AppointmentStatus" }
+      },
+      "Name": {
+        "in": "query",
+        "name": "name",
+        "schema": { "$ref": "#/components/domain/Name" }
+      },
+      "Cpf": {
+        "in": "query",
+        "name": "cpf",
+        "schema": { "$ref": "#/components/domain/Cpf" }
+      },
+      "Cnpj": {
+        "in": "query",
+        "name": "cnpj",
+        "schema": { "$ref": "#/components/domain/Cnpj" }
+      },
+      "Phone": {
+        "in": "query",
+        "name": "phone",
+        "schema": { "$ref": "#/components/domain/Phone" }
       },
       "Page": {
         "in": "query",
@@ -1927,7 +1989,8 @@
         "schema": {
           "type": "number",
           "format": "integer",
-          "minimum": 0
+          "minimum": 0,
+          "default": 0
         }
       },
       "PageSize": {
@@ -1936,7 +1999,8 @@
         "schema": {
           "type": "number",
           "format": "integer",
-          "minimum": 1
+          "minimum": 1,
+          "default": 10
         }
       }
     },
@@ -1964,7 +2028,7 @@
       "Email": {
         "type": "string",
         "format": "email",
-        "minLength": 3,
+        "minLength": 1,
         "maxLength": 200
       },
       "Role": {
@@ -1973,7 +2037,7 @@
       },
       "Password": {
         "type": "string",
-        "minLength": 5,
+        "minLength": 1,
         "maxLength": 30
       },
       "Phone": {
@@ -2201,7 +2265,14 @@
           "code": {
             "type": "string",
             "description": "A machine-readable, domain-specific error code used by clients to implement conditional logic.",
-            "enum": ["auth_error", "forbidden_error", "validation_error", "resource_not_found", "resource_conflict", "internal_error"]
+            "enum": [
+              "auth_error",
+              "forbidden_error",
+              "validation_error",
+              "resource_not_found",
+              "resource_conflict",
+              "internal_error"
+            ]
           },
           "type": {
             "type": "string",
@@ -2275,7 +2346,7 @@
           "database": {
             "type": "object",
             "properties": {
-              "status": { "type": "string" },
+              "status": { "type": "string", "enum": ["connected", "disconnected"] },
               "version": { "type": "string" },
               "maxConnections": { "type": "number" },
               "openedConnections": { "type": "number" },

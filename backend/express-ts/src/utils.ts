@@ -46,7 +46,7 @@ export function getDateParam(value: any) {
 // parsers
 type Brand<T, B> = T & { readonly __brand: B }
 
-type UUID = Brand<string, 'UUID'>
+export type UUID = Brand<string, 'UUID'>
 
 export function parseUuid(value: unknown): UUID | null {
   if (typeof value != 'string') return null

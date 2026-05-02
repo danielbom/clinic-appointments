@@ -1,6 +1,7 @@
 import { Path } from '../lib/path'
 import { Writable } from '../lib/writable'
 import openApiJson from '../public/api/openapi.json' with { type: 'json' }
+import { collectApi, collectQueries, createQuerySchema } from './_generate'
 
 function getId(baseUrl: string, name: string) {
   return `${baseUrl}/schemas/${name.replace('#/components/', '')}.json`
@@ -29,13 +30,17 @@ function generateSchemas(schemasDir: Path, baseUrl: string, component: keyof typ
   for (const key in (openApiJson.components as any)[component]) {
     const id = `${component}/${key}`
     const filePath = schemasDir.append(id + '.json')
-    filePath.parent().mkdir({ existsOk: true, parents: true })
-    const schema = mapSchema(baseUrl, {
+    const ajvSchema = mapSchema(baseUrl, {
       $id: id,
       ...(openApiJson.components as any)[component][key],
     })
-    filePath.writeText(JSON.stringify(schema, null, 2))
+    filePath.parent().mkdir({ existsOk: true, parents: true })
+    filePath.writeText(JSON.stringify(ajvSchema, null, 2))
   }
+}
+
+function actionNameToType(actionName: string, type: string): string {
+  return actionName[0].toUpperCase() + actionName.slice(1) + type
 }
 
 function generateAllSchemas(schemasDir: Path, { baseUrl }: { baseUrl: string }) {
@@ -43,32 +48,44 @@ function generateAllSchemas(schemasDir: Path, { baseUrl }: { baseUrl: string }) 
   generateSchemas(schemasDir, baseUrl, 'domain')
   generateSchemas(schemasDir, baseUrl, 'body')
   generateSchemas(schemasDir, baseUrl, 'schemas')
-}
+  if (false /** disabled */) {
+    for (const key in openApiJson.components.query) {
+      const id = `query/${key}`
+      const filePath = schemasDir.append(id + '.json')
+      const ajvSchema = mapSchema(baseUrl, {
+        $id: id,
+        ...(openApiJson.components.query as any)[key].schema,
+      })
+      filePath.parent().mkdir({ existsOk: true, parents: true })
+      filePath.writeText(JSON.stringify(ajvSchema, null, 2))
+    }
+  }
+  if (false /** disabled */) {
+    const api = collectApi()
+    const queries = collectQueries()
 
-function collectApi() {
-  const api: Record<string, { actions: Record<string, { body: any | undefined; responses: Record<string, any> }> }> = {}
-  for (const pathUrl in openApiJson.paths) {
-    const path = (openApiJson.paths as any)[pathUrl]
-    openApiJson.paths['/api/appointments'].get.responses
-    for (const method in path) {
-      const endpoint = path[method]
-      const [resource, action] = endpoint.operationId.split('.')
-      if (!api[resource]) api[resource] = { actions: {} }
-      if (!api[resource].actions[action]) api[resource].actions[action] = { body: undefined, responses: {} }
-      for (const status in endpoint.responses) {
-        api[resource].actions[action].responses[status] = endpoint.responses[status]
-      }
-      if (endpoint.requestBody) {
-        api[resource].actions[action].body = endpoint.requestBody
+    for (const resource in api) {
+      const route = api[resource]
+      for (const action in route.actions) {
+        // const endpoint = route.actions[action]
+        const endpoint = route.actions[action] as any
+        if (endpoint.query) {
+          const schema = createQuerySchema(queries, endpoint.query)
+          const name = actionNameToType(action, 'Query')
+          const id = `queries/${name}`
+          const filePath = schemasDir.append(id + '.json')
+          const ajvSchema = mapSchema(baseUrl, { $id: id, ...schema })
+          filePath.parent().mkdir({ existsOk: true, parents: true })
+          filePath.writeText(JSON.stringify(ajvSchema, null, 2))
+        }
       }
     }
   }
-  return api
 }
 
-function hasBody(actions: Record<string, { body: any | undefined }>): boolean {
+function hasBodyOrQuery(actions: Record<string, { body: any | undefined; query: any | undefined }>): boolean {
   for (const key in actions) {
-    if (actions[key].body) return true
+    if (actions[key].body || actions[key].query) return true
   }
   return false
 }
@@ -83,18 +100,24 @@ function generateAjvValidations(w: Writable, { baseUrl }: { baseUrl: string }) {
   w.write('export const validations = {\n')
   for (const resource in api) {
     const route = api[resource]
-    if (!hasBody(route.actions)) continue
+    if (!hasBodyOrQuery(route.actions)) continue
 
     w.write(`  ${resource}: {\n`)
     for (const action in route.actions) {
       const endpoint = route.actions[action]
-      if (!endpoint.body) continue
+      if (!endpoint.body && !endpoint.query) continue
 
       w.write(`    ${action}: {\n`)
       if (endpoint.body) {
         const id = getId(baseUrl, endpoint.body.content['application/json'].schema.$ref)
-        const name = id.slice(id.lastIndexOf('/') + 1, id.lastIndexOf('.'))
-        w.write(`      body: ajv.compile<types.body.${name}>({\n`)
+        w.write(`      body: ajv.compile<types.api.${resource}.${action}.body>({\n`)
+        w.write(`        $ref: '${id}',\n`)
+        w.write(`      }),\n`)
+      }
+      if (false && endpoint.query /** disabled */) {
+        const name = actionNameToType(action, 'Query')
+        const id = getId(baseUrl, '#/components/queries/' + name)
+        w.write(`      query: ajv.compile<types.api.${resource}.${action}.query>({\n`)
         w.write(`        $ref: '${id}',\n`)
         w.write(`      }),\n`)
       }

@@ -233,13 +233,14 @@ export default {
       const reply = replier<types.api.appointments.listAppointments.responses>(res)
 
       // Collect query parameters, path parameters, and request body
-      const page = getIntParam(req.query.page, 0)
-      const pageSize = getIntParam(req.query.pageSize, 10)
-      const startDate = getDateParam(req.query.startDate)
-      const endDate = getDateParam(req.query.endDate)
-      const serviceName = getStringParam(req.query.serviceName)
-      const specialist = getStringParam(req.query.specialist)
-      const customer = getStringParam(req.query.customer)
+      const query: types.api.appointments.listAppointments.query = req.query
+      const page = getIntParam(query.page, 0)
+      const pageSize = getIntParam(query.pageSize, 10)
+      const startDate = getDateParam(query.startDate)
+      const endDate = getDateParam(query.endDate)
+      const serviceName = getStringParam(query.serviceName)
+      const specialist = getStringParam(query.specialist)
+      const customer = getStringParam(query.customer)
 
       // Validate e execute the usecase
       const rows = await db.appointments.findMany({
@@ -309,11 +310,12 @@ export default {
       const reply = replier<types.api.appointments.countAppointments.responses>(res)
 
       // Collect query parameters, path parameters, and request body
-      const startDate = getDateParam(req.query.startDate)
-      const endDate = getDateParam(req.query.endDate)
-      const serviceName = getStringParam(req.query.serviceName)
-      const specialist = getStringParam(req.query.specialist)
-      const customer = getStringParam(req.query.customer)
+      const query: types.api.appointments.countAppointments.query = req.query
+      const startDate = getDateParam(query.startDate)
+      const endDate = getDateParam(query.endDate)
+      const serviceName = getStringParam(query.serviceName)
+      const specialist = getStringParam(query.specialist)
+      const customer = getStringParam(query.customer)
 
       // Validate e execute the usecase
       const count = await db.appointments.count({
@@ -337,11 +339,12 @@ export default {
       const reply = replier<types.api.appointments.getAppointmentsCalendar.responses>(res)
 
       // Collect query parameters, path parameters, and request body
-      const startDate = getDateParam(req.query.startDate)
+      const query: types.api.appointments.getAppointmentsCalendar.query = req.query
+      const startDate = getDateParam(query.startDate)
       if (!startDate) {
         return reply.fail(errors.validation('query', 'startDate', 'invalid date format'))
       }
-      const endDate = getDateParam(req.query.endDate)
+      const endDate = getDateParam(query.endDate)
       if (!endDate) {
         return reply.fail(errors.validation('query', 'endDate', 'invalid date format'))
       }
@@ -398,11 +401,12 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       const reply = replier<types.api.appointments.getAppointmentsCalendarCount.responses>(res)
 
       // Collect query parameters, path parameters, and request body
-      const startDate = getDateParam(req.query.startDate)
+      const query: types.api.appointments.getAppointmentsCalendarCount.query = req.query
+      const startDate = getDateParam(query.startDate)
       if (!startDate) {
         return reply.fail(errors.validation('query', 'startDate', 'invalid date format'))
       }
-      const endDate = getDateParam(req.query.endDate)
+      const endDate = getDateParam(query.endDate)
       if (!endDate) {
         return reply.fail(errors.validation('query', 'endDate', 'invalid date format'))
       }
@@ -536,11 +540,12 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.customers.listCustomers.responses>(res)
 
       // Collect query parameters, path parameters, and request body
-      const page = getIntParam(req.query.page, 0)
-      const pageSize = getIntParam(req.query.pageSize, 10)
-      const name = getStringParam(req.query.name, '')
-      const cpf = getStringParam(req.query.cpf, '')
-      const phone = getStringParam(req.query.phone, '')
+      const query: types.api.customers.listCustomers.query = req.query
+      const page = getIntParam(query.page, 0)
+      const pageSize = getIntParam(query.pageSize, 10)
+      const name = getStringParam(query.name, '')
+      const cpf = getStringParam(query.cpf, '')
+      const phone = getStringParam(query.phone, '')
 
       // Validate e execute the usecase
       const rows = await db.customers.findMany({
@@ -590,9 +595,10 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.customers.countCustomers.responses>(res)
 
       // Collect query parameters, path parameters, and request body
-      const name = getStringParam(req.query.name, '')
-      const cpf = getStringParam(req.query.cpf, '')
-      const phone = getStringParam(req.query.phone, '')
+      const query: types.api.customers.countCustomers.query = req.query
+      const name = getStringParam(query.name, '')
+      const cpf = getStringParam(query.cpf, '')
+      const phone = getStringParam(query.phone, '')
 
       // Validate e execute the usecase
       const count = await db.customers.count({
@@ -687,12 +693,13 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.secretaries.listSecretaries.responses>(res)
 
       // Collect query parameters, path parameters, and request body
-      const page = getIntParam(req.query.page, 0)
-      const pageSize = getIntParam(req.query.pageSize, 10)
-      const name = getStringParam(req.query.name, '')
-      const cpf = getStringParam(req.query.cpf, '')
-      const cnpj = getStringParam(req.query.cnpj, '')
-      const phone = getStringParam(req.query.phone, '')
+      const query: types.api.secretaries.listSecretaries.query = req.query
+      const page = getIntParam(query.page, 0)
+      const pageSize = getIntParam(query.pageSize, 10)
+      const name = getStringParam(query.name, '')
+      const cpf = getStringParam(query.cpf, '')
+      const cnpj = getStringParam(query.cnpj, '')
+      const phone = getStringParam(query.phone, '')
 
       // Validate e execute the usecase
       const rows = await db.secretaries.findMany({
@@ -753,10 +760,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.secretaries.countSecretaries.responses>(res)
 
       // Collect query parameters, path parameters, and request body
-      const name = getStringParam(req.query.name, '')
-      const cpf = getStringParam(req.query.cpf, '')
-      const cnpj = getStringParam(req.query.cnpj, '')
-      const phone = getStringParam(req.query.phone, '')
+      const query: types.api.secretaries.countSecretaries.query = req.query
+      const name = getStringParam(query.name, '')
+      const cpf = getStringParam(query.cpf, '')
+      const cnpj = getStringParam(query.cnpj, '')
+      const phone = getStringParam(query.phone, '')
 
       // Validate e execute the usecase
       const count = await db.secretaries.count({
@@ -872,8 +880,9 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.servicesAvailable.listServicesAvailable.responses>(res)
 
       // Collect query parameters, path parameters, and request body
-      const page = getIntParam(req.query.page, 0)
-      const pageSize = getIntParam(req.query.pageSize, 10)
+      const query: types.api.servicesAvailable.listServicesAvailable.query = req.query
+      const page = getIntParam(query.page, 0)
+      const pageSize = getIntParam(query.pageSize, 10)
 
       // Validate e execute the usecase
       const rows = await db.specializations.findMany({
@@ -1029,11 +1038,12 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.services.listServices.responses>(res)
 
       // Collect query parameters, path parameters, and request body
-      const page = getIntParam(req.query.page, 0)
-      const pageSize = getIntParam(req.query.pageSize, 10)
-      const service = getStringParam(req.query.service).toLowerCase()
-      const specialist = getStringParam(req.query.specialist).toLowerCase()
-      const specialization = getStringParam(req.query.specialization).toLowerCase()
+      const query: types.api.services.listServices.query = req.query
+      const page = getIntParam(query.page, 0)
+      const pageSize = getIntParam(query.pageSize, 10)
+      const service = getStringParam(query.service).toLowerCase()
+      const specialist = getStringParam(query.specialist).toLowerCase()
+      const specialization = getStringParam(query.specialization).toLowerCase()
 
       // Validate e execute the usecase
       const rows = await db.services.findMany({
@@ -1085,9 +1095,10 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.services.countServices.responses>(res)
 
       // Collect query parameters, path parameters, and request body
-      const service = getStringParam(req.query.service).toLowerCase()
-      const specialist = getStringParam(req.query.specialist).toLowerCase()
-      const specialization = getStringParam(req.query.specialization).toLowerCase()
+      const query: types.api.services.countServices.query = req.query
+      const service = getStringParam(query.service).toLowerCase()
+      const specialist = getStringParam(query.specialist).toLowerCase()
+      const specialization = getStringParam(query.specialization).toLowerCase()
 
       // Validate e execute the usecase
       const count = await db.services.count({
@@ -1207,12 +1218,13 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.specialists.listSpecialists.responses>(res)
 
       // Collect query parameters, path parameters, and request body
-      const page = getIntParam(req.query.page, 0)
-      const pageSize = getIntParam(req.query.pageSize, 10)
-      const name = getStringParam(req.query.name)
-      const cpf = getStringParam(req.query.cpf)
-      const cnpj = getStringParam(req.query.cnpj)
-      const phone = getStringParam(req.query.phone)
+      const query: types.api.specialists.listSpecialists.query = req.query
+      const page = getIntParam(query.page, 0)
+      const pageSize = getIntParam(query.pageSize, 10)
+      const name = getStringParam(query.name)
+      const cpf = getStringParam(query.cpf)
+      const cnpj = getStringParam(query.cnpj)
+      const phone = getStringParam(query.phone)
 
       // Validate e execute the usecase
       const rows = await db.specialists.findMany({
@@ -1286,10 +1298,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.specialists.countSpecialists.responses>(res)
 
       // Collect query parameters, path parameters, and request body
-      const name = getStringParam(req.query.name)
-      const cpf = getStringParam(req.query.cpf)
-      const cnpj = getStringParam(req.query.cnpj)
-      const phone = getStringParam(req.query.phone)
+      const query: types.api.specialists.countSpecialists.query = req.query
+      const name = getStringParam(query.name)
+      const cpf = getStringParam(query.cpf)
+      const cnpj = getStringParam(query.cnpj)
+      const phone = getStringParam(query.phone)
 
       // Validate e execute the usecase
       const count = await db.specialists.count({
@@ -1374,10 +1387,16 @@ ORDER BY "month" ASC;`
         return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
       }
 
+      const query: types.api.specialists.getSpecialistAppointments.query = req.query
+      const page = getIntParam(query.page, 0)
+      const pageSize = getIntParam(query.pageSize, 10)
+
       // Validate e execute the usecase
       const rows = await db.appointments.findMany({
         where: { specialist_id: id },
         include: { service_names: {}, customers: {} },
+        take: pageSize,
+        skip: page * pageSize,
       })
 
       // Format the response

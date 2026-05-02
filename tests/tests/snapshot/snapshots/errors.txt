@@ -141,7 +141,7 @@ Response: {
   },
   "errors": {
     "email": [
-      "must NOT have fewer than 3 characters"
+      "is required"
     ]
   },
   "instance": "/api/auth/login",
@@ -165,7 +165,7 @@ Response: {
   },
   "errors": {
     "email": [
-      "must NOT have fewer than 3 characters"
+      "is required"
     ]
   },
   "instance": "/api/auth/login",

@@ -1,5 +1,6 @@
 import { Path } from '../lib/path'
 import { Writable, WriteStdout } from '../lib/writable'
+import { collectApi, collectQueries, createQuerySchema } from './_generate'
 import openApiJson from '../public/api/openapi.json' with { type: 'json' }
 
 function formatRef(ref: string) {
@@ -8,11 +9,10 @@ function formatRef(ref: string) {
 
 function generateDocs(w: Writable, ident: string, item: any) {
   const docs: string[] = []
-  if (item.description) {
-    docs.push(` * @description: ${item.description}\n`)
-  }
-  if (item.format) {
-    docs.push(` * @format: ${item.format}\n`)
+  for (const key of ['description', 'default', 'format', 'minimum', 'maximum', 'minLength', 'maxLength']) {
+    if (item[key] != null) {
+      docs.push(` * @${key}: ${item[key]}\n`)
+    }
   }
   if (docs.length > 0) {
     w.write(ident)
@@ -143,27 +143,6 @@ function generateRootType(w: Writable, name: string, item: any) {
   }
 }
 
-function collectApi() {
-  const api: Record<string, { actions: Record<string, { body: any | undefined; responses: Record<string, any> }> }> = {}
-  for (const pathUrl in openApiJson.paths) {
-    const path = (openApiJson.paths as any)[pathUrl]
-    openApiJson.paths['/api/appointments'].get.responses
-    for (const method in path) {
-      const endpoint = path[method]
-      const [resource, action] = endpoint.operationId.split('.')
-      if (!api[resource]) api[resource] = { actions: {} }
-      if (!api[resource].actions[action]) api[resource].actions[action] = { body: undefined, responses: {} }
-      for (const status in endpoint.responses) {
-        api[resource].actions[action].responses[status] = endpoint.responses[status]
-      }
-      if (endpoint.requestBody) {
-        api[resource].actions[action].body = endpoint.requestBody
-      }
-    }
-  }
-  return api
-}
-
 function generateNamespace(w: Writable, component: keyof typeof openApiJson.components) {
   let count = 0
   w.write(`export namespace ${component} {\n`)
@@ -180,15 +159,9 @@ function generateNamespace(w: Writable, component: keyof typeof openApiJson.comp
   w.write('}\n')
 }
 
-function generateSwaggerTypes(w: Writable) {
-  generateNamespace(w, 'domain')
-  w.write('\n')
-  generateNamespace(w, 'schemas')
-  w.write('\n')
-  generateNamespace(w, 'body')
-  w.write('\n')
-
+function generateSwaggerTypesApi(w: Writable) {
   const api = collectApi()
+  const queries = collectQueries()
 
   let count = 0
   w.write('export namespace api {\n')
@@ -208,6 +181,14 @@ function generateSwaggerTypes(w: Writable) {
       }
 
       w.write(`    export namespace ${action} {\n`)
+
+      if (endpoint.query) {
+        const schema = createQuerySchema(queries, endpoint.query)
+        w.write(`      export type query = `)
+        generateType(w, '      ', schema)
+        w.write('\n')
+        w.write('\n')
+      }
 
       if (endpoint.body) {
         const schema = endpoint.body?.content?.['application/json']?.schema
@@ -246,6 +227,35 @@ function generateSwaggerTypes(w: Writable) {
     count++
   }
   w.write('}\n')
+}
+
+function generateSwaggerTypes(w: Writable) {
+  generateNamespace(w, 'domain')
+  w.write('\n')
+  generateNamespace(w, 'schemas')
+  w.write('\n')
+  generateNamespace(w, 'body')
+  w.write('\n')
+
+  {
+    let count = 0
+    w.write(`export namespace query {\n`)
+    for (const key in openApiJson.components.query) {
+      if (count > 0) {
+        w.write('\n')
+      }
+      const item = (openApiJson.components.query as any)[key]
+      generateDocs(w, '  ', item.schema)
+      w.write(`  export type ${key} = `)
+      generateType(w, '', item.schema)
+      w.write('\n')
+      count++
+    }
+    w.write('}\n')
+    w.write('\n')
+  }
+
+  generateSwaggerTypesApi(w)
 }
 
 const DEBUG = false
