@@ -2,5 +2,6 @@
   "$id": "https://dev-clinic-appointments.com.br/schemas/domain/Phone.json",
   "type": "string",
   "format": "phone",
-  "maxLength": 20
+  "description": "Phone digits with punctuations (spaces matter)",
+  "maxLength": 24
 }

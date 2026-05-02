@@ -341,11 +341,7 @@
         "operationId": "appointments.getAppointmentById",
         "summary": "Get appointment by id",
         "tags": ["Appointments"],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Id"
-          }
-        ],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "200": {
             "content": {
@@ -380,6 +376,7 @@
         "operationId": "appointments.updateAppointment",
         "summary": "Update an appointment",
         "tags": ["Appointments"],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "requestBody": {
           "required": true,
           "content": {
@@ -415,6 +412,7 @@
         "operationId": "appointments.deleteAppointment",
         "summary": "Delete an appointment",
         "tags": ["Appointments"],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "204": {
             "description": "Item deleted successfully"
@@ -548,11 +546,7 @@
         "operationId": "customers.getCustomerById",
         "summary": "Get customer by id",
         "tags": ["Customers"],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Id"
-          }
-        ],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "200": {
             "content": {
@@ -587,6 +581,7 @@
         "operationId": "customers.updateCustomer",
         "summary": "Update an customer",
         "tags": ["Customers"],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "requestBody": {
           "required": true,
           "content": {
@@ -622,6 +617,7 @@
         "operationId": "customers.deleteCustomer",
         "summary": "Delete an customer",
         "tags": ["Customers"],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "204": {
             "description": "Item deleted successfully"
@@ -699,6 +695,7 @@
         },
         "responses": {
           "201": {
+            "description": "Secretary created successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -766,11 +763,7 @@
         "operationId": "secretaries.getSecretaryById",
         "summary": "Get secretaries by id",
         "tags": ["Secretaries"],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Id"
-          }
-        ],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "200": {
             "content": {
@@ -805,6 +798,7 @@
         "operationId": "secretaries.updateSecretary",
         "summary": "Update an secretaries",
         "tags": ["Secretaries"],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "requestBody": {
           "required": true,
           "content": {
@@ -817,6 +811,7 @@
         },
         "responses": {
           "200": {
+            "description": "Secretary updated successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -858,9 +853,10 @@
         "operationId": "secretaries.deleteSecretary",
         "summary": "Delete an secretaries",
         "tags": ["Secretaries"],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "204": {
-            "description": "Item deleted successfully"
+            "description": "Secretary deleted successfully"
           },
           "400": {
             "content": {
@@ -928,6 +924,7 @@
         },
         "responses": {
           "201": {
+            "description": "Service Available created successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -962,11 +959,7 @@
         "operationId": "servicesAvailable.getServiceAvailableById",
         "summary": "Get a service available by id",
         "tags": ["Services Available"],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Id"
-          }
-        ],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "200": {
             "content": {
@@ -1001,6 +994,7 @@
         "operationId": "servicesAvailable.updateServiceAvailable",
         "summary": "Update an service available",
         "tags": ["Services Available"],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "requestBody": {
           "required": true,
           "content": {
@@ -1013,6 +1007,7 @@
         },
         "responses": {
           "200": {
+            "description": "Service Available updated successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -1045,9 +1040,10 @@
         "operationId": "servicesAvailable.deleteServiceAvailable",
         "summary": "Delete a service available",
         "tags": ["Services Available"],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "204": {
-            "description": "Item deleted successfully"
+            "description": "Service Available deleted successfully"
           },
           "400": {
             "content": {
@@ -1121,6 +1117,7 @@
         },
         "responses": {
           "201": {
+            "description": "Service created successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -1178,11 +1175,7 @@
         "operationId": "services.getServiceById",
         "summary": "Get services by id",
         "tags": ["Services"],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Id"
-          }
-        ],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "200": {
             "content": {
@@ -1217,6 +1210,7 @@
         "operationId": "services.updateService",
         "summary": "Update a services",
         "tags": ["Services"],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "requestBody": {
           "required": true,
           "content": {
@@ -1229,6 +1223,7 @@
         },
         "responses": {
           "200": {
+            "description": "Service updated successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -1261,9 +1256,10 @@
         "operationId": "services.deleteService",
         "summary": "Delete a services",
         "tags": ["Services"],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "204": {
-            "description": "Item deleted successfully"
+            "description": "Service deleted successfully"
           },
           "400": {
             "content": {
@@ -1368,6 +1364,7 @@
         },
         "responses": {
           "201": {
+            "description": "Specialist created successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -1435,11 +1432,7 @@
         "operationId": "specialists.getSpecialistServices",
         "summary": "Get specialist services",
         "tags": ["Specialists"],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Id"
-          }
-        ],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "200": {
             "content": {
@@ -1479,11 +1472,7 @@
         "operationId": "specialists.getSpecialistSpecializations",
         "summary": "Get specialist specializations",
         "tags": ["Specialists"],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Id"
-          }
-        ],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "200": {
             "content": {
@@ -1614,11 +1603,7 @@
         "operationId": "specialists.getSpecialistById",
         "summary": "Get specialists by id",
         "tags": ["Specialists"],
-        "parameters": [
-          {
-            "$ref": "#/components/parameters/Id"
-          }
-        ],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "200": {
             "content": {
@@ -1653,6 +1638,7 @@
         "operationId": "specialists.updateSpecialist",
         "summary": "Update a specialists",
         "tags": ["Specialists"],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "requestBody": {
           "required": true,
           "content": {
@@ -1665,6 +1651,7 @@
         },
         "responses": {
           "200": {
+            "description": "Specialist updated successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -1697,9 +1684,10 @@
         "operationId": "specialists.deleteSpecialist",
         "summary": "Delete a specialists",
         "tags": ["Specialists"],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "204": {
-            "description": "Item deleted successfully"
+            "description": "Specialist deleted successfully"
           },
           "400": {
             "content": {
@@ -1767,6 +1755,7 @@
         },
         "responses": {
           "201": {
+            "description": "Specialization created successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -1801,6 +1790,7 @@
         "operationId": "specializations.updateSpecialization",
         "summary": "Update an specializations",
         "tags": ["Specializations"],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "requestBody": {
           "required": true,
           "content": {
@@ -1813,6 +1803,7 @@
         },
         "responses": {
           "200": {
+            "description": "Specialization updated successfully",
             "content": {
               "application/json": {
                 "schema": {
@@ -1845,9 +1836,10 @@
         "operationId": "specializations.deleteSpecialization",
         "summary": "Delete a specializations",
         "tags": ["Specializations"],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "204": {
-            "description": "Item deleted successfully"
+            "description": "Specialization deleted successfully"
           },
           "400": {
             "content": {
@@ -2009,53 +2001,63 @@
       "Uuid": {
         "type": "string",
         "format": "uuid",
-        "description": "Example: 019dcd01-5a4a-736f-9407-8e69aa9433bc",
+        "example": "019dcd01-5a4a-736f-9407-8e69aa9433bc",
         "maxLength": 36
       },
       "Price": {
         "type": "number",
         "format": "integer",
-        "description": "in cents",
+        "description": "Integer value in cents.",
         "minimum": 0
       },
       "Duration": {
         "type": "number",
         "format": "integer",
-        "description": "in minutes",
+        "description": "Integer value in minutes.",
         "minimum": 0,
         "maximum": 600
       },
       "Email": {
         "type": "string",
         "format": "email",
+        "example": "user@domain.com",
         "minLength": 1,
         "maxLength": 200
       },
       "Role": {
         "type": "string",
+        "enum": ["admin", "secretary"],
         "maxLength": 36
       },
       "Password": {
         "type": "string",
+        "description": "Access password.",
+        "example": "59@qhPYphEUYwGDK",
         "minLength": 1,
         "maxLength": 30
       },
       "Phone": {
         "type": "string",
         "format": "phone",
-        "maxLength": 20
+        "description": "Phone digits with punctuations (spaces matter)",
+        "example": "+55 (94) 4019-9572",
+        "maxLength": 24
       },
       "Cpf": {
         "type": "string",
         "format": "cpf",
+        "description": "CPF digits with or without punctuations",
+        "example": "900.394.636-13 or 90039463613",
         "minLength": 11,
-        "maxLength": 11
+        "maxLength": 14
       },
       "Cnpj": {
         "type": "string",
         "format": "cnpj",
+        "description": "CNPJ digits with or without punctuations",
+        "example": "20.573.002/0001-87 or 20573002000187",
         "minLength": 14,
-        "maxLength": 14
+        "maxLength": 18
       },
       "Name": {
         "type": "string",
@@ -2066,16 +2068,18 @@
       "Date": {
         "type": "string",
         "format": "date",
+        "description": "date only string in format YYYY-MM-DD",
+        "example": "2026-05-02",
         "minLength": 10,
-        "maxLength": 10,
-        "description": "date only string in format YYYY-MM-DD"
+        "maxLength": 10
       },
       "Time": {
         "type": "string",
         "format": "time",
+        "description": "time only string in format HH:MM:SS",
+        "example": "12:21:50",
         "minLength": 8,
-        "maxLength": 8,
-        "description": "time only string in format HH-MM-SS"
+        "maxLength": 8
       },
       "Resource": {
         "type": "string",

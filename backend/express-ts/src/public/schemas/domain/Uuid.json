@@ -2,6 +2,5 @@
   "$id": "https://dev-clinic-appointments.com.br/schemas/domain/Uuid.json",
   "type": "string",
   "format": "uuid",
-  "description": "Example: 019dcd01-5a4a-736f-9407-8e69aa9433bc",
   "maxLength": 36
 }

@@ -9,9 +9,12 @@ function formatRef(ref: string) {
 
 function generateDocs(w: Writable, ident: string, item: any) {
   const docs: string[] = []
-  for (const key of ['description', 'default', 'format', 'minimum', 'maximum', 'minLength', 'maxLength']) {
+  if (item.description) {
+      docs.push(` * ${item.description}\n`)
+  }
+  for (const key of ['default', 'format', 'example', 'minimum', 'maximum', 'minLength', 'maxLength']) {
     if (item[key] != null) {
-      docs.push(` * @${key}: ${item[key]}\n`)
+      docs.push(` * @${key} ${item[key]}\n`)
     }
   }
   if (docs.length > 0) {

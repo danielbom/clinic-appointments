@@ -23,6 +23,9 @@ function mapSchema(baseUrl: string, schema: any) {
   if (schema.type === 'array') {
     schema.items = mapSchema(baseUrl, { ...schema.items })
   }
+  if (schema.example) {
+    delete schema.example
+  }
   return schema
 }
 

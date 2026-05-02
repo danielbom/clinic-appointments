@@ -2,6 +2,6 @@
   "$id": "https://dev-clinic-appointments.com.br/schemas/domain/Price.json",
   "type": "number",
   "format": "integer",
-  "description": "in cents",
+  "description": "Integer value in cents.",
   "minimum": 0
 }

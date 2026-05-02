@@ -2,7 +2,7 @@
   "$id": "https://dev-clinic-appointments.com.br/schemas/domain/Date.json",
   "type": "string",
   "format": "date",
+  "description": "date only string in format YYYY-MM-DD",
   "minLength": 10,
-  "maxLength": 10,
-  "description": "date only string in format YYYY-MM-DD"
+  "maxLength": 10
 }
