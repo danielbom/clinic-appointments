@@ -145,12 +145,12 @@ export default {
       // Validate e execute the usecase
       const identity = await getIdentity({ email: args.email })
       if (!identity) {
-        return reply.fail(errors.auth('invalid_credentials'))
+        return reply.fail(errors.invalidCredentials())
       }
 
       const validPassword = await verifyPassword(args.password, identity.password)
       if (!validPassword) {
-        return reply.fail(errors.auth('invalid_credentials'))
+        return reply.fail(errors.invalidCredentials())
       }
 
       const data: JwtData = {
@@ -170,14 +170,14 @@ export default {
       // Collect query parameters, path parameters, and request body
       const refreshToken = getAccessTokenFromRequest(req)
       if (!refreshToken) {
-        return reply.fail(errors.auth('invalid_token'))
+        return reply.fail(errors.invalidToken())
       }
 
       const jwtData = await verifyJWT(refreshToken)
         .then(extractJwtData)
         .catch(() => null)
       if (!jwtData || !isRefreshToken(jwtData)) {
-        return reply.fail(errors.auth('invalid_token'))
+        return reply.fail(errors.invalidToken())
       }
 
       const id = parseUuid(jwtData.userId)
@@ -209,14 +209,14 @@ export default {
       // Collect query parameters, path parameters, and request body
       const jwtData = await getJwtDataFromRequest(req)
       if (!jwtData) {
-        return reply.fail(errors.auth('invalid_token'))
+        return reply.fail(errors.invalidToken())
       }
 
       // Validate e execute the usecase
       const identity = await getIdentity({ id: jwtData.userId })
       if (!identity) {
         console.error('jwt userId without identity:', jwtData.userId)
-        return reply.fail(errors.auth('invalid_token'))
+        return reply.fail(errors.invalidToken())
       }
 
       // Format the response
@@ -224,7 +224,7 @@ export default {
         id: identity.id,
         name: identity.name,
         email: identity.email,
-        role: identity.role,
+        role: identity.role as any,
       })
     },
   },

@@ -1,0 +1,37 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/errors/NotFoundProblemDetails.json",
+  "description": "Represents a missing resource. Uses code 'resource_not_found' and HTTP status 404. Occurs when the specified resource cannot be found.",
+  "allOf": [
+    {
+      "$ref": "#/components/errors/ProblemDetails"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "resource_not_found"
+          ]
+        },
+        "status": {
+          "type": "number",
+          "enum": [
+            404
+          ]
+        },
+        "title": {
+          "type": "string",
+          "enum": [
+            "Resource not found"
+          ]
+        }
+      },
+      "required": [
+        "code",
+        "status",
+        "title"
+      ]
+    }
+  ]
+}

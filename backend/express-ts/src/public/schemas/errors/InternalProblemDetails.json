@@ -1,0 +1,37 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/errors/InternalProblemDetails.json",
+  "description": "Represents an unexpected server error. Uses code 'internal_error' and HTTP status 500. Indicates that the server encountered an unhandled condition while processing the request.",
+  "allOf": [
+    {
+      "$ref": "#/components/errors/ProblemDetails"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "internal_error"
+          ]
+        },
+        "status": {
+          "type": "number",
+          "enum": [
+            500
+          ]
+        },
+        "title": {
+          "type": "string",
+          "enum": [
+            "Internal error"
+          ]
+        }
+      },
+      "required": [
+        "code",
+        "status",
+        "title"
+      ]
+    }
+  ]
+}

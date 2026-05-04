@@ -10,7 +10,7 @@ function formatRef(ref: string) {
 function generateDocs(w: Writable, ident: string, item: any) {
   const docs: string[] = []
   if (item.description) {
-      docs.push(` * ${item.description}\n`)
+    docs.push(` * ${item.description}\n`)
   }
   for (const key of ['default', 'format', 'example', 'minimum', 'maximum', 'minLength', 'maxLength']) {
     if (item[key] != null) {
@@ -63,6 +63,40 @@ function generateString(w: Writable, ident: string, item: any) {
   }
 }
 
+function generateNumber(w: Writable, ident: string, item: any) {
+  if (item.type !== 'number') throw new Error()
+
+  if (item.enum && item.enum.length === 1) {
+    const values: string[] = item.enum
+    if (values.length > 10) {
+      let count = 0
+      w.write('//\n')
+      for (const value of values) {
+        w.write(ident)
+        w.write(`  | ${value}`)
+        if (count === 0) {
+          w.write(' //')
+        }
+        if (count + 1 < values.length) {
+          w.write('\n')
+        }
+        count++
+      }
+    } else {
+      let count = 0
+      for (const value of values) {
+        if (count > 0) {
+          w.write(' | ')
+        }
+        w.write(`${value}`)
+        count++
+      }
+    }
+  } else {
+    w.write(item.type)
+  }
+}
+
 function generateType(w: Writable, ident: string, item: any) {
   if (item.$ref) {
     w.write(formatRef(item.$ref))
@@ -107,6 +141,8 @@ function generateType(w: Writable, ident: string, item: any) {
       }
     } else if (item.type === 'string') {
       generateString(w, ident, item)
+    } else if (item.type === 'number') {
+      generateNumber(w, ident, item)
     } else {
       w.write(item.type)
     }
@@ -126,6 +162,9 @@ function generateRootType(w: Writable, name: string, item: any) {
     } else if (item.type === 'string') {
       w.write(`  export type ${name} = `)
       generateString(w, '  ', item)
+    } else if (item.type === 'number') {
+      w.write(`  export type ${name} = `)
+      generateNumber(w, '  ', item)
     } else {
       w.write(`  export type ${name} = ${item.type}`)
     }
@@ -236,6 +275,8 @@ function generateSwaggerTypes(w: Writable) {
   generateNamespace(w, 'domain')
   w.write('\n')
   generateNamespace(w, 'schemas')
+  w.write('\n')
+  generateNamespace(w, 'errors')
   w.write('\n')
   generateNamespace(w, 'body')
   w.write('\n')

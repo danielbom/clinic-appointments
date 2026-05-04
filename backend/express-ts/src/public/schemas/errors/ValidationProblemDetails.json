@@ -1,0 +1,37 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/errors/ValidationProblemDetails.json",
+  "description": "Represents an error caused by invalid input or an invalid resource state. Uses code 'validation_error' and HTTP status 400. Includes detailed validation messages in the 'errors' property and may indicate the input location through 'source'.",
+  "allOf": [
+    {
+      "$ref": "#/components/errors/ProblemDetails"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "validation_error"
+          ]
+        },
+        "status": {
+          "type": "number",
+          "enum": [
+            400
+          ]
+        },
+        "title": {
+          "type": "string",
+          "enum": [
+            "Validation error"
+          ]
+        }
+      },
+      "required": [
+        "code",
+        "status",
+        "title"
+      ]
+    }
+  ]
+}

@@ -51,6 +51,7 @@ function generateAllSchemas(schemasDir: Path, { baseUrl }: { baseUrl: string }) 
   generateSchemas(schemasDir, baseUrl, 'domain')
   generateSchemas(schemasDir, baseUrl, 'body')
   generateSchemas(schemasDir, baseUrl, 'schemas')
+  generateSchemas(schemasDir, baseUrl, 'errors')
   if (false /** disabled */) {
     for (const key in openApiJson.components.query) {
       const id = `query/${key}`

@@ -2,7 +2,7 @@ import * as types from './swagger-types'
 
 const devUrl = 'https://dev-clinic-appointments.com.br'
 export const errors = {
-  missingValue(location: 'body' | 'path' | 'query', path = '') {
+  missingValue(location: 'body' | 'path' | 'query', path = ''): types.errors.ValidationProblemDetails {
     return {
       code: 'validation_error' as const,
       type: `${devUrl}/schemas/errors/ValidationError.json`,
@@ -15,7 +15,7 @@ export const errors = {
       },
     }
   },
-  validation(location: 'body' | 'path' | 'query', path: string, reason: string) {
+  validation(location: 'body' | 'path' | 'query', path: string, reason: string): types.errors.ValidationProblemDetails {
     if (reason === 'must NOT have fewer than 1 characters') {
       reason = 'is required'
     } else if (reason.startsWith('must be ')) {
@@ -35,7 +35,7 @@ export const errors = {
       },
     }
   },
-  invalidState(detail: string) {
+  invalidState(detail: string): types.errors.ValidationProblemDetails {
     return {
       code: 'validation_error' as const,
       type: `${devUrl}/schemas/errors/ValidationError.json`,
@@ -44,7 +44,7 @@ export const errors = {
       status: 400 as const,
     }
   },
-  ajv(error: { instancePath: string; message?: string | undefined }) {
+  ajv(error: { instancePath: string; message?: string | undefined }): types.errors.ValidationProblemDetails {
     const instancePath = error.instancePath
     let reason = error.message ?? ''
     let key = ''
@@ -63,39 +63,37 @@ export const errors = {
     }
     return this.validation('body', key, reason)
   },
-  auth(type: 'invalid_credentials' | 'invalid_token') {
-    let title = ''
-    let detail = ''
-    switch (type) {
-      case 'invalid_credentials': {
-        title = 'Invalid credentials'
-        detail = 'Email or password is incorrect'
-        break
-      }
-      case 'invalid_token': {
-        title = 'Invalid token'
-        detail = 'JWT token is invalid or expired'
-        break
-      }
-    }
+
+  invalidCredentials(): types.errors.AuthProblemDetails {
     return {
       code: 'auth_error' as const,
       type: `${devUrl}/schemas/errors/AuthError.json`,
-      title,
-      detail,
+      title: 'Invalid credentials',
+      detail: 'Email or password is incorrect',
       status: 401 as const,
     }
   },
-  invalidAccess(detail: string) {
+  invalidToken(): types.errors.AuthProblemDetails {
+    return {
+      code: 'auth_error' as const,
+      type: `${devUrl}/schemas/errors/AuthError.json`,
+      title: 'Invalid token',
+      detail: 'JWT token is invalid or expired',
+      status: 401 as const,
+    }
+  },
+
+  invalidAccess(detail: string): types.errors.InvalidAccessProblemDetails {
     return {
       code: 'forbidden_error' as const,
       type: `${devUrl}/schemas/errors/ForbiddenError.json`,
-      title: 'ForbiddenError',
+      title: 'Forbidden error',
       detail,
       status: 403 as const,
     }
   },
-  notFound(resource: types.domain.Resource) {
+
+  notFound(resource: types.domain.Resource): types.errors.NotFoundProblemDetails {
     return {
       code: 'resource_not_found' as const,
       type: `${devUrl}/schemas/errors/ResourceNotFound.json`,
@@ -104,16 +102,18 @@ export const errors = {
       status: 404 as const,
     }
   },
-  alreadyExists(resource: types.domain.Resource, key: string) {
+
+  alreadyExists(resource: types.domain.Resource, key: string): types.errors.ConflictProblemDetails {
     return {
       code: 'resource_conflict' as const,
       type: `${devUrl}/schemas/errors/ResourceConflict.json`,
-      title: 'Resource already exists',
+      title: 'Resource conflict',
       detail: `${resource} with this ${key} already exists`,
       status: 409 as const,
     }
   },
-  internal(detail?: string) {
+
+  internal(detail?: string): types.errors.InternalProblemDetails {
     return {
       code: 'internal_error' as const,
       type: `${devUrl}/schemas/errors/InternalError.json`,
@@ -122,9 +122,4 @@ export const errors = {
       status: 500 as const,
     }
   },
-}
-
-{
-  let typecheck: Record<string, (...args: any) => types.schemas.ProblemDetails> = errors
-  typecheck
 }
