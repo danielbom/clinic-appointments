@@ -3,6 +3,7 @@ import _ from 'lodash'
 import { addDays, addHours, endOfYear, startOfYear } from 'date-fns'
 
 import { API_URL } from '../config'
+import { formatJson } from '../api-extensions'
 
 import { Api, AppointmentStatus, Config } from '../../src/lib/api'
 import { getDatePart, getHourPart } from '../../src/lib/date-fns-ext'
@@ -563,6 +564,15 @@ function main() {
       throw error
     })
     .finally(() => {
+      {
+        const timing = tracker.timing()
+        const formatted = Object.entries(timing).map(([key, value]) => [key, formatJson(value)])
+        const size = formatted.reduce((curr, pair) => Math.max(curr, pair[0].length), 0)
+        snapshotLog.write('Timing:\n')
+        for (const [key, value] of formatted) {
+          snapshotLog.write(` - ${key.padEnd(size, ' ')} = Timing${value}\n`)
+        }
+      }
       console.log(timeMessage + ` End api snapshot: ${API_URL}`)
       console.timeEnd(timeMessage + ' Time')
       snapshotLog.close()
