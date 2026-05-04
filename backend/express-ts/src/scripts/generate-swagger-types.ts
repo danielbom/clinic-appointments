@@ -7,16 +7,7 @@ function formatRef(ref: string) {
   return ref.replace('#/components/', '').replace('/', '.')
 }
 
-function generateDocs(w: Writable, ident: string, item: any) {
-  const docs: string[] = []
-  if (item.description) {
-    docs.push(` * ${item.description}\n`)
-  }
-  for (const key of ['default', 'format', 'example', 'minimum', 'maximum', 'minLength', 'maxLength']) {
-    if (item[key] != null) {
-      docs.push(` * @${key} ${item[key]}\n`)
-    }
-  }
+function writeDocs(w: Writable, ident: string, docs: string[]) {
   if (docs.length > 0) {
     w.write(ident)
     w.write('/**\n')
@@ -27,6 +18,18 @@ function generateDocs(w: Writable, ident: string, item: any) {
     w.write(ident)
     w.write(' */\n')
   }
+}
+function generateDocs(w: Writable, ident: string, item: any) {
+  const docs: string[] = []
+  if (item.description) {
+    docs.push(` * ${item.description}\n`)
+  }
+  for (const key of ['default', 'format', 'example', 'minimum', 'maximum', 'minLength', 'maxLength']) {
+    if (item[key] != null) {
+      docs.push(` * @${key} ${item[key]}\n`)
+    }
+  }
+  writeDocs(w, ident, docs)
 }
 
 function generateString(w: Writable, ident: string, item: any) {
@@ -220,6 +223,19 @@ function generateSwaggerTypesApi(w: Writable) {
       const endpoint = route.actions[action]
       if (countResource > 0) {
         w.write('\n')
+      }
+
+      {
+        const docs: string[] = []
+        if (endpoint.description) {
+          docs.push(` * ${endpoint.description}\n`)
+        }
+        docs.push(` * @id ${endpoint.id}\n`)
+        docs.push(` * @route ${endpoint.method.toUpperCase()} ${endpoint.url}\n`)
+        if (endpoint.security && endpoint.security.length > 0) {
+          docs.push(` * @security ${endpoint.security.map((it) => Object.keys(it)).join(', ')}\n`)
+        }
+        writeDocs(w, '    ', docs)
       }
 
       w.write(`    export namespace ${action} {\n`)

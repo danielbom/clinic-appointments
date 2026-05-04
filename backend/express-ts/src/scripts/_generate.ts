@@ -2,26 +2,33 @@ import openApiJson from '../public/api/openapi.json' with { type: 'json' }
 
 export function collectApi() {
   type Action = {
-    body: any | undefined
-    query: { $ref: string }[] | undefined
+    method: string
+    url: string
+    id: string
+    description?: string
+    body?: any
+    security?: Record<string, any[]>[]
+    query?: { $ref: string }[]
     responses: Record<string, any>
   }
   const api: Record<string, { actions: Record<string, Action> }> = {}
-  for (const pathUrl in openApiJson.paths) {
-    const path = (openApiJson.paths as any)[pathUrl]
-    openApiJson.paths['/api/appointments'].get.responses
+  for (const url in openApiJson.paths) {
+    const path = (openApiJson.paths as any)[url]
     for (const method in path) {
       const endpoint = path[method]
       const [resource, action] = endpoint.operationId.split('.')
-      if (!api[resource]) api[resource] = { actions: {} }
-      if (!api[resource].actions[action])
-        api[resource].actions[action] = { body: undefined, query: undefined, responses: {} }
+      if (!api[resource]) {
+        api[resource] = { actions: {} }
+      }
+      if (!api[resource].actions[action]) {
+        api[resource].actions[action] = { responses: {}, url, method, id: endpoint.operationId }
+      }
       for (const status in endpoint.responses) {
         api[resource].actions[action].responses[status] = endpoint.responses[status]
       }
-      if (endpoint.requestBody) {
-        api[resource].actions[action].body = endpoint.requestBody
-      }
+      api[resource].actions[action].description = endpoint.description
+      api[resource].actions[action].body = endpoint.requestBody
+      api[resource].actions[action].security = endpoint.security
       if (endpoint.parameters) {
         const query = endpoint.parameters.filter((it: any) => it.$ref?.startsWith('#/components/query/'))
         if (query.length > 0) {

@@ -529,6 +529,10 @@ export namespace query {
 
 export namespace api {
   export namespace health {
+    /**
+     * @id health.healthCheck
+     * @route GET /api/health
+     */
     export namespace healthCheck {
       export type responses = {
         /**
@@ -540,6 +544,10 @@ export namespace api {
   }
 
   export namespace auth {
+    /**
+     * @id auth.login
+     * @route POST /api/auth/login
+     */
     export namespace login {
       export type body = body.AuthLogin
 
@@ -550,6 +558,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id auth.refresh
+     * @route POST /api/auth/refresh
+     * @security BearerAuth
+     */
     export namespace refresh {
       export type responses = {
         200: schemas.AuthResponse
@@ -559,6 +572,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id auth.me
+     * @route GET /api/auth/me
+     * @security BearerAuth
+     */
     export namespace me {
       export type responses = {
         200: schemas.AuthIdentity
@@ -569,6 +587,11 @@ export namespace api {
   }
 
   export namespace appointments {
+    /**
+     * @id appointments.listAppointments
+     * @route GET /api/appointments
+     * @security BearerAuth
+     */
     export namespace listAppointments {
       export type query = {
         page?: query.Page
@@ -587,6 +610,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id appointments.createAppointment
+     * @route POST /api/appointments
+     * @security BearerAuth
+     */
     export namespace createAppointment {
       export type body = body.AppointmentsCreateBody
 
@@ -597,6 +625,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id appointments.countAppointments
+     * @route GET /api/appointments/count
+     * @security BearerAuth
+     */
     export namespace countAppointments {
       export type query = {
         startDate?: query.StartDate
@@ -613,6 +646,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id appointments.getAppointmentsCalendar
+     * @route GET /api/appointments/calendar
+     * @security BearerAuth
+     */
     export namespace getAppointmentsCalendar {
       export type query = {
         startDate?: query.StartDate
@@ -625,6 +663,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id appointments.getAppointmentsCalendarCount
+     * @route GET /api/appointments/calendar/count
+     * @security BearerAuth
+     */
     export namespace getAppointmentsCalendarCount {
       export type query = {
         startDate?: query.StartDate
@@ -637,6 +680,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id appointments.getAppointmentById
+     * @route GET /api/appointments/{id}
+     * @security BearerAuth
+     */
     export namespace getAppointmentById {
       export type responses = {
         200: schemas.Appointment
@@ -645,6 +693,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id appointments.updateAppointment
+     * @route PUT /api/appointments/{id}
+     * @security BearerAuth
+     */
     export namespace updateAppointment {
       export type body = body.AppointmentsUpdateBody
 
@@ -654,6 +707,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id appointments.deleteAppointment
+     * @route DELETE /api/appointments/{id}
+     * @security BearerAuth
+     */
     export namespace deleteAppointment {
       export type responses = {
         /**
@@ -667,6 +725,11 @@ export namespace api {
   }
 
   export namespace customers {
+    /**
+     * @id customers.listCustomers
+     * @route GET /api/customers
+     * @security BearerAuth
+     */
     export namespace listCustomers {
       export type query = {
         page?: query.Page
@@ -682,6 +745,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id customers.createCustomer
+     * @route POST /api/customers
+     * @security BearerAuth
+     */
     export namespace createCustomer {
       export type body = body.CustomerCreateBody
 
@@ -691,6 +759,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id customers.countCustomers
+     * @route GET /api/customers/count
+     * @security BearerAuth
+     */
     export namespace countCustomers {
       export type query = {
         name?: query.Name
@@ -704,6 +777,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id customers.getCustomerById
+     * @route GET /api/customers/{id}
+     * @security BearerAuth
+     */
     export namespace getCustomerById {
       export type responses = {
         200: schemas.Customer
@@ -712,6 +790,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id customers.updateCustomer
+     * @route PUT /api/customers/{id}
+     * @security BearerAuth
+     */
     export namespace updateCustomer {
       export type body = body.CustomerUpdateBody
 
@@ -721,6 +804,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id customers.deleteCustomer
+     * @route DELETE /api/customers/{id}
+     * @security BearerAuth
+     */
     export namespace deleteCustomer {
       export type responses = {
         /**
@@ -734,6 +822,11 @@ export namespace api {
   }
 
   export namespace secretaries {
+    /**
+     * @id secretaries.listSecretaries
+     * @route GET /api/secretaries
+     * @security BearerAuth
+     */
     export namespace listSecretaries {
       export type query = {
         page?: query.Page
@@ -750,6 +843,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id secretaries.createSecretary
+     * @route POST /api/secretaries
+     * @security BearerAuth
+     */
     export namespace createSecretary {
       export type body = body.SecretaryCreateBody
 
@@ -763,6 +861,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id secretaries.countSecretaries
+     * @route GET /api/secretaries/count
+     * @security BearerAuth
+     */
     export namespace countSecretaries {
       export type query = {
         name?: query.Name
@@ -777,6 +880,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id secretaries.getSecretaryById
+     * @route GET /api/secretaries/{id}
+     * @security BearerAuth
+     */
     export namespace getSecretaryById {
       export type responses = {
         200: schemas.Customer
@@ -785,6 +893,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id secretaries.updateSecretary
+     * @route PUT /api/secretaries/{id}
+     * @security BearerAuth
+     */
     export namespace updateSecretary {
       export type body = body.SecretaryUpdateBody
 
@@ -799,6 +912,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id secretaries.deleteSecretary
+     * @route DELETE /api/secretaries/{id}
+     * @security BearerAuth
+     */
     export namespace deleteSecretary {
       export type responses = {
         /**
@@ -812,6 +930,11 @@ export namespace api {
   }
 
   export namespace servicesAvailable {
+    /**
+     * @id servicesAvailable.listServicesAvailable
+     * @route GET /api/services-available
+     * @security BearerAuth
+     */
     export namespace listServicesAvailable {
       export type query = {
         page?: query.Page
@@ -824,6 +947,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id servicesAvailable.createServiceAvailable
+     * @route POST /api/services-available
+     * @security BearerAuth
+     */
     export namespace createServiceAvailable {
       export type body = body.ServiceAvailableCreateBody
 
@@ -837,6 +965,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id servicesAvailable.getServiceAvailableById
+     * @route GET /api/services-available/{id}
+     * @security BearerAuth
+     */
     export namespace getServiceAvailableById {
       export type responses = {
         200: schemas.ServiceAvailable
@@ -845,6 +978,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id servicesAvailable.updateServiceAvailable
+     * @route PUT /api/services-available/{id}
+     * @security BearerAuth
+     */
     export namespace updateServiceAvailable {
       export type body = body.ServiceAvailableUpdateBody
 
@@ -858,6 +996,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id servicesAvailable.deleteServiceAvailable
+     * @route DELETE /api/services-available/{id}
+     * @security BearerAuth
+     */
     export namespace deleteServiceAvailable {
       export type responses = {
         /**
@@ -871,6 +1014,11 @@ export namespace api {
   }
 
   export namespace services {
+    /**
+     * @id services.listServices
+     * @route GET /api/services
+     * @security BearerAuth
+     */
     export namespace listServices {
       export type query = {
         page?: query.Page
@@ -886,6 +1034,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id services.createService
+     * @route POST /api/services
+     * @security BearerAuth
+     */
     export namespace createService {
       export type body = body.ServiceCreateBody
 
@@ -898,6 +1051,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id services.countServices
+     * @route GET /api/services/count
+     * @security BearerAuth
+     */
     export namespace countServices {
       export type query = {
         service?: query.Service
@@ -911,6 +1069,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id services.getServiceById
+     * @route GET /api/services/{id}
+     * @security BearerAuth
+     */
     export namespace getServiceById {
       export type responses = {
         200: schemas.Service
@@ -919,6 +1082,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id services.updateService
+     * @route PUT /api/services/{id}
+     * @security BearerAuth
+     */
     export namespace updateService {
       export type body = body.ServiceUpdateBody
 
@@ -932,6 +1100,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id services.deleteService
+     * @route DELETE /api/services/{id}
+     * @security BearerAuth
+     */
     export namespace deleteService {
       export type responses = {
         /**
@@ -945,6 +1118,11 @@ export namespace api {
   }
 
   export namespace serviceGroups {
+    /**
+     * @id serviceGroups.listServiceGroups
+     * @route GET /api/service-groups
+     * @security BearerAuth
+     */
     export namespace listServiceGroups {
       export type responses = {
         200: schemas.ServiceGroup[]
@@ -954,6 +1132,11 @@ export namespace api {
   }
 
   export namespace specialists {
+    /**
+     * @id specialists.listSpecialists
+     * @route GET /api/specialists
+     * @security BearerAuth
+     */
     export namespace listSpecialists {
       export type query = {
         page?: query.Page
@@ -970,6 +1153,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id specialists.createSpecialist
+     * @route POST /api/specialists
+     * @security BearerAuth
+     */
     export namespace createSpecialist {
       export type body = body.SpecialistCreateBody
 
@@ -983,6 +1171,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id specialists.countSpecialists
+     * @route GET /api/specialists/count
+     * @security BearerAuth
+     */
     export namespace countSpecialists {
       export type query = {
         name?: query.Name
@@ -997,6 +1190,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id specialists.getSpecialistServices
+     * @route GET /api/specialists/{id}/services
+     * @security BearerAuth
+     */
     export namespace getSpecialistServices {
       export type responses = {
         200: schemas.SpecialistService[]
@@ -1005,6 +1203,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id specialists.getSpecialistSpecializations
+     * @route GET /api/specialists/{id}/specializations
+     * @security BearerAuth
+     */
     export namespace getSpecialistSpecializations {
       export type responses = {
         200: schemas.Specialization[]
@@ -1013,6 +1216,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id specialists.getSpecialistAppointments
+     * @route GET /api/specialists/{id}/appointments
+     * @security BearerAuth
+     */
     export namespace getSpecialistAppointments {
       export type query = {
         page?: query.Page
@@ -1026,6 +1234,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id specialists.getSpecialistService
+     * @route GET /api/specialists/{id}/services/{service_id}
+     * @security BearerAuth
+     */
     export namespace getSpecialistService {
       export type responses = {
         200: schemas.Service
@@ -1034,6 +1247,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id specialists.getSpecialistById
+     * @route GET /api/specialists/{id}
+     * @security BearerAuth
+     */
     export namespace getSpecialistById {
       export type responses = {
         200: schemas.Specialist
@@ -1042,6 +1260,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id specialists.updateSpecialist
+     * @route PUT /api/specialists/{id}
+     * @security BearerAuth
+     */
     export namespace updateSpecialist {
       export type body = body.SpecialistUpdateBody
 
@@ -1055,6 +1278,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id specialists.deleteSpecialist
+     * @route DELETE /api/specialists/{id}
+     * @security BearerAuth
+     */
     export namespace deleteSpecialist {
       export type responses = {
         /**
@@ -1068,6 +1296,11 @@ export namespace api {
   }
 
   export namespace specializations {
+    /**
+     * @id specializations.listSpecializations
+     * @route GET /api/specializations
+     * @security BearerAuth
+     */
     export namespace listSpecializations {
       export type responses = {
         200: schemas.Specialization[]
@@ -1075,6 +1308,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id specializations.createSpecialization
+     * @route POST /api/specializations
+     * @security BearerAuth
+     */
     export namespace createSpecialization {
       export type body = body.SpecializationCreateBody
 
@@ -1088,6 +1326,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id specializations.updateSpecialization
+     * @route PUT /api/specializations/{id}
+     * @security BearerAuth
+     */
     export namespace updateSpecialization {
       export type body = body.SpecializationUpdateBody
 
@@ -1101,6 +1344,11 @@ export namespace api {
       }
     }
 
+    /**
+     * @id specializations.deleteSpecialization
+     * @route DELETE /api/specializations/{id}
+     * @security BearerAuth
+     */
     export namespace deleteSpecialization {
       export type responses = {
         /**
@@ -1114,18 +1362,33 @@ export namespace api {
   }
 
   export namespace test {
+    /**
+     * Available only in TEST environments
+     * @id test.initTest
+     * @route GET /api/test/init
+     */
     export namespace initTest {
       export type responses = {
         200: any
       }
     }
 
+    /**
+     * Available only in TEST environments
+     * @id test.statsTest
+     * @route GET /api/test/stats
+     */
     export namespace statsTest {
       export type responses = {
         200: any
       }
     }
 
+    /**
+     * Available only in TEST environments
+     * @id test.debugClaimsTest
+     * @route GET /api/test/debug-claims
+     */
     export namespace debugClaimsTest {
       export type responses = {
         200: any

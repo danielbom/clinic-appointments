@@ -84,6 +84,7 @@
         "operationId": "auth.refresh",
         "summary": "Refresh",
         "tags": ["Auth"],
+        "security": [{ "BearerAuth": [] }],
         "responses": {
           "200": {
             "content": {
@@ -129,6 +130,7 @@
         "operationId": "auth.me",
         "summary": "Get user identity",
         "tags": ["Auth"],
+        "security": [{ "BearerAuth": [] }],
         "responses": {
           "200": {
             "content": {
@@ -166,6 +168,7 @@
         "operationId": "appointments.listAppointments",
         "summary": "Get all appointments",
         "tags": ["Appointments"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [
           { "$ref": "#/components/query/Page" },
           { "$ref": "#/components/query/PageSize" },
@@ -202,6 +205,7 @@
         "operationId": "appointments.createAppointment",
         "summary": "Create an appointment",
         "tags": ["Appointments"],
+        "security": [{ "BearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -248,6 +252,7 @@
         "operationId": "appointments.countAppointments",
         "summary": "Count appointments",
         "tags": ["Appointments"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [
           { "$ref": "#/components/query/StartDate" },
           { "$ref": "#/components/query/EndDate" },
@@ -283,6 +288,7 @@
         "operationId": "appointments.getAppointmentsCalendar",
         "summary": "Get appointments calendar",
         "tags": ["Appointments"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/query/StartDate" }, { "$ref": "#/components/query/EndDate" }],
         "responses": {
           "200": {
@@ -312,6 +318,7 @@
         "operationId": "appointments.getAppointmentsCalendarCount",
         "summary": "Get appointments calendar count",
         "tags": ["Appointments"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/query/StartDate" }, { "$ref": "#/components/query/EndDate" }],
         "responses": {
           "200": {
@@ -341,6 +348,7 @@
         "operationId": "appointments.getAppointmentById",
         "summary": "Get appointment by id",
         "tags": ["Appointments"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "200": {
@@ -376,6 +384,7 @@
         "operationId": "appointments.updateAppointment",
         "summary": "Update an appointment",
         "tags": ["Appointments"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "requestBody": {
           "required": true,
@@ -412,6 +421,7 @@
         "operationId": "appointments.deleteAppointment",
         "summary": "Delete an appointment",
         "tags": ["Appointments"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "204": {
@@ -444,6 +454,7 @@
         "operationId": "customers.listCustomers",
         "summary": "Get all customers",
         "tags": ["Customers"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [
           { "$ref": "#/components/query/Page" },
           { "$ref": "#/components/query/PageSize" },
@@ -477,6 +488,7 @@
         "operationId": "customers.createCustomer",
         "summary": "Create a customer",
         "tags": ["Customers"],
+        "security": [{ "BearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -514,6 +526,7 @@
         "operationId": "customers.countCustomers",
         "summary": "Count customers",
         "tags": ["Customers"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [
           { "$ref": "#/components/query/Name" },
           { "$ref": "#/components/query/Cpf" },
@@ -546,6 +559,7 @@
         "operationId": "customers.getCustomerById",
         "summary": "Get customer by id",
         "tags": ["Customers"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "200": {
@@ -581,6 +595,7 @@
         "operationId": "customers.updateCustomer",
         "summary": "Update an customer",
         "tags": ["Customers"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "requestBody": {
           "required": true,
@@ -617,6 +632,7 @@
         "operationId": "customers.deleteCustomer",
         "summary": "Delete an customer",
         "tags": ["Customers"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "204": {
@@ -649,6 +665,7 @@
         "operationId": "secretaries.listSecretaries",
         "summary": "Get all secretaries",
         "tags": ["Secretaries"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [
           { "$ref": "#/components/query/Page" },
           { "$ref": "#/components/query/PageSize" },
@@ -683,6 +700,7 @@
         "operationId": "secretaries.createSecretary",
         "summary": "Create a secretary",
         "tags": ["Secretaries"],
+        "security": [{ "BearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -730,6 +748,7 @@
         "operationId": "secretaries.countSecretaries",
         "summary": "Count secretaries",
         "tags": ["Secretaries"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [
           { "$ref": "#/components/query/Name" },
           { "$ref": "#/components/query/Cpf" },
@@ -763,6 +782,7 @@
         "operationId": "secretaries.getSecretaryById",
         "summary": "Get secretaries by id",
         "tags": ["Secretaries"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "200": {
@@ -798,6 +818,7 @@
         "operationId": "secretaries.updateSecretary",
         "summary": "Update an secretaries",
         "tags": ["Secretaries"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "requestBody": {
           "required": true,
@@ -853,6 +874,7 @@
         "operationId": "secretaries.deleteSecretary",
         "summary": "Delete an secretaries",
         "tags": ["Secretaries"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "204": {
@@ -885,6 +907,7 @@
         "operationId": "servicesAvailable.listServicesAvailable",
         "summary": "Get all services available",
         "tags": ["Services Available"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/query/Page" }, { "$ref": "#/components/query/PageSize" }],
         "responses": {
           "200": {
@@ -912,6 +935,7 @@
         "operationId": "servicesAvailable.createServiceAvailable",
         "summary": "Create a service available",
         "tags": ["Services Available"],
+        "security": [{ "BearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -959,6 +983,7 @@
         "operationId": "servicesAvailable.getServiceAvailableById",
         "summary": "Get a service available by id",
         "tags": ["Services Available"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "200": {
@@ -994,6 +1019,7 @@
         "operationId": "servicesAvailable.updateServiceAvailable",
         "summary": "Update an service available",
         "tags": ["Services Available"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "requestBody": {
           "required": true,
@@ -1040,6 +1066,7 @@
         "operationId": "servicesAvailable.deleteServiceAvailable",
         "summary": "Delete a service available",
         "tags": ["Services Available"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "204": {
@@ -1072,6 +1099,7 @@
         "operationId": "services.listServices",
         "summary": "Get all services",
         "tags": ["Services"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [
           { "$ref": "#/components/query/Page" },
           { "$ref": "#/components/query/PageSize" },
@@ -1105,6 +1133,7 @@
         "operationId": "services.createService",
         "summary": "Create a service",
         "tags": ["Services"],
+        "security": [{ "BearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -1143,6 +1172,7 @@
         "operationId": "services.countServices",
         "summary": "Count services",
         "tags": ["Services"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [
           { "$ref": "#/components/query/Service" },
           { "$ref": "#/components/query/Specialist" },
@@ -1175,6 +1205,7 @@
         "operationId": "services.getServiceById",
         "summary": "Get services by id",
         "tags": ["Services"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "200": {
@@ -1210,6 +1241,7 @@
         "operationId": "services.updateService",
         "summary": "Update a services",
         "tags": ["Services"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "requestBody": {
           "required": true,
@@ -1256,6 +1288,7 @@
         "operationId": "services.deleteService",
         "summary": "Delete a services",
         "tags": ["Services"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "204": {
@@ -1288,6 +1321,7 @@
         "operationId": "serviceGroups.listServiceGroups",
         "summary": "Get all services grouped by specification",
         "tags": ["Service Groups"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [],
         "responses": {
           "200": {
@@ -1318,6 +1352,7 @@
         "operationId": "specialists.listSpecialists",
         "summary": "Get all specialists",
         "tags": ["Specialists"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [
           { "$ref": "#/components/query/Page" },
           { "$ref": "#/components/query/PageSize" },
@@ -1352,6 +1387,7 @@
         "operationId": "specialists.createSpecialist",
         "summary": "Create a specialist",
         "tags": ["Specialists"],
+        "security": [{ "BearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -1399,6 +1435,7 @@
         "operationId": "specialists.countSpecialists",
         "summary": "Count specialists",
         "tags": ["Specialists"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [
           { "$ref": "#/components/query/Name" },
           { "$ref": "#/components/query/Cpf" },
@@ -1432,6 +1469,7 @@
         "operationId": "specialists.getSpecialistServices",
         "summary": "Get specialist services",
         "tags": ["Specialists"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "200": {
@@ -1472,6 +1510,7 @@
         "operationId": "specialists.getSpecialistSpecializations",
         "summary": "Get specialist specializations",
         "tags": ["Specialists"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "200": {
@@ -1512,6 +1551,7 @@
         "operationId": "specialists.getSpecialistAppointments",
         "summary": "Get specialist appointments",
         "tags": ["Specialists"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [
           { "$ref": "#/components/parameters/Id" },
           { "$ref": "#/components/query/Page" },
@@ -1556,6 +1596,7 @@
         "operationId": "specialists.getSpecialistService",
         "summary": "Get specialist service",
         "tags": ["Specialists"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [
           { "$ref": "#/components/parameters/Id" },
           {
@@ -1603,6 +1644,7 @@
         "operationId": "specialists.getSpecialistById",
         "summary": "Get specialists by id",
         "tags": ["Specialists"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "200": {
@@ -1638,6 +1680,7 @@
         "operationId": "specialists.updateSpecialist",
         "summary": "Update a specialists",
         "tags": ["Specialists"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "requestBody": {
           "required": true,
@@ -1684,6 +1727,7 @@
         "operationId": "specialists.deleteSpecialist",
         "summary": "Delete a specialists",
         "tags": ["Specialists"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "204": {
@@ -1716,6 +1760,7 @@
         "operationId": "specializations.listSpecializations",
         "summary": "Get all specializations",
         "tags": ["Specializations"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [],
         "responses": {
           "200": {
@@ -1743,6 +1788,7 @@
         "operationId": "specializations.createSpecialization",
         "summary": "Create a specialization",
         "tags": ["Specializations"],
+        "security": [{ "BearerAuth": [] }],
         "requestBody": {
           "required": true,
           "content": {
@@ -1790,6 +1836,7 @@
         "operationId": "specializations.updateSpecialization",
         "summary": "Update an specializations",
         "tags": ["Specializations"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "requestBody": {
           "required": true,
@@ -1836,6 +1883,7 @@
         "operationId": "specializations.deleteSpecialization",
         "summary": "Delete a specializations",
         "tags": ["Specializations"],
+        "security": [{ "BearerAuth": [] }],
         "parameters": [{ "$ref": "#/components/parameters/Id" }],
         "responses": {
           "204": {
@@ -1899,6 +1947,14 @@
   },
 
   "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+
     "parameters": {
       "Id": {
         "name": "id",
