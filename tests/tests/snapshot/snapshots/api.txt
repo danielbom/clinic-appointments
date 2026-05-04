@@ -83,7 +83,7 @@ Body: {
 Response: {
   "code": "resource_conflict",
   "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceConflict.json",
-  "title": "Resource already exists",
+  "title": "Resource conflict",
   "detail": "secretary with this email already exists",
   "status": 409,
   "instance": "/api/secretaries",
@@ -239,7 +239,7 @@ Body: {
 Response: {
   "code": "resource_conflict",
   "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceConflict.json",
-  "title": "Resource already exists",
+  "title": "Resource conflict",
   "detail": "specialization with this name already exists",
   "status": 409,
   "instance": "/api/specializations",

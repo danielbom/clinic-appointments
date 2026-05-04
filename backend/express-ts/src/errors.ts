@@ -102,6 +102,15 @@ export const errors = {
       status: 404 as const,
     }
   },
+  routeNotFound(method: string, url: string): types.errors.NotFoundProblemDetails {
+    return {
+      code: 'resource_not_found' as const,
+      type: `${devUrl}/schemas/errors/ResourceNotFound.json`,
+      title: 'Route not found',
+      detail: `route ${method} ${url} not found`,
+      status: 404 as const,
+    }
+  },
 
   alreadyExists(resource: types.domain.Resource, key: string): types.errors.ConflictProblemDetails {
     return {

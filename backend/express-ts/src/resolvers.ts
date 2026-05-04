@@ -233,6 +233,11 @@ export default {
       const reply = replier<types.api.appointments.listAppointments.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const query: types.api.appointments.listAppointments.query = req.query
       const page = getIntParam(query.page, 0)
       const pageSize = getIntParam(query.pageSize, 10)
@@ -275,6 +280,11 @@ export default {
       const reply = replier<types.api.appointments.createAppointment.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       if (!validations.appointments.createAppointment.body(req.body)) {
         return reply.fail(errors.ajv(validations.appointments.createAppointment.body.errors![0]))
       }
@@ -310,6 +320,11 @@ export default {
       const reply = replier<types.api.appointments.countAppointments.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const query: types.api.appointments.countAppointments.query = req.query
       const startDate = getDateParam(query.startDate)
       const endDate = getDateParam(query.endDate)
@@ -339,6 +354,11 @@ export default {
       const reply = replier<types.api.appointments.getAppointmentsCalendar.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const query: types.api.appointments.getAppointmentsCalendar.query = req.query
       const startDate = getDateParam(query.startDate)
       if (!startDate) {
@@ -401,6 +421,11 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
       const reply = replier<types.api.appointments.getAppointmentsCalendarCount.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const query: types.api.appointments.getAppointmentsCalendarCount.query = req.query
       const startDate = getDateParam(query.startDate)
       if (!startDate) {
@@ -464,6 +489,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.appointments.getAppointmentById.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const id = parseUuid(req.params.id)
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
@@ -490,6 +520,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.appointments.updateAppointment.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       if (!validations.appointments.updateAppointment.body(req.body)) {
         return reply.fail(errors.ajv(validations.appointments.updateAppointment.body.errors![0]))
       }
@@ -517,6 +552,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.appointments.deleteAppointment.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const id = parseUuid(req.params.id)
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
@@ -540,6 +580,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.customers.listCustomers.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const query: types.api.customers.listCustomers.query = req.query
       const page = getIntParam(query.page, 0)
       const pageSize = getIntParam(query.pageSize, 10)
@@ -571,6 +616,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.customers.createCustomer.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       if (!validations.customers.createCustomer.body(req.body)) {
         return reply.fail(errors.ajv(validations.customers.createCustomer.body.errors![0]))
       }
@@ -595,6 +645,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.customers.countCustomers.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const query: types.api.customers.countCustomers.query = req.query
       const name = getStringParam(query.name, '')
       const cpf = getStringParam(query.cpf, '')
@@ -618,6 +673,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.customers.getCustomerById.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const id = parseUuid(req.params.id)
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
@@ -639,6 +699,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.customers.updateCustomer.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       if (!validations.customers.updateCustomer.body(req.body)) {
         return reply.fail(errors.ajv(validations.customers.updateCustomer.body.errors![0]))
       }
@@ -670,6 +735,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.customers.deleteCustomer.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const id = parseUuid(req.params.id)
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
@@ -693,6 +763,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.secretaries.listSecretaries.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const query: types.api.secretaries.listSecretaries.query = req.query
       const page = getIntParam(query.page, 0)
       const pageSize = getIntParam(query.pageSize, 10)
@@ -726,6 +801,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.secretaries.createSecretary.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       if (!validations.secretaries.createSecretary.body(req.body)) {
         return reply.fail(errors.ajv(validations.secretaries.createSecretary.body.errors![0]))
       }
@@ -760,6 +840,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.secretaries.countSecretaries.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const query: types.api.secretaries.countSecretaries.query = req.query
       const name = getStringParam(query.name, '')
       const cpf = getStringParam(query.cpf, '')
@@ -785,6 +870,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.secretaries.getSecretaryById.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const id = parseUuid(req.params.id)
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
@@ -806,6 +896,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.secretaries.updateSecretary.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       if (!validations.secretaries.updateSecretary.body(req.body)) {
         return reply.fail(errors.ajv(validations.secretaries.updateSecretary.body.errors![0]))
       }
@@ -857,6 +952,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.secretaries.deleteSecretary.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const id = parseUuid(req.params.id)
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
@@ -880,6 +980,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.servicesAvailable.listServicesAvailable.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const query: types.api.servicesAvailable.listServicesAvailable.query = req.query
       const page = getIntParam(query.page, 0)
       const pageSize = getIntParam(query.pageSize, 10)
@@ -904,6 +1009,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.servicesAvailable.createServiceAvailable.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       if (!validations.servicesAvailable.createServiceAvailable.body(req.body)) {
         return reply.fail(errors.ajv(validations.servicesAvailable.createServiceAvailable.body.errors![0]))
       }
@@ -943,6 +1053,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.servicesAvailable.getServiceAvailableById.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const id = parseUuid(req.params.id)
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
@@ -972,6 +1087,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.servicesAvailable.updateServiceAvailable.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const id = parseUuid(req.params.id)
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
@@ -1015,6 +1135,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.servicesAvailable.deleteServiceAvailable.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const id = parseUuid(req.params.id)
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
@@ -1038,6 +1163,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.services.listServices.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const query: types.api.services.listServices.query = req.query
       const page = getIntParam(query.page, 0)
       const pageSize = getIntParam(query.pageSize, 10)
@@ -1072,6 +1202,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.services.createService.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       if (!validations.services.createService.body(req.body)) {
         return reply.fail(errors.ajv(validations.services.createService.body.errors![0]))
       }
@@ -1095,6 +1230,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.services.countServices.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const query: types.api.services.countServices.query = req.query
       const service = getStringParam(query.service).toLowerCase()
       const specialist = getStringParam(query.specialist).toLowerCase()
@@ -1120,6 +1260,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.services.getServiceById.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const id = parseUuid(req.params.id)
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
@@ -1147,6 +1292,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.services.updateService.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const id = parseUuid(req.params.id)
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
@@ -1177,6 +1327,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.services.deleteService.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const id = parseUuid(req.params.id)
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
@@ -1200,6 +1355,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.serviceGroups.listServiceGroups.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
 
       // Validate e execute the usecase
       const rows = await db.specializations.findMany({
@@ -1218,6 +1378,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.specialists.listSpecialists.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const query: types.api.specialists.listSpecialists.query = req.query
       const page = getIntParam(query.page, 0)
       const pageSize = getIntParam(query.pageSize, 10)
@@ -1251,6 +1416,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.specialists.createSpecialist.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       if (!validations.specialists.createSpecialist.body(req.body)) {
         return reply.fail(errors.ajv(validations.specialists.createSpecialist.body.errors![0]))
       }
@@ -1298,6 +1468,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.specialists.countSpecialists.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const query: types.api.specialists.countSpecialists.query = req.query
       const name = getStringParam(query.name)
       const cpf = getStringParam(query.cpf)
@@ -1323,6 +1498,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.specialists.getSpecialistById.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const id = parseUuid(req.params.id)
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
@@ -1344,6 +1524,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.specialists.getSpecialistServices.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const id = parseUuid(req.params.id)
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
@@ -1365,6 +1550,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.specialists.getSpecialistSpecializations.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const id = parseUuid(req.params.id)
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
@@ -1382,6 +1572,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.specialists.getSpecialistAppointments.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const id = parseUuid(req.params.id)
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
@@ -1409,6 +1604,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.specialists.getSpecialistService.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const id = parseUuid(req.params.id)
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
@@ -1440,6 +1640,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.specialists.updateSpecialist.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const id = parseUuid(req.params.id)
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
@@ -1470,6 +1675,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.specialists.deleteSpecialist.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const id = parseUuid(req.params.id)
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
@@ -1493,6 +1703,10 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.specializations.listSpecializations.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
 
       // Validate e execute the usecase
       const rows = await db.specializations.findMany({
@@ -1506,6 +1720,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.specializations.createSpecialization.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       if (!validations.specializations.createSpecialization.body(req.body)) {
         return reply.fail(errors.ajv(validations.specializations.createSpecialization.body.errors![0]))
       }
@@ -1534,6 +1753,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.specializations.updateSpecialization.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const id = parseUuid(req.params.id)
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
@@ -1561,6 +1785,11 @@ ORDER BY "month" ASC;`
       const reply = replier<types.api.specializations.deleteSpecialization.responses>(res)
 
       // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
       const id = parseUuid(req.params.id)
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))

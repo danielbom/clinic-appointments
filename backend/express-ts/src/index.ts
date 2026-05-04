@@ -10,6 +10,7 @@ import morgan from 'morgan'
 import plugOpenApiResolvers from './plug-resolvers'
 import { getAppConfig } from './config'
 import { context } from './context'
+import { errors } from './errors'
 
 const appConfig = getAppConfig()
 const app = express()
@@ -37,29 +38,25 @@ app.use(morgan(':method :url :status :response-time ms - :res[content-length]'))
 
 {
   const api = Router()
-  api.use(express.json({ type: 'application/json' }))
   api.use('/api', express.static(path.join(import.meta.dirname, 'public/api')))
-  plugOpenApiResolvers(api, openApiJson)
   api.use('/api/docs', swaggerUI.serve, swaggerUI.setup(openApiJson))
   api.use('/api/schemas', express.static(path.join(import.meta.dirname, 'public/schemas')))
   api.use('/api/redoc', express.static(path.join(import.meta.dirname, 'public/redoc')))
+  api.use(express.json({ type: 'application/json' }))
+  plugOpenApiResolvers(api, openApiJson)
   app.use(api)
 }
 
 // not found
 app.use('/', (req, res, next) => {
-  res.status(404).json({ error: `route ${req.method} ${req.url} not found`, method: req.method, url: req.url })
+  res.status(404).json(errors.routeNotFound(req.method, req.url))
   next()
 })
 
-// handle jwt errors
-app.use((err: Error, _req: Request, res: Response, next: NextFunction) => {
-  if (err && typeof err === 'object') {
-    if (err.name === 'UnauthorizedError') {
-      return res.status(401).json({ error: err.message })
-    }
-  }
-  next(err)
+// handle unexpected errors
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  console.error(err)
+  res.status(500).json(errors.internal('An unexpected error occured'))
 })
 
 app.listen(appConfig.port, () => {

@@ -23,7 +23,8 @@
         "title": {
           "type": "string",
           "enum": [
-            "Resource not found"
+            "Resource not found",
+            "Route not found"
           ]
         }
       },

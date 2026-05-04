@@ -84,6 +84,75 @@ async function run(w: WriteStr, api: Api, args: Args) {
   await api.test.stats()
   await api.test.init()
 
+  w.write('# Route not found\n\n')
+  await api.appointments.delete('')
+  await api.appointments.update('', {} as any)
+
+  w.write('# Auth errors\n\n')
+  await api.auth.me()
+  {
+    await api.appointments.create({} as any)
+    await api.appointments.getById('x')
+    await api.appointments.getAll()
+    await api.appointments.count()
+    await api.appointments.getCalendar({} as any)
+    await api.appointments.getCalendarCount({} as any)
+    await api.appointments.update('x', {} as any)
+    await api.appointments.delete('x')
+  }
+  {
+    await api.customers.create({} as any)
+    await api.customers.getById('x')
+    await api.customers.getAll()
+    await api.customers.count()
+    await api.customers.update('x', {} as any)
+    await api.customers.delete('x')
+  }
+  {
+    await api.secretaries.create({} as any)
+    await api.secretaries.getById('x')
+    await api.secretaries.getAll()
+    await api.secretaries.count()
+    await api.secretaries.update('x', {} as any)
+    await api.secretaries.delete('x')
+  }
+  {
+    await api.serviceGroups.getAll()
+  }
+  {
+    await api.services.create({} as any)
+    await api.services.getById('x')
+    await api.services.getAll()
+    await api.services.count()
+    await api.services.update('x', {} as any)
+    await api.services.delete('x')
+  }
+  {
+    await api.servicesAvailable.create({} as any)
+    await api.servicesAvailable.getById('x')
+    await api.servicesAvailable.getAll()
+    await api.servicesAvailable.update('x', {} as any)
+    await api.servicesAvailable.delete('x')
+  }
+  {
+    await api.specialists.create({} as any)
+    await api.specialists.getById('x')
+    await api.specialists.getAll()
+    await api.specialists.getAppointments('x')
+    await api.specialists.getServices('x')
+    await api.specialists.getSpecializations('x')
+    await api.specialists.getService('x', 'y')
+    await api.specialists.count()
+    await api.specialists.update('x', {} as any)
+    await api.specialists.delete('x')
+  }
+  {
+    await api.specializations.create({} as any)
+    await api.specializations.getAll()
+    await api.specializations.update('x', {} as any)
+    await api.specializations.delete('x')
+  }
+
   w.write('# api.auth.login: Short expiration time\n\n')
   await api.auth
     .login(credentials.admin, {

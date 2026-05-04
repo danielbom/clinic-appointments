@@ -353,7 +353,7 @@ export namespace errors {
   export type NotFoundProblemDetails = errors.ProblemDetails & {
     code: 'resource_not_found'
     status: 404
-    title: 'Resource not found'
+    title: 'Resource not found' | 'Route not found'
   }
 
   /**
@@ -607,6 +607,7 @@ export namespace api {
       export type responses = {
         200: schemas.Appointment[]
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
       }
     }
 
@@ -621,6 +622,7 @@ export namespace api {
       export type responses = {
         201: schemas.Id
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
       }
     }
@@ -643,6 +645,7 @@ export namespace api {
       export type responses = {
         200: schemas.Count
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
       }
     }
 
@@ -660,6 +663,7 @@ export namespace api {
       export type responses = {
         200: schemas.AppointmentCalendar[]
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
       }
     }
 
@@ -677,6 +681,7 @@ export namespace api {
       export type responses = {
         200: schemas.AppointmentCalendarCount[]
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
       }
     }
 
@@ -689,6 +694,7 @@ export namespace api {
       export type responses = {
         200: schemas.Appointment
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
       }
     }
@@ -704,6 +710,7 @@ export namespace api {
       export type responses = {
         200: schemas.Id
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
       }
     }
 
@@ -719,6 +726,7 @@ export namespace api {
          */
         204: any
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
       }
     }
@@ -742,6 +750,7 @@ export namespace api {
       export type responses = {
         200: schemas.Customer[]
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
       }
     }
 
@@ -756,6 +765,7 @@ export namespace api {
       export type responses = {
         201: schemas.Id
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
       }
     }
 
@@ -774,6 +784,7 @@ export namespace api {
       export type responses = {
         200: schemas.Count
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
       }
     }
 
@@ -786,6 +797,7 @@ export namespace api {
       export type responses = {
         200: schemas.Customer
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         404: errors.ValidationProblemDetails
       }
     }
@@ -801,6 +813,7 @@ export namespace api {
       export type responses = {
         200: schemas.Id
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
       }
     }
 
@@ -816,6 +829,7 @@ export namespace api {
          */
         204: any
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
       }
     }
@@ -840,6 +854,7 @@ export namespace api {
       export type responses = {
         200: schemas.Secretary[]
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
       }
     }
 
@@ -857,6 +872,7 @@ export namespace api {
          */
         201: schemas.Id
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         409: errors.ConflictProblemDetails
       }
     }
@@ -877,6 +893,7 @@ export namespace api {
       export type responses = {
         200: schemas.Count
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
       }
     }
 
@@ -889,6 +906,7 @@ export namespace api {
       export type responses = {
         200: schemas.Customer
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
       }
     }
@@ -907,6 +925,7 @@ export namespace api {
          */
         200: schemas.Id
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
         409: errors.ConflictProblemDetails
       }
@@ -924,6 +943,7 @@ export namespace api {
          */
         204: any
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
       }
     }
@@ -944,6 +964,7 @@ export namespace api {
       export type responses = {
         200: schemas.ServiceGroup[]
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
       }
     }
 
@@ -961,6 +982,7 @@ export namespace api {
          */
         201: schemas.Id
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         409: errors.ConflictProblemDetails
       }
     }
@@ -974,6 +996,7 @@ export namespace api {
       export type responses = {
         200: schemas.ServiceAvailable
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
       }
     }
@@ -992,6 +1015,7 @@ export namespace api {
          */
         200: schemas.Id
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
       }
     }
@@ -1008,6 +1032,7 @@ export namespace api {
          */
         204: any
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
       }
     }
@@ -1031,6 +1056,7 @@ export namespace api {
       export type responses = {
         200: schemas.ServiceEnriched[]
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
       }
     }
 
@@ -1048,6 +1074,7 @@ export namespace api {
          */
         201: schemas.Id
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
       }
     }
 
@@ -1066,6 +1093,7 @@ export namespace api {
       export type responses = {
         200: schemas.Count
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
       }
     }
 
@@ -1078,6 +1106,7 @@ export namespace api {
       export type responses = {
         200: schemas.Service
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
       }
     }
@@ -1096,6 +1125,7 @@ export namespace api {
          */
         200: schemas.Id
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
       }
     }
@@ -1112,6 +1142,7 @@ export namespace api {
          */
         204: any
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
       }
     }
@@ -1127,6 +1158,7 @@ export namespace api {
       export type responses = {
         200: schemas.ServiceGroup[]
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
       }
     }
   }
@@ -1150,6 +1182,7 @@ export namespace api {
       export type responses = {
         200: schemas.Specialist[]
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
       }
     }
 
@@ -1167,6 +1200,7 @@ export namespace api {
          */
         201: schemas.Id
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         409: errors.ConflictProblemDetails
       }
     }
@@ -1187,6 +1221,7 @@ export namespace api {
       export type responses = {
         200: schemas.Count
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
       }
     }
 
@@ -1199,6 +1234,7 @@ export namespace api {
       export type responses = {
         200: schemas.SpecialistService[]
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
       }
     }
@@ -1212,6 +1248,7 @@ export namespace api {
       export type responses = {
         200: schemas.Specialization[]
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
       }
     }
@@ -1230,6 +1267,7 @@ export namespace api {
       export type responses = {
         200: schemas.SpecialistAppointment[]
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
       }
     }
@@ -1243,6 +1281,7 @@ export namespace api {
       export type responses = {
         200: schemas.Service
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
       }
     }
@@ -1256,6 +1295,7 @@ export namespace api {
       export type responses = {
         200: schemas.Specialist
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
       }
     }
@@ -1274,6 +1314,7 @@ export namespace api {
          */
         200: schemas.Id
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
       }
     }
@@ -1290,6 +1331,7 @@ export namespace api {
          */
         204: any
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
       }
     }
@@ -1305,6 +1347,7 @@ export namespace api {
       export type responses = {
         200: schemas.Specialization[]
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
       }
     }
 
@@ -1322,6 +1365,7 @@ export namespace api {
          */
         201: schemas.Id
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         409: errors.ConflictProblemDetails
       }
     }
@@ -1340,6 +1384,7 @@ export namespace api {
          */
         200: schemas.Id
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
       }
     }
@@ -1356,6 +1401,7 @@ export namespace api {
          */
         204: any
         400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
       }
     }
