@@ -7,12 +7,20 @@ import (
 
 	"backend/internal/api/dtos"
 	"backend/internal/api/presenter"
+	"backend/internal/env"
 	"backend/internal/usecase"
 
 	"github.com/go-chi/render"
 )
 
 func (h *api) authLogin(w http.ResponseWriter, r *http.Request) {
+	accessTokenExpireIn := 0
+	refreshTokenExpireIn := 0
+	if env.Get(env.APP_ENVIRONMENT) == "test" || env.Get(env.APP_ENVIRONMENT) == "development" {
+		accessTokenExpireIn = int(ParseIntOrDefault(r.Header.Get("x-access-token-expires-in"), 0))
+		refreshTokenExpireIn = int(ParseIntOrDefault(r.Header.Get("x-refresh-token-expires-in"), 0))
+	}
+
 	// Collect query parameters, path parameters, and request body
 	var body dtos.AuthLoginBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
@@ -43,13 +51,13 @@ func (h *api) authLogin(w http.ResponseWriter, r *http.Request) {
 		Role:   identity.Role,
 	}
 
-	accessToken, err2 := h.GenerateAccessJWT(data)
+	accessToken, err2 := h.GenerateAccessJWT(data, accessTokenExpireIn)
 	if err2 != nil {
 		SomethingWentWrong(w, r, err2)
 		return
 	}
 
-	refreshToken, err3 := h.GenerateRefreshJWT(data)
+	refreshToken, err3 := h.GenerateRefreshJWT(data, refreshTokenExpireIn)
 	if err3 != nil {
 		SomethingWentWrong(w, r, err3)
 		return
@@ -94,7 +102,7 @@ func (h *api) authRefresh(w http.ResponseWriter, r *http.Request) {
 		Role:   identity.Role,
 	}
 
-	accessToken, err2 := h.GenerateAccessJWT(data)
+	accessToken, err2 := h.GenerateAccessJWT(data, 0)
 	if err2 != nil {
 		SomethingWentWrong(w, r, err2)
 		return

@@ -17,13 +17,13 @@ type CreateServiceNameArgs struct {
 
 func (args *CreateServiceNameArgs) Validate() *UsecaseError {
 	args.Name = strings.TrimSpace(args.Name)
+	if args.Name == "" {
+		return NewInvalidArgumentError(ACTION_MUTATION, "name", ErrFieldIsRequired)
+	}
 	if args.Specialization == "" && !args.SpecializationID.Valid {
 		if err := args.SpecializationID.Scan(args.SpecializationIDRaw); err != nil {
 			return NewInvalidArgumentError(ACTION_MUTATION, "specializationId", ErrInvalidUuid)
 		}
-	}
-	if args.Name == "" {
-		return NewInvalidArgumentError(ACTION_MUTATION, "name", ErrFieldIsRequired)
 	}
 	return nil
 }

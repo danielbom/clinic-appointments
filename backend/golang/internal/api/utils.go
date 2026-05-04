@@ -50,7 +50,7 @@ func GetAndParseUuidParam(w http.ResponseWriter, r *http.Request, paramName stri
 	result, ok := ParseUuid(rawId)
 	if !ok {
 		// Format the response
-		response := presenter.ValidationProblem("path", paramName, "invalid uuid format")
+		response := presenter.ValidationProblem("path", paramName, "invalid uuid")
 		EnhanceProblem(w, r, &response)
 		render.Status(r, http.StatusBadRequest)
 		render.JSON(w, r, response)

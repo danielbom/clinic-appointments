@@ -237,7 +237,7 @@ func (h *api) updateSecretary(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if jwtData.Role == "secretary" && jwtData.UserID != secretaryId.String() {
-		InvalidAccess(w, r, "Role without access")
+		InvalidAccess(w, r, "User without access")
 		return
 	}
 

@@ -17,19 +17,27 @@ type JwtData struct {
 	Role   string
 }
 
-func (h *api) GenerateAccessJWT(data JwtData) (string, error) {
+func (h *api) GenerateAccessJWT(data JwtData, expireIn int) (string, error) {
+	expireAt := time.Now().Add(time.Minute * 10).Unix()
+	if expireIn > 0 {
+		expireAt = time.Now().Add(time.Second * time.Duration(expireIn)).Unix()
+	}
 	_, tokenString, err := h.auth.Encode(jwtGo.MapClaims{
 		"sub":  data.UserID,
 		"role": data.Role,
-		"exp":  time.Now().Add(time.Minute * 10).Unix(),
+		"exp":  expireAt,
 	})
 	return tokenString, err
 }
 
-func (h *api) GenerateRefreshJWT(data JwtData) (string, error) {
+func (h *api) GenerateRefreshJWT(data JwtData, expireIn int) (string, error) {
+	expireAt := time.Now().Add(time.Hour * 24).Unix()
+	if expireIn > 0 {
+		expireAt = time.Now().Add(time.Second * time.Duration(expireIn)).Unix()
+	}
 	_, tokenString, err := h.auth.Encode(jwtGo.MapClaims{
 		"sub": data.UserID,
-		"exp": time.Now().Add(time.Hour * 24).Unix(),
+		"exp": expireAt,
 	})
 	return tokenString, err
 }

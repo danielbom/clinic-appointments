@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	_ "backend/internal/api/docs"
+	"backend/internal/api/presenter"
 	"backend/internal/env"
 	"backend/internal/infra"
 
@@ -11,6 +12,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/jwtauth"
+	"github.com/go-chi/render"
 	"github.com/jackc/pgx/v5/pgxpool"
 	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
@@ -122,6 +124,13 @@ func NewApi(pool *pgxpool.Pool, auth *jwtauth.JWTAuth) http.Handler {
 	r.Get("/api/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("http://localhost:8080/swagger/doc.json"), //The url pointing to API definition
 	))
+
+	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
+		// Format the response
+		response := presenter.RouteNotFoundProblem(r.Method, r.URL.String())
+		render.Status(r, http.StatusNotFound)
+		render.JSON(w, r, response)
+	})
 
 	return r
 }

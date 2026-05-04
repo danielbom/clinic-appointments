@@ -91,11 +91,21 @@ func NotFoundProblem(resource string) dtos.ProblemDetails {
 	return p
 }
 
+func RouteNotFoundProblem(method, url string) dtos.ProblemDetails {
+	var p dtos.ProblemDetails
+	p.Code = "resource_not_found"
+	p.Type = fmt.Sprintf("%s/schemas/errors/ResourceNotFound.json", DEV_URL)
+	p.Title = "Route not found"
+	p.Detail = fmt.Sprintf("%s %s not found", method, url)
+	p.Status = 404
+	return p
+}
+
 func AlreadyExistsProblem(resource, key string) dtos.ProblemDetails {
 	var p dtos.ProblemDetails
 	p.Code = "resource_conflict"
 	p.Type = fmt.Sprintf("%s/schemas/errors/ResourceConflict.json", DEV_URL)
-	p.Title = "Resource already exists"
+	p.Title = "Resource conflict"
 	p.Detail = fmt.Sprintf("%s with this %s already exists", resource, key)
 	p.Status = 409
 	return p
