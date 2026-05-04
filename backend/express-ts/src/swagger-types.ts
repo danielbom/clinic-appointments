@@ -855,6 +855,7 @@ export namespace api {
         200: schemas.Secretary[]
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
+        403: errors.InvalidAccessProblemDetails
       }
     }
 
@@ -873,6 +874,7 @@ export namespace api {
         201: schemas.Id
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
+        403: errors.InvalidAccessProblemDetails
         409: errors.ConflictProblemDetails
       }
     }
@@ -894,6 +896,7 @@ export namespace api {
         200: schemas.Count
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
+        403: errors.InvalidAccessProblemDetails
       }
     }
 
@@ -907,6 +910,7 @@ export namespace api {
         200: schemas.Customer
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
+        403: errors.InvalidAccessProblemDetails
         404: errors.NotFoundProblemDetails
       }
     }
@@ -926,6 +930,7 @@ export namespace api {
         200: schemas.Id
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
+        403: errors.InvalidAccessProblemDetails
         404: errors.NotFoundProblemDetails
         409: errors.ConflictProblemDetails
       }
@@ -944,6 +949,7 @@ export namespace api {
         204: any
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
+        403: errors.InvalidAccessProblemDetails
         404: errors.NotFoundProblemDetails
       }
     }

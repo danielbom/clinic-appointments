@@ -153,11 +153,7 @@ export default {
         return reply.fail(errors.invalidCredentials())
       }
 
-      const data: JwtData = {
-        userId: identity.id,
-        role: identity.role,
-      }
-
+      const data = new JwtData(identity.id, identity.role)
       const accessToken = generateAccessJWT(data, accessTokenExpireIn)
       const refreshToken = generateRefreshJWT(data, refreshTokenExpireIn)
 
@@ -193,11 +189,7 @@ export default {
         return reply.fail(errors.internal('JWT userId without identity'))
       }
 
-      const data: JwtData = {
-        role: identity.role,
-        userId: identity.id,
-      }
-
+      const data = new JwtData(identity.id, identity.role)
       const accessToken = generateAccessJWT(data)
 
       // Format the response
@@ -496,7 +488,7 @@ ORDER BY "month" ASC;`
 
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
       // Validate e execute the usecase
@@ -525,15 +517,15 @@ ORDER BY "month" ASC;`
         return reply.fail(errors.invalidToken())
       }
 
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
+      }
+
       if (!validations.appointments.updateAppointment.body(req.body)) {
         return reply.fail(errors.ajv(validations.appointments.updateAppointment.body.errors![0]))
       }
       const args: types.api.appointments.updateAppointment.body = req.body
-
-      const id = parseUuid(req.params.id)
-      if (!id) {
-        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
-      }
 
       // Validate e execute the usecase
       const row = await db.appointments.update({
@@ -559,7 +551,7 @@ ORDER BY "month" ASC;`
 
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
       // Validate e execute the usecase
@@ -680,7 +672,7 @@ ORDER BY "month" ASC;`
 
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
       // Validate e execute the usecase
@@ -704,15 +696,15 @@ ORDER BY "month" ASC;`
         return reply.fail(errors.invalidToken())
       }
 
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
+      }
+
       if (!validations.customers.updateCustomer.body(req.body)) {
         return reply.fail(errors.ajv(validations.customers.updateCustomer.body.errors![0]))
       }
       const args: types.api.customers.updateCustomer.body = req.body
-
-      const id = parseUuid(req.params.id)
-      if (!id) {
-        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
-      }
 
       const data = {
         name: args.name,
@@ -742,7 +734,7 @@ ORDER BY "month" ASC;`
 
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
       // Validate e execute the usecase
@@ -766,6 +758,9 @@ ORDER BY "month" ASC;`
       const jwtData = await getJwtDataFromRequest(req)
       if (!jwtData) {
         return reply.fail(errors.invalidToken())
+      }
+      if (!jwtData.hasAccess()) {
+        return reply.fail(errors.invalidAccess('Role without access'))
       }
 
       const query: types.api.secretaries.listSecretaries.query = req.query
@@ -804,6 +799,9 @@ ORDER BY "month" ASC;`
       const jwtData = await getJwtDataFromRequest(req)
       if (!jwtData) {
         return reply.fail(errors.invalidToken())
+      }
+      if (!jwtData.hasAccess()) {
+        return reply.fail(errors.invalidAccess('Role without access'))
       }
 
       if (!validations.secretaries.createSecretary.body(req.body)) {
@@ -844,6 +842,9 @@ ORDER BY "month" ASC;`
       if (!jwtData) {
         return reply.fail(errors.invalidToken())
       }
+      if (!jwtData.hasAccess()) {
+        return reply.fail(errors.invalidAccess('Role without access'))
+      }
 
       const query: types.api.secretaries.countSecretaries.query = req.query
       const name = getStringParam(query.name, '')
@@ -874,10 +875,16 @@ ORDER BY "month" ASC;`
       if (!jwtData) {
         return reply.fail(errors.invalidToken())
       }
+      if (!jwtData.hasAccess('secretary')) {
+        return reply.fail(errors.invalidAccess('Role without access'))
+      }
 
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
+      }
+      if (jwtData.role === 'secretary' && jwtData.userId !== id) {
+        return reply.fail(errors.invalidAccess('User without access'))
       }
 
       // Validate e execute the usecase
@@ -900,16 +907,22 @@ ORDER BY "month" ASC;`
       if (!jwtData) {
         return reply.fail(errors.invalidToken())
       }
+      if (!jwtData.hasAccess("secretary")) {
+        return reply.fail(errors.invalidAccess('Role without access'))
+      }
+
+      const id = parseUuid(req.params.id)
+      if (!id) {
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
+      }
+      if (jwtData.role === 'secretary' && jwtData.userId !== id) {
+        return reply.fail(errors.invalidAccess('User without access'))
+      }
 
       if (!validations.secretaries.updateSecretary.body(req.body)) {
         return reply.fail(errors.ajv(validations.secretaries.updateSecretary.body.errors![0]))
       }
       const args: types.api.secretaries.updateSecretary.body = req.body
-
-      const id = parseUuid(req.params.id)
-      if (!id) {
-        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
-      }
 
       const data = {
         name: args.name,
@@ -956,10 +969,13 @@ ORDER BY "month" ASC;`
       if (!jwtData) {
         return reply.fail(errors.invalidToken())
       }
+      if (!jwtData.hasAccess()) {
+        return reply.fail(errors.invalidAccess('Role without access'))
+      }
 
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
       // Validate e execute the usecase
@@ -1060,7 +1076,7 @@ ORDER BY "month" ASC;`
 
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
       // Validate e execute the usecase
@@ -1094,7 +1110,7 @@ ORDER BY "month" ASC;`
 
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
       if (!validations.servicesAvailable.updateServiceAvailable.body(req.body)) {
@@ -1142,7 +1158,7 @@ ORDER BY "month" ASC;`
 
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
       // Validate e execute the usecase
@@ -1267,7 +1283,7 @@ ORDER BY "month" ASC;`
 
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
       // Validate e execute the usecase
@@ -1299,7 +1315,7 @@ ORDER BY "month" ASC;`
 
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
       if (!validations.services.updateService.body(req.body)) {
@@ -1334,7 +1350,7 @@ ORDER BY "month" ASC;`
 
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
       // Validate e execute the usecase
@@ -1359,7 +1375,6 @@ ORDER BY "month" ASC;`
       if (!jwtData) {
         return reply.fail(errors.invalidToken())
       }
-
 
       // Validate e execute the usecase
       const rows = await db.specializations.findMany({
@@ -1505,7 +1520,7 @@ ORDER BY "month" ASC;`
 
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
       // Validate e execute the usecase
@@ -1531,7 +1546,7 @@ ORDER BY "month" ASC;`
 
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
       // Validate e execute the usecase
@@ -1557,7 +1572,7 @@ ORDER BY "month" ASC;`
 
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
       // Validate e execute the usecase
@@ -1579,7 +1594,7 @@ ORDER BY "month" ASC;`
 
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
       const query: types.api.specialists.getSpecialistAppointments.query = req.query
@@ -1611,11 +1626,11 @@ ORDER BY "month" ASC;`
 
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
       const serviceId = parseUuid(req.params.service_id)
       if (!serviceId) {
-        return reply.fail(errors.validation('path', 'service_id', 'invalid uuid format'))
+        return reply.fail(errors.validation('path', 'service_id', 'invalid uuid'))
       }
 
       // Validate e execute the usecase
@@ -1647,7 +1662,7 @@ ORDER BY "month" ASC;`
 
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
       if (!validations.specialists.updateSpecialist.body(req.body)) {
@@ -1682,7 +1697,7 @@ ORDER BY "month" ASC;`
 
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
       // Validate e execute the usecase
@@ -1760,7 +1775,7 @@ ORDER BY "month" ASC;`
 
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
       if (!validations.specializations.updateSpecialization.body(req.body)) {
@@ -1792,7 +1807,7 @@ ORDER BY "month" ASC;`
 
       const id = parseUuid(req.params.id)
       if (!id) {
-        return reply.fail(errors.validation('path', 'id', 'invalid uuid format'))
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
       // Validate e execute the usecase

@@ -1,4 +1,4 @@
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:76:3)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:78:3)
 Request: GET /api/health 200
 Response: {
   "status": true,
@@ -13,43 +13,43 @@ Response: {
   }
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:84:3)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:86:3)
 Request: GET /api/test/stats 200
 Response: {
   "database": "user=test_user password=test_password host=localhost port=5432 dbname=test_db",
   "message": "Environment: TEST"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:85:3)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:87:3)
 Request: GET /api/test/init 200
 Response: "System initialized to be tested"
 
 # Route not found
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:88:3)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:90:3)
 Request: DELETE /api/appointments/ 404
 Response: {
   "code": "resource_not_found",
   "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceNotFound.json",
   "title": "Route not found",
-  "detail": "route DELETE /api/appointments/ not found",
+  "detail": "DELETE /api/appointments/ not found",
   "status": 404
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:89:3)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:91:3)
 Request: PUT /api/appointments/ 404
 Body: {}
 Response: {
   "code": "resource_not_found",
   "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceNotFound.json",
   "title": "Route not found",
-  "detail": "route PUT /api/appointments/ not found",
+  "detail": "PUT /api/appointments/ not found",
   "status": 404
 }
 
 # Auth errors
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:92:3)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:94:3)
 Request: GET /api/auth/me 401
 Response: {
   "code": "auth_error",
@@ -61,7 +61,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:94:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:96:5)
 Request: POST /api/appointments 401
 Body: {}
 Response: {
@@ -74,7 +74,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:95:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:97:5)
 Request: GET /api/appointments/x 401
 Response: {
   "code": "auth_error",
@@ -86,7 +86,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:96:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:98:5)
 Request: GET /api/appointments 401
 Params: {}
 Response: {
@@ -99,7 +99,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:97:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:99:5)
 Request: GET /api/appointments/count 401
 Params: {}
 Response: {
@@ -112,7 +112,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:98:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:100:5)
 Request: GET /api/appointments/calendar 401
 Params: {}
 Response: {
@@ -125,7 +125,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:99:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:101:5)
 Request: GET /api/appointments/calendar/count 401
 Params: {}
 Response: {
@@ -138,7 +138,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:100:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:102:5)
 Request: PUT /api/appointments/x 401
 Body: {}
 Response: {
@@ -151,7 +151,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:101:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:103:5)
 Request: DELETE /api/appointments/x 401
 Response: {
   "code": "auth_error",
@@ -163,7 +163,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:104:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:106:5)
 Request: POST /api/customers 401
 Body: {}
 Response: {
@@ -176,7 +176,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:105:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:107:5)
 Request: GET /api/customers/x 401
 Response: {
   "code": "auth_error",
@@ -188,7 +188,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:106:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:108:5)
 Request: GET /api/customers 401
 Params: {}
 Response: {
@@ -201,7 +201,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:107:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:109:5)
 Request: GET /api/customers/count 401
 Params: {}
 Response: {
@@ -214,7 +214,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:108:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:110:5)
 Request: PUT /api/customers/x 401
 Body: {}
 Response: {
@@ -227,7 +227,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:109:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:111:5)
 Request: DELETE /api/customers/x 401
 Response: {
   "code": "auth_error",
@@ -239,7 +239,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:112:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:114:5)
 Request: POST /api/secretaries 401
 Body: {}
 Response: {
@@ -252,7 +252,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:113:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:115:5)
 Request: GET /api/secretaries/x 401
 Response: {
   "code": "auth_error",
@@ -264,7 +264,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:114:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:116:5)
 Request: GET /api/secretaries 401
 Params: {}
 Response: {
@@ -277,7 +277,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:115:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:117:5)
 Request: GET /api/secretaries/count 401
 Params: {}
 Response: {
@@ -290,7 +290,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:116:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:118:5)
 Request: PUT /api/secretaries/x 401
 Body: {}
 Response: {
@@ -303,7 +303,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:117:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:119:5)
 Request: DELETE /api/secretaries/x 401
 Response: {
   "code": "auth_error",
@@ -315,7 +315,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:120:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:122:5)
 Request: GET /api/service-groups 401
 Response: {
   "code": "auth_error",
@@ -327,7 +327,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:123:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:125:5)
 Request: POST /api/services 401
 Body: {}
 Response: {
@@ -340,7 +340,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:124:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:126:5)
 Request: GET /api/services/x 401
 Response: {
   "code": "auth_error",
@@ -352,7 +352,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:125:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:127:5)
 Request: GET /api/services 401
 Params: {}
 Response: {
@@ -365,7 +365,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:126:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:128:5)
 Request: GET /api/services/count 401
 Params: {}
 Response: {
@@ -378,7 +378,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:127:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:129:5)
 Request: PUT /api/services/x 401
 Body: {}
 Response: {
@@ -391,7 +391,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:128:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:130:5)
 Request: DELETE /api/services/x 401
 Response: {
   "code": "auth_error",
@@ -403,7 +403,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:131:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:133:5)
 Request: POST /api/services-available 401
 Body: {}
 Response: {
@@ -416,7 +416,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:132:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:134:5)
 Request: GET /api/services-available/x 401
 Response: {
   "code": "auth_error",
@@ -428,7 +428,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:133:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:135:5)
 Request: GET /api/services-available 401
 Response: {
   "code": "auth_error",
@@ -440,7 +440,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:134:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:136:5)
 Request: PUT /api/services-available/x 401
 Body: {}
 Response: {
@@ -453,7 +453,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:135:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:137:5)
 Request: DELETE /api/services-available/x 401
 Response: {
   "code": "auth_error",
@@ -465,7 +465,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:138:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:140:5)
 Request: POST /api/specialists 401
 Body: {}
 Response: {
@@ -478,7 +478,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:139:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:141:5)
 Request: GET /api/specialists/x 401
 Response: {
   "code": "auth_error",
@@ -490,7 +490,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:140:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:142:5)
 Request: GET /api/specialists 401
 Params: {}
 Response: {
@@ -503,7 +503,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:141:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:143:5)
 Request: GET /api/specialists/x/appointments 401
 Params: {}
 Response: {
@@ -516,7 +516,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:142:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:144:5)
 Request: GET /api/specialists/x/services 401
 Response: {
   "code": "auth_error",
@@ -528,7 +528,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:143:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:145:5)
 Request: GET /api/specialists/x/specializations 401
 Response: {
   "code": "auth_error",
@@ -540,7 +540,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:144:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:146:5)
 Request: GET /api/specialists/x/services/y 401
 Response: {
   "code": "auth_error",
@@ -552,7 +552,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:145:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:147:5)
 Request: GET /api/specialists/count 401
 Params: {}
 Response: {
@@ -565,7 +565,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:146:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:148:5)
 Request: PUT /api/specialists/x 401
 Body: {}
 Response: {
@@ -578,7 +578,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:147:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:149:5)
 Request: DELETE /api/specialists/x 401
 Response: {
   "code": "auth_error",
@@ -590,7 +590,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:150:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:152:5)
 Request: POST /api/specializations 401
 Body: {}
 Response: {
@@ -603,7 +603,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:151:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:153:5)
 Request: GET /api/specializations 401
 Response: {
   "code": "auth_error",
@@ -615,7 +615,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:152:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:154:5)
 Request: PUT /api/specializations/x 401
 Body: {}
 Response: {
@@ -628,7 +628,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:153:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:155:5)
 Request: DELETE /api/specializations/x 401
 Response: {
   "code": "auth_error",
@@ -642,7 +642,7 @@ Response: {
 
 # api.auth.login: Short expiration time
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:157:3)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:159:3)
 Request: POST /api/auth/login 200
 Body: {
   "email": "admin@test.com",
@@ -655,7 +655,7 @@ Response: {
 
 # api.auth.login: Invalid body
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:172:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:174:5)
 Request: POST /api/auth/login 400
 Response: {
   "code": "validation_error",
@@ -671,7 +671,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:172:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:174:5)
 Request: POST /api/auth/login 400
 Body: {}
 Response: {
@@ -692,7 +692,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:172:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:174:5)
 Request: POST /api/auth/login 400
 Body: {
   "email": null,
@@ -716,7 +716,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:172:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:174:5)
 Request: POST /api/auth/login 400
 Body: {
   "email": null,
@@ -740,7 +740,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:172:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:174:5)
 Request: POST /api/auth/login 400
 Body: {
   "email": "",
@@ -764,7 +764,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:172:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:174:5)
 Request: POST /api/auth/login 400
 Body: {
   "email": "",
@@ -788,7 +788,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:175:3)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:177:3)
 Request: POST /api/auth/login 401
 Body: {
   "email": "admin@test.com",
@@ -804,7 +804,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:177:3)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:179:3)
 Request: GET /api/auth/me 401
 Response: {
   "code": "auth_error",
@@ -818,7 +818,7 @@ Response: {
 
 # api.auth.login: Long expiration time
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:180:3)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:182:3)
 Request: POST /api/auth/login 200
 Body: {
   "email": "admin@test.com",
@@ -831,7 +831,7 @@ Response: {
 
 # api.auth.refresh: Long accessToken auth
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:187:3)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:189:3)
 Request: POST /api/auth/refresh 401
 Response: {
   "code": "auth_error",
@@ -845,7 +845,7 @@ Response: {
 
 # Invalid uuid when calling any .getById(id)
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:190:3)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:192:3)
 Request: GET /api/appointments/0 400
 Response: {
   "code": "validation_error",
@@ -858,14 +858,14 @@ Response: {
   },
   "errors": {
     "id": [
-      "invalid uuid format"
+      "invalid uuid"
     ]
   },
   "instance": "/api/appointments/0",
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:191:3)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:193:3)
 Request: GET /api/customers/0 400
 Response: {
   "code": "validation_error",
@@ -878,14 +878,14 @@ Response: {
   },
   "errors": {
     "id": [
-      "invalid uuid format"
+      "invalid uuid"
     ]
   },
   "instance": "/api/customers/0",
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:192:3)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:194:3)
 Request: GET /api/secretaries/0 400
 Response: {
   "code": "validation_error",
@@ -898,14 +898,14 @@ Response: {
   },
   "errors": {
     "id": [
-      "invalid uuid format"
+      "invalid uuid"
     ]
   },
   "instance": "/api/secretaries/0",
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:193:3)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:195:3)
 Request: GET /api/services/0 400
 Response: {
   "code": "validation_error",
@@ -918,14 +918,14 @@ Response: {
   },
   "errors": {
     "id": [
-      "invalid uuid format"
+      "invalid uuid"
     ]
   },
   "instance": "/api/services/0",
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:194:3)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:196:3)
 Request: GET /api/services-available/0 400
 Response: {
   "code": "validation_error",
@@ -938,14 +938,14 @@ Response: {
   },
   "errors": {
     "id": [
-      "invalid uuid format"
+      "invalid uuid"
     ]
   },
   "instance": "/api/services-available/0",
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:195:3)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:197:3)
 Request: GET /api/specialists/0 400
 Response: {
   "code": "validation_error",
@@ -958,7 +958,7 @@ Response: {
   },
   "errors": {
     "id": [
-      "invalid uuid format"
+      "invalid uuid"
     ]
   },
   "instance": "/api/specialists/0",
@@ -967,7 +967,7 @@ Response: {
 
 # api.secretaries.create
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:207:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:209:5)
 Request: POST /api/secretaries 400
 Response: {
   "code": "validation_error",
@@ -983,7 +983,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:207:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:209:5)
 Request: POST /api/secretaries 400
 Body: {}
 Response: {
@@ -1004,7 +1004,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:207:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:209:5)
 Request: POST /api/secretaries 400
 Body: {
   "name": null,
@@ -1033,7 +1033,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:207:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:209:5)
 Request: POST /api/secretaries 201
 Body: {
   "name": "Secretary Test",
@@ -1050,7 +1050,7 @@ Response: {
 
 # api.specializations.create
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:212:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:218:5)
 Request: POST /api/specializations 400
 Response: {
   "code": "validation_error",
@@ -1066,7 +1066,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:212:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:218:5)
 Request: POST /api/specializations 400
 Body: {}
 Response: {
@@ -1087,7 +1087,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:215:3)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:221:3)
 Request: POST /api/specializations 201
 Body: {
   "name": "Specialization"
@@ -1096,7 +1096,7 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:216:3)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:222:3)
 Request: POST /api/specializations 409
 Body: {
   "name": "Specialization"
@@ -1113,7 +1113,7 @@ Response: {
 
 # api.servicesAvailable.create
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:223:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:229:5)
 Request: POST /api/services-available 400
 Response: {
   "code": "validation_error",
@@ -1129,7 +1129,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:223:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:229:5)
 Request: POST /api/services-available 400
 Body: {}
 Response: {
@@ -1150,7 +1150,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:223:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:229:5)
 Request: POST /api/services-available 400
 Body: {
   "name": null,
@@ -1174,7 +1174,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:223:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:229:5)
 Request: POST /api/services-available 400
 Body: {
   "name": "",
@@ -1198,7 +1198,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:223:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:229:5)
 Request: POST /api/services-available 400
 Body: {
   "name": "Service Available",
@@ -1215,14 +1215,14 @@ Response: {
   },
   "errors": {
     "specializationId": [
-      "must match format \"uuid\""
+      "invalid uuid"
     ]
   },
   "instance": "/api/services-available",
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:230:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:236:5)
 Request: POST /api/services-available 400
 Response: {
   "code": "validation_error",
@@ -1238,7 +1238,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:230:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:236:5)
 Request: POST /api/services-available 400
 Body: {}
 Response: {
@@ -1259,7 +1259,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:230:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:236:5)
 Request: POST /api/services-available 400
 Body: {
   "name": "",
@@ -1283,7 +1283,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:230:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:236:5)
 Request: POST /api/services-available 400
 Body: {
   "name": "",
@@ -1307,7 +1307,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:230:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:236:5)
 Request: POST /api/services-available 400
 Body: {
   "name": "",
@@ -1331,7 +1331,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:233:3)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:239:3)
 Request: POST /api/services-available 201
 Body: {
   "name": "Service Available",
@@ -1341,7 +1341,7 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:236:3)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:242:3)
 Request: POST /api/services-available 409
 Body: {
   "name": "Service Available",
@@ -1357,9 +1357,193 @@ Response: {
   "traceId": "[trace-id]"
 }
 
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:245:3)
+Request: GET /api/appointments/[uuid] 404
+Response: {
+  "code": "resource_not_found",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceNotFound.json",
+  "title": "Resource not found",
+  "detail": "appointment not found",
+  "status": 404,
+  "instance": "/api/appointments/[uuid]",
+  "traceId": "[trace-id]"
+}
+
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:246:3)
+Request: GET /api/customers/[uuid] 404
+Response: {
+  "code": "resource_not_found",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceNotFound.json",
+  "title": "Resource not found",
+  "detail": "customer not found",
+  "status": 404,
+  "instance": "/api/customers/[uuid]",
+  "traceId": "[trace-id]"
+}
+
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:247:3)
+Request: GET /api/secretaries/[uuid] 404
+Response: {
+  "code": "resource_not_found",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceNotFound.json",
+  "title": "Resource not found",
+  "detail": "secretary not found",
+  "status": 404,
+  "instance": "/api/secretaries/[uuid]",
+  "traceId": "[trace-id]"
+}
+
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:248:3)
+Request: GET /api/services/[uuid] 404
+Response: {
+  "code": "resource_not_found",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceNotFound.json",
+  "title": "Resource not found",
+  "detail": "service not found",
+  "status": 404,
+  "instance": "/api/services/[uuid]",
+  "traceId": "[trace-id]"
+}
+
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:249:3)
+Request: GET /api/services-available/[uuid] 404
+Response: {
+  "code": "resource_not_found",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceNotFound.json",
+  "title": "Resource not found",
+  "detail": "service_name not found",
+  "status": 404,
+  "instance": "/api/services-available/[uuid]",
+  "traceId": "[trace-id]"
+}
+
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:250:3)
+Request: GET /api/specialists/[uuid] 404
+Response: {
+  "code": "resource_not_found",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceNotFound.json",
+  "title": "Resource not found",
+  "detail": "specialist not found",
+  "status": 404,
+  "instance": "/api/specialists/[uuid]",
+  "traceId": "[trace-id]"
+}
+
+# Invalid access
+
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:254:3)
+Request: POST /api/secretaries 201
+Body: {
+  "name": "Secretary Test",
+  "email": "secretary2@test.com",
+  "password": "456@Mudar",
+  "birthdate": "2000-10-10",
+  "cnpj": "08130896000135",
+  "cpf": "72730805001",
+  "phone": "119876543210"
+}
+Response: {
+  "id": "[uuid]"
+}
+
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:263:3)
+Request: POST /api/auth/login 200
+Body: {
+  "email": "secretary@test.com",
+  "password": "456@Mudar"
+}
+Response: {
+  "accessToken": "[access-token]",
+  "refreshToken": "[access-token]"
+}
+
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:265:3)
+Request: GET /api/secretaries 403
+Params: {}
+Response: {
+  "code": "forbidden_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ForbiddenError.json",
+  "title": "Forbidden error",
+  "detail": "Role without access",
+  "status": 403,
+  "instance": "/api/secretaries",
+  "traceId": "[trace-id]"
+}
+
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:266:3)
+Request: GET /api/secretaries/count 403
+Params: {}
+Response: {
+  "code": "forbidden_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ForbiddenError.json",
+  "title": "Forbidden error",
+  "detail": "Role without access",
+  "status": 403,
+  "instance": "/api/secretaries/count",
+  "traceId": "[trace-id]"
+}
+
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:267:3)
+Request: GET /api/secretaries/[uuid] 403
+Response: {
+  "code": "forbidden_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ForbiddenError.json",
+  "title": "Forbidden error",
+  "detail": "User without access",
+  "status": 403,
+  "instance": "/api/secretaries/[uuid]",
+  "traceId": "[trace-id]"
+}
+
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:268:3)
+Request: POST /api/secretaries 403
+Body: {
+  "name": "Secretary Test",
+  "email": "secretary@test.com",
+  "password": "456@Mudar",
+  "birthdate": "2000-10-10",
+  "cnpj": "08130896000135",
+  "cpf": "72730805001",
+  "phone": "119876543210"
+}
+Response: {
+  "code": "forbidden_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ForbiddenError.json",
+  "title": "Forbidden error",
+  "detail": "Role without access",
+  "status": 403,
+  "instance": "/api/secretaries",
+  "traceId": "[trace-id]"
+}
+
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:269:3)
+Request: PUT /api/secretaries/[uuid] 403
+Body: {}
+Response: {
+  "code": "forbidden_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ForbiddenError.json",
+  "title": "Forbidden error",
+  "detail": "User without access",
+  "status": 403,
+  "instance": "/api/secretaries/[uuid]",
+  "traceId": "[trace-id]"
+}
+
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:270:3)
+Request: DELETE /api/secretaries/[uuid] 403
+Response: {
+  "code": "forbidden_error",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ForbiddenError.json",
+  "title": "Forbidden error",
+  "detail": "Role without access",
+  "status": 403,
+  "instance": "/api/secretaries/[uuid]",
+  "traceId": "[trace-id]"
+}
+
 # Token expired
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:243:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:277:5)
 Request: GET /api/auth/me 401
 Response: {
   "code": "auth_error",
@@ -1371,7 +1555,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:244:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:278:5)
 Request: POST /api/auth/refresh 401
 Response: {
   "code": "auth_error",
@@ -1383,7 +1567,7 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:245:5)
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\errors.ts:279:5)
 Request: POST /api/auth/refresh 401
 Response: {
   "code": "auth_error",

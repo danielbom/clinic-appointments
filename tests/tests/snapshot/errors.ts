@@ -71,6 +71,8 @@ async function run(w: WriteStr, api: Api, args: Args) {
     },
     specializationId: '',
     serviceAvailableId: '',
+    secretaryId: '',
+    secretaryId2: '',
   }
 
   await api.health.healthCheck().then((res) => {
@@ -204,7 +206,11 @@ async function run(w: WriteStr, api: Api, args: Args) {
     password: [baseData.secretary.password],
     birthdate: [baseData.secretary.birthdate],
   })) {
-    await api.secretaries.create(data as any)
+    await api.secretaries.create(data as any).then((res) => {
+      if (res.data.id) {
+        state.secretaryId = res.data.id
+      }
+    })
   }
 
   w.write('# api.specializations.create\n\n')
@@ -234,6 +240,34 @@ async function run(w: WriteStr, api: Api, args: Args) {
     .create({ name: 'Service Available', specializationId: state.specializationId })
     .then((res) => (state.serviceAvailableId = res.data.id))
   await api.servicesAvailable.create({ name: 'Service Available', specializationId: state.specializationId })
+
+  // not found
+  await api.appointments.getById(state.serviceAvailableId)
+  await api.customers.getById(state.serviceAvailableId)
+  await api.secretaries.getById(state.serviceAvailableId)
+  await api.services.getById(state.serviceAvailableId)
+  await api.servicesAvailable.getById(state.secretaryId)
+  await api.specialists.getById(state.serviceAvailableId)
+
+  // invalid access
+  w.write('# Invalid access\n\n')
+  await api.secretaries
+    .create({
+      ...baseData.secretary,
+      email: 'secretary2@test.com',
+    })
+    .then((res) => {
+      state.secretaryId2 = res.data.id
+    })
+
+  await api.auth.login(credentials.secretary).then((res) => apiLogin(res.data.accessToken))
+
+  await api.secretaries.getAll()
+  await api.secretaries.count()
+  await api.secretaries.getById(state.secretaryId2)
+  await api.secretaries.create(baseData.secretary)
+  await api.secretaries.update(state.secretaryId2, {} as any)
+  await api.secretaries.delete(state.secretaryId)
 
   // token expired
   w.write('# Token expired\n\n')

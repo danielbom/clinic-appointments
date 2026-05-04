@@ -828,6 +828,15 @@
                 }
               }
             }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/InvalidAccessProblemDetails"
+                }
+              }
+            }
           }
         }
       },
@@ -871,6 +880,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/InvalidAccessProblemDetails"
                 }
               }
             }
@@ -926,6 +944,15 @@
                 }
               }
             }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/InvalidAccessProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -961,6 +988,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/InvalidAccessProblemDetails"
                 }
               }
             }
@@ -1021,6 +1057,15 @@
               }
             }
           },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/InvalidAccessProblemDetails"
+                }
+              }
+            }
+          },
           "404": {
             "content": {
               "application/json": {
@@ -1065,6 +1110,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/InvalidAccessProblemDetails"
                 }
               }
             }

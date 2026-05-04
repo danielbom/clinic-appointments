@@ -51,15 +51,19 @@ export const errors = {
     if (instancePath) {
       key = instancePath.slice(1).replaceAll(/\//g, '.')
     }
+    const matchFormat = reason.match(/must match format \"(\w+)\"/)
+    if (matchFormat) {
+      reason = `invalid ${matchFormat[1]}`
+    }
     const match = reason.match(/'(\w+)'/)
     if (match) {
       key = match[1]
     }
-    if (reason.startsWith('must have required property ')) {
-      reason = 'is required'
-    }
     if (!key) {
       return this.missingValue('body')
+    }
+    if (reason.startsWith('must have required property ')) {
+      reason = 'is required'
     }
     return this.validation('body', key, reason)
   },
@@ -107,7 +111,7 @@ export const errors = {
       code: 'resource_not_found' as const,
       type: `${devUrl}/schemas/errors/ResourceNotFound.json`,
       title: 'Route not found',
-      detail: `route ${method} ${url} not found`,
+      detail: `${method} ${url} not found`,
       status: 404 as const,
     }
   },

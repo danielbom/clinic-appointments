@@ -1,9 +1,16 @@
 import jwt from 'jsonwebtoken'
 import { getJwtConfig } from './config'
 
-export type JwtData = {
-  userId: string
-  role: string
+export class JwtData {
+  constructor(
+    public userId: string,
+    public role: string,
+  ) {}
+
+  hasAccess(...roles: string[]) {
+    if (this.role === 'admin') return true
+    return roles.includes(this.role)
+  }
 }
 
 interface JwtPayload {
@@ -64,7 +71,7 @@ export function verifyJWT(token: string): Promise<JwtPayload> {
 }
 
 export function extractJwtData(payload: JwtPayload): JwtData {
-  return { userId: payload.sub, role: payload.role }
+  return new JwtData(payload.sub, payload.role)
 }
 
 export function isRefreshToken(data: JwtData): boolean {
