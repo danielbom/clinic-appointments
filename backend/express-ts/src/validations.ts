@@ -10,18 +10,10 @@ export const validations = {
     },
   },
   appointments: {
-    listAppointments: {
-    },
     createAppointment: {
       body: ajv.compile<types.api.appointments.createAppointment.body>({
         $ref: 'https://dev-clinic-appointments.com.br/schemas/body/AppointmentsCreateBody.json',
       }),
-    },
-    countAppointments: {
-    },
-    getAppointmentsCalendar: {
-    },
-    getAppointmentsCalendarCount: {
     },
     updateAppointment: {
       body: ajv.compile<types.api.appointments.updateAppointment.body>({
@@ -30,14 +22,10 @@ export const validations = {
     },
   },
   customers: {
-    listCustomers: {
-    },
     createCustomer: {
       body: ajv.compile<types.api.customers.createCustomer.body>({
         $ref: 'https://dev-clinic-appointments.com.br/schemas/body/CustomerCreateBody.json',
       }),
-    },
-    countCustomers: {
     },
     updateCustomer: {
       body: ajv.compile<types.api.customers.updateCustomer.body>({
@@ -46,14 +34,10 @@ export const validations = {
     },
   },
   secretaries: {
-    listSecretaries: {
-    },
     createSecretary: {
       body: ajv.compile<types.api.secretaries.createSecretary.body>({
         $ref: 'https://dev-clinic-appointments.com.br/schemas/body/SecretaryCreateBody.json',
       }),
-    },
-    countSecretaries: {
     },
     updateSecretary: {
       body: ajv.compile<types.api.secretaries.updateSecretary.body>({
@@ -62,8 +46,6 @@ export const validations = {
     },
   },
   servicesAvailable: {
-    listServicesAvailable: {
-    },
     createServiceAvailable: {
       body: ajv.compile<types.api.servicesAvailable.createServiceAvailable.body>({
         $ref: 'https://dev-clinic-appointments.com.br/schemas/body/ServiceAvailableCreateBody.json',
@@ -76,14 +58,10 @@ export const validations = {
     },
   },
   services: {
-    listServices: {
-    },
     createService: {
       body: ajv.compile<types.api.services.createService.body>({
         $ref: 'https://dev-clinic-appointments.com.br/schemas/body/ServiceCreateBody.json',
       }),
-    },
-    countServices: {
     },
     updateService: {
       body: ajv.compile<types.api.services.updateService.body>({
@@ -92,16 +70,10 @@ export const validations = {
     },
   },
   specialists: {
-    listSpecialists: {
-    },
     createSpecialist: {
       body: ajv.compile<types.api.specialists.createSpecialist.body>({
         $ref: 'https://dev-clinic-appointments.com.br/schemas/body/SpecialistCreateBody.json',
       }),
-    },
-    countSpecialists: {
-    },
-    getSpecialistAppointments: {
     },
     updateSpecialist: {
       body: ajv.compile<types.api.specialists.updateSpecialist.body>({

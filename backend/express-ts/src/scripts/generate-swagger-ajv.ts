@@ -87,7 +87,7 @@ function generateAllSchemas(schemasDir: Path, { baseUrl }: { baseUrl: string }) 
   }
 }
 
-function hasBodyOrQuery(actions: Record<string, { body: any | undefined; query: any | undefined }>): boolean {
+function hasBodyOrQuery(actions: Record<string, { body?: any; query?: any }>): boolean {
   for (const key in actions) {
     if (actions[key].body || actions[key].query) return true
   }
@@ -109,7 +109,8 @@ function generateAjvValidations(w: Writable, { baseUrl }: { baseUrl: string }) {
     w.write(`  ${resource}: {\n`)
     for (const action in route.actions) {
       const endpoint = route.actions[action]
-      if (!endpoint.body && !endpoint.query) continue
+      // if (!endpoint.body && !endpoint.query) continue
+      if (!endpoint.body) continue
 
       w.write(`    ${action}: {\n`)
       if (endpoint.body) {

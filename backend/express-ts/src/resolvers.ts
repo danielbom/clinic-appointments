@@ -14,12 +14,13 @@ import {
   replier,
   verifyPassword,
 } from './utils'
+import * as queries from './queries'
 import { validations } from './validations'
-import { getDatePart, getTimePart, presenter } from './presenter'
+import { AppointmentStatus, Identity, presenter } from './presenter'
 import { errors } from './errors'
 import * as types from './swagger-types'
 
-async function getIdentity(where: { email: string } | { id: string }) {
+async function getIdentity(where: { email: string } | { id: string }): Promise<Identity | null> {
   const admin = await db.admins.findUnique({ where })
 
   if (admin) {
@@ -47,13 +48,6 @@ async function getIdentity(where: { email: string } | { id: string }) {
   return null
 }
 
-const AppointmentStatus = {
-  None: 0,
-  Pending: 1,
-  Realized: 2,
-  Canceled: 3,
-}
-
 export default {
   health: {
     async healthCheck(req: Request, res: Response) {
@@ -63,27 +57,16 @@ export default {
         app: async () => {},
         jwt: async () => {},
         database: async () => {
-          type DbInfo = {
-            version: string
-            max_connections: number
-            opened_connections: number
-            schema_version: number
-          }
-
           const dbConfig = getDatabaseConfig()
 
           try {
-            const rows = await db.$queryRaw<DbInfo[]>`SELECT
-              current_setting('server_version') as version,
-              current_setting('max_connections')::int as max_connections,
-              (SELECT count(*)::int FROM pg_stat_activity WHERE datname = ${dbConfig.name}) as opened_connections,
-              (SELECT version FROM schema_version) as schema_version;`
+            const row = await queries.queryDatabaseInfo({ databaseName: dbConfig.name })
             response.database = {
               status: 'connected',
-              version: rows[0].version,
-              maxConnections: rows[0].max_connections,
-              openedConnections: rows[0].opened_connections,
-              schemaVersion: rows[0].schema_version,
+              version: row.version,
+              maxConnections: row.max_connections,
+              openedConnections: row.opened_connections,
+              schemaVersion: row.schema_version,
             }
           } catch (error) {
             console.error(error)
@@ -212,12 +195,7 @@ export default {
       }
 
       // Format the response
-      return reply.send(200, {
-        id: identity.id,
-        name: identity.name,
-        email: identity.email,
-        role: identity.role as any,
-      })
+      return reply.send(200, presenter.identity(identity))
     },
   },
   appointments: {
@@ -238,35 +216,22 @@ export default {
       const serviceName = getStringParam(query.serviceName)
       const specialist = getStringParam(query.specialist)
       const customer = getStringParam(query.customer)
+      const status = getIntParam(query.status, 0 /** all */)
 
       // Validate e execute the usecase
-      const rows = await db.appointments.findMany({
-        include: {
-          customers: {},
-          service_names: {},
-          specialists: {},
-        },
-        where: {
-          AND: [
-            ...(startDate ? [{ date: { gte: startDate } }] : []),
-            ...(endDate ? [{ date: { lte: endDate } }] : []),
-            ...(serviceName
-              ? [{ service_names: { name: { contains: serviceName, mode: 'insensitive' } } } as const]
-              : []), //
-            ...(specialist ? [{ specialists: { name: { contains: specialist, mode: 'insensitive' } } } as const] : []), //
-            ...(customer ? [{ customers: { name: { contains: customer, mode: 'insensitive' } } } as const] : []), //
-          ],
-        },
-        orderBy: [{ date: 'desc' }, { time: 'desc' }],
-        take: pageSize,
-        skip: page * pageSize,
+      const rows = await queries.queryAppointments({
+        page,
+        pageSize,
+        startDate,
+        endDate,
+        serviceName,
+        specialist,
+        customer,
+        status,
       })
 
       // Format the response
-      return reply.send(
-        200,
-        rows.map((row) => presenter.appointment(row)),
-      )
+      return reply.send(200, rows.map(presenter.appointment))
     },
     async createAppointment(req: Request, res: Response) {
       const reply = replier<types.api.appointments.createAppointment.responses>(res)
@@ -323,20 +288,16 @@ export default {
       const serviceName = getStringParam(query.serviceName)
       const specialist = getStringParam(query.specialist)
       const customer = getStringParam(query.customer)
+      const status = getIntParam(query.status, 0 /** all */)
 
       // Validate e execute the usecase
-      const count = await db.appointments.count({
-        where: {
-          AND: [
-            ...(startDate ? [{ date: { gte: startDate } }] : []),
-            ...(endDate ? [{ date: { lte: endDate } }] : []),
-            ...(serviceName
-              ? [{ service_names: { name: { contains: serviceName, mode: 'insensitive' } } } as const]
-              : []), //
-            ...(specialist ? [{ specialists: { name: { contains: specialist, mode: 'insensitive' } } } as const] : []), //
-            ...(customer ? [{ customers: { name: { contains: customer, mode: 'insensitive' } } } as const] : []), //
-          ],
-        },
+      const count = await queries.queryAppointmentsCount({
+        startDate,
+        endDate,
+        serviceName,
+        specialist,
+        customer,
+        status,
       })
 
       // Format the response
@@ -362,52 +323,10 @@ export default {
       }
 
       // Validate e execute the usecase
-
-      // -- Just with client.previewFeatures = ["relationJoins"] enabled
-      // const row = await dbLog.appointments.findMany({
-      //   relationLoadStrategy: 'join',
-      //   select: {
-      //     id: true,
-      //     date: true,
-      //     time: true,
-      //     status: true,
-      //     specialists: { select: { name: true } },
-      //   },
-      //   where: {
-      //     AND: [
-      //       { date: { gt: startDate } }, //
-      //       { date: { lt: endDate } }, //
-      //     ],
-      //   },
-      //   orderBy: [{ date: 'desc' }, { time: 'desc' }],
-      // })
-
-      type CalendarRow = {
-        id: string
-        date: Date
-        time: Date
-        status: number
-        specialist_name: string
-      }
-      const row = await db.$queryRaw<CalendarRow[]>`
-SELECT "a"."id", "a"."date", "a"."time", "a"."status", "s"."name" AS "specialist_name"
-FROM "appointments" "a"
-JOIN "specialists" "s" ON "a"."specialist_id" = "s"."id"
-WHERE "a"."date" >= ${startDate} AND "a"."date" <= ${endDate}
-ORDER BY "a"."date" DESC, "a"."time" DESC
-      `
+      const rows = await queries.queryAppointmentsCalendar({ startDate, endDate })
 
       // Format the response
-      return reply.send(
-        200,
-        row.map((row) => ({
-          id: row.id,
-          date: getDatePart(row.date.toISOString()),
-          time: getTimePart(row.time.toISOString()),
-          specialistName: row.specialist_name,
-          status: row.status,
-        })),
-      )
+      return reply.send(200, rows.map(presenter.calendar))
     },
     async getAppointmentsCalendarCount(req: Request, res: Response) {
       const reply = replier<types.api.appointments.getAppointmentsCalendarCount.responses>(res)
@@ -428,53 +347,11 @@ ORDER BY "a"."date" DESC, "a"."time" DESC
         return reply.fail(errors.validation('query', 'endDate', 'invalid date format'))
       }
 
-      type CountByStatus = { month: number; status: number; count: number }
-
       // Validate e execute the usecase
-      // const appointmentsCount = await db.appointments.groupBy({
-      //   where: {
-      //     AND: [
-      //       { date: { gt: startDate } }, //
-      //       { date: { lt: endDate } }, //
-      //     ],
-      //   },
-      //   by: ['date', 'status'],
-      //   _count: { status: true },
-      // })
-      const appointmentsCount = await db.$queryRaw<CountByStatus[]>`
-SELECT date_part('month', "a"."date")::int AS "month"
-     , "status", COUNT("a"."id")::int AS "count"
-FROM "appointments" "a"
-WHERE "a"."date" >= ${startDate}
-  AND "a"."date" <= ${endDate}
-GROUP BY "month", "status"
-ORDER BY "month" ASC;`
+      const calendarCount = await queries.queryAppointmentsCalendarCount({ startDate, endDate })
 
       // Format the response
-      const response: types.schemas.AppointmentCalendarCount[] = Array.from({ length: 12 }, (_, month) => ({
-        month,
-        pendingCount: 0,
-        realizedCount: 0,
-        canceledCount: 0,
-      }))
-
-      appointmentsCount.forEach((countByStatus) => {
-        switch (countByStatus.status) {
-          case AppointmentStatus.Pending: {
-            response[countByStatus.month - 1].pendingCount += countByStatus.count
-            break
-          }
-          case AppointmentStatus.Realized: {
-            response[countByStatus.month - 1].realizedCount += countByStatus.count
-            break
-          }
-          case AppointmentStatus.Canceled: {
-            response[countByStatus.month - 1].canceledCount += countByStatus.count
-            break
-          }
-        }
-      })
-
+      const response = presenter.calendarCount(calendarCount)
       return reply.send(200, response)
     },
     async getAppointmentById(req: Request, res: Response) {
@@ -492,14 +369,7 @@ ORDER BY "month" ASC;`
       }
 
       // Validate e execute the usecase
-      const row = await db.appointments.findFirst({
-        include: {
-          customers: {},
-          service_names: {},
-          specialists: {},
-        },
-        where: { id },
-      })
+      const row = await queries.queryAppointment({ appointmentId: id })
 
       if (!row) {
         return reply.fail(errors.notFound('appointment'))
@@ -585,24 +455,10 @@ ORDER BY "month" ASC;`
       const phone = getStringParam(query.phone, '')
 
       // Validate e execute the usecase
-      const rows = await db.customers.findMany({
-        where: {
-          AND: [
-            ...(name ? [{ name: { contains: name, mode: 'insensitive' } as const }] : []), //
-            ...(cpf ? [{ cpf }] : []), //
-            ...(phone ? [{ phone }] : []), //
-          ],
-        },
-        // orderBy: { name: 'asc' },
-        take: pageSize,
-        skip: page * pageSize,
-      })
+      const rows = await queries.queryCustomers({ page, pageSize, name, cpf, phone })
 
       // Format the response
-      return reply.send(
-        200,
-        rows.map((row) => presenter.customer(row)),
-      )
+      return reply.send(200, rows.map(presenter.customer))
     },
     async createCustomer(req: Request, res: Response) {
       const reply = replier<types.api.customers.createCustomer.responses>(res)
@@ -648,15 +504,7 @@ ORDER BY "month" ASC;`
       const phone = getStringParam(query.phone, '')
 
       // Validate e execute the usecase
-      const count = await db.customers.count({
-        where: {
-          AND: [
-            ...(name ? [{ name: { contains: name, mode: 'insensitive' } as const }] : []), //
-            ...(cpf ? [{ cpf }] : []), //
-            ...(phone ? [{ phone }] : []), //
-          ],
-        },
-      })
+      const count = await queries.queryCustomersCount({ name, cpf, phone })
 
       // Format the response
       return reply.send(200, count)
@@ -676,9 +524,7 @@ ORDER BY "month" ASC;`
       }
 
       // Validate e execute the usecase
-      const row = await db.customers.findFirst({
-        where: { id },
-      })
+      const row = await queries.queryCustomer({ customerId: id })
 
       if (!row) {
         return reply.fail(errors.notFound('customer'))
@@ -772,25 +618,10 @@ ORDER BY "month" ASC;`
       const phone = getStringParam(query.phone, '')
 
       // Validate e execute the usecase
-      const rows = await db.secretaries.findMany({
-        where: {
-          AND: [
-            ...(name ? [{ name: { contains: name, mode: 'insensitive' } as const }] : []), //
-            ...(cpf ? [{ cpf }] : []), //
-            ...(cnpj ? [{ cnpj }] : []), //
-            ...(phone ? [{ phone }] : []), //
-          ],
-        },
-        orderBy: { name: 'asc' },
-        take: pageSize,
-        skip: page * pageSize,
-      })
+      const rows = await queries.querySecretaries({ page, pageSize, name, cpf, cnpj, phone })
 
       // Format the response
-      return reply.send(
-        200,
-        rows.map((row) => presenter.secretary(row)),
-      )
+      return reply.send(200, rows.map(presenter.secretary))
     },
     async createSecretary(req: Request, res: Response) {
       const reply = replier<types.api.secretaries.createSecretary.responses>(res)
@@ -853,16 +684,7 @@ ORDER BY "month" ASC;`
       const phone = getStringParam(query.phone, '')
 
       // Validate e execute the usecase
-      const count = await db.secretaries.count({
-        where: {
-          AND: [
-            ...(name ? [{ name: { contains: name, mode: 'insensitive' } as const }] : []), //
-            ...(cpf ? [{ cpf }] : []), //
-            ...(cnpj ? [{ cnpj }] : []), //
-            ...(phone ? [{ phone }] : []), //
-          ],
-        },
-      })
+      const count = await queries.querySecretariesCount({ name, cpf, cnpj, phone })
 
       // Format the response
       return reply.send(200, count)
@@ -888,9 +710,7 @@ ORDER BY "month" ASC;`
       }
 
       // Validate e execute the usecase
-      const row = await db.secretaries.findFirst({
-        where: { id },
-      })
+      const row = await queries.querySecretary({ secretaryId: id })
 
       if (!row) {
         return reply.fail(errors.notFound('secretary'))
@@ -907,7 +727,7 @@ ORDER BY "month" ASC;`
       if (!jwtData) {
         return reply.fail(errors.invalidToken())
       }
-      if (!jwtData.hasAccess("secretary")) {
+      if (!jwtData.hasAccess('secretary')) {
         return reply.fail(errors.invalidAccess('Role without access'))
       }
 
@@ -1006,20 +826,10 @@ ORDER BY "month" ASC;`
       const pageSize = getIntParam(query.pageSize, 10)
 
       // Validate e execute the usecase
-      const rows = await db.specializations.findMany({
-        orderBy: { name: 'asc' },
-        include: {
-          service_names: {},
-        },
-        take: pageSize,
-        skip: page * pageSize,
-      })
+      const rows = await queries.queryServiceAvailables({ page, pageSize })
 
       // Format the response
-      return reply.send(
-        200,
-        rows.map((row) => presenter.serviceGroup(row)),
-      )
+      return reply.send(200, rows.map(presenter.serviceGroup))
     },
     async createServiceAvailable(req: Request, res: Response) {
       const reply = replier<types.api.servicesAvailable.createServiceAvailable.responses>(res)
@@ -1080,24 +890,14 @@ ORDER BY "month" ASC;`
       }
 
       // Validate e execute the usecase
-      const row = await db.service_names.findUnique({
-        where: { id },
-        include: {
-          specializations: {},
-        },
-      })
+      const row = await queries.queryServiceAvailable({ serviceAvailableId: id })
 
       if (!row) {
         return reply.fail(errors.notFound('service_name'))
       }
 
       // Format the response
-      return reply.send(200, {
-        serviceName: row.name,
-        serviceNameId: row.id,
-        specialization: row.specializations.name,
-        specializationId: row.specializations.id,
-      })
+      return reply.send(200, presenter.serviceAvailable(row))
     },
     async updateServiceAvailable(req: Request, res: Response) {
       const reply = replier<types.api.servicesAvailable.updateServiceAvailable.responses>(res)
@@ -1192,27 +992,10 @@ ORDER BY "month" ASC;`
       const specialization = getStringParam(query.specialization).toLowerCase()
 
       // Validate e execute the usecase
-      const rows = await db.services.findMany({
-        where: {
-          AND: [
-            ...(service ? [{ service_names: { name: { contains: service } } } as const] : []), //
-            ...(specialist ? [{ specialists: { name: { contains: specialist } } } as const] : []), //
-            ...(specialization
-              ? [{ service_names: { specializations: { name: { contains: specialization } } } } as const]
-              : []), //
-          ],
-        },
-        include: { service_names: { include: { specializations: {} } }, specialists: {} },
-        // orderBy: [{ service_names: { specializations: { name: 'desc' } } }, { service_names: { name: 'desc' } }],
-        take: pageSize,
-        skip: page * pageSize,
-      })
+      const rows = await queries.queryServices({ page, pageSize, service, specialist, specialization })
 
       // Format the response
-      return reply.send(
-        200,
-        rows.map((row) => presenter.service(row)),
-      )
+      return reply.send(200, rows.map(presenter.serviceEnhanced))
     },
     async createService(req: Request, res: Response) {
       const reply = replier<types.api.services.createService.responses>(res)
@@ -1257,17 +1040,7 @@ ORDER BY "month" ASC;`
       const specialization = getStringParam(query.specialization).toLowerCase()
 
       // Validate e execute the usecase
-      const count = await db.services.count({
-        where: {
-          AND: [
-            ...(service ? [{ service_names: { name: { contains: service } } } as const] : []), //
-            ...(specialist ? [{ specialists: { name: { contains: specialist } } } as const] : []), //
-            ...(specialization
-              ? [{ service_names: { specializations: { name: { contains: specialization } } } } as const]
-              : []), //
-          ],
-        },
-      })
+      const count = await queries.queryServicesCount({ service, specialist, specialization })
 
       // Format the response
       return reply.send(200, count)
@@ -1287,22 +1060,14 @@ ORDER BY "month" ASC;`
       }
 
       // Validate e execute the usecase
-      const row = await db.services.findUnique({
-        where: { id },
-      })
+      const row = await queries.queryService({ serviceId: id })
 
       if (!row) {
         return reply.fail(errors.notFound('service'))
       }
 
       // Format the response
-      return reply.send(200, {
-        id: row.id,
-        specialistId: row.specialist_id,
-        serviceNameId: row.service_name_id,
-        price: row.price,
-        duration: row.duration,
-      })
+      return reply.send(200, presenter.service(row))
     },
     async updateService(req: Request, res: Response) {
       const reply = replier<types.api.services.updateService.responses>(res)
@@ -1377,15 +1142,10 @@ ORDER BY "month" ASC;`
       }
 
       // Validate e execute the usecase
-      const rows = await db.specializations.findMany({
-        include: { service_names: {} },
-      })
+      const rows = await queries.queryServiceGroups()
 
       // Format the response
-      return reply.send(
-        200,
-        rows.map((row) => presenter.serviceGroup(row)),
-      )
+      return reply.send(200, rows.map(presenter.serviceGroup))
     },
   },
   specialists: {
@@ -1407,25 +1167,10 @@ ORDER BY "month" ASC;`
       const phone = getStringParam(query.phone)
 
       // Validate e execute the usecase
-      const rows = await db.specialists.findMany({
-        where: {
-          AND: [
-            ...(name ? [{ name: { contains: name, mode: 'insensitive' } as const }] : []), //
-            ...(cpf ? [{ cpf }] : []), //
-            ...(cnpj ? [{ cnpj }] : []), //
-            ...(phone ? [{ phone }] : []), //
-          ],
-        },
-        orderBy: { name: 'asc' },
-        take: pageSize,
-        skip: page * pageSize,
-      })
+      const rows = await queries.querySpecialists({ page, pageSize, name, cpf, cnpj, phone })
 
       // Format the response
-      return reply.send(
-        200,
-        rows.map((row) => presenter.specialist(row)),
-      )
+      return reply.send(200, rows.map(presenter.specialist))
     },
     async createSpecialist(req: Request, res: Response) {
       const reply = replier<types.api.specialists.createSpecialist.responses>(res)
@@ -1495,16 +1240,7 @@ ORDER BY "month" ASC;`
       const phone = getStringParam(query.phone)
 
       // Validate e execute the usecase
-      const count = await db.specialists.count({
-        where: {
-          AND: [
-            ...(name ? [{ name: { contains: name, mode: 'insensitive' } as const }] : []), //
-            ...(cpf ? [{ cpf }] : []), //
-            ...(cnpj ? [{ cnpj }] : []), //
-            ...(phone ? [{ phone }] : []), //
-          ],
-        },
-      })
+      const count = await queries.querySpecialistsCount({ name, cpf, cnpj, phone })
 
       // Format the response
       return reply.send(200, count)
@@ -1524,9 +1260,7 @@ ORDER BY "month" ASC;`
       }
 
       // Validate e execute the usecase
-      const row = await db.specialists.findUnique({
-        where: { id },
-      })
+      const row = await queries.querySpecialist({ specialistId: id })
 
       if (!row) {
         return reply.fail(errors.notFound('specialist'))
@@ -1550,16 +1284,10 @@ ORDER BY "month" ASC;`
       }
 
       // Validate e execute the usecase
-      const rows = await db.services.findMany({
-        where: { specialist_id: id },
-        include: { service_names: {} },
-      })
+      const rows = await queries.querySpecialistServices({ specialistId: id })
 
       // Format the response
-      return reply.send(
-        200,
-        rows.map((row) => presenter.specialistService(row)),
-      )
+      return reply.send(200, rows.map(presenter.specialistService))
     },
     async getSpecialistSpecializations(req: Request, res: Response) {
       const reply = replier<types.api.specialists.getSpecialistSpecializations.responses>(res)
@@ -1576,9 +1304,7 @@ ORDER BY "month" ASC;`
       }
 
       // Validate e execute the usecase
-      const rows = await db.specializations.findMany({
-        where: { service_names: { some: { services: { some: { specialist_id: id } } } } },
-      })
+      const rows = await queries.querySpecialistSpecializations({ specialistId: id })
 
       // Format the response
       return reply.send(200, rows)
@@ -1602,18 +1328,10 @@ ORDER BY "month" ASC;`
       const pageSize = getIntParam(query.pageSize, 10)
 
       // Validate e execute the usecase
-      const rows = await db.appointments.findMany({
-        where: { specialist_id: id },
-        include: { service_names: {}, customers: {} },
-        take: pageSize,
-        skip: page * pageSize,
-      })
+      const rows = await queries.querySpecialistAppointments({ page, pageSize, specialistId: id })
 
       // Format the response
-      return reply.send(
-        200,
-        rows.map((row) => presenter.specialistAppointment(row)),
-      )
+      return reply.send(200, rows.map(presenter.specialistAppointment))
     },
     async getSpecialistService(req: Request, res: Response) {
       const reply = replier<types.api.specialists.getSpecialistService.responses>(res)
@@ -1634,22 +1352,14 @@ ORDER BY "month" ASC;`
       }
 
       // Validate e execute the usecase
-      const row = await db.services.findFirst({
-        where: { specialist_id: id, service_name_id: serviceId },
-      })
+      const row = await queries.querySpecialistService({ specialistId: id, serviceId })
 
       if (!row) {
         return reply.fail(errors.notFound('service'))
       }
 
       // Format the response
-      return reply.send(200, {
-        id: row.id,
-        specialistId: row.specialist_id,
-        serviceNameId: row.service_name_id,
-        price: row.price,
-        duration: row.duration,
-      })
+      return reply.send(200, presenter.service(row))
     },
     async updateSpecialist(req: Request, res: Response) {
       const reply = replier<types.api.specialists.updateSpecialist.responses>(res)
@@ -1724,9 +1434,7 @@ ORDER BY "month" ASC;`
       }
 
       // Validate e execute the usecase
-      const rows = await db.specializations.findMany({
-        orderBy: { name: 'asc' },
-      })
+      const rows = await queries.querySpecializations()
 
       // Format the response
       return reply.send(200, rows)

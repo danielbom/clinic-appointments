@@ -1,5 +1,14 @@
 import * as types from './swagger-types'
-import { type db } from './db'
+import type * as models from './prisma/models.ts'
+import { Calendar, CalendarCount } from './queries'
+
+export type Identity = {
+  id: string
+  name: string
+  email: string
+  password: string
+  role: 'admin' | 'secretary'
+}
 
 export function getDatePart(isodate: string): string {
   return isodate.slice(0, 10)
@@ -9,19 +18,20 @@ export function getTimePart(isodate: string): string {
   return isodate.slice(11, 19)
 }
 
+export const AppointmentStatus = {
+  None: 0,
+  Pending: 1,
+  Realized: 2,
+  Canceled: 3,
+}
+
 export const presenter = {
   appointment(
-    row: Awaited<
-      ReturnType<
-        typeof db.appointments.findMany<{
-          include: {
-            customers: {}
-            service_names: {}
-            specialists: {}
-          }
-        }>
-      >
-    >[number],
+    row: models.appointmentsModel & {
+      customers: models.customersModel
+      service_names: models.service_namesModel
+      specialists: models.specialistsModel
+    },
   ): types.schemas.Appointment {
     return {
       id: row.id,
@@ -38,17 +48,55 @@ export const presenter = {
       status: row.status,
     }
   },
+  calendar(row: Calendar): types.schemas.AppointmentCalendar {
+    return {
+      id: row.id,
+      date: getDatePart(row.date.toISOString()),
+      time: getTimePart(row.time.toISOString()),
+      specialistName: row.specialist_name,
+      status: row.status,
+    }
+  },
+  calendarCount(calendarCount: CalendarCount[]): types.schemas.AppointmentCalendarCount[] {
+    const response: types.schemas.AppointmentCalendarCount[] = Array.from({ length: 12 }, (_, month) => ({
+      month,
+      pendingCount: 0,
+      realizedCount: 0,
+      canceledCount: 0,
+    }))
+
+    calendarCount.forEach((count) => {
+      switch (count.status) {
+        case AppointmentStatus.Pending: {
+          response[count.month - 1].pendingCount += count.count
+          break
+        }
+        case AppointmentStatus.Realized: {
+          response[count.month - 1].realizedCount += count.count
+          break
+        }
+        case AppointmentStatus.Canceled: {
+          response[count.month - 1].canceledCount += count.count
+          break
+        }
+      }
+    })
+
+    return response
+  },
+  identity(identity: Identity): types.schemas.AuthIdentity {
+    return {
+      id: identity.id,
+      name: identity.name,
+      email: identity.email,
+      role: identity.role,
+    }
+  },
   specialistAppointment(
-    row: Awaited<
-      ReturnType<
-        typeof db.appointments.findMany<{
-          include: {
-            customers: {}
-            service_names: {}
-          }
-        }>
-      >
-    >[number],
+    row: models.appointmentsModel & {
+      customers: models.customersModel
+      service_names: models.service_namesModel
+    },
   ): types.schemas.SpecialistAppointment {
     return {
       id: row.id,
@@ -63,7 +111,7 @@ export const presenter = {
       status: row.status,
     }
   },
-  secretary(row: Awaited<ReturnType<typeof db.secretaries.findMany<{}>>>[number]): types.schemas.Secretary {
+  secretary(row: models.secretariesModel): types.schemas.Secretary {
     return {
       id: row.id,
       name: row.name,
@@ -74,7 +122,7 @@ export const presenter = {
       cnpj: row.cnpj ?? undefined,
     }
   },
-  customer(row: Awaited<ReturnType<typeof db.customers.findMany<{}>>>[number]): types.schemas.Customer {
+  customer(row: models.customersModel): types.schemas.Customer {
     return {
       id: row.id,
       name: row.name,
@@ -84,7 +132,7 @@ export const presenter = {
       cpf: row.cpf,
     }
   },
-  specialist(row: Awaited<ReturnType<typeof db.specialists.findMany<{}>>>[number]): types.schemas.Specialist {
+  specialist(row: models.specialistsModel): types.schemas.Specialist {
     return {
       id: row.id,
       name: row.name,
@@ -96,15 +144,9 @@ export const presenter = {
     }
   },
   specialistService(
-    row: Awaited<
-      ReturnType<
-        typeof db.services.findMany<{
-          include: {
-            service_names: {}
-          }
-        }>
-      >
-    >[number],
+    row: models.servicesModel & {
+      service_names: models.service_namesModel
+    },
   ) {
     return {
       id: row.id,
@@ -115,17 +157,22 @@ export const presenter = {
       duration: row.duration,
     }
   },
-  service(
-    row: Awaited<
-      ReturnType<
-        typeof db.services.findMany<{
-          include: {
-            service_names: { include: { specializations: {} } }
-            specialists: {}
-          }
-        }>
-      >
-    >[number],
+  service(row: models.servicesModel): types.schemas.Service {
+    return {
+      id: row.id,
+      specialistId: row.specialist_id,
+      serviceNameId: row.service_name_id,
+      price: row.price,
+      duration: row.duration,
+    }
+  },
+  serviceEnhanced(
+    row: models.servicesModel & {
+      service_names: models.service_namesModel & {
+        specializations: models.specializationsModel
+      }
+      specialists: models.specialistsModel
+    },
   ): types.schemas.ServiceEnriched {
     return {
       id: row.id,
@@ -140,7 +187,9 @@ export const presenter = {
     }
   },
   serviceGroup(
-    row: Awaited<ReturnType<typeof db.specializations.findMany<{ include: { service_names: {} } }>>>[number],
+    row: models.specializationsModel & {
+      service_names: models.service_namesModel[]
+    },
   ): types.schemas.ServiceGroup {
     return {
       id: row.id,
@@ -149,6 +198,18 @@ export const presenter = {
         id: s.id,
         name: s.name,
       })),
+    }
+  },
+  serviceAvailable(
+    row: models.service_namesModel & {
+      specializations: models.specializationsModel
+    },
+  ): types.schemas.ServiceAvailable {
+    return {
+      serviceName: row.name,
+      serviceNameId: row.id,
+      specialization: row.specializations.name,
+      specializationId: row.specializations.id,
     }
   },
 }
