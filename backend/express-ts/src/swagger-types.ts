@@ -362,7 +362,7 @@ export namespace errors {
   export type ConflictProblemDetails = errors.ProblemDetails & {
     code: 'resource_conflict'
     status: 409
-    title: 'Resource conflict'
+    title: 'Resource conflict' | 'Schedule conflict'
   }
 
   /**
@@ -628,6 +628,7 @@ export namespace api {
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
+        409: errors.ConflictProblemDetails
       }
     }
 
@@ -715,6 +716,8 @@ export namespace api {
         200: schemas.Id
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
+        404: errors.NotFoundProblemDetails
+        409: errors.ConflictProblemDetails
       }
     }
 
@@ -770,6 +773,7 @@ export namespace api {
         201: schemas.Id
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
+        409: errors.ConflictProblemDetails
       }
     }
 
@@ -819,6 +823,7 @@ export namespace api {
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
+        409: errors.ConflictProblemDetails
       }
     }
 
@@ -1088,6 +1093,7 @@ export namespace api {
         201: schemas.Id
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
+        409: errors.ConflictProblemDetails
       }
     }
 

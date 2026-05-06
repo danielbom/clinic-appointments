@@ -1,6 +1,7 @@
 import Ajv from 'ajv'
 import { Path } from './lib/path'
 import { validate as isUuid } from 'uuid'
+import { isValidISODate, isValidISOTime } from './utils'
 
 export const ajv = new Ajv({})
 
@@ -30,26 +31,14 @@ ajv.addFormat('uuid', {
   validate: (data) => isUuid(data),
 })
 
-const DATE_FORMAT = /\d\d\d\d-\d\d-\d\d/
 ajv.addFormat('date', {
   type: 'string',
-  validate: (data) => {
-    if (data.match(DATE_FORMAT) && !isNaN(new Date(data + 'T00:00:00').getTime())) {
-      return true
-    }
-    return false
-  },
+  validate: (data) => isValidISODate(data),
 })
 
-const TIME_FORMAT = /\d\d:\d\d:\d\d/
 ajv.addFormat('time', {
   type: 'string',
-  validate: (data) => {
-    if (data.match(TIME_FORMAT) && !isNaN(new Date('2020-01-01T' + data).getTime())) {
-      return true
-    }
-    return false
-  },
+  validate: (data) => isValidISOTime(data),
 })
 
 ajv.addFormat('phone', {

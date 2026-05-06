@@ -1,6 +1,8 @@
 import { db } from './db'
+import { parseISODateToUTC, parseISOTimeToUTC } from './utils'
 
 // health
+
 export type DatabaseInfo = {
   version: string
   max_connections: number
@@ -18,6 +20,7 @@ current_setting('max_connections')::int as max_connections,
 }
 
 // auth
+
 export type Identity = {
   id: string
   name: string
@@ -124,6 +127,28 @@ ORDER BY "month" ASC;`
 }
 
 // appointments
+
+export async function queryAppointmentIntersects(args: {
+  date: string
+  time: string
+  duration: number
+  specialistId: string
+}): Promise<boolean> {
+  const { duration, specialistId } = args
+  const date = parseISODateToUTC(args.date)
+  const time = parseISOTimeToUTC(args.time)
+  const result = await db.$queryRaw<{ conflict: boolean }[]>`
+SELECT COUNT("date") > 0 AS conflict
+FROM "appointments"
+WHERE "date" = ${date}
+  AND "specialist_id" = ${specialistId}
+  AND (
+    "time" < ${time}::time + make_interval(mins => ${duration}::integer)
+    AND ${time}::time < "time" + make_interval(mins => "duration")
+  )
+LIMIT 1`
+  return result[0].conflict
+}
 
 export async function queryAppointment({ appointmentId }: { appointmentId: string }) {
   const row = await db.appointments.findFirst({

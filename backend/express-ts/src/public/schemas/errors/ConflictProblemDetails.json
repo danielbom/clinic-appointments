@@ -23,7 +23,8 @@
         "title": {
           "type": "string",
           "enum": [
-            "Resource conflict"
+            "Resource conflict",
+            "Schedule conflict"
           ]
         }
       },

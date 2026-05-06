@@ -261,6 +261,15 @@
                 }
               }
             }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ConflictProblemDetails"
+                }
+              }
+            }
           }
         }
       }
@@ -477,6 +486,24 @@
                 }
               }
             }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ConflictProblemDetails"
+                }
+              }
+            }
           }
         }
       },
@@ -604,6 +631,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ConflictProblemDetails"
                 }
               }
             }
@@ -748,6 +784,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ConflictProblemDetails"
                 }
               }
             }
@@ -1484,6 +1529,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ConflictProblemDetails"
                 }
               }
             }
@@ -2981,7 +3035,7 @@
             "properties": {
               "code": { "type": "string", "enum": ["resource_conflict"] },
               "status": { "type": "number", "enum": [409] },
-              "title": { "type": "string", "enum": ["Resource conflict"] }
+              "title": { "type": "string", "enum": ["Resource conflict", "Schedule conflict"] }
             },
             "required": ["code", "status", "title"]
           }

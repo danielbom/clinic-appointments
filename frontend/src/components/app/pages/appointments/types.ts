@@ -6,7 +6,7 @@ export type Appointment = {
   serviceNameId: string
   specialistName: string
   specialistId: string
-  price: number // TODO: add to table
+  price: number
   date: string
   time: string
   duration: number

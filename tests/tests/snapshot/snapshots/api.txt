@@ -84,7 +84,7 @@ Response: {
   "code": "resource_conflict",
   "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceConflict.json",
   "title": "Resource conflict",
-  "detail": "secretary with this email already exists",
+  "detail": "secretary with the same email already exists",
   "status": 409,
   "instance": "/api/secretaries",
   "traceId": "[trace-id]"
@@ -240,7 +240,7 @@ Response: {
   "code": "resource_conflict",
   "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceConflict.json",
   "title": "Resource conflict",
-  "detail": "specialization with this name already exists",
+  "detail": "specialization with the same name already exists",
   "status": 409,
   "instance": "/api/specializations",
   "traceId": "[trace-id]"

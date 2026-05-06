@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS services (
     FOREIGN KEY ("specialist_id")    REFERENCES specialists("id")   ON DELETE CASCADE
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS services_service_unique_idx  ON services("service_name_id", "specialist_id");
+CREATE UNIQUE INDEX IF NOT EXISTS services_service_unique_idx  ON services("service_name_id", "specialist_id"); -- TODO: services("specialist_id", "service_name_id")
 CREATE        INDEX IF NOT EXISTS services_specialist_id_idx   ON services("specialist_id");
 CREATE        INDEX IF NOT EXISTS services_service_name_id_idx ON services("service_name_id");
 

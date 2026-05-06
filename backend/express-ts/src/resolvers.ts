@@ -19,6 +19,7 @@ import type * as types from './swagger-types'
 type Errors =
   | { error: mutations.NotFoundError; response: types.errors.NotFoundProblemDetails }
   | { error: mutations.AlreadyExistsError; response: types.errors.ConflictProblemDetails }
+  | { error: mutations.ScheduleConflictError; response: types.errors.ConflictProblemDetails }
   | { error: mutations.InvalidCredentialsError; response: types.errors.AuthProblemDetails }
   | { error: mutations.InvalidTokenError; response: types.errors.AuthProblemDetails }
   | { error: mutations.InternalError; response: types.errors.InternalProblemDetails }
@@ -26,6 +27,7 @@ type Errors =
 type ErrorsMap = {
   'not found': types.errors.NotFoundProblemDetails
   'already exists': types.errors.ConflictProblemDetails
+  'schedule conflict': types.errors.ConflictProblemDetails
   'invalid credentials': types.errors.AuthProblemDetails
   'invalid token': types.errors.AuthProblemDetails
   'internal': types.errors.AuthProblemDetails
@@ -37,6 +39,8 @@ function mapError<TError extends Errors['error'], K extends TError['kind']>(erro
       return errors.notFound(error.resource) as ErrorsMap[K]
     case 'already exists':
       return errors.alreadyExists(error.resource, error.key) as ErrorsMap[K]
+    case 'schedule conflict':
+      return errors.scheduleConflict(error.resource, error.key) as ErrorsMap[K]
     case 'invalid credentials':
       return errors.invalidCredentials() as ErrorsMap[K]
     case 'invalid token':
@@ -359,8 +363,7 @@ export default {
       const result = await mutations.updateAppointment(id, args)
 
       if (!result.ok) {
-        throw new Error('TODO')
-        // return reply.fail(errors.internal())
+        return reply.fail(mapError(result.error))
       }
 
       // Format the response
@@ -432,7 +435,7 @@ export default {
       const result = await mutations.createCustomer(args)
 
       if (!result.ok) {
-        throw new Error('TODO')
+        return reply.fail(mapError(result.error))
       }
 
       // Format the response
@@ -870,7 +873,7 @@ export default {
       const result = await mutations.createService(args)
 
       if (!result.ok) {
-        throw new Error('TODO')
+        return reply.fail(mapError(result.error))
       }
 
       // Format the response

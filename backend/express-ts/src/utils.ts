@@ -87,6 +87,33 @@ export async function verifyPassword(password: string, hash: string) {
   return await bcrypt.compare(password, hash)
 }
 
+// datetime
+
+const ISO_DATE_PATTERN = /^\d\d\d\d-\d\d-\d\d$/
+const ISO_TIME_PATTERN = /^\d\d:\d\d:\d\d$/
+
+export function parseISODateToUTC(date: string): Date | null {
+  if (!date.match(ISO_DATE_PATTERN)) return null
+  const result = new Date(date + 'T00:00:00.000Z')
+  if (isNaN(result.getTime())) return null
+  return result
+}
+
+export function parseISOTimeToUTC(time: string): Date | null {
+  if (!time.match(ISO_TIME_PATTERN)) return null
+  const result = new Date(`2020-01-02T${time}.000Z`)
+  if (isNaN(result.getTime())) return null
+  return result
+}
+
+export function isValidISODate(date: string) {
+  return parseISODateToUTC(date) !== null
+}
+
+export function isValidISOTime(time: string) {
+  return parseISOTimeToUTC(time) !== null
+}
+
 // extras
 export function replier<R extends Record<number, unknown>>(res: Response) {
   type Status = keyof R & number
@@ -95,11 +122,13 @@ export function replier<R extends Record<number, unknown>>(res: Response) {
       res.status(key).send(value)
     },
     fail<T extends { status: Status }>(value: T) {
-      this.send(value.status, {
+      const result = {
         ...value,
         instance: res.req.url.toString(),
         traceId: context.get(res.req, 'id'),
-      })
+      }
+      // TODO: console.error(result)
+      this.send(value.status, result)
     },
   }
 }

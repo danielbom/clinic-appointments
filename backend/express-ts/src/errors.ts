@@ -122,7 +122,17 @@ export const errors = {
       code: 'resource_conflict' as const,
       type: `${devUrl}/schemas/errors/ResourceConflict.json`,
       title: 'Resource conflict',
-      detail: `${resource} with this ${key} already exists`,
+      detail: `${resource} with the same ${key} already exists`,
+      status: 409 as const,
+    }
+  },
+
+  scheduleConflict(resource: types.domain.Resource, key: string): types.errors.ConflictProblemDetails {
+    return {
+      code: 'resource_conflict' as const,
+      type: `${devUrl}/schemas/errors/ResourceConflict.json`,
+      title: 'Schedule conflict',
+      detail: `${resource} already scheduled at the specified ${key}`,
       status: 409 as const,
     }
   },

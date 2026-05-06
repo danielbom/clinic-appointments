@@ -11,6 +11,7 @@ import plugOpenApiResolvers from './plug-resolvers'
 import { getAppConfig } from './config'
 import { context } from './context'
 import { errors } from './errors'
+import { replier } from './utils'
 
 const appConfig = getAppConfig()
 const app = express()
@@ -48,15 +49,16 @@ app.use(morgan(':method :url :status :response-time ms - :res[content-length]'))
 }
 
 // not found
-app.use('/', (req, res, next) => {
-  res.status(404).json(errors.routeNotFound(req.method, req.url))
-  next()
+app.use('/', (req, res, _next) => {
+  const reply = replier(res)
+  reply.fail(errors.routeNotFound(req.method, req.url))
 })
 
 // handle unexpected errors
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  const reply = replier(res)
   console.error(err)
-  res.status(500).json(errors.internal('An unexpected error occured'))
+  reply.fail(errors.internal('An unexpected error occured'))
 })
 
 app.listen(appConfig.port, () => {

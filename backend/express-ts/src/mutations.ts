@@ -1,8 +1,16 @@
 import { db } from './db'
 import { extractJwtData, generateAccessJWT, generateRefreshJWT, isRefreshToken, JwtData, verifyJWT } from './jwt'
 import { AppointmentStatus } from './presenter'
-import { queryIdentity } from './queries'
-import { generateId, hashPassword, parseUuid, UUID, verifyPassword } from './utils'
+import { queryAppointmentIntersects, queryIdentity } from './queries'
+import {
+  generateId,
+  hashPassword,
+  parseISODateToUTC,
+  parseISOTimeToUTC,
+  parseUuid,
+  UUID,
+  verifyPassword,
+} from './utils'
 import type * as types from './swagger-types'
 
 type Res<TOk, TError> = { ok: true; value: TOk } | { ok: false; error: TError }
@@ -13,6 +21,7 @@ export type InvalidCredentialsError = { kind: 'invalid credentials' }
 export type InvalidTokenError = { kind: 'invalid token' }
 export type NotFoundError = { kind: 'not found'; resource: Resource }
 export type AlreadyExistsError = { kind: 'already exists'; resource: Resource; key: string }
+export type ScheduleConflictError = { kind: 'schedule conflict'; resource: Resource; key: string }
 export type InternalError = { kind: 'internal'; detail: string }
 
 // auth
@@ -75,8 +84,7 @@ export async function refresh({
 
 export async function createAppointment(
   args: types.api.appointments.createAppointment.body,
-): Promise<Res<Id, NotFoundError>> {
-  // TODO: check scheduling conflict
+): Promise<Res<Id, NotFoundError | ScheduleConflictError>> {
   const service = await db.services.findUnique({
     where: { id: args.serviceId },
   })
@@ -85,11 +93,22 @@ export async function createAppointment(
     return { ok: false, error: { kind: 'not found', resource: 'service' } }
   }
 
+  const appointmentsIntersects = await queryAppointmentIntersects({
+    date: args.date,
+    time: args.time,
+    duration: service.duration,
+    specialistId: service.specialist_id,
+  })
+
+  if (appointmentsIntersects) {
+    return { ok: false, error: { kind: 'schedule conflict', resource: 'appointment', key: 'date,time' } }
+  }
+
   const row = await db.appointments.create({
     data: {
       id: generateId(),
-      date: new Date(args.date),
-      time: new Date(`2020-01-02T${args.time}.000Z`),
+      date: parseISODateToUTC(args.date)!,
+      time: parseISOTimeToUTC(args.time)!,
       duration: service.duration,
       price: service.price,
       customer_id: args.customerId,
@@ -105,16 +124,34 @@ export async function createAppointment(
 export async function updateAppointment(
   appointmentId: UUID,
   args: types.api.appointments.updateAppointment.body,
-): Promise<Res<Id, null>> {
-  // TODO: check scheduling conflict
-  const row = await db.appointments.update({
+): Promise<Res<Id, ScheduleConflictError | NotFoundError>> {
+  const row = await db.appointments.findFirst({
+    where: { id: appointmentId },
+  })
+  if (!row) {
+    return { ok: false, error: { kind: 'not found', resource: 'appointment' } }
+  }
+
+  const appointmentsIntersects = await queryAppointmentIntersects({
+    date: args.date,
+    time: args.time,
+    duration: row.duration,
+    specialistId: row.specialist_id,
+  })
+
+  if (appointmentsIntersects) {
+    return { ok: false, error: { kind: 'schedule conflict', resource: 'appointment', key: 'date,time' } }
+  }
+
+  await db.appointments.update({
     where: { id: appointmentId },
     data: {
-      date: new Date(args.date),
-      time: new Date(`2020-01-02T${args.time}.000Z`),
+      date: parseISODateToUTC(args.date)!,
+      time: parseISOTimeToUTC(args.time)!,
       status: args.status,
     },
   })
+
   return { ok: true, value: { id: row.id } }
 }
 
@@ -130,11 +167,21 @@ export async function deleteAppointment(appointmentId: UUID): Promise<Res<Id, No
 
 // customers
 
-export async function createCustomer(args: types.api.customers.createCustomer.body): Promise<Res<Id, null>> {
+export async function createCustomer(
+  args: types.api.customers.createCustomer.body,
+): Promise<Res<Id, AlreadyExistsError>> {
+  const exists = await db.customers.findUnique({
+    where: { phone: args.phone },
+  })
+
+  if (exists) {
+    return { ok: false, error: { kind: 'already exists', resource: 'customer', key: 'phone' } }
+  }
+
   const row = await db.customers.create({
     data: {
       id: generateId(),
-      birthdate: new Date(args.birthdate),
+      birthdate: parseISODateToUTC(args.birthdate)!,
       cpf: args.cpf,
       email: args.email,
       name: args.name,
@@ -147,20 +194,30 @@ export async function createCustomer(args: types.api.customers.createCustomer.bo
 export async function updateCustomer(
   customerId: UUID,
   args: types.api.customers.updateCustomer.body,
-): Promise<Res<Id, NotFoundError>> {
+): Promise<Res<Id, AlreadyExistsError | NotFoundError>> {
+  const exists = await db.customers.findUnique({
+    where: { phone: args.phone },
+  })
+
+  if (exists && exists.id !== customerId) {
+    return { ok: false, error: { kind: 'already exists', resource: 'customer', key: 'phone' } }
+  }
+
   const row = await db.customers.update({
     where: { id: customerId },
     data: {
       name: args.name,
       email: args.email,
       phone: args.phone,
-      birthdate: new Date(args.birthdate),
+      birthdate: parseISODateToUTC(args.birthdate)!,
       cpf: args.cpf,
     },
   })
+
   if (!row) {
     return { ok: false, error: { kind: 'not found', resource: 'customer' } }
   }
+
   return { ok: true, value: { id: row.id } }
 }
 
@@ -190,7 +247,7 @@ export async function createSecretary(
   const row = await db.secretaries.create({
     data: {
       id: generateId(),
-      birthdate: new Date(args.birthdate),
+      birthdate: parseISODateToUTC(args.birthdate)!,
       cpf: args.cpf,
       email: args.email,
       name: args.name,
@@ -221,7 +278,7 @@ export async function updateSecretary(
       name: args.name,
       email: args.email,
       phone: args.phone,
-      birthdate: new Date(args.birthdate),
+      birthdate: parseISODateToUTC(args.birthdate)!,
       cpf: args.cpf,
       cnpj: args.cnpj,
       password: args.password ? await hashPassword(args.password) : undefined,
@@ -331,7 +388,20 @@ export async function deleteServiceAvailable(serviceAvailableId: UUID): Promise<
 
 // services
 
-export async function createService(args: types.api.services.createService.body): Promise<Res<Id, null>> {
+export async function createService(args: types.api.services.createService.body): Promise<Res<Id, AlreadyExistsError>> {
+  const exists = await db.services.findUnique({
+    where: {
+      service_name_id_specialist_id: {
+        service_name_id: args.serviceNameId,
+        specialist_id: args.specialistId,
+      },
+    },
+  })
+
+  if (exists) {
+    return { ok: false, error: { kind: 'already exists', resource: 'service', key: 'specialist_id,service_name_id' } }
+  }
+
   const row = await db.services.create({
     data: {
       id: generateId(),
@@ -355,9 +425,11 @@ export async function updateService(
       price: args.price,
     },
   })
+
   if (!row) {
     return { ok: false, error: { kind: 'not found', resource: 'specialization' } }
   }
+
   return { ok: true, value: { id: row.id } }
 }
 
@@ -398,7 +470,7 @@ export async function createSpecialist(
     const row = await tx.specialists.create({
       data: {
         id: generateId(),
-        birthdate: new Date(args.birthdate),
+        birthdate: parseISODateToUTC(args.birthdate)!,
         cpf: args.cpf,
         email: args.email,
         name: args.name,
@@ -438,7 +510,7 @@ export async function updateSpecialist(
   const row = await db.specialists.update({
     where: { id: specialistId },
     data: {
-      birthdate: new Date(args.birthdate),
+      birthdate: parseISODateToUTC(args.birthdate)!,
       cpf: args.cpf,
       email: args.email,
       name: args.name,

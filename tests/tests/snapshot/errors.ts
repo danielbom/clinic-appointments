@@ -59,22 +59,6 @@ async function run(w: WriteStr, api: Api, args: Args) {
     }
   }
 
-  const state = {
-    longAuth: {
-      accessToken: '',
-      refreshToken: '',
-    },
-    shortAuth: {
-      accessToken: '',
-      refreshToken: '',
-      time: 0,
-    },
-    specializationId: '',
-    serviceAvailableId: '',
-    secretaryId: '',
-    secretaryId2: '',
-  }
-
   await api.health.healthCheck().then((res) => {
     if (!res.data.status) {
       throw new Error('API is not healthy')
@@ -219,7 +203,6 @@ async function run(w: WriteStr, api: Api, args: Args) {
   }
 
   await api.specializations.create({ name: 'Specialization' }).then((res) => (state.specializationId = res.data.id))
-  await api.specializations.create({ name: 'Specialization' })
 
   w.write('# api.servicesAvailable.create\n\n')
   for (const data of generateObject({
@@ -239,7 +222,22 @@ async function run(w: WriteStr, api: Api, args: Args) {
   await api.servicesAvailable
     .create({ name: 'Service Available', specializationId: state.specializationId })
     .then((res) => (state.serviceAvailableId = res.data.id))
-  await api.servicesAvailable.create({ name: 'Service Available', specializationId: state.specializationId })
+
+  w.write('# api.specialists.create\n\n')
+  await api.specialists.create(baseData.specialist).then((res) => (state.specialistId = res.data.id))
+
+  w.write('# api.services.create\n\n')
+  await api.services
+    .create({ serviceNameId: state.serviceAvailableId, specialistId: state.specialistId, duration: 60, price: 10000 })
+    .then((res) => (state.serviceId = res.data.id))
+
+  w.write('# api.customer.create\n\n')
+  await api.customers.create(baseData.customer).then((res) => (state.customerId = res.data.id))
+
+  w.write('# api.appointments.create\n\n')
+  await api.appointments
+    .create({ customerId: state.customerId, serviceId: state.serviceId, date: '2032-01-02', time: '09:00:00' })
+    .then((res) => (state.appointmentId = res.data.id))
 
   // not found
   await api.appointments.getById(state.serviceAvailableId)
@@ -269,6 +267,44 @@ async function run(w: WriteStr, api: Api, args: Args) {
   await api.secretaries.update(state.secretaryId2, {} as any)
   await api.secretaries.delete(state.secretaryId)
 
+  // conflict
+  apiLogin(state.longAuth.accessToken)
+  await api.secretaries.create(baseData.secretary)
+  await api.specializations.create({ name: 'Specialization' })
+  await api.servicesAvailable.create({ name: 'Service', specializationId: state.specializationId })
+  await api.specialists.create(baseData.specialist)
+  await api.services.create({
+    serviceNameId: state.serviceAvailableId,
+    specialistId: state.specialistId,
+    duration: 60,
+    price: 10000,
+  })
+  await api.customers.create(baseData.customer)
+  await api.appointments.create({
+    customerId: state.customerId,
+    serviceId: state.serviceId,
+    date: '2032-01-02',
+    time: '09:00:00',
+  })
+  await api.appointments.create({
+    customerId: state.customerId,
+    serviceId: state.serviceId,
+    date: '2032-01-02',
+    time: '09:30:00',
+  })
+  await api.appointments.create({
+    customerId: state.customerId,
+    serviceId: state.serviceId,
+    date: '2032-01-02',
+    time: '09:59:00',
+  })
+  await api.appointments.create({
+    customerId: state.customerId,
+    serviceId: state.serviceId,
+    date: '2032-01-02',
+    time: '10:00:00',
+  })
+
   // token expired
   w.write('# Token expired\n\n')
   {
@@ -280,6 +316,26 @@ async function run(w: WriteStr, api: Api, args: Args) {
   }
 
   complete(w.value(), args)
+}
+
+const state = {
+  longAuth: {
+    accessToken: '',
+    refreshToken: '',
+  },
+  shortAuth: {
+    accessToken: '',
+    refreshToken: '',
+    time: 0,
+  },
+  specializationId: '',
+  serviceAvailableId: '',
+  secretaryId: '',
+  secretaryId2: '',
+  specialistId: '',
+  customerId: '',
+  serviceId: '',
+  appointmentId: '',
 }
 
 function main() {
