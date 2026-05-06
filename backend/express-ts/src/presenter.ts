@@ -1,14 +1,6 @@
 import * as types from './swagger-types'
 import type * as models from './prisma/models.ts'
-import { Calendar, CalendarCount } from './queries'
-
-export type Identity = {
-  id: string
-  name: string
-  email: string
-  password: string
-  role: 'admin' | 'secretary'
-}
+import { Calendar, CalendarCount, Identity } from './queries'
 
 export function getDatePart(isodate: string): string {
   return isodate.slice(0, 10)

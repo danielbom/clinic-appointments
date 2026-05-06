@@ -465,6 +465,10 @@ export namespace body {
     birthdate: domain.Date
     cpf: domain.Cpf
     cnpj: domain.Cnpj
+    /**
+     * @minItems 0
+     * @maxItems 10
+     */
     services: body.SpecialistsCreateBodyService[]
   }
 
@@ -814,6 +818,7 @@ export namespace api {
         200: schemas.Id
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
+        404: errors.NotFoundProblemDetails
       }
     }
 
@@ -989,6 +994,7 @@ export namespace api {
         201: schemas.Id
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
+        404: errors.NotFoundProblemDetails
         409: errors.ConflictProblemDetails
       }
     }
@@ -1023,6 +1029,7 @@ export namespace api {
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
+        409: errors.ConflictProblemDetails
       }
     }
 
@@ -1207,6 +1214,7 @@ export namespace api {
         201: schemas.Id
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
+        404: errors.NotFoundProblemDetails
         409: errors.ConflictProblemDetails
       }
     }
@@ -1322,6 +1330,7 @@ export namespace api {
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
+        409: errors.ConflictProblemDetails
       }
     }
 
@@ -1392,6 +1401,7 @@ export namespace api {
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
+        409: errors.ConflictProblemDetails
       }
     }
 

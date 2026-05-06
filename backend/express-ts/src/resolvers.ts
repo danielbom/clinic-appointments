@@ -1,51 +1,50 @@
-import { type Request, type Response } from 'express'
-import { db } from './db'
+import type { Request, Response } from 'express'
 import { getAppConfig, getDatabaseConfig, listConfiguredResources } from './config'
-import { extractJwtData, generateAccessJWT, generateRefreshJWT, isRefreshToken, JwtData, verifyJWT } from './jwt'
 import {
-  generateId,
   getAccessTokenFromRequest,
   getDateParam,
   getIntParam,
   getJwtDataFromRequest,
   getStringParam,
-  hashPassword,
   parseUuid,
   replier,
-  verifyPassword,
 } from './utils'
-import * as queries from './queries'
 import { validations } from './validations'
-import { AppointmentStatus, Identity, presenter } from './presenter'
+import { presenter } from './presenter'
 import { errors } from './errors'
-import * as types from './swagger-types'
+import * as queries from './queries'
+import * as mutations from './mutations'
+import type * as types from './swagger-types'
 
-async function getIdentity(where: { email: string } | { id: string }): Promise<Identity | null> {
-  const admin = await db.admins.findUnique({ where })
+type Errors =
+  | { error: mutations.NotFoundError; response: types.errors.NotFoundProblemDetails }
+  | { error: mutations.AlreadyExistsError; response: types.errors.ConflictProblemDetails }
+  | { error: mutations.InvalidCredentialsError; response: types.errors.AuthProblemDetails }
+  | { error: mutations.InvalidTokenError; response: types.errors.AuthProblemDetails }
+  | { error: mutations.InternalError; response: types.errors.InternalProblemDetails }
 
-  if (admin) {
-    return {
-      id: admin.id,
-      name: admin.name,
-      email: admin.email,
-      password: admin.password,
-      role: 'admin',
-    }
+type ErrorsMap = {
+  'not found': types.errors.NotFoundProblemDetails
+  'already exists': types.errors.ConflictProblemDetails
+  'invalid credentials': types.errors.AuthProblemDetails
+  'invalid token': types.errors.AuthProblemDetails
+  'internal': types.errors.AuthProblemDetails
+}
+
+function mapError<TError extends Errors['error'], K extends TError['kind']>(error: TError): ErrorsMap[K] {
+  switch (error.kind) {
+    case 'not found':
+      return errors.notFound(error.resource) as ErrorsMap[K]
+    case 'already exists':
+      return errors.alreadyExists(error.resource, error.key) as ErrorsMap[K]
+    case 'invalid credentials':
+      return errors.invalidCredentials() as ErrorsMap[K]
+    case 'invalid token':
+      return errors.invalidToken() as ErrorsMap[K]
+    case 'internal':
+      return errors.internal(error.detail) as ErrorsMap[K]
   }
-
-  const secretary = await db.secretaries.findUnique({ where })
-
-  if (secretary) {
-    return {
-      id: secretary.id,
-      name: secretary.name,
-      email: secretary.email,
-      password: secretary.password,
-      role: 'secretary',
-    }
-  }
-
-  return null
+  throw new Error('unreachable')
 }
 
 export default {
@@ -126,22 +125,14 @@ export default {
       const args: types.api.auth.login.body = req.body
 
       // Validate e execute the usecase
-      const identity = await getIdentity({ email: args.email })
-      if (!identity) {
-        return reply.fail(errors.invalidCredentials())
-      }
+      const result = await mutations.login(args, { accessTokenExpireIn, refreshTokenExpireIn })
 
-      const validPassword = await verifyPassword(args.password, identity.password)
-      if (!validPassword) {
-        return reply.fail(errors.invalidCredentials())
+      if (!result.ok) {
+        return reply.fail(mapError(result.error))
       }
-
-      const data = new JwtData(identity.id, identity.role)
-      const accessToken = generateAccessJWT(data, accessTokenExpireIn)
-      const refreshToken = generateRefreshJWT(data, refreshTokenExpireIn)
 
       // Format the response
-      return reply.send(200, { accessToken, refreshToken })
+      return reply.send(200, result.value)
     },
     async refresh(req: Request, res: Response) {
       const reply = replier<types.api.auth.refresh.responses>(res)
@@ -152,31 +143,14 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      const jwtData = await verifyJWT(refreshToken)
-        .then(extractJwtData)
-        .catch(() => null)
-      if (!jwtData || !isRefreshToken(jwtData)) {
-        return reply.fail(errors.invalidToken())
-      }
+      const result = await mutations.refresh({ refreshToken })
 
-      const id = parseUuid(jwtData.userId)
-      if (!id) {
-        console.error('jwt userId is not an uuid')
-        return reply.fail(errors.internal('JWT userId is not an uuid'))
+      if (!result.ok) {
+        return reply.fail(mapError(result.error))
       }
-
-      // Validate e execute the usecase
-      const identity = await getIdentity({ id })
-      if (!identity) {
-        console.error('jwt userId without identity:', id)
-        return reply.fail(errors.internal('JWT userId without identity'))
-      }
-
-      const data = new JwtData(identity.id, identity.role)
-      const accessToken = generateAccessJWT(data)
 
       // Format the response
-      return reply.send(200, { accessToken, refreshToken })
+      return reply.send(200, result.value)
     },
     async me(req: Request, res: Response) {
       const reply = replier<types.api.auth.me.responses>(res)
@@ -188,7 +162,7 @@ export default {
       }
 
       // Validate e execute the usecase
-      const identity = await getIdentity({ id: jwtData.userId })
+      const identity = await queries.queryIdentity({ userId: jwtData.userId })
       if (!identity) {
         console.error('jwt userId without identity:', jwtData.userId)
         return reply.fail(errors.invalidToken())
@@ -248,30 +222,14 @@ export default {
       const args: types.api.appointments.createAppointment.body = req.body
 
       // Validate e execute the usecase
-      const service = await db.services.findUnique({
-        where: { id: args.serviceId },
-      })
+      const result = await mutations.createAppointment(args)
 
-      if (!service) {
-        return reply.fail(errors.notFound('service'))
+      if (!result.ok) {
+        return reply.fail(mapError(result.error))
       }
 
-      const row = await db.appointments.create({
-        data: {
-          id: generateId(),
-          date: new Date(args.date),
-          time: new Date(`2020-01-02T${args.time}.000Z`),
-          duration: service.duration,
-          price: service.price,
-          customer_id: args.customerId,
-          service_name_id: service.service_name_id,
-          specialist_id: service.specialist_id,
-          status: AppointmentStatus.Pending,
-        },
-      })
-
       // Format the response
-      return reply.send(201, { id: row.id })
+      return reply.send(201, result.value)
     },
     async countAppointments(req: Request, res: Response) {
       const reply = replier<types.api.appointments.countAppointments.responses>(res)
@@ -398,17 +356,15 @@ export default {
       const args: types.api.appointments.updateAppointment.body = req.body
 
       // Validate e execute the usecase
-      const row = await db.appointments.update({
-        where: { id },
-        data: {
-          date: new Date(args.date),
-          time: new Date(`2020-01-02T${args.time}.000Z`),
-          status: args.status,
-        },
-      })
+      const result = await mutations.updateAppointment(id, args)
+
+      if (!result.ok) {
+        throw new Error('TODO')
+        // return reply.fail(errors.internal())
+      }
 
       // Format the response
-      return reply.send(200, { id: row.id })
+      return reply.send(200, result.value)
     },
     async deleteAppointment(req: Request, res: Response) {
       const reply = replier<types.api.appointments.deleteAppointment.responses>(res)
@@ -425,12 +381,10 @@ export default {
       }
 
       // Validate e execute the usecase
-      const row = await db.appointments.delete({
-        where: { id },
-      })
+      const result = await mutations.deleteAppointment(id)
 
-      if (!row) {
-        return reply.fail(errors.notFound('appointment'))
+      if (!result.ok) {
+        return reply.fail(mapError(result.error))
       }
 
       // Format the response
@@ -475,19 +429,14 @@ export default {
       const args: types.api.customers.createCustomer.body = req.body
 
       // Validate e execute the usecase
-      const row = await db.customers.create({
-        data: {
-          id: generateId(),
-          birthdate: new Date(args.birthdate),
-          cpf: args.cpf,
-          email: args.email,
-          name: args.name,
-          phone: args.phone,
-        },
-      })
+      const result = await mutations.createCustomer(args)
+
+      if (!result.ok) {
+        throw new Error('TODO')
+      }
 
       // Format the response
-      return reply.send(201, { id: row.id })
+      return reply.send(201, result.value)
     },
     async countCustomers(req: Request, res: Response) {
       const reply = replier<types.api.customers.countCustomers.responses>(res)
@@ -552,22 +501,15 @@ export default {
       }
       const args: types.api.customers.updateCustomer.body = req.body
 
-      const data = {
-        name: args.name,
-        email: args.email,
-        phone: args.phone,
-        birthdate: new Date(args.birthdate),
-        cpf: args.cpf,
+      // Validate e execute the usecase
+      const result = await mutations.updateCustomer(id, args)
+
+      if (!result.ok) {
+        return reply.fail(mapError(result.error))
       }
 
-      // Validate e execute the usecase
-      const row = await db.customers.update({
-        where: { id },
-        data,
-      })
-
       // Format the response
-      return reply.send(200, { id: row.id })
+      return reply.send(200, result.value)
     },
     async deleteCustomer(req: Request, res: Response) {
       const reply = replier<types.api.customers.deleteCustomer.responses>(res)
@@ -584,12 +526,10 @@ export default {
       }
 
       // Validate e execute the usecase
-      const row = await db.customers.delete({
-        where: { id },
-      })
+      const result = await mutations.deleteCustomer(id)
 
-      if (!row) {
-        return reply.fail(errors.notFound('customer'))
+      if (!result.ok) {
+        return reply.fail(mapError(result.error))
       }
 
       // Format the response
@@ -641,29 +581,14 @@ export default {
       const args: types.api.secretaries.createSecretary.body = req.body
 
       // Validate e execute the usecase
-      const exists = await db.secretaries.findUnique({
-        where: { email: args.email },
-      })
+      const result = await mutations.createSecretary(args)
 
-      if (exists) {
-        return reply.fail(errors.alreadyExists('secretary', 'email'))
+      if (!result.ok) {
+        return reply.fail(mapError(result.error))
       }
 
-      const row = await db.secretaries.create({
-        data: {
-          id: generateId(),
-          birthdate: new Date(args.birthdate),
-          cpf: args.cpf,
-          email: args.email,
-          name: args.name,
-          password: await hashPassword(args.password),
-          phone: args.phone,
-          cnpj: args.cnpj,
-        },
-      })
-
       // Format the response
-      return reply.send(201, { id: row.id })
+      return reply.send(201, result.value)
     },
     async countSecretaries(req: Request, res: Response) {
       const reply = replier<types.api.secretaries.countSecretaries.responses>(res)
@@ -744,42 +669,15 @@ export default {
       }
       const args: types.api.secretaries.updateSecretary.body = req.body
 
-      const data = {
-        name: args.name,
-        email: args.email,
-        phone: args.phone,
-        birthdate: new Date(args.birthdate),
-        cpf: args.cpf,
-        cnpj: args.cnpj,
-        password: args.password ? await hashPassword(args.password) : undefined,
-      }
-
       // Validate e execute the usecase
-      const row = await db.secretaries.findFirst({
-        where: { id },
-      })
+      const result = await mutations.updateSecretary(id, args)
 
-      if (!row) {
-        return reply.fail(errors.notFound('secretary'))
+      if (!result.ok) {
+        return reply.fail(mapError(result.error))
       }
-
-      if (row.email !== data.email) {
-        const exists = await db.secretaries.findUnique({
-          where: { email: data.email },
-        })
-
-        if (exists) {
-          return reply.fail(errors.alreadyExists('secretary', 'email'))
-        }
-      }
-
-      await db.secretaries.update({
-        where: { id },
-        data,
-      })
 
       // Format the response
-      return reply.send(200, { id: row.id })
+      return reply.send(200, result.value)
     },
     async deleteSecretary(req: Request, res: Response) {
       const reply = replier<types.api.secretaries.deleteSecretary.responses>(res)
@@ -799,12 +697,10 @@ export default {
       }
 
       // Validate e execute the usecase
-      const row = await db.secretaries.delete({
-        where: { id },
-      })
+      const result = await mutations.deleteSecretary(id)
 
-      if (!row) {
-        return reply.fail(errors.notFound('secretary'))
+      if (!result.ok) {
+        return reply.fail(mapError(result.error))
       }
 
       // Format the response
@@ -846,34 +742,14 @@ export default {
       const args: types.api.servicesAvailable.createServiceAvailable.body = req.body
 
       // Validate e execute the usecase
-      const exists = await db.service_names.findUnique({
-        where: { name: args.name },
-      })
+      const result = await mutations.createServiceAvailable(args)
 
-      if (exists) {
-        return reply.fail(errors.alreadyExists('service_name', 'name'))
+      if (!result.ok) {
+        return reply.fail(mapError(result.error))
       }
-
-      if (args.specialization) {
-        throw new Error('TODO')
-      }
-
-      if (!args.specializationId) {
-        return reply.fail(
-          errors.validation('body', 'specializationId', "must have required property 'specializationId'"),
-        )
-      }
-
-      const row = await db.service_names.create({
-        data: {
-          id: generateId(),
-          name: args.name,
-          specialization_id: args.specializationId,
-        },
-      })
 
       // Format the response
-      return reply.send(201, { id: row.id })
+      return reply.send(201, result.value)
     },
     async getServiceAvailableById(req: Request, res: Response) {
       const reply = replier<types.api.servicesAvailable.getServiceAvailableById.responses>(res)
@@ -919,33 +795,14 @@ export default {
       const args: types.api.servicesAvailable.updateServiceAvailable.body = req.body
 
       // Validate e execute the usecase
-      const row = await db.service_names.findUnique({
-        where: { id },
-      })
+      const result = await mutations.updateServiceAvailable(id, args)
 
-      if (!row) {
-        return reply.fail(errors.notFound('service_name'))
+      if (!result.ok) {
+        return reply.fail(mapError(result.error))
       }
-
-      if (row.name === args.name) {
-        return reply.send(200, { id: row.id })
-      }
-
-      const exists = await db.service_names.findUnique({
-        where: { name: args.name },
-      })
-
-      if (exists) {
-        return reply.fail(errors.notFound('service_name'))
-      }
-
-      await db.service_names.update({
-        where: { id },
-        data: { name: args.name },
-      })
 
       // Format the response
-      return reply.send(200, { id: row.id })
+      return reply.send(200, result.value)
     },
     async deleteServiceAvailable(req: Request, res: Response) {
       const reply = replier<types.api.servicesAvailable.deleteServiceAvailable.responses>(res)
@@ -962,12 +819,10 @@ export default {
       }
 
       // Validate e execute the usecase
-      const row = await db.service_names.delete({
-        where: { id },
-      })
+      const result = await mutations.deleteServiceAvailable(id)
 
-      if (!row) {
-        return reply.fail(errors.notFound('service_name'))
+      if (!result.ok) {
+        return reply.fail(mapError(result.error))
       }
 
       // Format the response
@@ -1012,18 +867,14 @@ export default {
       const args: types.api.services.createService.body = req.body
 
       // Validate e execute the usecase
-      const row = await db.services.create({
-        data: {
-          id: generateId(),
-          service_name_id: args.serviceNameId,
-          specialist_id: args.specialistId,
-          price: args.price,
-          duration: args.duration,
-        },
-      })
+      const result = await mutations.createService(args)
+
+      if (!result.ok) {
+        throw new Error('TODO')
+      }
 
       // Format the response
-      return reply.send(201, { id: row.id })
+      return reply.send(201, result.value)
     },
     async countServices(req: Request, res: Response) {
       const reply = replier<types.api.services.countServices.responses>(res)
@@ -1089,20 +940,14 @@ export default {
       const args: types.api.services.updateService.body = req.body
 
       // Validate e execute the usecase
-      const row = await db.services.update({
-        where: { id },
-        data: {
-          duration: args.duration,
-          price: args.price,
-        },
-      })
+      const result = await mutations.updateService(id, args)
 
-      if (!row) {
-        return reply.fail(errors.notFound('service'))
+      if (!result.ok) {
+        return reply.fail(mapError(result.error))
       }
 
       // Format the response
-      return reply.send(200, { id: row.id })
+      return reply.send(200, result.value)
     },
     async deleteService(req: Request, res: Response) {
       const reply = replier<types.api.services.deleteService.responses>(res)
@@ -1119,12 +964,10 @@ export default {
       }
 
       // Validate e execute the usecase
-      const row = await db.services.delete({
-        where: { id },
-      })
+      const result = await mutations.deleteService(id)
 
-      if (!row) {
-        return reply.fail(errors.notFound('service'))
+      if (!result.ok) {
+        return reply.fail(mapError(result.error))
       }
 
       // Format the response
@@ -1187,42 +1030,14 @@ export default {
       const args: types.api.specialists.createSpecialist.body = req.body
 
       // Validate e execute the usecase
-      const exists = await db.specialists.findUnique({
-        where: { email: args.email },
-      })
+      const result = await mutations.createSpecialist(args)
 
-      if (exists) {
-        return reply.fail(errors.alreadyExists('specialist', 'email'))
+      if (!result.ok) {
+        return reply.fail(mapError(result.error))
       }
 
-      const row = await db.$transaction(async (tx) => {
-        const row = await tx.specialists.create({
-          data: {
-            id: generateId(),
-            birthdate: new Date(args.birthdate),
-            cpf: args.cpf,
-            email: args.email,
-            name: args.name,
-            phone: args.phone,
-            cnpj: args.cnpj,
-          },
-        })
-
-        await tx.services.createMany({
-          data: args.services.map((s) => ({
-            id: generateId(),
-            service_name_id: s.serviceNameId,
-            price: s.price,
-            duration: s.duration,
-            specialist_id: row.id,
-          })),
-        })
-
-        return row
-      })
-
       // Format the response
-      return reply.send(201, { id: row.id })
+      return reply.send(201, result.value)
     },
     async countSpecialists(req: Request, res: Response) {
       const reply = replier<types.api.specialists.countSpecialists.responses>(res)
@@ -1381,20 +1196,14 @@ export default {
       const args: types.api.specialists.updateSpecialist.body = req.body
 
       // Validate e execute the usecase
-      const row = await db.specialists.update({
-        where: { id },
-        data: {
-          birthdate: new Date(args.birthdate),
-          cpf: args.cpf,
-          email: args.email,
-          name: args.name,
-          phone: args.phone,
-          cnpj: args.cnpj,
-        },
-      })
+      const result = await mutations.updateSpecialist(id, args)
+
+      if (!result.ok) {
+        return reply.fail(mapError(result.error))
+      }
 
       // Format the response
-      return reply.send(200, { id: row.id })
+      return reply.send(200, result.value)
     },
     async deleteSpecialist(req: Request, res: Response) {
       const reply = replier<types.api.specialists.deleteSpecialist.responses>(res)
@@ -1411,12 +1220,10 @@ export default {
       }
 
       // Validate e execute the usecase
-      const row = await db.specialists.delete({
-        where: { id },
-      })
+      const result = await mutations.deleteSpecialist(id)
 
-      if (!row) {
-        return reply.fail(errors.notFound('specialist'))
+      if (!result.ok) {
+        return reply.fail(mapError(result.error))
       }
 
       // Format the response
@@ -1454,23 +1261,14 @@ export default {
       const args: types.api.specializations.createSpecialization.body = req.body
 
       // Validate e execute the usecase
-      const exists = await db.specializations.findUnique({
-        where: { name: args.name },
-      })
+      const result = await mutations.createSpecialization(args)
 
-      if (exists) {
-        return reply.fail(errors.alreadyExists('specialization', 'name'))
+      if (!result.ok) {
+        return reply.fail(mapError(result.error))
       }
 
-      const row = await db.specializations.create({
-        data: {
-          id: generateId(),
-          name: args.name,
-        },
-      })
-
       // Format the response
-      return reply.send(201, { id: row.id })
+      return reply.send(201, result.value)
     },
     async updateSpecialization(req: Request, res: Response) {
       const reply = replier<types.api.specializations.updateSpecialization.responses>(res)
@@ -1489,20 +1287,17 @@ export default {
       if (!validations.specializations.updateSpecialization.body(req.body)) {
         return reply.fail(errors.ajv(validations.specializations.updateSpecialization.body.errors![0]))
       }
-      const args: types.api.specializations.createSpecialization.body = req.body
+      const args: types.api.specializations.updateSpecialization.body = req.body
 
       // Validate e execute the usecase
-      const row = await db.specializations.update({
-        where: { id },
-        data: { name: args.name },
-      })
+      const result = await mutations.updateSpecialization(id, args)
 
-      if (!row) {
-        return reply.fail(errors.notFound('specialization'))
+      if (!result.ok) {
+        return reply.fail(mapError(result.error))
       }
 
       // Format the response
-      return reply.send(200, { id: row.id })
+      return reply.send(200, result.value)
     },
     async deleteSpecialization(req: Request, res: Response) {
       const reply = replier<types.api.specializations.deleteSpecialization.responses>(res)
@@ -1519,12 +1314,10 @@ export default {
       }
 
       // Validate e execute the usecase
-      const row = await db.specializations.delete({
-        where: { id },
-      })
+      const result = await mutations.deleteSpecialization(id)
 
-      if (!row) {
-        return reply.fail(errors.notFound('specialization'))
+      if (!result.ok) {
+        return reply.fail(mapError(result.error))
       }
 
       // Format the response
@@ -1535,32 +1328,15 @@ export default {
     async initTest(req: Request, res: Response) {
       const reply = replier<types.api.test.initTest.responses>(res)
 
-      await db.$transaction(async (tx) => {
-        await tx.admins.deleteMany()
-        await tx.appointments.deleteMany()
-        await tx.customers.deleteMany()
-        await tx.secretaries.deleteMany()
-        await tx.services.deleteMany()
-        await tx.service_names.deleteMany()
-        await tx.specialists.deleteMany()
-        await tx.specialist_hours.deleteMany()
-        await tx.specializations.deleteMany()
+      await mutations.initTest()
 
-        await tx.admins.create({
-          data: {
-            id: generateId(),
-            name: 'Admin Test',
-            email: 'admin@test.com',
-            password: await hashPassword('123mudar'),
-          },
-        })
-      })
       return reply.send(200, 'System initialized to be tested')
     },
     async statsTest(req: Request, res: Response) {
       const reply = replier<types.api.test.statsTest.responses>(res)
 
       const dbConfig = getDatabaseConfig()
+
       return reply.send(200, {
         database: `user=${dbConfig.user} password=${dbConfig.password} host=${dbConfig.host} port=${dbConfig.port} dbname=${dbConfig.name}`,
         message: 'Environment: TEST',

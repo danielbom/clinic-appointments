@@ -24,7 +24,17 @@ function generateDocs(w: Writable, ident: string, item: any) {
   if (item.description) {
     docs.push(` * ${item.description}\n`)
   }
-  for (const key of ['default', 'format', 'example', 'minimum', 'maximum', 'minLength', 'maxLength']) {
+  for (const key of [
+    'default',
+    'format',
+    'example',
+    'minimum',
+    'maximum',
+    'minLength',
+    'maxLength',
+    'minItems',
+    'maxItems',
+  ]) {
     if (item[key] != null) {
       docs.push(` * @${key} ${item[key]}\n`)
     }

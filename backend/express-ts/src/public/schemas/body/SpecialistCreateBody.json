@@ -24,7 +24,9 @@
       "type": "array",
       "items": {
         "$ref": "https://dev-clinic-appointments.com.br/schemas/body/SpecialistsCreateBodyService.json"
-      }
+      },
+      "minItems": 0,
+      "maxItems": 10
     }
   },
   "required": [

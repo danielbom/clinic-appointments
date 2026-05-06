@@ -1,6 +1,7 @@
-import * as types from './swagger-types'
+import type * as types from './swagger-types'
 
 const devUrl = 'https://dev-clinic-appointments.com.br'
+
 export const errors = {
   missingValue(location: 'body' | 'path' | 'query', path = ''): types.errors.ValidationProblemDetails {
     return {

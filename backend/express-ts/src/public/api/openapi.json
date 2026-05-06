@@ -742,6 +742,15 @@
                 }
               }
             }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
           }
         }
       },
@@ -1218,6 +1227,15 @@
               }
             }
           },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          },
           "409": {
             "content": {
               "application/json": {
@@ -1326,6 +1344,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ConflictProblemDetails"
                 }
               }
             }
@@ -1769,20 +1796,29 @@
               }
             }
           },
-          "409": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/errors/ConflictProblemDetails"
-                }
-              }
-            }
-          },
           "401": {
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ConflictProblemDetails"
                 }
               }
             }
@@ -2143,6 +2179,15 @@
                 }
               }
             }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ConflictProblemDetails"
+                }
+              }
+            }
           }
         }
       },
@@ -2332,6 +2377,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ConflictProblemDetails"
                 }
               }
             }
@@ -2747,7 +2801,9 @@
           "cnpj": { "$ref": "#/components/domain/Cnpj" },
           "services": {
             "type": "array",
-            "items": { "$ref": "#/components/body/SpecialistsCreateBodyService" }
+            "items": { "$ref": "#/components/body/SpecialistsCreateBodyService" },
+            "minItems": 0,
+            "maxItems": 10
           }
         },
         "required": ["name", "email", "phone", "birthdate", "cpf", "cnpj", "services"]
