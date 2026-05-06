@@ -1,6 +1,6 @@
 import * as types from './swagger-types'
 import type * as models from './prisma/models.ts'
-import { Calendar, CalendarCount, Identity } from './queries'
+import { Calendar, CalendarCount, Identity, ServiceEnriched } from './queries'
 
 export function getDatePart(isodate: string): string {
   return isodate.slice(0, 10)
@@ -158,22 +158,15 @@ export const presenter = {
       duration: row.duration,
     }
   },
-  serviceEnhanced(
-    row: models.servicesModel & {
-      service_names: models.service_namesModel & {
-        specializations: models.specializationsModel
-      }
-      specialists: models.specialistsModel
-    },
-  ): types.schemas.ServiceEnriched {
+  serviceEnhanced(row: ServiceEnriched): types.schemas.ServiceEnriched {
     return {
       id: row.id,
-      serviceName: row.service_names.name,
+      serviceName: row.service_name,
       serviceNameId: row.service_name_id,
-      specialistName: row.specialists.name,
-      specialistId: row.specialists.id,
-      specialization: row.service_names.specializations.name,
-      specializationId: row.service_names.specializations.id,
+      specialistName: row.specialist_name,
+      specialistId: row.specialist_id,
+      specialization: row.specialization_name,
+      specializationId: row.specialization_id,
       price: row.price,
       duration: row.duration,
     }

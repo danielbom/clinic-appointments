@@ -51,8 +51,9 @@ WHERE true
   AND (sqlc.arg('cpf')::text = ''   OR "cpf" = sqlc.arg('cpf'))
   AND (sqlc.arg('cnpj')::text = ''  OR "cnpj" = sqlc.arg('cnpj'))
   AND (sqlc.arg('phone')::text = '' OR "phone" = sqlc.arg('phone'))
-LIMIT sqlc.arg('limit')::integer
-OFFSET sqlc.arg('offset')::integer;
+ORDER BY "email" ASC
+OFFSET sqlc.arg('offset')::integer
+LIMIT sqlc.arg('limit')::integer;
 
 -- name: DeleteSpecialistByID :execrows
 DELETE FROM "specialists"

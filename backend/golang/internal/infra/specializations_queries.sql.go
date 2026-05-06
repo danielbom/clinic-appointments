@@ -73,7 +73,7 @@ func (q *Queries) GetSpecializationByName(ctx context.Context, specializationnam
 const listSpecializations = `-- name: ListSpecializations :many
 SELECT "id", "name"
 FROM "specializations"
-ORDER BY "name"
+ORDER BY "name" ASC
 `
 
 func (q *Queries) ListSpecializations(ctx context.Context) ([]Specialization, error) {
@@ -105,7 +105,7 @@ WHERE "sp"."id" IN (
 	JOIN "service_names" "sn" ON "sn"."id" = "s"."service_name_id"
 	WHERE "s"."specialist_id" = $1
 )
-ORDER BY "name"
+ORDER BY "name" ASC
 `
 
 func (q *Queries) ListSpecializationsBySpecialistID(ctx context.Context, specialistid pgtype.UUID) ([]Specialization, error) {

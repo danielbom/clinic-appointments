@@ -137,9 +137,9 @@ WHERE true
   AND ($1::text = ''  OR "name" ILIKE '%' || $1 || '%')
   AND ($2::text = ''   OR "cpf" = $2)
   AND ($3::text = '' OR "phone" = $3)
-ORDER BY "name"
-LIMIT $5::integer
+ORDER BY "name" ASC
 OFFSET $4::integer
+LIMIT $5::integer
 `
 
 type ListCustomersParams struct {

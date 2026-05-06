@@ -106,7 +106,7 @@ func CreateAppointment(state State, args CreateAppointmentArgs) (pgtype.UUID, *U
 		return none, NewUnexpectedError(err)
 	}
 	if appointmentsIntersects {
-		return none, NewInvalidStateError(ErrAppointmentsIntersection)
+		return none, NewScheduleConflictError("appointment", "date,time")
 	}
 
 	id, err := NewUuid()

@@ -12,7 +12,7 @@ import (
 )
 
 const appointmentsIntersects = `-- name: AppointmentsIntersects :one
-SELECT COUNT("date") > 0 AS count
+SELECT COUNT("date") > 0 AS intersects
 FROM "appointments"
 WHERE "date" = $1
   AND "specialist_id" = $2
@@ -37,9 +37,9 @@ func (q *Queries) AppointmentsIntersects(ctx context.Context, arg AppointmentsIn
 		arg.Time,
 		arg.Duration,
 	)
-	var count bool
-	err := row.Scan(&count)
-	return count, err
+	var intersects bool
+	err := row.Scan(&intersects)
+	return intersects, err
 }
 
 const countAppointments = `-- name: CountAppointments :one
@@ -230,8 +230,8 @@ WHERE true
   AND ($5 = ''        OR "sn"."name" ILIKE '%' || $5 || '%')
   AND ($6 = 0              OR "a"."status" = $6)
 ORDER BY "a"."date" DESC, "a"."time" DESC
-LIMIT $8::integer
 OFFSET $7::integer
+LIMIT $8::integer
 `
 
 type ListAppointmentsParams struct {

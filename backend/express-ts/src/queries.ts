@@ -1,5 +1,6 @@
 import { db } from './db'
 import { parseISODateToUTC, parseISOTimeToUTC } from './utils'
+import type * as models from './prisma/models.ts'
 
 // health
 
@@ -11,11 +12,12 @@ export type DatabaseInfo = {
 }
 
 export async function queryDatabaseInfo({ databaseName }: { databaseName: string }) {
-  const rows = await db.$queryRaw<DatabaseInfo[]>`SELECT
-current_setting('server_version') as version,
-current_setting('max_connections')::int as max_connections,
-(SELECT count(*)::int FROM pg_stat_activity WHERE datname = ${databaseName}) as opened_connections,
-(SELECT version FROM schema_version) as schema_version;`
+  const rows = await db.$queryRaw<DatabaseInfo[]>`-- name: GetDbSettings :one
+SELECT
+  current_setting('server_version') as version,
+  current_setting('max_connections')::int as max_connections,
+  (SELECT count(*)::int FROM pg_stat_activity WHERE datname = ${databaseName}) as opened_connections,
+  (SELECT version FROM schema_version) as schema_version;`
   return rows[0]
 }
 
@@ -88,7 +90,7 @@ export async function queryAppointmentsCalendar({ startDate, endDate }: { startD
   //   orderBy: [{ date: 'desc' }, { time: 'desc' }],
   // })
 
-  const rows = await db.$queryRaw<Calendar[]>`
+  const rows = await db.$queryRaw<Calendar[]>`-- name: ListAppointmentsCalendar :many
 SELECT "a"."id", "a"."date", "a"."time", "a"."status", "s"."name" AS "specialist_name"
 FROM "appointments" "a"
 JOIN "specialists" "s" ON "a"."specialist_id" = "s"."id"
@@ -115,7 +117,7 @@ export async function queryAppointmentsCalendarCount({ startDate, endDate }: { s
   //   _count: { status: true },
   // })
 
-  const rows = await db.$queryRaw<CalendarCount[]>`
+  const rows = await db.$queryRaw<CalendarCount[]>`-- name: ListAppointmentsCalendarCount :many
 SELECT date_part('month', "a"."date")::int AS "month"
       , "status", COUNT("a"."id")::int AS "count"
 FROM "appointments" "a"
@@ -137,8 +139,8 @@ export async function queryAppointmentIntersects(args: {
   const { duration, specialistId } = args
   const date = parseISODateToUTC(args.date)
   const time = parseISOTimeToUTC(args.time)
-  const result = await db.$queryRaw<{ conflict: boolean }[]>`
-SELECT COUNT("date") > 0 AS conflict
+  const result = await db.$queryRaw<{ intersects: boolean }[]>`-- name: AppointmentsIntersects :one
+SELECT COUNT("date") > 0 AS intersects
 FROM "appointments"
 WHERE "date" = ${date}
   AND "specialist_id" = ${specialistId}
@@ -147,7 +149,7 @@ WHERE "date" = ${date}
     AND ${time}::time < "time" + make_interval(mins => "duration")
   )
 LIMIT 1`
-  return result[0].conflict
+  return result[0].intersects
 }
 
 export async function queryAppointment({ appointmentId }: { appointmentId: string }) {
@@ -381,6 +383,13 @@ export async function queryService({ serviceId }: { serviceId: string }) {
   return row
 }
 
+export type ServiceEnriched = models.servicesModel & {
+  specialist_name: string
+  service_name: string
+  specialization_id: string
+  specialization_name: string
+}
+
 export async function queryServices({
   page,
   pageSize,
@@ -394,21 +403,22 @@ export async function queryServices({
   specialist: string
   specialization: string
 }) {
-  const rows = await db.services.findMany({
-    where: {
-      AND: [
-        ...(service ? [{ service_names: { name: { contains: service } } } as const] : []), //
-        ...(specialist ? [{ specialists: { name: { contains: specialist } } } as const] : []), //
-        ...(specialization
-          ? [{ service_names: { specializations: { name: { contains: specialization } } } } as const]
-          : []), //
-      ],
-    },
-    include: { service_names: { include: { specializations: {} } }, specialists: {} },
-    // orderBy: [{ service_names: { specializations: { name: 'desc' } } }, { service_names: { name: 'desc' } }],
-    take: pageSize,
-    skip: page * pageSize,
-  })
+  const rows = await db.$queryRaw<ServiceEnriched[]>`-- name: ListServicesEnriched :many
+SELECT "s"."id", "s"."price", "s"."duration",
+       "s"."specialist_id",      "sp"."name" AS "specialist_name",
+       "s"."service_name_id",    "sn"."name" AS "service_name",
+       "sn"."specialization_id", "sz"."name" AS "specialization_name"
+FROM "services" "s"
+JOIN "specialists" "sp"       ON "s"."specialist_id" = "sp"."id"
+JOIN "service_names" "sn"     ON "s"."service_name_id" = "sn"."id"
+JOIN "specializations" "sz"   ON "sn"."specialization_id" = "sz"."id"
+WHERE true
+   AND (${specialist}::text = ''     OR LOWER(unaccent("sp"."name")) LIKE '%' || LOWER(unaccent(${specialist})) || '%')
+   AND (${specialization}::text = '' OR LOWER(unaccent("sz"."name")) LIKE '%' || LOWER(unaccent(${specialization})) || '%')
+   AND (${service}::text = ''        OR LOWER(unaccent("sn"."name")) LIKE '%' || LOWER(unaccent(${service})) || '%')
+ORDER BY "specialization_name", "service_name"
+OFFSET ${page * pageSize}::integer
+LIMIT ${pageSize}::integer`
   return rows
 }
 
@@ -477,7 +487,7 @@ export async function querySpecialists({
         ...(phone ? [{ phone }] : []), //
       ],
     },
-    orderBy: { name: 'asc' },
+    orderBy: { email: 'asc' },
     take: pageSize,
     skip: page * pageSize,
   })

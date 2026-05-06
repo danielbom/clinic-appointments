@@ -25,7 +25,7 @@ WHERE "name" = sqlc.arg('specializationName');
 -- name: ListSpecializations :many
 SELECT "id", "name"
 FROM "specializations"
-ORDER BY "name";
+ORDER BY "name" ASC;
 
 -- name: ListSpecializationsBySpecialistID :many
 SELECT "sp"."id", "sp"."name"
@@ -36,7 +36,7 @@ WHERE "sp"."id" IN (
 	JOIN "service_names" "sn" ON "sn"."id" = "s"."service_name_id"
 	WHERE "s"."specialist_id" = sqlc.arg('specialistId')
 )
-ORDER BY "name";
+ORDER BY "name" ASC;
 
 -- name: DeleteSpecializationByID :execrows
 DELETE FROM "specializations"

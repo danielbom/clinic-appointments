@@ -11,9 +11,9 @@ WHERE true
    AND (sqlc.arg('specialist')::text = ''     OR LOWER(unaccent("sp"."name")) LIKE '%' || LOWER(unaccent(sqlc.arg('specialist'))) || '%')
    AND (sqlc.arg('specialization')::text = '' OR LOWER(unaccent("sz"."name")) LIKE '%' || LOWER(unaccent(sqlc.arg('specialization'))) || '%')
    AND (sqlc.arg('serviceName')::text = ''    OR LOWER(unaccent("sn"."name")) LIKE '%' || LOWER(unaccent(sqlc.arg('serviceName'))) || '%')
-ORDER BY "specialization_name", "service_name"
-LIMIT sqlc.arg('limit')::integer
-OFFSET sqlc.arg('offset')::integer;
+ORDER BY "specialization_name" ASC, "service_name" ASC
+OFFSET sqlc.arg('offset')::integer
+LIMIT sqlc.arg('limit')::integer;
 
 -- name: CountServicesEnriched :one
 SELECT COUNT("s"."id")::int AS count

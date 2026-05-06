@@ -26,7 +26,7 @@ WHERE "id" = sqlc.arg('serviceNameId');
 -- name: ListServiceNames :many
 SELECT "id", "name", "specialization_id"
 FROM "service_names"
-ORDER BY "name";
+ORDER BY "name" ASC;
 
 -- name: DeleteServiceNameByID :execrows
 DELETE FROM "service_names"

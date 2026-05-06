@@ -106,7 +106,17 @@ func AlreadyExistsProblem(resource, key string) dtos.ProblemDetails {
 	p.Code = "resource_conflict"
 	p.Type = fmt.Sprintf("%s/schemas/errors/ResourceConflict.json", DEV_URL)
 	p.Title = "Resource conflict"
-	p.Detail = fmt.Sprintf("%s with this %s already exists", resource, key)
+	p.Detail = fmt.Sprintf("%s with the same %s already exists", resource, key)
+	p.Status = 409
+	return p
+}
+
+func ScheduleConflictProblem(resource, key string) dtos.ProblemDetails {
+	var p dtos.ProblemDetails
+	p.Code = "resource_conflict"
+	p.Type = fmt.Sprintf("%s/schemas/errors/ResourceConflict.json", DEV_URL)
+	p.Title = "Schedule conflict"
+	p.Detail = fmt.Sprintf("%s already scheduled at the specified %s", resource, key)
 	p.Status = 409
 	return p
 }

@@ -128,6 +128,7 @@ func NewApi(pool *pgxpool.Pool, auth *jwtauth.JWTAuth) http.Handler {
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		// Format the response
 		response := presenter.RouteNotFoundProblem(r.Method, r.URL.String())
+		EnhanceProblem(w, r, &response)
 		render.Status(r, http.StatusNotFound)
 		render.JSON(w, r, response)
 	})

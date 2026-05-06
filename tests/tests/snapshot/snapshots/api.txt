@@ -2138,10 +2138,120 @@ Params: {
 Response: [
   {
     "id": "[uuid]",
-    "name": "Specialist 0001",
-    "email": "specialist-1@test.com",
+    "name": "Specialist 0010",
+    "email": "specialist-10@test.com",
     "phone": "219876543210",
-    "birthdate": "1995-06-03",
+    "birthdate": "1993-08-27",
+    "cpf": "96156338012",
+    "cnpj": "16833374000128"
+  },
+  {
+    "id": "[uuid]",
+    "name": "Specialist 0011",
+    "email": "specialist-11@test.com",
+    "phone": "219876543210",
+    "birthdate": "1997-12-25",
+    "cpf": "96156338012",
+    "cnpj": "16833374000128"
+  },
+  {
+    "id": "[uuid]",
+    "name": "Specialist 0012",
+    "email": "specialist-12@test.com",
+    "phone": "219876543210",
+    "birthdate": "1990-05-07",
+    "cpf": "96156338012",
+    "cnpj": "16833374000128"
+  },
+  {
+    "id": "[uuid]",
+    "name": "Specialist 0013",
+    "email": "specialist-13@test.com",
+    "phone": "219876543210",
+    "birthdate": "1985-12-13",
+    "cpf": "96156338012",
+    "cnpj": "16833374000128"
+  },
+  {
+    "id": "[uuid]",
+    "name": "Specialist 0014",
+    "email": "specialist-14@test.com",
+    "phone": "219876543210",
+    "birthdate": "1983-01-10",
+    "cpf": "96156338012",
+    "cnpj": "16833374000128"
+  }
+]
+
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:494:3)
+Request: GET /api/specialists 200
+Params: {
+  "page": 1,
+  "pageSize": 5,
+  "name": "1"
+}
+Response: [
+  {
+    "id": "[uuid]",
+    "name": "Specialist 0015",
+    "email": "specialist-15@test.com",
+    "phone": "219876543210",
+    "birthdate": "1985-05-08",
+    "cpf": "96156338012",
+    "cnpj": "16833374000128"
+  },
+  {
+    "id": "[uuid]",
+    "name": "Specialist 0016",
+    "email": "specialist-16@test.com",
+    "phone": "219876543210",
+    "birthdate": "1997-05-28",
+    "cpf": "96156338012",
+    "cnpj": "16833374000128"
+  },
+  {
+    "id": "[uuid]",
+    "name": "Specialist 0017",
+    "email": "specialist-17@test.com",
+    "phone": "219876543210",
+    "birthdate": "1997-08-18",
+    "cpf": "96156338012",
+    "cnpj": "16833374000128"
+  },
+  {
+    "id": "[uuid]",
+    "name": "Specialist 0018",
+    "email": "specialist-18@test.com",
+    "phone": "219876543210",
+    "birthdate": "1983-01-28",
+    "cpf": "96156338012",
+    "cnpj": "16833374000128"
+  },
+  {
+    "id": "[uuid]",
+    "name": "Specialist 0019",
+    "email": "specialist-19@test.com",
+    "phone": "219876543210",
+    "birthdate": "1980-08-27",
+    "cpf": "96156338012",
+    "cnpj": "16833374000128"
+  }
+]
+
+- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:495:3)
+Request: GET /api/specialists 200
+Params: {
+  "page": 0,
+  "pageSize": 5,
+  "phone": "219876543210"
+}
+Response: [
+  {
+    "id": "[uuid]",
+    "name": "Specialist 0000",
+    "email": "specialist-0@test.com",
+    "phone": "219876543210",
+    "birthdate": "1983-10-12",
     "cpf": "96156338012",
     "cnpj": "16833374000128"
   },
@@ -2183,116 +2293,6 @@ Response: [
   }
 ]
 
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:494:3)
-Request: GET /api/specialists 200
-Params: {
-  "page": 1,
-  "pageSize": 5,
-  "name": "1"
-}
-Response: [
-  {
-    "id": "[uuid]",
-    "name": "Specialist 0014",
-    "email": "specialist-14@test.com",
-    "phone": "219876543210",
-    "birthdate": "1983-01-10",
-    "cpf": "96156338012",
-    "cnpj": "16833374000128"
-  },
-  {
-    "id": "[uuid]",
-    "name": "Specialist 0015",
-    "email": "specialist-15@test.com",
-    "phone": "219876543210",
-    "birthdate": "1985-05-08",
-    "cpf": "96156338012",
-    "cnpj": "16833374000128"
-  },
-  {
-    "id": "[uuid]",
-    "name": "Specialist 0016",
-    "email": "specialist-16@test.com",
-    "phone": "219876543210",
-    "birthdate": "1997-05-28",
-    "cpf": "96156338012",
-    "cnpj": "16833374000128"
-  },
-  {
-    "id": "[uuid]",
-    "name": "Specialist 0017",
-    "email": "specialist-17@test.com",
-    "phone": "219876543210",
-    "birthdate": "1997-08-18",
-    "cpf": "96156338012",
-    "cnpj": "16833374000128"
-  },
-  {
-    "id": "[uuid]",
-    "name": "Specialist 0018",
-    "email": "specialist-18@test.com",
-    "phone": "219876543210",
-    "birthdate": "1983-01-28",
-    "cpf": "96156338012",
-    "cnpj": "16833374000128"
-  }
-]
-
-- at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:495:3)
-Request: GET /api/specialists 200
-Params: {
-  "page": 0,
-  "pageSize": 5,
-  "phone": "219876543210"
-}
-Response: [
-  {
-    "id": "[uuid]",
-    "name": "Specialist 0000",
-    "email": "specialist-0@test.com",
-    "phone": "219876543210",
-    "birthdate": "1983-10-12",
-    "cpf": "96156338012",
-    "cnpj": "16833374000128"
-  },
-  {
-    "id": "[uuid]",
-    "name": "Specialist 0001",
-    "email": "specialist-1@test.com",
-    "phone": "219876543210",
-    "birthdate": "1995-06-03",
-    "cpf": "96156338012",
-    "cnpj": "16833374000128"
-  },
-  {
-    "id": "[uuid]",
-    "name": "Specialist 0002",
-    "email": "specialist-2@test.com",
-    "phone": "219876543210",
-    "birthdate": "1987-12-28",
-    "cpf": "96156338012",
-    "cnpj": "16833374000128"
-  },
-  {
-    "id": "[uuid]",
-    "name": "Specialist 0003",
-    "email": "specialist-3@test.com",
-    "phone": "219876543210",
-    "birthdate": "1996-04-01",
-    "cpf": "96156338012",
-    "cnpj": "16833374000128"
-  },
-  {
-    "id": "[uuid]",
-    "name": "Specialist 0004",
-    "email": "specialist-4@test.com",
-    "phone": "219876543210",
-    "birthdate": "1992-02-15",
-    "cpf": "96156338012",
-    "cnpj": "16833374000128"
-  }
-]
-
 - at async run (E:\DISK\_workspace\usefull\clinic-appointments\tests\tests\snapshot\api.ts:496:3)
 Request: GET /api/specialists 200
 Params: {
@@ -2312,37 +2312,37 @@ Response: [
   },
   {
     "id": "[uuid]",
-    "name": "Specialist 0001",
-    "email": "specialist-1@test.com",
+    "name": "Specialist 0010",
+    "email": "specialist-10@test.com",
     "phone": "219876543210",
-    "birthdate": "1995-06-03",
+    "birthdate": "1993-08-27",
     "cpf": "96156338012",
     "cnpj": "16833374000128"
   },
   {
     "id": "[uuid]",
-    "name": "Specialist 0002",
-    "email": "specialist-2@test.com",
+    "name": "Specialist 0011",
+    "email": "specialist-11@test.com",
     "phone": "219876543210",
-    "birthdate": "1987-12-28",
+    "birthdate": "1997-12-25",
     "cpf": "96156338012",
     "cnpj": "16833374000128"
   },
   {
     "id": "[uuid]",
-    "name": "Specialist 0003",
-    "email": "specialist-3@test.com",
+    "name": "Specialist 0012",
+    "email": "specialist-12@test.com",
     "phone": "219876543210",
-    "birthdate": "1996-04-01",
+    "birthdate": "1990-05-07",
     "cpf": "96156338012",
     "cnpj": "16833374000128"
   },
   {
     "id": "[uuid]",
-    "name": "Specialist 0004",
-    "email": "specialist-4@test.com",
+    "name": "Specialist 0013",
+    "email": "specialist-13@test.com",
     "phone": "219876543210",
-    "birthdate": "1992-02-15",
+    "birthdate": "1985-12-13",
     "cpf": "96156338012",
     "cnpj": "16833374000128"
   }
@@ -2367,37 +2367,37 @@ Response: [
   },
   {
     "id": "[uuid]",
-    "name": "Specialist 0001",
-    "email": "specialist-1@test.com",
+    "name": "Specialist 0010",
+    "email": "specialist-10@test.com",
     "phone": "219876543210",
-    "birthdate": "1995-06-03",
+    "birthdate": "1993-08-27",
     "cpf": "96156338012",
     "cnpj": "16833374000128"
   },
   {
     "id": "[uuid]",
-    "name": "Specialist 0002",
-    "email": "specialist-2@test.com",
+    "name": "Specialist 0011",
+    "email": "specialist-11@test.com",
     "phone": "219876543210",
-    "birthdate": "1987-12-28",
+    "birthdate": "1997-12-25",
     "cpf": "96156338012",
     "cnpj": "16833374000128"
   },
   {
     "id": "[uuid]",
-    "name": "Specialist 0003",
-    "email": "specialist-3@test.com",
+    "name": "Specialist 0012",
+    "email": "specialist-12@test.com",
     "phone": "219876543210",
-    "birthdate": "1996-04-01",
+    "birthdate": "1990-05-07",
     "cpf": "96156338012",
     "cnpj": "16833374000128"
   },
   {
     "id": "[uuid]",
-    "name": "Specialist 0004",
-    "email": "specialist-4@test.com",
+    "name": "Specialist 0013",
+    "email": "specialist-13@test.com",
     "phone": "219876543210",
-    "birthdate": "1992-02-15",
+    "birthdate": "1985-12-13",
     "cpf": "96156338012",
     "cnpj": "16833374000128"
   }
@@ -2448,25 +2448,47 @@ Params: {
 Response: [
   {
     "id": "[uuid]",
-    "serviceName": "Service Available 9-0001",
+    "serviceName": "Service Available 0-0001",
     "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0000",
+    "specialistName": "Specialist 0010",
     "specialistId": "[uuid]",
-    "specialization": "Specialization 0009",
+    "specialization": "Specialization 0000",
     "specializationId": "[uuid]",
-    "price": 250,
+    "price": 50,
     "duration": 30
   },
   {
     "id": "[uuid]",
-    "serviceName": "Service Available 4-0001",
+    "serviceName": "Service Available 0-0001",
     "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0001",
+    "specialistName": "Specialist 0028",
     "specialistId": "[uuid]",
-    "specialization": "Specialization 0004",
+    "specialization": "Specialization 0000",
     "specializationId": "[uuid]",
-    "price": 200,
-    "duration": 30
+    "price": 75,
+    "duration": 45
+  },
+  {
+    "id": "[uuid]",
+    "serviceName": "Service Available 0-0001",
+    "serviceNameId": "[uuid]",
+    "specialistName": "Specialist 0049",
+    "specialistId": "[uuid]",
+    "specialization": "Specialization 0000",
+    "specializationId": "[uuid]",
+    "price": 250,
+    "duration": 75
+  },
+  {
+    "id": "[uuid]",
+    "serviceName": "Service Available 0-0001",
+    "serviceNameId": "[uuid]",
+    "specialistName": "Specialist 0021",
+    "specialistId": "[uuid]",
+    "specialization": "Specialization 0000",
+    "specializationId": "[uuid]",
+    "price": 150,
+    "duration": 60
   },
   {
     "id": "[uuid]",
@@ -2478,28 +2500,6 @@ Response: [
     "specializationId": "[uuid]",
     "price": 200,
     "duration": 60
-  },
-  {
-    "id": "[uuid]",
-    "serviceName": "Service Available 6-0001",
-    "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0004",
-    "specialistId": "[uuid]",
-    "specialization": "Specialization 0006",
-    "specializationId": "[uuid]",
-    "price": 200,
-    "duration": 75
-  },
-  {
-    "id": "[uuid]",
-    "serviceName": "Service Available 9-0001",
-    "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0005",
-    "specialistId": "[uuid]",
-    "specialization": "Specialization 0009",
-    "specializationId": "[uuid]",
-    "price": 200,
-    "duration": 75
   }
 ]
 
@@ -2524,6 +2524,39 @@ Response: [
   },
   {
     "id": "[uuid]",
+    "serviceName": "Service Available 1-0000",
+    "serviceNameId": "[uuid]",
+    "specialistName": "Specialist 0018",
+    "specialistId": "[uuid]",
+    "specialization": "Specialization 0001",
+    "specializationId": "[uuid]",
+    "price": 250,
+    "duration": 75
+  },
+  {
+    "id": "[uuid]",
+    "serviceName": "Service Available 1-0000",
+    "serviceNameId": "[uuid]",
+    "specialistName": "Specialist 0031",
+    "specialistId": "[uuid]",
+    "specialization": "Specialization 0001",
+    "specializationId": "[uuid]",
+    "price": 175,
+    "duration": 30
+  },
+  {
+    "id": "[uuid]",
+    "serviceName": "Service Available 1-0001",
+    "serviceNameId": "[uuid]",
+    "specialistName": "Specialist 0015",
+    "specialistId": "[uuid]",
+    "specialization": "Specialization 0001",
+    "specializationId": "[uuid]",
+    "price": 175,
+    "duration": 45
+  },
+  {
+    "id": "[uuid]",
     "serviceName": "Service Available 1-0001",
     "serviceNameId": "[uuid]",
     "specialistName": "Specialist 0007",
@@ -2532,39 +2565,6 @@ Response: [
     "specializationId": "[uuid]",
     "price": 50,
     "duration": 90
-  },
-  {
-    "id": "[uuid]",
-    "serviceName": "Service Available 8-0001",
-    "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0010",
-    "specialistId": "[uuid]",
-    "specialization": "Specialization 0008",
-    "specializationId": "[uuid]",
-    "price": 200,
-    "duration": 30
-  },
-  {
-    "id": "[uuid]",
-    "serviceName": "Service Available 9-0001",
-    "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0010",
-    "specialistId": "[uuid]",
-    "specialization": "Specialization 0009",
-    "specializationId": "[uuid]",
-    "price": 175,
-    "duration": 90
-  },
-  {
-    "id": "[uuid]",
-    "serviceName": "Service Available 0-0001",
-    "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0010",
-    "specialistId": "[uuid]",
-    "specialization": "Specialization 0000",
-    "specializationId": "[uuid]",
-    "price": 50,
-    "duration": 30
   }
 ]
 
@@ -2578,28 +2578,6 @@ Params: {
 Response: [
   {
     "id": "[uuid]",
-    "serviceName": "Service Available 8-0001",
-    "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0010",
-    "specialistId": "[uuid]",
-    "specialization": "Specialization 0008",
-    "specializationId": "[uuid]",
-    "price": 200,
-    "duration": 30
-  },
-  {
-    "id": "[uuid]",
-    "serviceName": "Service Available 9-0001",
-    "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0010",
-    "specialistId": "[uuid]",
-    "specialization": "Specialization 0009",
-    "specializationId": "[uuid]",
-    "price": 175,
-    "duration": 90
-  },
-  {
-    "id": "[uuid]",
     "serviceName": "Service Available 0-0001",
     "serviceNameId": "[uuid]",
     "specialistName": "Specialist 0010",
@@ -2607,6 +2585,17 @@ Response: [
     "specialization": "Specialization 0000",
     "specializationId": "[uuid]",
     "price": 50,
+    "duration": 30
+  },
+  {
+    "id": "[uuid]",
+    "serviceName": "Service Available 8-0001",
+    "serviceNameId": "[uuid]",
+    "specialistName": "Specialist 0010",
+    "specialistId": "[uuid]",
+    "specialization": "Specialization 0008",
+    "specializationId": "[uuid]",
+    "price": 200,
     "duration": 30
   },
   {
@@ -2619,6 +2608,17 @@ Response: [
     "specializationId": "[uuid]",
     "price": 200,
     "duration": 75
+  },
+  {
+    "id": "[uuid]",
+    "serviceName": "Service Available 9-0001",
+    "serviceNameId": "[uuid]",
+    "specialistName": "Specialist 0010",
+    "specialistId": "[uuid]",
+    "specialization": "Specialization 0009",
+    "specializationId": "[uuid]",
+    "price": 175,
+    "duration": 90
   }
 ]
 
@@ -2632,36 +2632,25 @@ Params: {
 Response: [
   {
     "id": "[uuid]",
-    "serviceName": "Service Available 0-0003",
+    "serviceName": "Service Available 0-0000",
     "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0000",
+    "specialistName": "Specialist 0024",
     "specialistId": "[uuid]",
     "specialization": "Specialization 0000",
     "specializationId": "[uuid]",
-    "price": 250,
+    "price": 225,
+    "duration": 45
+  },
+  {
+    "id": "[uuid]",
+    "serviceName": "Service Available 0-0000",
+    "serviceNameId": "[uuid]",
+    "specialistName": "Specialist 0020",
+    "specialistId": "[uuid]",
+    "specialization": "Specialization 0000",
+    "specializationId": "[uuid]",
+    "price": 125,
     "duration": 90
-  },
-  {
-    "id": "[uuid]",
-    "serviceName": "Service Available 7-0000",
-    "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0000",
-    "specialistId": "[uuid]",
-    "specialization": "Specialization 0007",
-    "specializationId": "[uuid]",
-    "price": 150,
-    "duration": 60
-  },
-  {
-    "id": "[uuid]",
-    "serviceName": "Service Available 9-0001",
-    "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0000",
-    "specialistId": "[uuid]",
-    "specialization": "Specialization 0009",
-    "specializationId": "[uuid]",
-    "price": 250,
-    "duration": 30
   },
   {
     "id": "[uuid]",
@@ -2676,14 +2665,25 @@ Response: [
   },
   {
     "id": "[uuid]",
-    "serviceName": "Service Available 4-0001",
+    "serviceName": "Service Available 0-0000",
     "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0001",
+    "specialistName": "Specialist 0023",
     "specialistId": "[uuid]",
-    "specialization": "Specialization 0004",
+    "specialization": "Specialization 0000",
     "specializationId": "[uuid]",
-    "price": 200,
-    "duration": 30
+    "price": 150,
+    "duration": 60
+  },
+  {
+    "id": "[uuid]",
+    "serviceName": "Service Available 0-0000",
+    "serviceNameId": "[uuid]",
+    "specialistName": "Specialist 0038",
+    "specialistId": "[uuid]",
+    "specialization": "Specialization 0000",
+    "specializationId": "[uuid]",
+    "price": 175,
+    "duration": 60
   }
 ]
 

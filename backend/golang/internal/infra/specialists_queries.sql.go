@@ -190,8 +190,9 @@ WHERE true
   AND ($2::text = ''   OR "cpf" = $2)
   AND ($3::text = ''  OR "cnpj" = $3)
   AND ($4::text = '' OR "phone" = $4)
-LIMIT $6::integer
+ORDER BY "email" ASC
 OFFSET $5::integer
+LIMIT $6::integer
 `
 
 type ListSpecialistsParams struct {

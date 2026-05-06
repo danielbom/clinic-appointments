@@ -157,9 +157,9 @@ WHERE true
   AND ($2::text = ''   OR "cpf" = $2)
   AND ($3::text = ''  OR "cnpj" = $3)
   AND ($4::text = '' OR "phone" = $4)
-ORDER BY "name"
-LIMIT $6::integer
+ORDER BY "name" ASC
 OFFSET $5::integer
+LIMIT $6::integer
 `
 
 type ListSecretariesParams struct {

@@ -39,9 +39,9 @@ WHERE true
   AND (sqlc.arg('name')::text = ''  OR "name" ILIKE '%' || sqlc.arg('name') || '%')
   AND (sqlc.arg('cpf')::text = ''   OR "cpf" = sqlc.arg('cpf'))
   AND (sqlc.arg('phone')::text = '' OR "phone" = sqlc.arg('phone'))
-ORDER BY "name"
-LIMIT sqlc.arg('limit')::integer
-OFFSET sqlc.arg('offset')::integer;
+ORDER BY "name" ASC
+OFFSET sqlc.arg('offset')::integer
+LIMIT sqlc.arg('limit')::integer;
 
 -- name: CountCustomers :one
 SELECT COUNT(id)::int as count

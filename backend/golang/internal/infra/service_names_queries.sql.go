@@ -75,7 +75,7 @@ func (q *Queries) GetServiceNameByName(ctx context.Context, servicename string) 
 const listServiceNames = `-- name: ListServiceNames :many
 SELECT "id", "name", "specialization_id"
 FROM "service_names"
-ORDER BY "name"
+ORDER BY "name" ASC
 `
 
 func (q *Queries) ListServiceNames(ctx context.Context) ([]ServiceName, error) {

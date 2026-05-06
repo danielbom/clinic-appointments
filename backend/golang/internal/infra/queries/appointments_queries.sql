@@ -71,8 +71,8 @@ WHERE true
   AND (sqlc.arg('serviceName') = ''        OR "sn"."name" ILIKE '%' || sqlc.arg('serviceName') || '%')
   AND (sqlc.arg('status') = 0              OR "a"."status" = sqlc.arg('status'))
 ORDER BY "a"."date" DESC, "a"."time" DESC
-LIMIT sqlc.arg('limit')::integer
-OFFSET sqlc.arg('offset')::integer;
+OFFSET sqlc.arg('offset')::integer
+LIMIT sqlc.arg('limit')::integer;
 
 -- name: CountAppointments :one
 SELECT COUNT("a"."id")::int AS count
@@ -106,7 +106,7 @@ GROUP BY "month", "status"
 ORDER BY "month" ASC;
 
 -- name: AppointmentsIntersects :one
-SELECT COUNT("date") > 0 AS count
+SELECT COUNT("date") > 0 AS intersects
 FROM "appointments"
 WHERE "date" = sqlc.arg('date')
   AND "specialist_id" = sqlc.arg('specialistId')

@@ -49,7 +49,7 @@ func CreateSpecialistService(state State, args SpecialistServiceInfoArgs) (pgtyp
 		ServiceNameId: args.ServiceNameID,
 	})
 	if err == nil {
-		return none, NewResourceAlreadyExistsError("service", "specialistId,serviceNameId")
+		return none, NewResourceAlreadyExistsError("service", "specialist_id,service_name_id")
 	} else if !ErrorIsNoRows(err) {
 		return none, NewUnexpectedError(err)
 	}

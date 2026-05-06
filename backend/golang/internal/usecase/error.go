@@ -19,6 +19,7 @@ const (
 	ErrorKindUnexpected UsecaseErrorKind = iota
 	ErrorKindNotFound
 	ErrorKindAlreadyExists
+	ErrorKindScheduleConflict
 	ErrorKindInvalidArgument
 	ErrorKindInvalidState
 	ErrorKindAuth
@@ -54,6 +55,10 @@ func NewResourceAlreadyExistsError(resource, key string) *UsecaseError {
 	return &UsecaseError{Kind: ErrorKindAlreadyExists, Error: ErrResourceAlreadyExists, Resource: resource, Key: key}
 }
 
+func NewScheduleConflictError(resource, key string) *UsecaseError {
+	return &UsecaseError{Kind: ErrorKindScheduleConflict, Error: ErrResourceAlreadyExists, Resource: resource, Key: key}
+}
+
 func NewInvalidStateError(err error) *UsecaseError {
 	return &UsecaseError{Kind: ErrorKindInvalidState, Error: err}
 }
@@ -77,7 +82,6 @@ var (
 	ErrFieldIsRequired = errors.New("is required")
 
 	ErrInvalidAppointmentStatus = errors.New("invalid appointment status")
-	ErrAppointmentsIntersection = errors.New("appointments intersection")
 
 	ErrResourceNotFound      = errors.New("resource not found")
 	ErrResourceAlreadyExists = errors.New("resource already exists")

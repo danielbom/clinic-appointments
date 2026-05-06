@@ -18,16 +18,11 @@ func EnhanceProblem(w http.ResponseWriter, r *http.Request, p *dtos.ProblemDetai
 }
 
 func UsecaseError(w http.ResponseWriter, r *http.Request, err *usecase.UsecaseError) {
+	var response dtos.ProblemDetails
 	switch err.Kind {
 	case usecase.ErrorKindInvalidState:
-		// Format the response
-		response := presenter.InvalidStateProblem(err.Error.Error())
-		EnhanceProblem(w, r, &response)
-		render.Status(r, http.StatusBadRequest)
-		render.JSON(w, r, response)
-		return
+		response = presenter.InvalidStateProblem(err.Error.Error())
 	case usecase.ErrorKindInvalidArgument:
-		// Format the response
 		location := "args"
 		switch err.Action {
 		case usecase.ACTION_QUERY:
@@ -35,45 +30,25 @@ func UsecaseError(w http.ResponseWriter, r *http.Request, err *usecase.UsecaseEr
 		case usecase.ACTION_MUTATION:
 			location = "body"
 		}
-		response := presenter.ValidationProblem(location, err.Key, err.Error.Error())
-		EnhanceProblem(w, r, &response)
-		render.Status(r, http.StatusBadRequest)
-		render.JSON(w, r, response)
-		return
+		response = presenter.ValidationProblem(location, err.Key, err.Error.Error())
 	case usecase.ErrorKindAuth:
 		slog.Info("auth error", "error", err.Error)
-		// Format the response
-		response := presenter.AuthProblem(presenter.AUTH_INVALID_CREDENTIALS)
-		EnhanceProblem(w, r, &response)
-		render.Status(r, http.StatusUnauthorized)
-		render.JSON(w, r, response)
-		return
+		response = presenter.AuthProblem(presenter.AUTH_INVALID_CREDENTIALS)
 	case usecase.ErrorKindNotFound:
-		// Format the response
-		response := presenter.NotFoundProblem(err.Resource)
-		EnhanceProblem(w, r, &response)
-		render.Status(r, http.StatusNotFound)
-		render.JSON(w, r, response)
-		return
+		response = presenter.NotFoundProblem(err.Resource)
 	case usecase.ErrorKindAlreadyExists:
-		// Format the response
-		response := presenter.AlreadyExistsProblem(err.Resource, err.Key)
-		EnhanceProblem(w, r, &response)
-		render.Status(r, http.StatusConflict)
-		render.JSON(w, r, response)
-		return
+		response = presenter.AlreadyExistsProblem(err.Resource, err.Key)
+	case usecase.ErrorKindScheduleConflict:
+		response = presenter.ScheduleConflictProblem(err.Resource, err.Key)
 	case usecase.ErrorKindUnexpected:
 		slog.Error("something went wrong", "error", err.Error)
-		// Format the response
-		response := presenter.InternalProblem("something went wrong")
-		EnhanceProblem(w, r, &response)
-		render.Status(r, http.StatusInternalServerError)
-		render.JSON(w, r, response)
-		return
+		response = presenter.InternalProblem("something went wrong")
 	}
-	slog.Error("unknown error kind", "error", err.Error)
-	response := presenter.InternalProblem("unknown error kind")
+	if response.Status == 0 {
+		slog.Error("unknown error kind", "error", err.Error)
+		response = presenter.InternalProblem("unknown error kind")
+	}
 	EnhanceProblem(w, r, &response)
-	render.Status(r, http.StatusInternalServerError)
+	render.Status(r, response.Status)
 	render.JSON(w, r, response)
 }
