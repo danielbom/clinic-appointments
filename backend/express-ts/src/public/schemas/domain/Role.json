@@ -1,0 +1,9 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/domain/Role.json",
+  "type": "string",
+  "enum": [
+    "admin",
+    "secretary"
+  ],
+  "maxLength": 36
+}

@@ -1,6 +1,7 @@
 -- name: CreateService :one
-INSERT INTO services ("service_name_id", "specialist_id", "price", "duration")
-VALUES ( sqlc.arg('serviceNameId')
+INSERT INTO services ("id", "service_name_id", "specialist_id", "price", "duration")
+VALUES ( sqlc.arg('id')
+       , sqlc.arg('serviceNameId')
        , sqlc.arg('specialistId')
        , sqlc.arg('price')
        , sqlc.arg('duration')
@@ -10,8 +11,8 @@ RETURNING "id";
 -- name: UpdateService :one
 UPDATE "services" 
 SET
-    "price"    = sqlc.arg('price'),
-    "duration" = sqlc.arg('duration')
+  "price"    = sqlc.arg('price'),
+  "duration" = sqlc.arg('duration')
 WHERE "id" = sqlc.arg('id')
 RETURNING "id";
 

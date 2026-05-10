@@ -1,0 +1,24 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/schemas/AuthIdentity.json",
+  "type": "object",
+  "properties": {
+    "id": {
+      "$ref": "https://dev-clinic-appointments.com.br/schemas/domain/Uuid.json"
+    },
+    "name": {
+      "$ref": "https://dev-clinic-appointments.com.br/schemas/domain/Name.json"
+    },
+    "email": {
+      "$ref": "https://dev-clinic-appointments.com.br/schemas/domain/Email.json"
+    },
+    "role": {
+      "$ref": "https://dev-clinic-appointments.com.br/schemas/domain/Role.json"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "email",
+    "role"
+  ]
+}

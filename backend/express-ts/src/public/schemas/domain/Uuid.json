@@ -1,0 +1,6 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/domain/Uuid.json",
+  "type": "string",
+  "format": "uuid",
+  "maxLength": 36
+}

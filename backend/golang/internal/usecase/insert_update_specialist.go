@@ -4,7 +4,6 @@ import (
 	"backend/internal/infra"
 	"backend/internal/validate"
 
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -22,36 +21,45 @@ type SpecialistInfoArgs struct {
 func (args *SpecialistInfoArgs) Validate() *UsecaseError {
 	if !args.BirthdateDate.Valid {
 		if err := args.BirthdateDate.Scan(args.Birthdate); err != nil {
-			return NewInvalidArgumentError(ErrInvalidDate).InField("birthdate")
+			return NewInvalidArgumentError(ACTION_MUTATION, "birthdate", ErrInvalidDate)
 		}
 	}
 	if err := args.CnpjText.Scan(args.Cnpj); err != nil {
-		return NewUnexpectedError(err).InField("cnpj")
+		return NewUnreachableError("SpecialistInfoArgs.Validate: args.CnpjText.Scan")
 	}
 	if args.Name == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("name")
+		return NewInvalidArgumentError(ACTION_MUTATION, "name", ErrFieldIsRequired)
 	}
 	if args.Email == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("email")
+		return NewInvalidArgumentError(ACTION_MUTATION, "email", ErrFieldIsRequired)
+	}
+	if !validate.IsEmailValid(args.Email) {
+		return NewInvalidArgumentError(ACTION_MUTATION, "email", ErrInvalidEmail)
 	}
 	if args.Phone == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("phone")
+		return NewInvalidArgumentError(ACTION_MUTATION, "phone", ErrFieldIsRequired)
+	}
+	if !validate.IsPhoneValid(args.Phone) {
+		return NewInvalidArgumentError(ACTION_MUTATION, "phone", ErrInvalidPhone)
 	}
 	if args.Cpf == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("cpf")
+		return NewInvalidArgumentError(ACTION_MUTATION, "cpf", ErrFieldIsRequired)
 	}
 	if !validate.IsCpfValid(args.Cpf) {
-		return NewInvalidArgumentError(ErrInvalidFormat).InField("cpf")
+		return NewInvalidArgumentError(ACTION_MUTATION, "cpf", ErrInvalidCpf)
 	}
 	if args.CnpjText.String != "" {
+		if args.CnpjText.String == "" {
+			return NewInvalidArgumentError(ACTION_MUTATION, "cnpj", ErrFieldIsRequired)
+		}
 		if !validate.IsCnpjValid(args.CnpjText.String) {
-			return NewInvalidArgumentError(ErrInvalidFormat).InField("cnpj")
+			return NewInvalidArgumentError(ACTION_MUTATION, "cnpj", ErrInvalidCnpj)
 		}
 	}
 	return nil
 }
 
-func ServiceWithEmailExists(state State, email string, exceptId uuid.UUID) (bool, error) {
+func ServiceWithEmailExists(state State, email string, exceptId pgtype.UUID) (bool, error) {
 	specialist, err := state.Queries().GetSpecialistByEmail(state.Context(), email)
 	if ErrorIsNoRows(err) {
 		return false, nil
@@ -65,16 +73,23 @@ func ServiceWithEmailExists(state State, email string, exceptId uuid.UUID) (bool
 	return true, nil
 }
 
-func CreateSpecialist(state State, args SpecialistInfoArgs) (uuid.UUID, *UsecaseError) {
-	exists, err := ServiceWithEmailExists(state, args.Email, uuid.Nil)
+func CreateSpecialist(state State, args SpecialistInfoArgs) (pgtype.UUID, *UsecaseError) {
+	var none pgtype.UUID
+	exists, err := ServiceWithEmailExists(state, args.Email, pgtype.UUID{})
 	if err != nil {
-		return uuid.Nil, NewUnexpectedError(err)
+		return none, NewUnexpectedError(err)
 	}
 	if exists {
-		return uuid.Nil, NewResourceAlreadyExistsError("specialist.email")
+		return none, NewResourceAlreadyExistsError("specialist", "email")
+	}
+
+	id, err := NewUuid()
+	if err != nil {
+		return none, NewUnexpectedError(err)
 	}
 
 	params := infra.CreateSpecialistParams{
+		ID:        id,
 		Name:      args.Name,
 		Email:     args.Email,
 		Phone:     args.Phone,
@@ -82,21 +97,21 @@ func CreateSpecialist(state State, args SpecialistInfoArgs) (uuid.UUID, *Usecase
 		Cpf:       args.Cpf,
 		Cnpj:      args.CnpjText,
 	}
-	id, err := state.Queries().CreateSpecialist(state.Context(), params)
+	_, err = state.Queries().CreateSpecialist(state.Context(), params)
 	if err != nil {
-		return uuid.Nil, NewUnexpectedError(err)
+		return none, NewUnexpectedError(err)
 	}
 	return id, nil
 }
 
-func UpdateSpecialist(state State, specialistId uuid.UUID, args SpecialistInfoArgs) (infra.Specialist, *UsecaseError) {
+func UpdateSpecialist(state State, specialistId pgtype.UUID, args SpecialistInfoArgs) (infra.Specialist, *UsecaseError) {
 	var none infra.Specialist
 	exists, err := ServiceWithEmailExists(state, args.Email, specialistId)
 	if err != nil {
 		return none, NewUnexpectedError(err)
 	}
 	if exists {
-		return none, NewResourceAlreadyExistsError("specialist.email")
+		return none, NewResourceAlreadyExistsError("specialist", "email")
 	}
 	params := infra.UpdateSpecialistParams{
 		ID:        specialistId,

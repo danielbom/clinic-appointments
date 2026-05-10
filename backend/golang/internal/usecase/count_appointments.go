@@ -20,12 +20,12 @@ type CountAppointmentsArgs struct {
 func (args *CountAppointmentsArgs) Validate() *UsecaseError {
 	if args.StartDateRaw != "" {
 		if err := args.StartDate.Scan(args.StartDateRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidDate).InField("startDate")
+			return NewInvalidArgumentError(ACTION_QUERY, "startDate", ErrInvalidDate)
 		}
 	}
 	if args.EndDateRaw != "" {
 		if err := args.EndDate.Scan(args.EndDateRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidDate).InField("endDate")
+			return NewInvalidArgumentError(ACTION_QUERY, "endDate", ErrInvalidDate)
 		}
 	}
 	return nil

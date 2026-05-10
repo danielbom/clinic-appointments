@@ -1,36 +1,36 @@
 package api
 
 import (
-	"log/slog"
 	"net/http"
 	"strconv"
 
+	"backend/internal/api/presenter"
+
 	"github.com/go-chi/chi"
-	"github.com/google/uuid"
+	"github.com/go-chi/render"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
-func InvalidJson(w http.ResponseWriter) {
-	http.Error(w, "invalid json", http.StatusBadRequest)
-}
-
-func SomethingWentWrong(w http.ResponseWriter, err error) {
-	slog.Error("something went wrong", "error", err)
-	http.Error(w, "something went wrong", http.StatusInternalServerError)
-}
-
-func GetAndParseUuidParam(w http.ResponseWriter, r *http.Request, paramName string) (uuid.UUID, bool) {
+func GetAndParseUuidParam(w http.ResponseWriter, r *http.Request, paramName string) (pgtype.UUID, bool) {
 	rawId := chi.URLParam(r, paramName)
-	return ParseUuidParam(w, rawId, paramName)
+	result, ok := ParseUuid(rawId)
+	if !ok {
+		// Format the response
+		response := presenter.ValidationProblem("path", paramName, "invalid uuid")
+		EnhanceProblem(w, r, &response)
+		render.Status(r, http.StatusBadRequest)
+		render.JSON(w, r, response)
+	}
+	return result, ok
 }
 
-func ParseUuidParam(w http.ResponseWriter, rawID string, paramName string) (uuid.UUID, bool) {
-	id, err := uuid.Parse(rawID)
+func ParseUuid(rawID string) (pgtype.UUID, bool) {
+	var result pgtype.UUID
+	err := result.Scan(rawID)
 	if err != nil {
-		slog.Warn("invalid param", paramName, rawID)
-		http.Error(w, "invalid uuid param: "+paramName, http.StatusBadRequest)
-		return uuid.Nil, false
+		return result, false
 	}
-	return id, true
+	return result, true
 }
 
 func ParseIntOrDefault(text string, defaultValue int32) int32 {

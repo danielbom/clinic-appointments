@@ -17,10 +17,10 @@ import (
 // @Tags         Services
 // @Produce      json
 // @Success      200 {object}  dtos.Service
-// @Router       /services/{service_id} [get]
+// @Router       /services/{id} [get]
 func (h *api) getService(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
-	serviceId, ok := GetAndParseUuidParam(w, r, "service_id")
+	serviceId, ok := GetAndParseUuidParam(w, r, "id")
 	if !ok {
 		return
 	}
@@ -30,14 +30,14 @@ func (h *api) getService(w http.ResponseWriter, r *http.Request) {
 
 	service, err := usecase.GetService(rs, serviceId)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := presenter.GetService(service)
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }
 
 // @Summary      List services
@@ -52,7 +52,7 @@ func (h *api) getService(w http.ResponseWriter, r *http.Request) {
 // @Param        specialization	query string  false "Specialization"
 // @Success      200 {object}  []dtos.Service
 // @Router       /services [get]
-func (h *api) getServices(w http.ResponseWriter, r *http.Request) {
+func (h *api) listServices(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
 	query := r.URL.Query()
 	page := ParseIntOrDefault(query.Get("page"), 0)
@@ -71,7 +71,7 @@ func (h *api) getServices(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -79,14 +79,14 @@ func (h *api) getServices(w http.ResponseWriter, r *http.Request) {
 
 	services, err := usecase.ListServicesEnriched(rs, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := presenter.GetServices(services)
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }
 
 // @Summary      Count services
@@ -114,7 +114,7 @@ func (h *api) countServices(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -122,7 +122,7 @@ func (h *api) countServices(w http.ResponseWriter, r *http.Request) {
 
 	count, err := usecase.CountServicesEnriched(rs, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -143,7 +143,7 @@ func (h *api) createService(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
 	var body dtos.ServiceInfoBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		InvalidJson(w)
+		InvalidJson(w, r)
 		return
 	}
 
@@ -156,7 +156,7 @@ func (h *api) createService(w http.ResponseWriter, r *http.Request) {
 		RequireSpecialist: true,
 	}
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -164,14 +164,14 @@ func (h *api) createService(w http.ResponseWriter, r *http.Request) {
 
 	id, err := usecase.CreateSpecialistService(rs, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := dtos.Id{ID: id.String()}
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusCreated)
+	render.JSON(w, r, response)
 }
 
 // @Summary      Create service
@@ -181,17 +181,17 @@ func (h *api) createService(w http.ResponseWriter, r *http.Request) {
 // @Produce      json
 // @Param 		  data body dtos.ServiceInfoBody true "Service information"
 // @Success      200 {object}  dtos.Service
-// @Router       /services/{service_id} [put]
+// @Router       /services/{id} [put]
 func (h *api) updateService(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
-	serviceId, ok := GetAndParseUuidParam(w, r, "service_id")
+	serviceId, ok := GetAndParseUuidParam(w, r, "id")
 	if !ok {
 		return
 	}
 
 	var body dtos.ServiceInfoBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		InvalidJson(w)
+		InvalidJson(w, r)
 		return
 	}
 
@@ -203,7 +203,7 @@ func (h *api) updateService(w http.ResponseWriter, r *http.Request) {
 		RequireSpecialist: false,
 	}
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -211,14 +211,14 @@ func (h *api) updateService(w http.ResponseWriter, r *http.Request) {
 
 	id, err := usecase.UpdateSpecialistService(rs, serviceId, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := dtos.Id{ID: id.String()}
+	render.Status(r, http.StatusOK)
 	render.JSON(w, r, response)
-	render.Status(r, http.StatusCreated)
 }
 
 // @Summary      Delete service
@@ -227,10 +227,10 @@ func (h *api) updateService(w http.ResponseWriter, r *http.Request) {
 // @Tags         Services
 // @Produce      json
 // @Success      204
-// @Router       /services/{service_id} [delete]
+// @Router       /services/{id} [delete]
 func (h *api) deleteService(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
-	serviceId, ok := GetAndParseUuidParam(w, r, "service_id")
+	serviceId, ok := GetAndParseUuidParam(w, r, "id")
 	if !ok {
 		return
 	}
@@ -240,7 +240,7 @@ func (h *api) deleteService(w http.ResponseWriter, r *http.Request) {
 
 	err := usecase.DeleteSpecialistService(rs, serviceId)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 

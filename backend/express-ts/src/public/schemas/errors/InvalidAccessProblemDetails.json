@@ -1,0 +1,41 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/errors/InvalidAccessProblemDetails.json",
+  "description": "Represents an authorization failure. Uses code 'forbidden_error' and HTTP status 403. Occurs when the authenticated user does not have permission to access the requested resource or perform the operation.",
+  "allOf": [
+    {
+      "$ref": "#/components/errors/ProblemDetails"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "forbidden_error"
+          ]
+        },
+        "status": {
+          "type": "number",
+          "enum": [
+            403
+          ]
+        },
+        "title": {
+          "type": "string",
+          "enum": [
+            "Forbidden error"
+          ]
+        },
+        "detail": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "status",
+        "title",
+        "details"
+      ]
+    }
+  ]
+}

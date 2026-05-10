@@ -1,16 +1,16 @@
 package usecase
 
 import (
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
-func DeleteSpecialization(state State, id uuid.UUID) *UsecaseError {
+func DeleteSpecialization(state State, id pgtype.UUID) *UsecaseError {
 	count, err := state.Queries().DeleteSpecializationByID(state.Context(), id)
 	if err != nil {
-		return NewError(ErrorKindUnexpected, err)
+		return NewUnexpectedError(err)
 	}
 	if count == 0 {
-		return NewNotFoundError(ErrResourceNotFound).InField("specialization")
+		return NewNotFoundError("specialization")
 	}
 	return nil
 }

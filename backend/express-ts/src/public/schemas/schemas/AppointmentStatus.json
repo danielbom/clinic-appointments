@@ -1,0 +1,11 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/schemas/AppointmentStatus.json",
+  "type": "number",
+  "description": "0: None 1: Pending 2: Realized 3: Canceled",
+  "enum": [
+    0,
+    1,
+    2,
+    3
+  ]
+}

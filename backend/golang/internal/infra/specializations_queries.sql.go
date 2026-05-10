@@ -8,18 +8,25 @@ package infra
 import (
 	"context"
 
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createSpecialization = `-- name: CreateSpecialization :one
-INSERT INTO "specializations" ("name")
-VALUES ($1)
+INSERT INTO "specializations" ("id", "name")
+VALUES ( $1
+       , $2
+       )
 RETURNING "id"
 `
 
-func (q *Queries) CreateSpecialization(ctx context.Context, name string) (uuid.UUID, error) {
-	row := q.db.QueryRow(ctx, createSpecialization, name)
-	var id uuid.UUID
+type CreateSpecializationParams struct {
+	ID   pgtype.UUID
+	Name string
+}
+
+func (q *Queries) CreateSpecialization(ctx context.Context, arg CreateSpecializationParams) (pgtype.UUID, error) {
+	row := q.db.QueryRow(ctx, createSpecialization, arg.ID, arg.Name)
+	var id pgtype.UUID
 	err := row.Scan(&id)
 	return id, err
 }
@@ -29,7 +36,7 @@ DELETE FROM "specializations"
 WHERE "id" = $1
 `
 
-func (q *Queries) DeleteSpecializationByID(ctx context.Context, specializationid uuid.UUID) (int64, error) {
+func (q *Queries) DeleteSpecializationByID(ctx context.Context, specializationid pgtype.UUID) (int64, error) {
 	result, err := q.db.Exec(ctx, deleteSpecializationByID, specializationid)
 	if err != nil {
 		return 0, err
@@ -43,7 +50,7 @@ FROM "specializations"
 WHERE "id" = $1
 `
 
-func (q *Queries) GetSpecializationByID(ctx context.Context, specializationid uuid.UUID) (Specialization, error) {
+func (q *Queries) GetSpecializationByID(ctx context.Context, specializationid pgtype.UUID) (Specialization, error) {
 	row := q.db.QueryRow(ctx, getSpecializationByID, specializationid)
 	var i Specialization
 	err := row.Scan(&i.ID, &i.Name)
@@ -66,7 +73,7 @@ func (q *Queries) GetSpecializationByName(ctx context.Context, specializationnam
 const listSpecializations = `-- name: ListSpecializations :many
 SELECT "id", "name"
 FROM "specializations"
-ORDER BY "name"
+ORDER BY "name" ASC
 `
 
 func (q *Queries) ListSpecializations(ctx context.Context) ([]Specialization, error) {
@@ -93,16 +100,16 @@ const listSpecializationsBySpecialistID = `-- name: ListSpecializationsBySpecial
 SELECT "sp"."id", "sp"."name"
 FROM "specializations" "sp"
 WHERE "sp"."id" IN (
-	SELECT "sn"."specialization_id" 
-	FROM "services" "s" 
-	JOIN "service_names" "sn" ON "sn"."id" = "s"."service_name_id"
-	WHERE "s"."specialist_id" = $1
+  SELECT "sn"."specialization_id" 
+  FROM "services" "s" 
+  JOIN "service_names" "sn" ON "sn"."id" = "s"."service_name_id"
+  WHERE "s"."specialist_id" = $1
 )
-ORDER BY "name"
+ORDER BY "name" ASC
 `
 
-func (q *Queries) ListSpecializationsBySpecialistID(ctx context.Context, specializationid uuid.UUID) ([]Specialization, error) {
-	rows, err := q.db.Query(ctx, listSpecializationsBySpecialistID, specializationid)
+func (q *Queries) ListSpecializationsBySpecialistID(ctx context.Context, specialistid pgtype.UUID) ([]Specialization, error) {
+	rows, err := q.db.Query(ctx, listSpecializationsBySpecialistID, specialistid)
 	if err != nil {
 		return nil, err
 	}
@@ -124,19 +131,19 @@ func (q *Queries) ListSpecializationsBySpecialistID(ctx context.Context, special
 const updateSpecialization = `-- name: UpdateSpecialization :one
 UPDATE "specializations"
 SET 
-	"name" = $1
+  "name" = $1
 WHERE "id" = $2
 RETURNING "id"
 `
 
 type UpdateSpecializationParams struct {
 	Name string
-	ID   uuid.UUID
+	ID   pgtype.UUID
 }
 
-func (q *Queries) UpdateSpecialization(ctx context.Context, arg UpdateSpecializationParams) (uuid.UUID, error) {
+func (q *Queries) UpdateSpecialization(ctx context.Context, arg UpdateSpecializationParams) (pgtype.UUID, error) {
 	row := q.db.QueryRow(ctx, updateSpecialization, arg.Name, arg.ID)
-	var id uuid.UUID
+	var id pgtype.UUID
 	err := row.Scan(&id)
 	return id, err
 }

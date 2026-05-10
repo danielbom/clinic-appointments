@@ -1,6 +1,7 @@
 -- name: CreateSecretary :one
-INSERT INTO "secretaries" ("name", "email", "password", "phone", "birthdate", "cpf", "cnpj")
-VALUES ( sqlc.arg('name')
+INSERT INTO "secretaries" ("id", "name", "email", "password", "phone", "birthdate", "cpf", "cnpj")
+VALUES ( sqlc.arg('id')
+       , sqlc.arg('name')
        , sqlc.arg('email')
        , sqlc.arg('password')
        , sqlc.arg('phone')
@@ -43,9 +44,9 @@ WHERE true
   AND (sqlc.arg('cpf')::text = ''   OR "cpf" = sqlc.arg('cpf'))
   AND (sqlc.arg('cnpj')::text = ''  OR "cnpj" = sqlc.arg('cnpj'))
   AND (sqlc.arg('phone')::text = '' OR "phone" = sqlc.arg('phone'))
-ORDER BY "name"
-LIMIT sqlc.arg('limit')::integer
-OFFSET sqlc.arg('offset')::integer;
+ORDER BY "name" ASC
+OFFSET sqlc.arg('offset')::integer
+LIMIT sqlc.arg('limit')::integer;
 
 -- name: CountSecretaries :one
 SELECT COUNT(id)::int as count

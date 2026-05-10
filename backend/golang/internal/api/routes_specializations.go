@@ -20,7 +20,7 @@ import (
 // @Param        pageSize  query int     false "Page size"
 // @Success      200 {object}  []dtos.Specialization
 // @Router       /specializations [get]
-func (h *api) getSpecializations(w http.ResponseWriter, r *http.Request) {
+func (h *api) listSpecializations(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
 
 	// Validate e execute the usecase
@@ -28,14 +28,14 @@ func (h *api) getSpecializations(w http.ResponseWriter, r *http.Request) {
 
 	specializations, err := usecase.ListSpecializations(rs)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := presenter.GetSpecializations(specializations)
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }
 
 // @Summary      Create specialization
@@ -50,7 +50,7 @@ func (h *api) createSpecialization(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
 	var body dtos.SpecializationInfoBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		InvalidJson(w)
+		InvalidJson(w, r)
 		return
 	}
 
@@ -59,7 +59,7 @@ func (h *api) createSpecialization(w http.ResponseWriter, r *http.Request) {
 		Name: body.Name,
 	}
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -67,14 +67,14 @@ func (h *api) createSpecialization(w http.ResponseWriter, r *http.Request) {
 
 	id, err := usecase.CreateSpecialization(rs, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := dtos.Id{ID: id.String()}
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusCreated)
+	render.JSON(w, r, response)
 }
 
 // @Summary      Update specialization
@@ -83,16 +83,16 @@ func (h *api) createSpecialization(w http.ResponseWriter, r *http.Request) {
 // @Tags         Specializations
 // @Produce      json
 // @Success      200 {object}  dtos.Specialization
-// @Router       /specializations/{specialization_id} [put]
+// @Router       /specializations/{id} [put]
 func (h *api) updateSpecialization(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
-	specializationId, ok := GetAndParseUuidParam(w, r, "specialization_id")
+	specializationId, ok := GetAndParseUuidParam(w, r, "id")
 	if !ok {
 		return
 	}
 	var body dtos.SpecializationInfoBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		InvalidJson(w)
+		InvalidJson(w, r)
 		return
 	}
 
@@ -101,7 +101,7 @@ func (h *api) updateSpecialization(w http.ResponseWriter, r *http.Request) {
 		Name: body.Name,
 	}
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -109,14 +109,14 @@ func (h *api) updateSpecialization(w http.ResponseWriter, r *http.Request) {
 
 	id, err := usecase.UpdateSpecialization(rs, specializationId, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := dtos.Id{ID: id.String()}
+	render.Status(r, http.StatusOK)
 	render.JSON(w, r, response)
-	render.Status(r, http.StatusCreated)
 }
 
 // @Summary      Delete specialization
@@ -125,10 +125,10 @@ func (h *api) updateSpecialization(w http.ResponseWriter, r *http.Request) {
 // @Tags         Specializations
 // @Produce      json
 // @Success      204
-// @Router       /specializations/{specialization_id} [delete]
+// @Router       /specializations/{id} [delete]
 func (h *api) deleteSpecialization(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
-	specializationId, ok := GetAndParseUuidParam(w, r, "specialization_id")
+	specializationId, ok := GetAndParseUuidParam(w, r, "id")
 	if !ok {
 		return
 	}
@@ -138,7 +138,7 @@ func (h *api) deleteSpecialization(w http.ResponseWriter, r *http.Request) {
 
 	err := usecase.DeleteSpecialization(rs, specializationId)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 

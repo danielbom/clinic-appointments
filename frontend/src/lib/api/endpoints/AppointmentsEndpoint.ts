@@ -5,36 +5,36 @@ import { type Id } from './types'
 export class AppointmentsEndpoint {
   constructor(public _config: Config) {}
 
-  getAll(query: AppointmentsGetAllQuery = {}): Promise<AxiosResponse<Appointment[]>> {
-    return this._config.instance.get(`/api/appointments`, { params: query })
+  async getAll(query: AppointmentsGetAllQuery = {}): Promise<AxiosResponse<Appointment[]>> {
+    return await this._config.instance.get(`/api/appointments`, { params: query })
   }
 
-  count(query: AppointmentsCountAllQuery = {}): Promise<AxiosResponse<number>> {
-    return this._config.instance.get(`/api/appointments/count`, { params: query })
+  async count(query: AppointmentsCountAllQuery = {}): Promise<AxiosResponse<number>> {
+    return await this._config.instance.get(`/api/appointments/count`, { params: query })
   }
 
-  getCalendar(query: AppointmentsGetCalendarQuery): Promise<AxiosResponse<AppointmentCalendar[]>> {
-    return this._config.instance.get(`/api/appointments/calendar`, { params: query })
+  async getCalendar(query: AppointmentsGetCalendarQuery): Promise<AxiosResponse<AppointmentCalendar[]>> {
+    return await this._config.instance.get(`/api/appointments/calendar`, { params: query })
   }
 
-  getCalendarCount(query: AppointmentsGetCalendarQuery): Promise<AxiosResponse<AppointmentCalendarCount[]>> {
-    return this._config.instance.get(`/api/appointments/calendar/count`, { params: query })
+  async getCalendarCount(query: AppointmentsGetCalendarQuery): Promise<AxiosResponse<AppointmentCalendarCount[]>> {
+    return await this._config.instance.get(`/api/appointments/calendar/count`, { params: query })
   }
 
-  getById(id: string): Promise<AxiosResponse<Appointment>> {
-    return this._config.instance.get(`/api/appointments/${id}`)
+  async getById(id: string): Promise<AxiosResponse<Appointment>> {
+    return await this._config.instance.get(`/api/appointments/${id}`)
   }
 
-  create(data: AppointmentsCreateBody): Promise<AxiosResponse<Id>> {
-    return this._config.instance.post(`/api/appointments`, data)
+  async create(data: AppointmentsCreateBody): Promise<AxiosResponse<Id>> {
+    return await this._config.instance.post(`/api/appointments`, data)
   }
 
-  update(id: string, data: AppointmentsUpdateBody): Promise<AxiosResponse<Id>> {
-    return this._config.instance.put(`/api/appointments/${id}`, data)
+  async update(id: string, data: AppointmentsUpdateBody): Promise<AxiosResponse<Id>> {
+    return await this._config.instance.put(`/api/appointments/${id}`, data)
   }
 
-  delete(id: string): Promise<AxiosResponse<void>> {
-    return this._config.instance.delete(`/api/appointments/${id}`)
+  async delete(id: string): Promise<AxiosResponse<void>> {
+    return await this._config.instance.delete(`/api/appointments/${id}`)
   }
 }
 

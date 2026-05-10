@@ -3,69 +3,76 @@ package usecase
 import (
 	"backend/internal/infra"
 
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type SpecialistServiceInfoArgs struct {
 	ServiceNameIDRaw  string
-	ServiceNameID     uuid.UUID
+	ServiceNameID     pgtype.UUID
 	SpecialistIDRaw   string
-	SpecialistID      uuid.UUID
+	SpecialistID      pgtype.UUID
 	Price             int32
 	DurationMin       int32
 	RequireSpecialist bool
 }
 
 func (args *SpecialistServiceInfoArgs) Validate() *UsecaseError {
-	if args.ServiceNameID == uuid.Nil {
+	if !args.ServiceNameID.Valid {
 		if args.ServiceNameIDRaw == "" {
-			return NewInvalidArgumentError(ErrInvalidUuid).InField("serviceNameId")
+			return NewInvalidArgumentError(ACTION_MUTATION, "serviceNameId", ErrInvalidUuid)
 		}
 		if err := args.ServiceNameID.Scan(args.ServiceNameIDRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidUuid).InField("serviceNameId")
+			return NewInvalidArgumentError(ACTION_MUTATION, "serviceNameId", ErrInvalidUuid)
 		}
 	}
-	if args.RequireSpecialist && args.SpecialistID == uuid.Nil {
+	if args.RequireSpecialist && !args.SpecialistID.Valid {
 		if args.SpecialistIDRaw == "" {
-			return NewInvalidArgumentError(ErrInvalidUuid).InField("specialistId")
+			return NewInvalidArgumentError(ACTION_MUTATION, "specialistId", ErrInvalidUuid)
 		}
 		if err := args.SpecialistID.Scan(args.SpecialistIDRaw); err != nil {
-			return NewInvalidArgumentError(ErrInvalidUuid).InField("specialistId")
+			return NewInvalidArgumentError(ACTION_MUTATION, "specialistId", ErrInvalidUuid)
 		}
 	}
 	if args.DurationMin <= 0 {
-		return NewInvalidArgumentError(ErrExpectPositiveValue).InField("duration")
+		return NewInvalidArgumentError(ACTION_MUTATION, "duration", ErrExpectPositiveValue)
 	}
 	if args.Price < 0 {
-		return NewInvalidArgumentError(ErrExpectPositiveValue).InField("price")
+		return NewInvalidArgumentError(ACTION_MUTATION, "price", ErrExpectPositiveValue)
 	}
 	return nil
 }
 
-func CreateSpecialistService(state State, args SpecialistServiceInfoArgs) (uuid.UUID, *UsecaseError) {
+func CreateSpecialistService(state State, args SpecialistServiceInfoArgs) (pgtype.UUID, *UsecaseError) {
+	var none pgtype.UUID
 	_, err := state.Queries().GetService(state.Context(), infra.GetServiceParams{
 		SpecialistId:  args.SpecialistID,
 		ServiceNameId: args.ServiceNameID,
 	})
 	if err == nil {
-		return uuid.Nil, NewResourceAlreadyExistsError("service")
+		return none, NewResourceAlreadyExistsError("service", "specialist_id,service_name_id")
 	} else if !ErrorIsNoRows(err) {
-		return uuid.Nil, NewUnexpectedError(err)
+		return none, NewUnexpectedError(err)
 	}
 
-	id, err := state.Queries().CreateService(state.Context(), infra.CreateServiceParams{
+	id, err := NewUuid()
+	if err != nil {
+		return none, NewUnexpectedError(err)
+	}
+
+	_, err = state.Queries().CreateService(state.Context(), infra.CreateServiceParams{
+		ID:            id,
 		ServiceNameId: args.ServiceNameID,
 		SpecialistId:  args.SpecialistID,
 		Price:         args.Price,
 		Duration:      args.DurationMin,
 	})
 	if err != nil {
-		return uuid.Nil, NewUnexpectedError(err)
+		return none, NewUnexpectedError(err)
 	}
 	return id, nil
 }
 
-func UpdateSpecialistService(state State, serviceId uuid.UUID, args SpecialistServiceInfoArgs) (uuid.UUID, *UsecaseError) {
+func UpdateSpecialistService(state State, serviceId pgtype.UUID, args SpecialistServiceInfoArgs) (pgtype.UUID, *UsecaseError) {
 	params := infra.UpdateServiceParams{
 		ID:       serviceId,
 		Price:    args.Price,
@@ -73,7 +80,7 @@ func UpdateSpecialistService(state State, serviceId uuid.UUID, args SpecialistSe
 	}
 	id, err := state.Queries().UpdateService(state.Context(), params)
 	if err != nil {
-		return uuid.Nil, NewUnexpectedError(err)
+		return id, NewUnexpectedError(err)
 	}
 	return id, nil
 }

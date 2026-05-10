@@ -6,47 +6,47 @@ import { type Id } from './types'
 export class SpecialistsEndpoint {
   constructor(public _config: Config) {}
 
-  getById(id: string): Promise<AxiosResponse<Specialist>> {
-    return this._config.instance.get(`/api/specialists/${id}`)
+  async getById(id: string): Promise<AxiosResponse<Specialist>> {
+    return await this._config.instance.get(`/api/specialists/${id}`)
   }
 
-  getAll(query: SpecialistsGetAllQuery = {}): Promise<AxiosResponse<Specialist[]>> {
-    return this._config.instance.get(`/api/specialists`, { params: query })
+  async getAll(query: SpecialistsGetAllQuery = {}): Promise<AxiosResponse<Specialist[]>> {
+    return await this._config.instance.get(`/api/specialists`, { params: query })
   }
 
-  count(query: SpecialistsCountAllQuery = {}): Promise<AxiosResponse<number>> {
-    return this._config.instance.get(`/api/specialists/count`, { params: query })
+  async count(query: SpecialistsCountAllQuery = {}): Promise<AxiosResponse<number>> {
+    return await this._config.instance.get(`/api/specialists/count`, { params: query })
   }
 
-  getAppointments(
+  async getAppointments(
     id: string,
     query: GetSpecialistAppointmentQuery = {},
   ): Promise<AxiosResponse<SpecialistAppointment[]>> {
-    return this._config.instance.get(`/api/specialists/${id}/appointments`, { params: query })
+    return await this._config.instance.get(`/api/specialists/${id}/appointments`, { params: query })
   }
 
-  getSpecializations(id: string): Promise<AxiosResponse<Specialization[]>> {
-    return this._config.instance.get(`/api/specialists/${id}/specializations`)
+  async getSpecializations(id: string): Promise<AxiosResponse<Specialization[]>> {
+    return await this._config.instance.get(`/api/specialists/${id}/specializations`)
   }
 
-  getServices(id: string): Promise<AxiosResponse<SpecialistService[]>> {
-    return this._config.instance.get(`/api/specialists/${id}/services`)
+  async getServices(id: string): Promise<AxiosResponse<SpecialistService[]>> {
+    return await this._config.instance.get(`/api/specialists/${id}/services`)
   }
 
-  getService(id: string, serviceId: string): Promise<AxiosResponse<Service>> {
-    return this._config.instance.get(`/api/specialists/${id}/services/${serviceId}`)
+  async getService(id: string, serviceId: string): Promise<AxiosResponse<Service>> {
+    return await this._config.instance.get(`/api/specialists/${id}/services/${serviceId}`)
   }
 
-  create(data: SpecialistCreateBody): Promise<AxiosResponse<Id>> {
-    return this._config.instance.post(`/api/specialists`, data)
+  async create(data: SpecialistCreateBody): Promise<AxiosResponse<Id>> {
+    return await this._config.instance.post(`/api/specialists`, data)
   }
 
-  update(id: string, data: SpecialistUpdateBody): Promise<AxiosResponse<Id>> {
-    return this._config.instance.put(`/api/specialists/${id}`, data)
+  async update(id: string, data: SpecialistUpdateBody): Promise<AxiosResponse<Id>> {
+    return await this._config.instance.put(`/api/specialists/${id}`, data)
   }
 
-  delete(id: string): Promise<AxiosResponse<void>> {
-    return this._config.instance.delete(`/api/specialists/${id}`)
+  async delete(id: string): Promise<AxiosResponse<void>> {
+    return await this._config.instance.delete(`/api/specialists/${id}`)
   }
 }
 

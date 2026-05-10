@@ -8,7 +8,6 @@ package infra
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -42,7 +41,7 @@ func (q *Queries) CountSecretaries(ctx context.Context, arg CountSecretariesPara
 }
 
 const createSecretary = `-- name: CreateSecretary :one
-INSERT INTO "secretaries" ("name", "email", "password", "phone", "birthdate", "cpf", "cnpj")
+INSERT INTO "secretaries" ("id", "name", "email", "password", "phone", "birthdate", "cpf", "cnpj")
 VALUES ( $1
        , $2
        , $3
@@ -50,11 +49,13 @@ VALUES ( $1
        , $5
        , $6
        , $7
+       , $8
        )
 RETURNING "id", "name", "email", "password", "phone", "birthdate", "cpf", "cnpj"
 `
 
 type CreateSecretaryParams struct {
+	ID        pgtype.UUID
 	Name      string
 	Email     string
 	Password  string
@@ -66,6 +67,7 @@ type CreateSecretaryParams struct {
 
 func (q *Queries) CreateSecretary(ctx context.Context, arg CreateSecretaryParams) (Secretary, error) {
 	row := q.db.QueryRow(ctx, createSecretary,
+		arg.ID,
 		arg.Name,
 		arg.Email,
 		arg.Password,
@@ -93,7 +95,7 @@ DELETE FROM "secretaries"
 WHERE "id" = $1
 `
 
-func (q *Queries) DeleteSecretaryByID(ctx context.Context, secretaryid uuid.UUID) (int64, error) {
+func (q *Queries) DeleteSecretaryByID(ctx context.Context, secretaryid pgtype.UUID) (int64, error) {
 	result, err := q.db.Exec(ctx, deleteSecretaryByID, secretaryid)
 	if err != nil {
 		return 0, err
@@ -131,7 +133,7 @@ WHERE "id" = $1
 LIMIT 1
 `
 
-func (q *Queries) GetSecretaryByID(ctx context.Context, secretaryid uuid.UUID) (Secretary, error) {
+func (q *Queries) GetSecretaryByID(ctx context.Context, secretaryid pgtype.UUID) (Secretary, error) {
 	row := q.db.QueryRow(ctx, getSecretaryByID, secretaryid)
 	var i Secretary
 	err := row.Scan(
@@ -155,9 +157,9 @@ WHERE true
   AND ($2::text = ''   OR "cpf" = $2)
   AND ($3::text = ''  OR "cnpj" = $3)
   AND ($4::text = '' OR "phone" = $4)
-ORDER BY "name"
-LIMIT $6::integer
+ORDER BY "name" ASC
 OFFSET $5::integer
+LIMIT $6::integer
 `
 
 type ListSecretariesParams struct {
@@ -227,7 +229,7 @@ type UpdateSecretaryParams struct {
 	Birthdate pgtype.Date
 	Cpf       string
 	Cnpj      pgtype.Text
-	ID        uuid.UUID
+	ID        pgtype.UUID
 }
 
 func (q *Queries) UpdateSecretary(ctx context.Context, arg UpdateSecretaryParams) (Secretary, error) {

@@ -8,7 +8,7 @@ package infra
 import (
 	"context"
 
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const getServiceAvailableByID = `-- name: GetServiceAvailableByID :one
@@ -20,13 +20,13 @@ WHERE "sn"."id" = $1
 `
 
 type GetServiceAvailableByIDRow struct {
-	ServiceNameID    uuid.UUID
+	ServiceNameID    pgtype.UUID
 	ServiceName      string
-	SpecializationID uuid.UUID
+	SpecializationID pgtype.UUID
 	Specialization   string
 }
 
-func (q *Queries) GetServiceAvailableByID(ctx context.Context, servicenameid uuid.UUID) (GetServiceAvailableByIDRow, error) {
+func (q *Queries) GetServiceAvailableByID(ctx context.Context, servicenameid pgtype.UUID) (GetServiceAvailableByIDRow, error) {
 	row := q.db.QueryRow(ctx, getServiceAvailableByID, servicenameid)
 	var i GetServiceAvailableByIDRow
 	err := row.Scan(

@@ -23,9 +23,9 @@ type CreateAppointmentBody struct {
 }
 
 type UpdateAppointmentBody struct {
-	Date       string `json:"date"`
-	Time       string `json:"time"`
-	Status     int32  `json:"status"`
+	Date   string `json:"date"`
+	Time   string `json:"time"`
+	Status int32  `json:"status"`
 }
 
 type AppointmentCalendar struct {

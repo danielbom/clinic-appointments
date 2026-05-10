@@ -17,10 +17,10 @@ import (
 // @Tags         Appointments
 // @Produce      json
 // @Success      200 {object}  dtos.Appointment
-// @Router       /appointments/{appointment_id} [get]
+// @Router       /appointments/{id} [get]
 func (h *api) getAppointment(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
-	appointmentID, ok := GetAndParseUuidParam(w, r, "appointment_id")
+	appointmentID, ok := GetAndParseUuidParam(w, r, "id")
 	if !ok {
 		return
 	}
@@ -30,14 +30,14 @@ func (h *api) getAppointment(w http.ResponseWriter, r *http.Request) {
 
 	appointment, err := usecase.GetAppointment(rs, appointmentID)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := presenter.GetAppointment(appointment)
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }
 
 // @Summary      List appointments
@@ -51,7 +51,7 @@ func (h *api) getAppointment(w http.ResponseWriter, r *http.Request) {
 // @Param        endDate   query string  false "End date"
 // @Success      200 {object}  []dtos.Appointment
 // @Router       /appointments [get]
-func (h *api) getAppointments(w http.ResponseWriter, r *http.Request) {
+func (h *api) listAppointments(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
 	query := r.URL.Query()
 	page := ParseIntOrDefault(query.Get("page"), 0)
@@ -79,7 +79,7 @@ func (h *api) getAppointments(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -87,14 +87,14 @@ func (h *api) getAppointments(w http.ResponseWriter, r *http.Request) {
 
 	appointments, err := usecase.ListAppointments(rs, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := presenter.GetAppointments(appointments)
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }
 
 // @Summary      Count appointments
@@ -128,7 +128,7 @@ func (h *api) countAppointments(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -136,7 +136,7 @@ func (h *api) countAppointments(w http.ResponseWriter, r *http.Request) {
 
 	count, err := usecase.CountAppointments(rs, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -170,7 +170,7 @@ func (h *api) getAppointmentsCalendar(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -178,14 +178,14 @@ func (h *api) getAppointmentsCalendar(w http.ResponseWriter, r *http.Request) {
 
 	appointmentsCalendar, err := usecase.ListAppointmentsCalendar(rs, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := presenter.GetAppointmentsCalendar(appointmentsCalendar)
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }
 
 // @Summary      Count appointments for calendar
@@ -213,7 +213,7 @@ func (h *api) getAppointmentsCalendarCount(w http.ResponseWriter, r *http.Reques
 	}
 
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -221,14 +221,14 @@ func (h *api) getAppointmentsCalendarCount(w http.ResponseWriter, r *http.Reques
 
 	appointmentsCalendarCount, err := usecase.ListAppointmentsCalendarCount(rs, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := presenter.GetAppointmentsCalendarCount(appointmentsCalendarCount)
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }
 
 // @Summary      Create appointment
@@ -244,7 +244,7 @@ func (h *api) createAppointment(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
 	var body dtos.CreateAppointmentBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		InvalidJson(w)
+		InvalidJson(w, r)
 		return
 	}
 
@@ -258,7 +258,7 @@ func (h *api) createAppointment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -266,14 +266,14 @@ func (h *api) createAppointment(w http.ResponseWriter, r *http.Request) {
 
 	id, err := usecase.CreateAppointment(rs, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := dtos.Id{ID: id.String()}
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusCreated)
+	render.JSON(w, r, response)
 }
 
 // @Summary      Create appointment
@@ -284,17 +284,17 @@ func (h *api) createAppointment(w http.ResponseWriter, r *http.Request) {
 // @Produce      json
 // @Param        request body dtos.UpdateAppointmentBody true "Appointments info"
 // @Success      200 {object}  dtos.Inserted
-// @Router       /appointments/{appointment_id} [put]
+// @Router       /appointments/{id} [put]
 func (h *api) updateAppointment(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
-	appointmentID, ok := GetAndParseUuidParam(w, r, "appointment_id")
+	appointmentID, ok := GetAndParseUuidParam(w, r, "id")
 	if !ok {
 		return
 	}
 
 	var body dtos.UpdateAppointmentBody
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		InvalidJson(w)
+		InvalidJson(w, r)
 		return
 	}
 
@@ -306,7 +306,7 @@ func (h *api) updateAppointment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := args.Validate(); err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
@@ -314,14 +314,14 @@ func (h *api) updateAppointment(w http.ResponseWriter, r *http.Request) {
 
 	appointment, err := usecase.UpdateAppointment(rs, appointmentID, args)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 
 	// Format the response
 	response := dtos.Id{ID: appointment.ID.String()}
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }
 
 // @Summary      Delete appointment
@@ -330,10 +330,10 @@ func (h *api) updateAppointment(w http.ResponseWriter, r *http.Request) {
 // @Tags         Appointments
 // @Produce      json
 // @Success      204
-// @Router       /appointments/{appointment_id} [delete]
+// @Router       /appointments/{id} [delete]
 func (h *api) deleteAppointment(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
-	appointmentID, ok := GetAndParseUuidParam(w, r, "appointment_id")
+	appointmentID, ok := GetAndParseUuidParam(w, r, "id")
 	if !ok {
 		return
 	}
@@ -343,7 +343,7 @@ func (h *api) deleteAppointment(w http.ResponseWriter, r *http.Request) {
 
 	err := usecase.DeleteAppointment(rs, appointmentID)
 	if err != nil {
-		presenter.UsecaseError(w, err)
+		UsecaseError(w, r, err)
 		return
 	}
 

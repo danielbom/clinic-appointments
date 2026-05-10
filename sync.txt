@@ -2,3 +2,11 @@
 tests/src/lib/api
 !tests/src/lib/api/validation
 frontend/src/lib/api
+
+[writable.ts]
+tests/src/lib/writable.ts
+backend/express-ts/src/lib/writable.ts
+
+[path.ts]
+tests/src/lib/path.ts
+backend/express-ts/src/lib/path.ts

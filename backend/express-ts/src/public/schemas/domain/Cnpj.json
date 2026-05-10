@@ -1,0 +1,8 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/domain/Cnpj.json",
+  "type": "string",
+  "format": "cnpj",
+  "description": "CNPJ digits with or without punctuations",
+  "minLength": 14,
+  "maxLength": 18
+}

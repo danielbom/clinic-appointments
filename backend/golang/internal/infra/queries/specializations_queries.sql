@@ -1,12 +1,14 @@
 -- name: CreateSpecialization :one
-INSERT INTO "specializations" ("name")
-VALUES (sqlc.arg('name'))
+INSERT INTO "specializations" ("id", "name")
+VALUES ( sqlc.arg('id')
+       , sqlc.arg('name')
+       )
 RETURNING "id";
 
 -- name: UpdateSpecialization :one
 UPDATE "specializations"
 SET 
-	"name" = sqlc.arg('name')
+  "name" = sqlc.arg('name')
 WHERE "id" = sqlc.arg('id')
 RETURNING "id";
 
@@ -23,18 +25,18 @@ WHERE "name" = sqlc.arg('specializationName');
 -- name: ListSpecializations :many
 SELECT "id", "name"
 FROM "specializations"
-ORDER BY "name";
+ORDER BY "name" ASC;
 
 -- name: ListSpecializationsBySpecialistID :many
 SELECT "sp"."id", "sp"."name"
 FROM "specializations" "sp"
 WHERE "sp"."id" IN (
-	SELECT "sn"."specialization_id" 
-	FROM "services" "s" 
-	JOIN "service_names" "sn" ON "sn"."id" = "s"."service_name_id"
-	WHERE "s"."specialist_id" = sqlc.arg('specializationId')
+  SELECT "sn"."specialization_id" 
+  FROM "services" "s" 
+  JOIN "service_names" "sn" ON "sn"."id" = "s"."service_name_id"
+  WHERE "s"."specialist_id" = sqlc.arg('specialistId')
 )
-ORDER BY "name";
+ORDER BY "name" ASC;
 
 -- name: DeleteSpecializationByID :execrows
 DELETE FROM "specializations"

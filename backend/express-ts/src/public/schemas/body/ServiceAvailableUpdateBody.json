@@ -1,0 +1,12 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/body/ServiceAvailableUpdateBody.json",
+  "type": "object",
+  "properties": {
+    "name": {
+      "$ref": "https://dev-clinic-appointments.com.br/schemas/domain/Name.json"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

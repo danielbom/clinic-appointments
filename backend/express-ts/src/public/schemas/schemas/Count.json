@@ -1,0 +1,4 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/schemas/Count.json",
+  "type": "number"
+}

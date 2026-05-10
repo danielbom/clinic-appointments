@@ -8,7 +8,7 @@ package infra
 import (
 	"context"
 
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const getIdentityByEmail = `-- name: GetIdentityByEmail :one
@@ -23,7 +23,7 @@ LIMIT 1
 `
 
 type GetIdentityByEmailRow struct {
-	ID       uuid.UUID
+	ID       pgtype.UUID
 	Name     string
 	Email    string
 	Password string
@@ -55,14 +55,14 @@ LIMIT 1
 `
 
 type GetIdentityByIDRow struct {
-	ID       uuid.UUID
+	ID       pgtype.UUID
 	Name     string
 	Email    string
 	Password string
 	Role     string
 }
 
-func (q *Queries) GetIdentityByID(ctx context.Context, id uuid.UUID) (GetIdentityByIDRow, error) {
+func (q *Queries) GetIdentityByID(ctx context.Context, id pgtype.UUID) (GetIdentityByIDRow, error) {
 	row := q.db.QueryRow(ctx, getIdentityByID, id)
 	var i GetIdentityByIDRow
 	err := row.Scan(

@@ -4,7 +4,6 @@ import (
 	"backend/internal/infra"
 	"backend/internal/validate"
 
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -26,25 +25,39 @@ func (args *CustomerInfoArgs) Validate() *UsecaseError {
 	}
 	if args.Birthdate != "" {
 		if err := DateFromString(&args.BirthdateDate, args.Birthdate); err != nil {
-			return NewInvalidArgumentError(ErrInvalidDate).InField("birthdate")
+			return NewInvalidArgumentError(ACTION_MUTATION, "birthdate", ErrInvalidDate)
 		}
 	}
 	if args.Name == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("name")
+		return NewInvalidArgumentError(ACTION_MUTATION, "name", ErrFieldIsRequired)
 	}
 	if args.Phone == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("phone")
+		return NewInvalidArgumentError(ACTION_MUTATION, "phone", ErrFieldIsRequired)
+	}
+	if !validate.IsPhoneValid(args.Phone) {
+		return NewInvalidArgumentError(ACTION_MUTATION, "phone", ErrInvalidPhone)
 	}
 	if args.Cpf == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("cpf")
+		return NewInvalidArgumentError(ACTION_MUTATION, "cpf", ErrFieldIsRequired)
 	}
 	if !validate.IsCpfValid(args.Cpf) {
-		return NewInvalidArgumentError(ErrInvalidFormat).InField("cpf")
+		return NewInvalidArgumentError(ACTION_MUTATION, "cpf", ErrInvalidCpf)
+	}
+	if !validate.IsCpfValid(args.Cpf) {
+		return NewInvalidArgumentError(ACTION_MUTATION, "cpf", ErrInvalidCpf)
+	}
+	if args.EmailText.String != "" {
+		if args.EmailText.String == "" {
+			return NewInvalidArgumentError(ACTION_MUTATION, "email", ErrFieldIsRequired)
+		}
+		if !validate.IsEmailValid(args.EmailText.String) {
+			return NewInvalidArgumentError(ACTION_MUTATION, "email", ErrInvalidEmail)
+		}
 	}
 	return nil
 }
 
-func CustomerWithPhoneExists(state State, phone string, exceptId uuid.UUID) (bool, error) {
+func CustomerWithPhoneExists(state State, phone string, exceptId pgtype.UUID) (bool, error) {
 	customer, err := state.Queries().GetCustomerByPhone(state.Context(), phone)
 	if ErrorIsNoRows(err) {
 		return false, nil
@@ -60,14 +73,20 @@ func CustomerWithPhoneExists(state State, phone string, exceptId uuid.UUID) (boo
 
 func CreateCustomer(state State, args CustomerInfoArgs) (infra.Customer, *UsecaseError) {
 	var none infra.Customer
-	exists, err := CustomerWithPhoneExists(state, args.Phone, uuid.Nil)
+	exists, err := CustomerWithPhoneExists(state, args.Phone, pgtype.UUID{})
 	if err != nil {
 		return none, NewUnexpectedError(err)
 	}
 	if exists {
-		return none, NewResourceAlreadyExistsError("customer.phone")
+		return none, NewResourceAlreadyExistsError("customer", "phone")
 	}
+	id, err := NewUuid()
+	if err != nil {
+		return none, NewUnexpectedError(err)
+	}
+
 	params := infra.CreateCustomerParams{
+		ID:        id,
 		Name:      args.Name,
 		Email:     args.EmailText,
 		Phone:     args.Phone,
@@ -81,14 +100,14 @@ func CreateCustomer(state State, args CustomerInfoArgs) (infra.Customer, *Usecas
 	return customer, nil
 }
 
-func UpdateCustomer(state State, customerId uuid.UUID, args CustomerInfoArgs) (infra.Customer, *UsecaseError) {
+func UpdateCustomer(state State, customerId pgtype.UUID, args CustomerInfoArgs) (infra.Customer, *UsecaseError) {
 	var none infra.Customer
 	exists, err := CustomerWithPhoneExists(state, args.Phone, customerId)
 	if err != nil {
 		return none, NewUnexpectedError(err)
 	}
 	if exists {
-		return none, NewResourceAlreadyExistsError("customer.phone")
+		return none, NewResourceAlreadyExistsError("customer", "phone")
 	}
 	params := infra.UpdateCustomerParams{
 		ID:        customerId,

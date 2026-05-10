@@ -3,7 +3,6 @@ package usecase
 import (
 	"backend/internal/infra"
 
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -18,27 +17,26 @@ type UpdateAppointmentArgs struct {
 func (args *UpdateAppointmentArgs) Validate() *UsecaseError {
 	if !args.DateDate.Valid {
 		if err := args.DateDate.Scan(args.Date); err != nil {
-			return NewInvalidArgumentError(ErrInvalidDate).InField("date")
+			return NewInvalidArgumentError(ACTION_MUTATION, "date", ErrInvalidDate)
 		}
 	}
 	if !args.TimeTime.Valid {
 		if err := args.TimeTime.Scan(args.Time); err != nil {
-			return NewInvalidArgumentError(ErrInvalidTime).InField("time")
+			return NewInvalidArgumentError(ACTION_MUTATION, "time", ErrInvalidTime)
 		}
 	}
 	if args.Status < 0 || args.Status >= int32(AppointmentStatusCount) {
-		return NewInvalidArgumentError(ErrInvalidAppointmentStatus).InField("status")
+		return NewInvalidArgumentError(ACTION_MUTATION, "status", ErrInvalidAppointmentStatus)
 	}
 
 	return nil
 }
 
-func UpdateAppointment(state State, appointmentId uuid.UUID, args UpdateAppointmentArgs) (infra.Appointment, *UsecaseError) {
+func UpdateAppointment(state State, appointmentId pgtype.UUID, args UpdateAppointmentArgs) (infra.Appointment, *UsecaseError) {
 	var none infra.Appointment
 	_, err := state.Queries().GetAppointmentByID(state.Context(), appointmentId)
 	if ErrorIsNoRows(err) {
-		// TODO: Check this path
-		return none, NewNotFoundError(ErrResourceNotFound).InField("appointment")
+		return none, NewNotFoundError("appointment")
 	}
 	if err != nil {
 		return none, NewUnexpectedError(err)

@@ -3,10 +3,10 @@ package usecase
 import (
 	"backend/internal/infra"
 
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
-func AuthMe(state State, userId uuid.UUID) (infra.GetIdentityByIDRow, *UsecaseError) {
+func AuthMe(state State, userId pgtype.UUID) (infra.GetIdentityByIDRow, *UsecaseError) {
 	identity, err := state.Queries().GetIdentityByID(state.Context(), userId)
 	if ErrorIsNoRows(err) {
 		return identity, NewAuthError(err)

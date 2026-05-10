@@ -1,0 +1,38 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/errors/AuthProblemDetails.json",
+  "description": "Represents an authentication failure. Uses code 'auth_error' and HTTP status 401. Occurs when credentials are missing, invalid, or expired, such as incorrect login information or an invalid authentication token.",
+  "allOf": [
+    {
+      "$ref": "#/components/errors/ProblemDetails"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "auth_error"
+          ]
+        },
+        "status": {
+          "type": "number",
+          "enum": [
+            401
+          ]
+        },
+        "title": {
+          "type": "string",
+          "enum": [
+            "Invalid token",
+            "Invalid credentials"
+          ]
+        }
+      },
+      "required": [
+        "code",
+        "status",
+        "title"
+      ]
+    }
+  ]
+}

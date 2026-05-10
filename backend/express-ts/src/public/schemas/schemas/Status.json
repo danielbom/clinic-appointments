@@ -1,0 +1,52 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/schemas/Status.json",
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "boolean"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "datetime"
+    },
+    "environment": {
+      "type": "string"
+    },
+    "database": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "connected",
+            "disconnected"
+          ]
+        },
+        "version": {
+          "type": "string"
+        },
+        "maxConnections": {
+          "type": "number"
+        },
+        "openedConnections": {
+          "type": "number"
+        },
+        "schemaVersion": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "status",
+        "version",
+        "maxConnections",
+        "openedConnections",
+        "schemaVersion"
+      ]
+    }
+  },
+  "required": [
+    "status",
+    "updatedAt",
+    "environment"
+  ]
+}

@@ -1,9 +1,9 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
-	"backend/internal/api/presenter"
 	"backend/internal/usecase"
 
 	"github.com/go-chi/render"
@@ -18,15 +18,15 @@ func (h *api) getTestStats(w http.ResponseWriter, r *http.Request) {
 	if response["database"] == "" {
 		response["database"] = "<empty>"
 	}
-	render.JSON(w, r, response)
 	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }
 
 func (h *api) testInit(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	tx, err := h.pool.Begin(ctx)
 	if err != nil {
-		http.Error(w, "failed to start transaction", http.StatusInternalServerError)
+		SomethingWentWrong(w, r, fmt.Errorf("failed to start transaction: %v", err))
 		return
 	}
 	defer tx.Rollback(ctx)
@@ -36,7 +36,7 @@ func (h *api) testInit(w http.ResponseWriter, r *http.Request) {
 
 	ucErr := usecase.ResetDb(rs)
 	if ucErr != nil {
-		presenter.UsecaseError(w, ucErr)
+		UsecaseError(w, r, ucErr)
 		return
 	}
 
@@ -47,12 +47,12 @@ func (h *api) testInit(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if ucErr != nil {
-		presenter.UsecaseError(w, ucErr)
+		UsecaseError(w, r, ucErr)
 		return
 	}
 
 	if err := tx.Commit(ctx); err != nil {
-		http.Error(w, "failed to commit transaction", http.StatusInternalServerError)
+		SomethingWentWrong(w, r, fmt.Errorf("failed to commit transaction: %v", err))
 		return
 	}
 

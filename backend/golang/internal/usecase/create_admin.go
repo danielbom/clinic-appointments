@@ -2,8 +2,10 @@ package usecase
 
 import (
 	"backend/internal/infra"
+	"backend/internal/validate"
 
-	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -18,26 +20,39 @@ type CreateAdminArgs struct {
 
 func (args *CreateAdminArgs) Validate() *UsecaseError {
 	if args.Name == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("name")
+		return NewInvalidArgumentError(ACTION_MUTATION, "name", ErrFieldIsRequired)
 	}
 	if args.Email == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("email")
+		return NewInvalidArgumentError(ACTION_MUTATION, "email", ErrFieldIsRequired)
+	}
+	if !validate.IsEmailValid(args.Email) {
+		return NewInvalidArgumentError(ACTION_MUTATION, "email", ErrInvalidEmail)
 	}
 	if args.Password == "" {
-		return NewInvalidArgumentError(ErrFieldIsRequired).InField("password")
+		return NewInvalidArgumentError(ACTION_MUTATION, "password", ErrFieldIsRequired)
+	}
+	if !validate.IsPasswordValid(args.Email) {
+		return NewInvalidArgumentError(ACTION_MUTATION, "password", ErrInvalidPattern)
 	}
 	return nil
 }
 
-func CreateAdmin(state State, args CreateAdminArgs) (uuid.UUID, *UsecaseError) {
+func CreateAdmin(state State, args CreateAdminArgs) (pgtype.UUID, *UsecaseError) {
+	var none pgtype.UUID
 	_, err := state.Queries().GetIdentityByEmail(state.Context(), args.Email)
 	if err == nil {
-		return uuid.Nil, NewResourceAlreadyExistsError("identity")
+		return none, NewResourceAlreadyExistsError("identity", "email")
 	} else if !ErrorIsNoRows(err) {
-		return uuid.Nil, NewUnexpectedError(err)
+		return none, NewUnexpectedError(err)
+	}
+
+	id, err := NewUuid()
+	if err != nil {
+		return none, NewUnexpectedError(err)
 	}
 
 	params := infra.CreateAdminParams{
+		ID:       id,
 		Name:     args.Name,
 		Email:    args.Email,
 		Password: args.Password,
@@ -45,13 +60,13 @@ func CreateAdmin(state State, args CreateAdminArgs) (uuid.UUID, *UsecaseError) {
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(params.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return uuid.Nil, NewUnexpectedError(err)
+		return none, NewUnexpectedError(err)
 	}
 	params.Password = string(hashedPassword)
 
-	id, err := state.Queries().CreateAdmin(state.Context(), params)
+	_, err = state.Queries().CreateAdmin(state.Context(), params)
 	if err != nil {
-		return uuid.Nil, NewUnexpectedError(err)
+		return none, NewUnexpectedError(err)
 	}
 	return id, nil
 }

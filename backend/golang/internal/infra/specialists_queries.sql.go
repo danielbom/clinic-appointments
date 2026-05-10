@@ -8,7 +8,6 @@ package infra
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -42,18 +41,20 @@ func (q *Queries) CountSpecialists(ctx context.Context, arg CountSpecialistsPara
 }
 
 const createSpecialist = `-- name: CreateSpecialist :one
-INSERT INTO specialists ("name", "email", "phone", "birthdate", "cpf", "cnpj")
+INSERT INTO specialists ("id", "name", "email", "phone", "birthdate", "cpf", "cnpj")
 VALUES ( $1
        , $2
        , $3
        , $4
        , $5
        , $6
+       , $7
        )
 RETURNING "id"
 `
 
 type CreateSpecialistParams struct {
+	ID        pgtype.UUID
 	Name      string
 	Email     string
 	Phone     string
@@ -62,8 +63,9 @@ type CreateSpecialistParams struct {
 	Cnpj      pgtype.Text
 }
 
-func (q *Queries) CreateSpecialist(ctx context.Context, arg CreateSpecialistParams) (uuid.UUID, error) {
+func (q *Queries) CreateSpecialist(ctx context.Context, arg CreateSpecialistParams) (pgtype.UUID, error) {
 	row := q.db.QueryRow(ctx, createSpecialist,
+		arg.ID,
 		arg.Name,
 		arg.Email,
 		arg.Phone,
@@ -71,7 +73,7 @@ func (q *Queries) CreateSpecialist(ctx context.Context, arg CreateSpecialistPara
 		arg.Cpf,
 		arg.Cnpj,
 	)
-	var id uuid.UUID
+	var id pgtype.UUID
 	err := row.Scan(&id)
 	return id, err
 }
@@ -81,7 +83,7 @@ DELETE FROM "specialists"
 WHERE "id" = $1
 `
 
-func (q *Queries) DeleteSpecialistByID(ctx context.Context, specialistid uuid.UUID) (int64, error) {
+func (q *Queries) DeleteSpecialistByID(ctx context.Context, specialistid pgtype.UUID) (int64, error) {
 	result, err := q.db.Exec(ctx, deleteSpecialistByID, specialistid)
 	if err != nil {
 		return 0, err
@@ -118,7 +120,7 @@ WHERE "id" = $1
 LIMIT 1
 `
 
-func (q *Queries) GetSpecialistByID(ctx context.Context, specialistid uuid.UUID) (Specialist, error) {
+func (q *Queries) GetSpecialistByID(ctx context.Context, specialistid pgtype.UUID) (Specialist, error) {
 	row := q.db.QueryRow(ctx, getSpecialistByID, specialistid)
 	var i Specialist
 	err := row.Scan(
@@ -145,15 +147,15 @@ WHERE "s"."specialist_id" = $1
 `
 
 type ListServicesBySpecialistIDRow struct {
-	ID               uuid.UUID
-	SpecializationID uuid.UUID
-	ServiceNameID    uuid.UUID
+	ID               pgtype.UUID
+	SpecializationID pgtype.UUID
+	ServiceNameID    pgtype.UUID
 	ServiceName      string
 	Price            int32
 	Duration         int32
 }
 
-func (q *Queries) ListServicesBySpecialistID(ctx context.Context, specialistid uuid.UUID) ([]ListServicesBySpecialistIDRow, error) {
+func (q *Queries) ListServicesBySpecialistID(ctx context.Context, specialistid pgtype.UUID) ([]ListServicesBySpecialistIDRow, error) {
 	rows, err := q.db.Query(ctx, listServicesBySpecialistID, specialistid)
 	if err != nil {
 		return nil, err
@@ -188,9 +190,9 @@ WHERE true
   AND ($2::text = ''   OR "cpf" = $2)
   AND ($3::text = ''  OR "cnpj" = $3)
   AND ($4::text = '' OR "phone" = $4)
-ORDER BY "name"
-LIMIT $6::integer
+ORDER BY "email" ASC
 OFFSET $5::integer
+LIMIT $6::integer
 `
 
 type ListSpecialistsParams struct {
@@ -257,7 +259,7 @@ type UpdateSpecialistParams struct {
 	Birthdate pgtype.Date
 	Cpf       string
 	Cnpj      pgtype.Text
-	ID        uuid.UUID
+	ID        pgtype.UUID
 }
 
 func (q *Queries) UpdateSpecialist(ctx context.Context, arg UpdateSpecialistParams) (Specialist, error) {

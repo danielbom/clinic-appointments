@@ -4,8 +4,8 @@ import { type Config } from '../Config'
 export class HealthEndpoint {
   constructor(public _config: Config) {}
 
-  healthCheck(): Promise<AxiosResponse<Status>> {
-    return this._config.instance.get(`/api/health`)
+  async healthCheck(): Promise<AxiosResponse<Status>> {
+    return await this._config.instance.get(`/api/health`)
   }
 }
 

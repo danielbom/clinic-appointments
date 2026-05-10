@@ -14,5 +14,5 @@ type CreateServiceAvailableBody struct {
 }
 
 type UpdateServiceAvailableBody struct {
-	Name             string `json:"name"`
+	Name string `json:"name"`
 }

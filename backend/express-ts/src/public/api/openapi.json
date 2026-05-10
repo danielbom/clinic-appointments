@@ -1,0 +1,3334 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Clinic Appointments API",
+    "version": "1.0.0",
+    "description": "Clinic Appointments API documentation using OpenAPI 3.1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local development"
+    }
+  ],
+  "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
+  "paths": {
+    "/api/health": {
+      "get": {
+        "operationId": "health.healthCheck",
+        "summary": "Health check",
+        "tags": ["Health"],
+        "responses": {
+          "200": {
+            "description": "API is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Status"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/auth/login": {
+      "post": {
+        "operationId": "auth.login",
+        "summary": "Login",
+        "tags": ["Auth"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/AuthLogin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/refresh": {
+      "post": {
+        "operationId": "auth.refresh",
+        "summary": "Refresh",
+        "tags": ["Auth"],
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/InternalProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "operationId": "auth.me",
+        "summary": "Get user identity",
+        "tags": ["Auth"],
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthIdentity"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/appointments": {
+      "get": {
+        "operationId": "appointments.listAppointments",
+        "summary": "Get all appointments",
+        "tags": ["Appointments"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/query/Page" },
+          { "$ref": "#/components/query/PageSize" },
+          { "$ref": "#/components/query/StartDate" },
+          { "$ref": "#/components/query/EndDate" },
+          { "$ref": "#/components/query/ServiceName" },
+          { "$ref": "#/components/query/Specialist" },
+          { "$ref": "#/components/query/Customer" },
+          { "$ref": "#/components/query/Status" }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Appointment" }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "appointments.createAppointment",
+        "summary": "Create an appointment",
+        "tags": ["Appointments"],
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/AppointmentsCreateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ConflictProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/appointments/count": {
+      "get": {
+        "operationId": "appointments.countAppointments",
+        "summary": "Count appointments",
+        "tags": ["Appointments"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/query/StartDate" },
+          { "$ref": "#/components/query/EndDate" },
+          { "$ref": "#/components/query/ServiceName" },
+          { "$ref": "#/components/query/Specialist" },
+          { "$ref": "#/components/query/Customer" },
+          { "$ref": "#/components/query/Status" }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Count"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/appointments/calendar": {
+      "get": {
+        "operationId": "appointments.getAppointmentsCalendar",
+        "summary": "Get appointments calendar",
+        "tags": ["Appointments"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/query/StartDate" }, { "$ref": "#/components/query/EndDate" }],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/AppointmentCalendar" }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/appointments/calendar/count": {
+      "get": {
+        "operationId": "appointments.getAppointmentsCalendarCount",
+        "summary": "Get appointments calendar count",
+        "tags": ["Appointments"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/query/StartDate" }, { "$ref": "#/components/query/EndDate" }],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/AppointmentCalendarCount" }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/appointments/{id}": {
+      "get": {
+        "operationId": "appointments.getAppointmentById",
+        "summary": "Get appointment by id",
+        "tags": ["Appointments"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Appointment"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "appointments.updateAppointment",
+        "summary": "Update an appointment",
+        "tags": ["Appointments"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/AppointmentsUpdateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ConflictProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "appointments.deleteAppointment",
+        "summary": "Delete an appointment",
+        "tags": ["Appointments"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "204": {
+            "description": "Item deleted successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/customers": {
+      "get": {
+        "operationId": "customers.listCustomers",
+        "summary": "Get all customers",
+        "tags": ["Customers"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/query/Page" },
+          { "$ref": "#/components/query/PageSize" },
+          { "$ref": "#/components/query/Name" },
+          { "$ref": "#/components/query/Cpf" },
+          { "$ref": "#/components/query/Phone" }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Customer" }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "customers.createCustomer",
+        "summary": "Create a customer",
+        "tags": ["Customers"],
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/CustomerCreateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ConflictProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/customers/count": {
+      "get": {
+        "operationId": "customers.countCustomers",
+        "summary": "Count customers",
+        "tags": ["Customers"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/query/Name" },
+          { "$ref": "#/components/query/Cpf" },
+          { "$ref": "#/components/query/Phone" }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Count"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/customers/{id}": {
+      "get": {
+        "operationId": "customers.getCustomerById",
+        "summary": "Get customer by id",
+        "tags": ["Customers"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "customers.updateCustomer",
+        "summary": "Update an customer",
+        "tags": ["Customers"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/CustomerUpdateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ConflictProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "customers.deleteCustomer",
+        "summary": "Delete an customer",
+        "tags": ["Customers"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "204": {
+            "description": "Item deleted successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/secretaries": {
+      "get": {
+        "operationId": "secretaries.listSecretaries",
+        "summary": "Get all secretaries",
+        "tags": ["Secretaries"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/query/Page" },
+          { "$ref": "#/components/query/PageSize" },
+          { "$ref": "#/components/query/Name" },
+          { "$ref": "#/components/query/Cpf" },
+          { "$ref": "#/components/query/Cnpj" },
+          { "$ref": "#/components/query/Phone" }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Secretary" }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/InvalidAccessProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "secretaries.createSecretary",
+        "summary": "Create a secretary",
+        "tags": ["Secretaries"],
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/SecretaryCreateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Secretary created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/InvalidAccessProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ConflictProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/secretaries/count": {
+      "get": {
+        "operationId": "secretaries.countSecretaries",
+        "summary": "Count secretaries",
+        "tags": ["Secretaries"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/query/Name" },
+          { "$ref": "#/components/query/Cpf" },
+          { "$ref": "#/components/query/Cnpj" },
+          { "$ref": "#/components/query/Phone" }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Count"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/InvalidAccessProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/secretaries/{id}": {
+      "get": {
+        "operationId": "secretaries.getSecretaryById",
+        "summary": "Get secretaries by id",
+        "tags": ["Secretaries"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Customer"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/InvalidAccessProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "secretaries.updateSecretary",
+        "summary": "Update an secretaries",
+        "tags": ["Secretaries"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/SecretaryUpdateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Secretary updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/InvalidAccessProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ConflictProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "secretaries.deleteSecretary",
+        "summary": "Delete an secretaries",
+        "tags": ["Secretaries"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "204": {
+            "description": "Secretary deleted successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/InvalidAccessProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/services-available": {
+      "get": {
+        "operationId": "servicesAvailable.listServicesAvailable",
+        "summary": "Get all services available",
+        "tags": ["Services Available"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/query/Page" }, { "$ref": "#/components/query/PageSize" }],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ServiceGroup" }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "servicesAvailable.createServiceAvailable",
+        "summary": "Create a service available",
+        "tags": ["Services Available"],
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/ServiceAvailableCreateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Service Available created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ConflictProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/services-available/{id}": {
+      "get": {
+        "operationId": "servicesAvailable.getServiceAvailableById",
+        "summary": "Get a service available by id",
+        "tags": ["Services Available"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServiceAvailable"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "servicesAvailable.updateServiceAvailable",
+        "summary": "Update an service available",
+        "tags": ["Services Available"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/ServiceAvailableUpdateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Service Available updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ConflictProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "servicesAvailable.deleteServiceAvailable",
+        "summary": "Delete a service available",
+        "tags": ["Services Available"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "204": {
+            "description": "Service Available deleted successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/services": {
+      "get": {
+        "operationId": "services.listServices",
+        "summary": "Get all services",
+        "tags": ["Services"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/query/Page" },
+          { "$ref": "#/components/query/PageSize" },
+          { "$ref": "#/components/query/Service" },
+          { "$ref": "#/components/query/Specialist" },
+          { "$ref": "#/components/query/Specialization" }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ServiceEnriched" }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "services.createService",
+        "summary": "Create a service",
+        "tags": ["Services"],
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/ServiceCreateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Service created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ConflictProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/services/count": {
+      "get": {
+        "operationId": "services.countServices",
+        "summary": "Count services",
+        "tags": ["Services"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/query/Service" },
+          { "$ref": "#/components/query/Specialist" },
+          { "$ref": "#/components/query/Specialization" }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Count"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/services/{id}": {
+      "get": {
+        "operationId": "services.getServiceById",
+        "summary": "Get services by id",
+        "tags": ["Services"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Service"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "services.updateService",
+        "summary": "Update a services",
+        "tags": ["Services"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/ServiceUpdateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Service updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "services.deleteService",
+        "summary": "Delete a services",
+        "tags": ["Services"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "204": {
+            "description": "Service deleted successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/service-groups": {
+      "get": {
+        "operationId": "serviceGroups.listServiceGroups",
+        "summary": "Get all services grouped by specification",
+        "tags": ["Service Groups"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/ServiceGroup" }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/specialists": {
+      "get": {
+        "operationId": "specialists.listSpecialists",
+        "summary": "Get all specialists",
+        "tags": ["Specialists"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/query/Page" },
+          { "$ref": "#/components/query/PageSize" },
+          { "$ref": "#/components/query/Name" },
+          { "$ref": "#/components/query/Cpf" },
+          { "$ref": "#/components/query/Cnpj" },
+          { "$ref": "#/components/query/Phone" }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Specialist" }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "specialists.createSpecialist",
+        "summary": "Create a specialist",
+        "tags": ["Specialists"],
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/SpecialistCreateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Specialist created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ConflictProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/specialists/count": {
+      "get": {
+        "operationId": "specialists.countSpecialists",
+        "summary": "Count specialists",
+        "tags": ["Specialists"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/query/Name" },
+          { "$ref": "#/components/query/Cpf" },
+          { "$ref": "#/components/query/Cnpj" },
+          { "$ref": "#/components/query/Phone" }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Count"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/specialists/{id}/services": {
+      "get": {
+        "operationId": "specialists.getSpecialistServices",
+        "summary": "Get specialist services",
+        "tags": ["Specialists"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SpecialistService"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/specialists/{id}/specializations": {
+      "get": {
+        "operationId": "specialists.getSpecialistSpecializations",
+        "summary": "Get specialist specializations",
+        "tags": ["Specialists"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Specialization"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/specialists/{id}/appointments": {
+      "get": {
+        "operationId": "specialists.getSpecialistAppointments",
+        "summary": "Get specialist appointments",
+        "tags": ["Specialists"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/Id" },
+          { "$ref": "#/components/query/Page" },
+          { "$ref": "#/components/query/PageSize" }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SpecialistAppointment"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/specialists/{id}/services/{service_id}": {
+      "get": {
+        "operationId": "specialists.getSpecialistService",
+        "summary": "Get specialist service",
+        "tags": ["Specialists"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [
+          { "$ref": "#/components/parameters/Id" },
+          {
+            "name": "service_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/domain/Uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Service"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/specialists/{id}": {
+      "get": {
+        "operationId": "specialists.getSpecialistById",
+        "summary": "Get specialists by id",
+        "tags": ["Specialists"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Specialist"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "operationId": "specialists.updateSpecialist",
+        "summary": "Update a specialists",
+        "tags": ["Specialists"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/SpecialistUpdateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Specialist updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ConflictProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "specialists.deleteSpecialist",
+        "summary": "Delete a specialists",
+        "tags": ["Specialists"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "204": {
+            "description": "Specialist deleted successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/specializations": {
+      "get": {
+        "operationId": "specializations.listSpecializations",
+        "summary": "Get all specializations",
+        "tags": ["Specializations"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Specialization" }
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "specializations.createSpecialization",
+        "summary": "Create a specialization",
+        "tags": ["Specializations"],
+        "security": [{ "BearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/SpecializationCreateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Specialization created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ConflictProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/specializations/{id}": {
+      "put": {
+        "operationId": "specializations.updateSpecialization",
+        "summary": "Update an specializations",
+        "tags": ["Specializations"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/body/SpecializationUpdateBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Specialization updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Id"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ConflictProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "specializations.deleteSpecialization",
+        "summary": "Delete a specializations",
+        "tags": ["Specializations"],
+        "security": [{ "BearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/Id" }],
+        "responses": {
+          "204": {
+            "description": "Specialization deleted successfully"
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/AuthProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/errors/NotFoundProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/test/init": {
+      "get": {
+        "operationId": "test.initTest",
+        "summary": "Init tests",
+        "tags": ["Test"],
+        "description": "Available only in TEST environments",
+        "responses": {
+          "200": {}
+        }
+      }
+    },
+    "/api/test/stats": {
+      "get": {
+        "operationId": "test.statsTest",
+        "summary": "Stats in test",
+        "tags": ["Test"],
+        "description": "Available only in TEST environments",
+        "responses": {
+          "200": {}
+        }
+      }
+    },
+    "/api/test/debug-claims": {
+      "get": {
+        "operationId": "test.debugClaimsTest",
+        "summary": "Debug claims in test",
+        "tags": ["Test"],
+        "description": "Available only in TEST environments",
+        "responses": {
+          "200": {}
+        }
+      }
+    }
+  },
+
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+
+    "parameters": {
+      "Id": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "$ref": "#/components/domain/Uuid" }
+      },
+      "ServiceId": {
+        "name": "service_id",
+        "in": "path",
+        "required": true,
+        "schema": { "$ref": "#/components/domain/Uuid" }
+      }
+    },
+
+    "query": {
+      "StartDate": {
+        "in": "query",
+        "name": "startDate",
+        "schema": { "$ref": "#/components/domain/Date" }
+      },
+      "EndDate": {
+        "in": "query",
+        "name": "endDate",
+        "schema": { "$ref": "#/components/domain/Date" }
+      },
+      "ServiceName": {
+        "in": "query",
+        "name": "serviceName",
+        "schema": { "$ref": "#/components/domain/Name" }
+      },
+      "Service": {
+        "in": "query",
+        "name": "service",
+        "schema": { "$ref": "#/components/domain/Name" }
+      },
+      "Specialist": {
+        "in": "query",
+        "name": "specialist",
+        "schema": { "$ref": "#/components/domain/Name" }
+      },
+      "Specialization": {
+        "in": "query",
+        "name": "specialization",
+        "schema": { "$ref": "#/components/domain/Name" }
+      },
+      "Customer": {
+        "in": "query",
+        "name": "customer",
+        "schema": { "$ref": "#/components/domain/Name" }
+      },
+      "Status": {
+        "in": "query",
+        "name": "status",
+        "schema": { "$ref": "#/components/schemas/AppointmentStatus" }
+      },
+      "Name": {
+        "in": "query",
+        "name": "name",
+        "schema": { "$ref": "#/components/domain/Name" }
+      },
+      "Cpf": {
+        "in": "query",
+        "name": "cpf",
+        "schema": { "$ref": "#/components/domain/Cpf" }
+      },
+      "Cnpj": {
+        "in": "query",
+        "name": "cnpj",
+        "schema": { "$ref": "#/components/domain/Cnpj" }
+      },
+      "Phone": {
+        "in": "query",
+        "name": "phone",
+        "schema": { "$ref": "#/components/domain/Phone" }
+      },
+      "Page": {
+        "in": "query",
+        "name": "page",
+        "schema": {
+          "type": "number",
+          "format": "integer",
+          "minimum": 0,
+          "default": 0
+        }
+      },
+      "PageSize": {
+        "in": "query",
+        "name": "pageSize",
+        "schema": {
+          "type": "number",
+          "format": "integer",
+          "minimum": 1,
+          "default": 10
+        }
+      }
+    },
+
+    "domain": {
+      "Uuid": {
+        "type": "string",
+        "format": "uuid",
+        "example": "019dcd01-5a4a-736f-9407-8e69aa9433bc",
+        "maxLength": 36
+      },
+      "Price": {
+        "type": "number",
+        "format": "integer",
+        "description": "Integer value in cents.",
+        "minimum": 0
+      },
+      "Duration": {
+        "type": "number",
+        "format": "integer",
+        "description": "Integer value in minutes.",
+        "minimum": 0,
+        "maximum": 600
+      },
+      "Email": {
+        "type": "string",
+        "format": "email",
+        "example": "user@domain.com",
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "Role": {
+        "type": "string",
+        "enum": ["admin", "secretary"],
+        "maxLength": 36
+      },
+      "Password": {
+        "type": "string",
+        "description": "Access password.",
+        "example": "59@qhPYphEUYwGDK",
+        "minLength": 1,
+        "maxLength": 30
+      },
+      "Phone": {
+        "type": "string",
+        "format": "phone",
+        "description": "Phone digits with punctuations (spaces matter)",
+        "example": "+55 (94) 4019-9572",
+        "maxLength": 24
+      },
+      "Cpf": {
+        "type": "string",
+        "format": "cpf",
+        "description": "CPF digits with or without punctuations",
+        "example": "900.394.636-13 or 90039463613",
+        "minLength": 11,
+        "maxLength": 14
+      },
+      "Cnpj": {
+        "type": "string",
+        "format": "cnpj",
+        "description": "CNPJ digits with or without punctuations",
+        "example": "20.573.002/0001-87 or 20573002000187",
+        "minLength": 14,
+        "maxLength": 18
+      },
+      "Name": {
+        "type": "string",
+        "description": "Non empty string",
+        "minLength": 1,
+        "maxLength": 200
+      },
+      "Date": {
+        "type": "string",
+        "format": "date",
+        "description": "date only string in format YYYY-MM-DD",
+        "example": "2026-05-02",
+        "minLength": 10,
+        "maxLength": 10
+      },
+      "Time": {
+        "type": "string",
+        "format": "time",
+        "description": "time only string in format HH:MM:SS",
+        "example": "12:21:50",
+        "minLength": 8,
+        "maxLength": 8
+      },
+      "Resource": {
+        "type": "string",
+        "enum": ["appointment", "customer", "secretary", "service", "service_name", "specialist", "specialization"]
+      }
+    },
+
+    "body": {
+      "AuthLogin": {
+        "type": "object",
+        "properties": {
+          "email": { "$ref": "#/components/domain/Email" },
+          "password": { "$ref": "#/components/domain/Password" }
+        },
+        "required": ["email", "password"]
+      },
+
+      "AppointmentsCreateBody": {
+        "type": "object",
+        "properties": {
+          "customerId": { "$ref": "#/components/domain/Uuid" },
+          "serviceId": { "$ref": "#/components/domain/Uuid" },
+          "date": { "$ref": "#/components/domain/Date" },
+          "time": { "$ref": "#/components/domain/Time" }
+        },
+        "required": ["customerId", "serviceId", "date", "time"]
+      },
+      "AppointmentsUpdateBody": {
+        "type": "object",
+        "properties": {
+          "date": { "$ref": "#/components/domain/Date" },
+          "time": { "$ref": "#/components/domain/Time" },
+          "status": { "$ref": "#/components/schemas/AppointmentStatus" }
+        },
+        "required": ["date", "time", "status"]
+      },
+
+      "CustomerCreateBody": {
+        "type": "object",
+        "properties": {
+          "name": { "$ref": "#/components/domain/Name" },
+          "email": { "$ref": "#/components/domain/Email" },
+          "phone": { "$ref": "#/components/domain/Phone" },
+          "birthdate": { "$ref": "#/components/domain/Date" },
+          "cpf": { "$ref": "#/components/domain/Cpf" }
+        },
+        "required": ["name", "email", "phone", "birthdate", "cpf"]
+      },
+      "CustomerUpdateBody": {
+        "type": "object",
+        "properties": {
+          "name": { "$ref": "#/components/domain/Name" },
+          "email": { "$ref": "#/components/domain/Email" },
+          "phone": { "$ref": "#/components/domain/Phone" },
+          "birthdate": { "$ref": "#/components/domain/Date" },
+          "cpf": { "$ref": "#/components/domain/Cpf" }
+        },
+        "required": ["name", "email", "phone", "birthdate", "cpf"]
+      },
+
+      "SecretaryCreateBody": {
+        "type": "object",
+        "properties": {
+          "name": { "$ref": "#/components/domain/Name" },
+          "email": { "$ref": "#/components/domain/Email" },
+          "phone": { "$ref": "#/components/domain/Phone" },
+          "birthdate": { "$ref": "#/components/domain/Date" },
+          "password": { "$ref": "#/components/domain/Password" },
+          "cpf": { "$ref": "#/components/domain/Cpf" },
+          "cnpj": { "$ref": "#/components/domain/Cnpj" }
+        },
+        "required": ["name", "email", "phone", "birthdate", "password", "cpf", "cnpj"]
+      },
+      "SecretaryUpdateBody": {
+        "type": "object",
+        "properties": {
+          "name": { "$ref": "#/components/domain/Name" },
+          "email": { "$ref": "#/components/domain/Email" },
+          "phone": { "$ref": "#/components/domain/Phone" },
+          "birthdate": { "$ref": "#/components/domain/Date" },
+          "password": { "$ref": "#/components/domain/Password" },
+          "cpf": { "$ref": "#/components/domain/Cpf" },
+          "cnpj": { "$ref": "#/components/domain/Cnpj" }
+        },
+        "required": ["name", "email", "phone", "birthdate", "cpf", "cnpj"]
+      },
+
+      "ServiceAvailableCreateBody": {
+        "type": "object",
+        "properties": {
+          "name": { "$ref": "#/components/domain/Name" },
+          "specialization": { "$ref": "#/components/domain/Name" },
+          "specializationId": { "$ref": "#/components/domain/Uuid" }
+        },
+        "required": ["name"]
+      },
+      "ServiceAvailableUpdateBody": {
+        "type": "object",
+        "properties": {
+          "name": { "$ref": "#/components/domain/Name" }
+        },
+        "required": ["name"]
+      },
+
+      "ServiceCreateBody": {
+        "type": "object",
+        "properties": {
+          "specialistId": { "$ref": "#/components/domain/Uuid" },
+          "serviceNameId": { "$ref": "#/components/domain/Uuid" },
+          "price": { "$ref": "#/components/domain/Price" },
+          "duration": { "$ref": "#/components/domain/Duration" }
+        },
+        "required": ["specialistId", "serviceNameId", "price", "duration"]
+      },
+      "ServiceUpdateBody": {
+        "type": "object",
+        "properties": {
+          "price": { "$ref": "#/components/domain/Price" },
+          "duration": { "$ref": "#/components/domain/Duration" }
+        },
+        "required": ["price", "duration"]
+      },
+
+      "SpecialistsCreateBodyService": {
+        "type": "object",
+        "properties": {
+          "serviceNameId": { "$ref": "#/components/domain/Uuid" },
+          "price": { "$ref": "#/components/domain/Price" },
+          "duration": { "$ref": "#/components/domain/Duration" }
+        },
+        "required": ["serviceNameId", "price", "duration"]
+      },
+      "SpecialistCreateBody": {
+        "type": "object",
+        "properties": {
+          "name": { "$ref": "#/components/domain/Name" },
+          "email": { "$ref": "#/components/domain/Email" },
+          "phone": { "$ref": "#/components/domain/Phone" },
+          "birthdate": { "$ref": "#/components/domain/Date" },
+          "cpf": { "$ref": "#/components/domain/Cpf" },
+          "cnpj": { "$ref": "#/components/domain/Cnpj" },
+          "services": {
+            "type": "array",
+            "items": { "$ref": "#/components/body/SpecialistsCreateBodyService" },
+            "minItems": 0,
+            "maxItems": 10
+          }
+        },
+        "required": ["name", "email", "phone", "birthdate", "cpf", "cnpj", "services"]
+      },
+      "SpecialistUpdateBody": {
+        "type": "object",
+        "properties": {
+          "name": { "$ref": "#/components/domain/Name" },
+          "email": { "$ref": "#/components/domain/Email" },
+          "phone": { "$ref": "#/components/domain/Phone" },
+          "birthdate": { "$ref": "#/components/domain/Date" },
+          "cpf": { "$ref": "#/components/domain/Cpf" },
+          "cnpj": { "$ref": "#/components/domain/Cnpj" },
+          "services": {
+            "type": "array",
+            "items": { "$ref": "#/components/body/SpecialistsCreateBodyService" }
+          }
+        },
+        "required": ["name", "email", "phone", "birthdate", "cpf", "cnpj", "services"]
+      },
+
+      "SpecializationCreateBody": {
+        "type": "object",
+        "properties": {
+          "name": { "$ref": "#/components/domain/Name" }
+        },
+        "required": ["name"]
+      },
+      "SpecializationUpdateBody": {
+        "type": "object",
+        "properties": {
+          "name": { "$ref": "#/components/domain/Name" }
+        },
+        "required": ["name"]
+      }
+    },
+
+    "errors": {
+      "ProblemDetails": {
+        "type": "object",
+        "description": "Represents a standardized error response following RFC 7807. Provides both machine-readable and human-readable information about an error condition.",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "A machine-readable, domain-specific error code used by clients to implement conditional logic.",
+            "enum": [
+              "auth_error",
+              "forbidden_error",
+              "validation_error",
+              "resource_not_found",
+              "resource_conflict",
+              "internal_error"
+            ]
+          },
+          "type": {
+            "type": "string",
+            "format": "uri",
+            "description": "A URI reference that identifies the problem type. This value resolve to documentation describing the error category and possible resolutions."
+          },
+          "title": {
+            "type": "string",
+            "description": "A short, human-readable summary of the problem type. It remain stable across occurrences of the same error."
+          },
+          "status": {
+            "type": "number",
+            "description": "The HTTP status code returned for this occurrence of the problem."
+          },
+          "detail": {
+            "type": "string",
+            "description": "A human-readable explanation specific to this occurrence of the problem, providing additional context when necessary."
+          },
+          "instance": {
+            "type": "string",
+            "description": "A URI reference that identifies the specific occurrence of the problem, such as a request path or a correlation resource."
+          },
+          "traceId": {
+            "type": "string",
+            "description": "A unique identifier used for tracing the request across distributed systems, useful for diagnostics and support."
+          },
+          "source": {
+            "type": "object",
+            "description": "Indicates the location of the input associated with the error, such as request body, path parameters, or query parameters.",
+            "properties": {
+              "in": {
+                "type": "string",
+                "enum": ["body", "path", "query"]
+              },
+              "path": {
+                "type": "string"
+              }
+            },
+            "required": ["in", "path"]
+          },
+          "errors": {
+            "type": "object",
+            "description": "A map of validation errors where each key is a field or parameter name and the value is a list of associated validation messages.",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "description": "A validation error message for the associated field.",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "required": ["code", "type", "title", "status"]
+      },
+      "ValidationProblemDetails": {
+        "description": "Represents an error caused by invalid input or an invalid resource state. Uses code 'validation_error' and HTTP status 400. Includes detailed validation messages in the 'errors' property and may indicate the input location through 'source'.",
+        "allOf": [
+          { "$ref": "#/components/errors/ProblemDetails" },
+          {
+            "type": "object",
+            "properties": {
+              "code": { "type": "string", "enum": ["validation_error"] },
+              "status": { "type": "number", "enum": [400] },
+              "title": { "type": "string", "enum": ["Validation error"] }
+            },
+            "required": ["code", "status", "title"]
+          }
+        ]
+      },
+      "AuthProblemDetails": {
+        "description": "Represents an authentication failure. Uses code 'auth_error' and HTTP status 401. Occurs when credentials are missing, invalid, or expired, such as incorrect login information or an invalid authentication token.",
+        "allOf": [
+          { "$ref": "#/components/errors/ProblemDetails" },
+          {
+            "type": "object",
+            "properties": {
+              "code": { "type": "string", "enum": ["auth_error"] },
+              "status": { "type": "number", "enum": [401] },
+              "title": { "type": "string", "enum": ["Invalid token", "Invalid credentials"] }
+            },
+            "required": ["code", "status", "title"]
+          }
+        ]
+      },
+      "InvalidAccessProblemDetails": {
+        "description": "Represents an authorization failure. Uses code 'forbidden_error' and HTTP status 403. Occurs when the authenticated user does not have permission to access the requested resource or perform the operation.",
+        "allOf": [
+          { "$ref": "#/components/errors/ProblemDetails" },
+          {
+            "type": "object",
+            "properties": {
+              "code": { "type": "string", "enum": ["forbidden_error"] },
+              "status": { "type": "number", "enum": [403] },
+              "title": { "type": "string", "enum": ["Forbidden error"] },
+              "detail": { "type": "string" }
+            },
+            "required": ["code", "status", "title", "details"]
+          }
+        ]
+      },
+      "NotFoundProblemDetails": {
+        "description": "Represents a missing resource. Uses code 'resource_not_found' and HTTP status 404. Occurs when the specified resource cannot be found.",
+        "allOf": [
+          { "$ref": "#/components/errors/ProblemDetails" },
+          {
+            "type": "object",
+            "properties": {
+              "code": { "type": "string", "enum": ["resource_not_found"] },
+              "status": { "type": "number", "enum": [404] },
+              "title": { "type": "string", "enum": ["Resource not found", "Route not found"] }
+            },
+            "required": ["code", "status", "title"]
+          }
+        ]
+      },
+      "ConflictProblemDetails": {
+        "description": "Represents a resource conflict. Uses code 'resource_conflict' and HTTP status 409. Occurs when attempting to create or modify a resource that would violate a uniqueness constraint.",
+        "allOf": [
+          { "$ref": "#/components/errors/ProblemDetails" },
+          {
+            "type": "object",
+            "properties": {
+              "code": { "type": "string", "enum": ["resource_conflict"] },
+              "status": { "type": "number", "enum": [409] },
+              "title": { "type": "string", "enum": ["Resource conflict", "Schedule conflict"] }
+            },
+            "required": ["code", "status", "title"]
+          }
+        ]
+      },
+      "InternalProblemDetails": {
+        "description": "Represents an unexpected server error. Uses code 'internal_error' and HTTP status 500. Indicates that the server encountered an unhandled condition while processing the request.",
+        "allOf": [
+          { "$ref": "#/components/errors/ProblemDetails" },
+          {
+            "type": "object",
+            "properties": {
+              "code": { "type": "string", "enum": ["internal_error"] },
+              "status": { "type": "number", "enum": [500] },
+              "title": { "type": "string", "enum": ["Internal error"] }
+            },
+            "required": ["code", "status", "title"]
+          }
+        ]
+      }
+    },
+
+    "schemas": {
+      "Id": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" }
+        },
+        "required": ["id"]
+      },
+      "Count": {
+        "type": "number"
+      },
+      "Status": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "boolean" },
+          "updatedAt": { "type": "string", "format": "datetime" },
+          "environment": { "type": "string" },
+          "database": {
+            "type": "object",
+            "properties": {
+              "status": { "type": "string", "enum": ["connected", "disconnected"] },
+              "version": { "type": "string" },
+              "maxConnections": { "type": "number" },
+              "openedConnections": { "type": "number" },
+              "schemaVersion": { "type": "number" }
+            },
+            "required": ["status", "version", "maxConnections", "openedConnections", "schemaVersion"]
+          }
+        },
+        "required": ["status", "updatedAt", "environment"]
+      },
+
+      "AuthResponse": {
+        "type": "object",
+        "properties": {
+          "accessToken": { "type": "string" },
+          "refreshToken": { "type": "string" }
+        },
+        "required": ["accessToken", "refreshToken"]
+      },
+
+      "AuthIdentity": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "name": { "$ref": "#/components/domain/Name" },
+          "email": { "$ref": "#/components/domain/Email" },
+          "role": { "$ref": "#/components/domain/Role" }
+        },
+        "required": ["id", "name", "email", "role"]
+      },
+
+      "AppointmentStatus": {
+        "type": "number",
+        "description": "0: None 1: Pending 2: Realized 3: Canceled",
+        "enum": [0, 1, 2, 3]
+      },
+      "Appointment": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "customerName": { "$ref": "#/components/domain/Name" },
+          "customerId": { "$ref": "#/components/domain/Uuid" },
+          "serviceName": { "$ref": "#/components/domain/Name" },
+          "serviceNameId": { "$ref": "#/components/domain/Uuid" },
+          "specialistName": { "$ref": "#/components/domain/Name" },
+          "specialistId": { "$ref": "#/components/domain/Uuid" },
+          "price": { "$ref": "#/components/domain/Price" },
+          "duration": { "$ref": "#/components/domain/Duration" },
+          "date": { "$ref": "#/components/domain/Date" },
+          "time": { "$ref": "#/components/domain/Time" },
+          "status": { "$ref": "#/components/schemas/AppointmentStatus" }
+        },
+        "required": [
+          "id",
+          "customerName",
+          "customerId",
+          "serviceName",
+          "serviceNameId",
+          "specialistName",
+          "specialistId",
+          "price",
+          "duration",
+          "date",
+          "time",
+          "status"
+        ]
+      },
+      "AppointmentCalendarCount": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "month": { "type": "number" },
+            "pendingCount": { "type": "number" },
+            "realizedCount": { "type": "number" },
+            "canceledCount": { "type": "number" }
+          },
+          "required": ["month", "pendingCount", "realizedCount", "canceledCount"]
+        }
+      },
+      "AppointmentCalendar": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "date": { "$ref": "#/components/domain/Date" },
+          "time": { "$ref": "#/components/domain/Time" },
+          "specialistName": { "$ref": "#/components/domain/Name" },
+          "status": { "$ref": "#/components/schemas/AppointmentStatus" }
+        },
+        "required": ["id", "date", "time", "specialistName", "status"]
+      },
+
+      "Customer": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "name": { "$ref": "#/components/domain/Name" },
+          "email": { "$ref": "#/components/domain/Email" },
+          "phone": { "$ref": "#/components/domain/Phone" },
+          "birthdate": { "$ref": "#/components/domain/Date" },
+          "cpf": { "$ref": "#/components/domain/Cpf" }
+        },
+        "required": ["id", "name", "phone", "birthdate", "cpf"]
+      },
+
+      "Secretary": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "name": { "$ref": "#/components/domain/Name" },
+          "email": { "$ref": "#/components/domain/Email" },
+          "phone": { "$ref": "#/components/domain/Phone" },
+          "birthdate": { "$ref": "#/components/domain/Date" },
+          "cpf": { "$ref": "#/components/domain/Cpf" },
+          "cnpj": { "$ref": "#/components/domain/Cnpj" }
+        },
+        "required": ["id", "name", "email", "phone", "birthdate", "cpf"]
+      },
+
+      "ServiceAvailable": {
+        "type": "object",
+        "properties": {
+          "serviceNameId": { "$ref": "#/components/domain/Uuid" },
+          "serviceName": { "$ref": "#/components/domain/Name" },
+          "specializationId": { "$ref": "#/components/domain/Uuid" },
+          "specialization": { "$ref": "#/components/domain/Name" }
+        },
+        "required": ["id", "name", "items"]
+      },
+
+      "ServiceEnriched": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "serviceName": { "$ref": "#/components/domain/Name" },
+          "serviceNameId": { "$ref": "#/components/domain/Uuid" },
+          "specialistName": { "$ref": "#/components/domain/Name" },
+          "specialistId": { "$ref": "#/components/domain/Uuid" },
+          "specialization": { "$ref": "#/components/domain/Name" },
+          "specializationId": { "$ref": "#/components/domain/Uuid" },
+          "price": { "$ref": "#/components/domain/Price" },
+          "duration": { "$ref": "#/components/domain/Duration" }
+        },
+        "required": [
+          "id",
+          "serviceName",
+          "serviceNameId",
+          "specialistName",
+          "specialistId",
+          "specialization",
+          "specializationId",
+          "price",
+          "duration"
+        ]
+      },
+
+      "Service": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "serviceNameId": { "$ref": "#/components/domain/Uuid" },
+          "specialistId": { "$ref": "#/components/domain/Uuid" },
+          "price": { "$ref": "#/components/domain/Price" },
+          "duration": { "$ref": "#/components/domain/Duration" }
+        },
+        "required": ["id", "serviceNameId", "specialistId", "price", "duration"]
+      },
+
+      "ServiceGroup": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "name": { "$ref": "#/components/domain/Name" },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "$ref": "#/components/domain/Uuid" },
+                "name": { "$ref": "#/components/domain/Name" }
+              },
+              "required": ["id", "name"]
+            }
+          }
+        },
+        "required": ["id", "name", "items"]
+      },
+
+      "Specialist": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "name": { "$ref": "#/components/domain/Name" },
+          "email": { "$ref": "#/components/domain/Email" },
+          "phone": { "$ref": "#/components/domain/Phone" },
+          "birthdate": { "$ref": "#/components/domain/Date" },
+          "cpf": { "$ref": "#/components/domain/Cpf" },
+          "cnpj": { "$ref": "#/components/domain/Cnpj" }
+        },
+        "required": ["id", "name", "email", "phone", "birthdate", "cpf"]
+      },
+      "SpecialistAppointment": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "customerName": { "$ref": "#/components/domain/Name" },
+          "customerId": { "$ref": "#/components/domain/Uuid" },
+          "serviceName": { "$ref": "#/components/domain/Name" },
+          "serviceNameId": { "$ref": "#/components/domain/Uuid" },
+          "price": { "$ref": "#/components/domain/Price" },
+          "duration": { "$ref": "#/components/domain/Duration" },
+          "date": { "$ref": "#/components/domain/Date" },
+          "time": { "$ref": "#/components/domain/Time" },
+          "status": { "$ref": "#/components/schemas/AppointmentStatus" }
+        },
+        "required": [
+          "id",
+          "customerName",
+          "customerId",
+          "serviceName",
+          "serviceNameId",
+          "price",
+          "duration",
+          "date",
+          "time",
+          "status"
+        ]
+      },
+
+      "SpecialistService": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "specializationId": { "$ref": "#/components/domain/Uuid" },
+          "serviceName": { "$ref": "#/components/domain/Name" },
+          "serviceNameId": { "$ref": "#/components/domain/Uuid" },
+          "price": { "$ref": "#/components/domain/Price" },
+          "duration": { "$ref": "#/components/domain/Duration" }
+        },
+        "required": ["id", "specializationId", "serviceName", "serviceNameId", "price", "duration"]
+      },
+
+      "Specialization": {
+        "type": "object",
+        "properties": {
+          "id": { "$ref": "#/components/domain/Uuid" },
+          "name": { "$ref": "#/components/domain/Name" }
+        },
+        "required": ["id", "name"]
+      }
+    }
+  }
+}

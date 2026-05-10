@@ -1,6 +1,7 @@
 -- name: CreateCustomer :one
-INSERT INTO "customers" ("name", "email", "phone", "birthdate", "cpf")
-VALUES ( sqlc.arg('name')
+INSERT INTO "customers" ("id", "name", "email", "phone", "birthdate", "cpf")
+VALUES ( sqlc.arg('id')
+       , sqlc.arg('name')
        , sqlc.arg('email')
        , sqlc.arg('phone')
        , sqlc.arg('birthdate')
@@ -38,8 +39,9 @@ WHERE true
   AND (sqlc.arg('name')::text = ''  OR "name" ILIKE '%' || sqlc.arg('name') || '%')
   AND (sqlc.arg('cpf')::text = ''   OR "cpf" = sqlc.arg('cpf'))
   AND (sqlc.arg('phone')::text = '' OR "phone" = sqlc.arg('phone'))
-LIMIT sqlc.arg('limit')::integer
-OFFSET sqlc.arg('offset')::integer;
+ORDER BY "name" ASC
+OFFSET sqlc.arg('offset')::integer
+LIMIT sqlc.arg('limit')::integer;
 
 -- name: CountCustomers :one
 SELECT COUNT(id)::int as count

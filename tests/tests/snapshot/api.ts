@@ -1,38 +1,23 @@
-import axios, { AxiosResponse } from 'axios'
+import axios from 'axios'
 import _ from 'lodash'
 import { addDays, addHours, endOfYear, startOfYear } from 'date-fns'
 
 import { API_URL } from '../config'
+import { formatJson } from '../api-extensions'
 
 import { Api, AppointmentStatus, Config } from '../../src/lib/api'
 import { getDatePart, getHourPart } from '../../src/lib/date-fns-ext'
 
-import { Writable, WriteStr, WriteCombined } from '../../src/lib/writable'
+import { WriteStr, WriteCombined, WriteStdout } from '../../src/lib/writable'
 import { Path } from '../../src/lib/path'
 import { createTracker } from '../../src/lib/tracker'
-import levenshtein from 'fast-levenshtein'
 import { Random, rng } from '../../src/lib/rng'
+import { generateDatesFrom } from './internal/generateDatesFrom'
+import { enableWriteResponse, plugInterceptors } from './internal/plugInterceptors'
+import { Args, complete } from './internal/complete'
+import { baseData, credentials } from './internal/data'
 
 const random = new Random(rng.mulberry32(12345))
-
-export function getSimilarity(a: string, b: string): number {
-  const distance = levenshtein.get(a, b)
-  const maxLength = Math.max(a.length, b.length)
-
-  if (maxLength === 0) return 100
-
-  return (1 - distance / maxLength) * 100
-}
-
-async function generateDatesFrom(args: { startAt: Date; endAt: Date; consume: (date: Date) => Promise<void> }) {
-  let date = args.startAt
-  const endAt = args.endAt.getTime()
-  while (date.getTime() < endAt) {
-    await args.consume(date)
-    date = addDays(date, 1)
-  }
-  return date
-}
 
 const baseApi = new Api(
   new Config(
@@ -43,186 +28,16 @@ const baseApi = new Api(
   ),
 )
 const tracker = createTracker('api', baseApi)
-const api = tracker.proxy
-
-function writeResponse(writer: Writable, response: AxiosResponse) {
-  // https://github.com/horprogs/react-query/blob/7e69a716054958721288d34a26b30427c257aa3b/src/utils/mockApi.ts#L37
-  if (!response) return
-  const method = response.config.method?.toUpperCase() || 'UNKNOWN'
-  const url = response.config.url
-  if (!url) return
-  const status = response.status
-  writer.write(`Request: ${method} ${url} ${status}\n`)
-  if (response.config.params != null) {
-    writer.write(`Params: ${JSON.stringify(response.config.params, null, 2)}\n`)
-  }
-  if (response.config.data != null) {
-    writer.write(`Body: ${JSON.stringify(response.config.data, null, 2)}\n`)
-  }
-  if (response.data != null) {
-    writer.write(`Response: ${JSON.stringify(response.data, null, 2)}\n`)
-  }
-  writer.write('\n')
-}
-
-const ids = {
-  items: {} as Record<string, number>,
-  current: 1,
-  get(id: string) {
-    ids.items[id] = ids.items[id] || this.current++
-    return ids.items[id]
-  },
-}
-
-const UUID_REGEX = /\/(\w\w\w\w\w\w\w\w-\w\w\w\w-\w\w\w\w-\w\w\w\w-\w\w\w\w\w\w\w\w\w\w\w\w)/g
-
-function redactResponse(response: AxiosResponse | undefined): any {
-  function redactData(data: any): any {
-    if (typeof data !== 'object') return data
-    if (!data) return data
-    if (Array.isArray(data)) return data.map(redactData)
-    const newData = { ...data }
-    if (newData.accessToken) newData.accessToken = ids.get(newData.accessToken)
-    if (newData.refreshToken) newData.refreshToken = ids.get(newData.refreshToken)
-    if (newData.createdAt) newData.createdAt = '[temporal]'
-    if (newData.updatedAt) newData.updatedAt = '[temporal]'
-    if (newData.id) newData.id = ids.get(newData.id)
-    for (const key in newData) {
-      if (key.endsWith('Id')) {
-        newData[key] = ids.get(newData[key])
-      } else {
-        newData[key] = redactData(newData[key])
-      }
-    }
-    return newData
-  }
-  if (!response || typeof response != 'object') return response
-  const { data, config, ...responseRest } = response
-  const newResponse: any = { ...responseRest }
-  newResponse.config = { ...config, url: config.url ?? '' }
-  newResponse.data = redactData(data)
-  if (config.data) {
-    newResponse.config.data = redactData(JSON.parse(config.data))
-  }
-  for (const match of newResponse.config.url.matchAll(UUID_REGEX)) {
-    newResponse.config.url = newResponse.config.url.replace(match[1], ids.get(match[1]).toString())
-  }
-  return newResponse
-}
-
-const ACTUAL_SNAPSHOT_PATH = Path.from(import.meta.dirname).append('snapshot.actual.txt')
-const SNAPSHOT_LOG_PATH = Path.from(import.meta.dirname).append('snapshot.log')
-const CURRENT_SNAPSHOT_PATH = Path.from(import.meta.dirname).append('snapshot.txt')
-
-const output = new WriteStr()
-const logger = SNAPSHOT_LOG_PATH.open('w')
-const w = new WriteCombined([output])
-
-class SimpleAxiosError extends Error {
-  public code = ''
-  public status = 0
-  public config = {} as any
-  public response = {
-    data: undefined,
-  }
-  public constructor(error: any) {
-    super(String(error))
-    if (error) {
-      this.code = error.code
-      this.status = error.status
-      this.response.data = error.response?.data
-      for (const key of ['method', 'baseURL', 'headers', 'url', 'data']) {
-        this.config[key] = error.config?.[key]
-      }
-    }
-    Error.captureStackTrace(this)
-  }
-}
-
-let WRITE_RESPONSE = true
-
-api._config.instance.interceptors.response.use(
-  (response) => {
-    if (WRITE_RESPONSE) writeResponse(w, redactResponse(response))
-    writeResponse(logger, response)
-    return response
-  },
-  (error) => {
-    if (WRITE_RESPONSE) writeResponse(w, redactResponse(error.response))
-    writeResponse(logger, error.response)
-    throw new SimpleAxiosError(error)
-  },
-)
 
 function apiLogin(accessToken: string) {
-  api._config.instance.defaults.headers['Authorization'] = `Bearer ${accessToken}`
+  baseApi._config.instance.defaults.headers['Authorization'] = `Bearer ${accessToken}`
 }
 
-interface Args {
-  record: boolean
-}
-
-function complete(args: Args) {
-  const actual = output.toString()
-
-  if (args.record) {
-    CURRENT_SNAPSHOT_PATH.writeText(actual)
-    return
-  }
-
-  const expected = CURRENT_SNAPSHOT_PATH.readText()
-
-  if (actual === expected) {
-    console.log('INFO: OK')
-    if (ACTUAL_SNAPSHOT_PATH.exists()) {
-      ACTUAL_SNAPSHOT_PATH.unlink()
-    }
-    return
-  }
-
-  ACTUAL_SNAPSHOT_PATH.writeText(actual)
-  const similarity = getSimilarity(actual, expected).toFixed(2)
-  console.log(`ERROR: Snapshot mismatch: ${similarity === '100.00' ? '99.99' : similarity}%`)
-}
-
-async function run(args: Args) {
+async function run(w: WriteStr, api: Api, args: Args) {
   if (!args.record) {
-    if (!CURRENT_SNAPSHOT_PATH.exists()) {
+    if (!args.currentSnapshotPath.exists()) {
       throw new Error('snapshot does not exists. Run record first.')
     }
-  }
-
-  const adminCredentials = {
-    email: 'admin@test.com',
-    password: '123mudar',
-  }
-  const secretaryCredencials = {
-    email: 'secretary@test.com',
-    password: '456@Mudar',
-  }
-  const secretaryData = {
-    name: 'Secretary Test',
-    ...secretaryCredencials,
-    birthdate: '2000-10-10',
-    cnpj: '08130896000135',
-    cpf: '72730805001',
-    phone: '119876543210',
-  }
-  const specialistData = {
-    name: 'Specialist Test',
-    email: 'specialist@test.com',
-    phone: '219876543210',
-    cnpj: '16833374000128',
-    cpf: '96156338012',
-    birthdate: '1999-09-09',
-    services: [],
-  }
-  const customerData = {
-    name: 'Customer Test',
-    email: 'customer@test.com',
-    cpf: '11431287962',
-    birthdate: '1999-08-08',
-    phone: '21987654321',
   }
 
   const createDate = new Date(2030, 0, 2)
@@ -260,7 +75,7 @@ async function run(args: Args) {
   await api.test.stats()
   await api.test.init()
 
-  await api.auth.login(adminCredentials).then((res) => {
+  await api.auth.login(credentials.admin).then((res) => {
     apiLogin(res.data.accessToken)
     state.refreshToken = res.data.refreshToken
   })
@@ -270,28 +85,28 @@ async function run(args: Args) {
   // secretaries
   await api.secretaries.count()
   await api.secretaries.getAll()
-  await api.secretaries.create(secretaryData).then((res) => (state.secretaryId = res.data.id))
-  await api.secretaries.create(secretaryData)
+  await api.secretaries.create(baseData.secretary).then((res) => (state.secretaryId = res.data.id))
+  await api.secretaries.create(baseData.secretary)
   await api.secretaries.count()
   await api.secretaries.getAll()
   await api.secretaries.getById(state.secretaryId)
   await api.secretaries.update(state.secretaryId, {
-    name: secretaryData.name + ' Updated',
-    email: secretaryData.email,
+    name: baseData.secretary.name + ' Updated',
+    email: baseData.secretary.email,
     password: undefined, // no update
-    phone: '44' + secretaryData.phone.slice(2),
-    cpf: secretaryData.cpf,
-    cnpj: secretaryData.cnpj,
-    birthdate: secretaryData.birthdate,
+    phone: '44' + baseData.secretary.phone.slice(2),
+    cpf: baseData.secretary.cpf,
+    cnpj: baseData.secretary.cnpj,
+    birthdate: baseData.secretary.birthdate,
   })
   await api.secretaries.getById(state.secretaryId)
   await api.secretaries.delete(state.secretaryId)
   await api.secretaries.getById(state.secretaryId)
   await api.secretaries.count()
   await api.secretaries.getAll()
-  await api.secretaries.create(secretaryData).then((res) => (state.secretaryId = res.data.id))
+  await api.secretaries.create(baseData.secretary).then((res) => (state.secretaryId = res.data.id))
 
-  await api.auth.login(secretaryCredencials).then((res) => apiLogin(res.data.accessToken))
+  await api.auth.login(credentials.secretary).then((res) => apiLogin(res.data.accessToken))
   await api.auth.me()
 
   // specializations
@@ -337,6 +152,7 @@ async function run(args: Args) {
   for (const servicesAvailableId of state.servicesAvailableIds) {
     await api.servicesAvailable.delete(servicesAvailableId)
   }
+  await api.servicesAvailable.getById(state.servicesAvailableIds[0])
   state.servicesAvailableIds.length = 0
   await api.servicesAvailable.getAll()
 
@@ -359,18 +175,18 @@ async function run(args: Args) {
   // specialists
   await api.specialists.getAll()
   await api.specialists.count()
-  await api.specialists.create(specialistData).then((res) => (state.specialistId = res.data.id))
+  await api.specialists.create(baseData.specialist).then((res) => (state.specialistId = res.data.id))
   await api.specialists.getServices(state.specialistId)
   await api.specialists.getSpecializations(state.specialistId)
   await api.specialists.getAll()
   await api.specialists.count()
   await api.specialists.getById(state.specialistId)
   await api.specialists.update(state.specialistId, {
-    name: specialistData.name + ' Updated',
-    email: specialistData.email,
-    phone: '44' + specialistData.phone.slice(2),
-    cnpj: specialistData.cnpj,
-    cpf: specialistData.cpf,
+    name: baseData.specialist.name + ' Updated',
+    email: baseData.specialist.email,
+    phone: '44' + baseData.specialist.phone.slice(2),
+    cnpj: baseData.specialist.cnpj,
+    cpf: baseData.specialist.cpf,
     birthdate: '1999-08-07',
     services: [],
   })
@@ -381,7 +197,7 @@ async function run(args: Args) {
   await api.specialists.count()
   await api.specialists
     .create({
-      ...specialistData,
+      ...baseData.specialist,
       services: [
         { serviceNameId: state.servicesAvailableIds[0], price: 100, duration: 60 },
         { serviceNameId: state.servicesAvailableIds[2], price: 200, duration: 120 },
@@ -395,7 +211,7 @@ async function run(args: Args) {
 
   await api.specialists
     .create({
-      ...specialistData,
+      ...baseData.specialist,
       services: [
         { serviceNameId: state.servicesAvailableIds[0], price: 100, duration: 60 },
         { serviceNameId: state.servicesAvailableIds[1], price: 200, duration: 120 },
@@ -425,6 +241,7 @@ async function run(args: Args) {
   await api.services.getById(state.serviceId)
   await api.services.getAll()
   await api.services.delete(state.serviceId)
+  await api.services.getById(state.serviceId)
   await api.services.getAll()
   await api.services.count()
 
@@ -440,25 +257,26 @@ async function run(args: Args) {
   // customer
   await api.customers.getAll()
   await api.customers.count()
-  await api.customers.create(customerData).then((res) => (state.customerId = res.data.id))
+  await api.customers.create(baseData.customer).then((res) => (state.customerId = res.data.id))
   await api.customers.getById(state.customerId)
   await api.customers.getAll()
   await api.customers.count()
   await api.customers.update(state.customerId, {
-    name: customerData.name + ' Updated',
-    email: customerData.email,
-    phone: '44' + customerData.phone.slice(2),
-    cpf: customerData.cpf,
+    name: baseData.customer.name + ' Updated',
+    email: baseData.customer.email,
+    phone: '44' + baseData.customer.phone.slice(2),
+    cpf: baseData.customer.cpf,
     birthdate: '1999-08-07',
   })
   await api.customers.getById(state.customerId)
   await api.customers.getAll()
   await api.customers.count()
   await api.customers.delete(state.customerId)
+  await api.customers.getById(state.customerId)
   await api.customers.getAll()
   await api.customers.count()
 
-  await api.customers.create(customerData).then((res) => (state.customerId = res.data.id))
+  await api.customers.create(baseData.customer).then((res) => (state.customerId = res.data.id))
 
   // appointments
   await api.appointments.getAll({})
@@ -490,6 +308,7 @@ async function run(args: Args) {
   await api.appointments.getById(state.appointmentId)
   await api.appointments.getAll()
   await api.appointments.delete(state.appointmentId)
+  await api.appointments.getById(state.appointmentId)
   await api.appointments.getAll()
   await api.appointments.count()
 
@@ -517,34 +336,34 @@ async function run(args: Args) {
 
   // Seed
   {
-    WRITE_RESPONSE = false
+    enableWriteResponse(false)
 
     await api.test.init()
     state.servicesAvailableIds.length = 0
 
-    await api.auth.login(adminCredentials).then((res) => apiLogin(res.data.accessToken))
+    await api.auth.login(credentials.admin).then((res) => apiLogin(res.data.accessToken))
 
     // [secretaries]
     for (let i = 0; i < 20; i++) {
       const res = await api.secretaries.create({
-        name: `Secretary ${i}`,
+        name: `Secretary ${i.toString().padStart(4, '0')}`,
         email: `secretary-${i}@test.com`,
         password: '123@mudaR',
         birthdate: random.date(1980, 2010),
         cnpj: '08130896000135',
         cpf: '72730805001',
-        phone: '119876543210',
+        phone: '76543210',
       })
-      if (res.status !== 200) throw new Error(`secretaries ${i}: ${JSON.stringify(res.data)}`)
+      if (res.status !== 201) throw new Error(`secretaries ${i}: ${JSON.stringify(res.data)}`)
       state.secretaryIds.push(res.data.id)
     }
 
     // [specializations]
     for (let i = 0; i < 10; i++) {
       const res = await api.specializations.create({
-        name: `Specialization ${i}`,
+        name: `Specialization ${i.toString().padStart(4, '0')}`,
       })
-      if (res.status !== 200) throw new Error(`specializations ${i}: ${JSON.stringify(res.data)}`)
+      if (res.status !== 201) throw new Error(`specializations ${i}: ${JSON.stringify(res.data)}`)
       state.specializationIds.push(res.data.id)
     }
 
@@ -553,10 +372,10 @@ async function run(args: Args) {
       const specializationId = state.specializationIds[ix]
       for (let i = 0; i < 5; i++) {
         const res = await api.servicesAvailable.create({
-          name: `Service Available ${ix}-${i}`,
+          name: `Service Available ${ix}-${i.toString().padStart(4, '0')}`,
           specializationId: specializationId,
         })
-        if (res.status !== 200) throw new Error(`servicesAvailable ${i}: ${JSON.stringify(res.data)}`)
+        if (res.status !== 201) throw new Error(`servicesAvailable ${i}: ${JSON.stringify(res.data)}`)
         state.servicesAvailableIds.push(res.data.id)
       }
     }
@@ -564,15 +383,15 @@ async function run(args: Args) {
     // [specialists]
     for (let i = 0; i < 50; i++) {
       const res = await api.specialists.create({
-        name: `Specialist ${i}`,
+        name: `Specialist ${i.toString().padStart(4, '0')}`,
         email: `specialist-${i}@test.com`,
-        phone: '219876543210',
+        phone: '76543210',
         cnpj: '16833374000128',
         cpf: '96156338012',
         birthdate: random.date(1980, 2000),
         services: [],
       })
-      if (res.status !== 200) throw new Error(`specialists ${i}: ${JSON.stringify(res.data)}`)
+      if (res.status !== 201) throw new Error(`specialists ${i}: ${JSON.stringify(res.data)}`)
       state.specialistIds.push(res.data.id)
     }
 
@@ -589,7 +408,7 @@ async function run(args: Args) {
           serviceNameId,
           specialistId,
         })
-        if (res.status !== 200) throw new Error(`services ${ix}: i: ${JSON.stringify(res.data)}`)
+        if (res.status !== 201) throw new Error(`services ${ix}: i: ${JSON.stringify(res.data)}`)
         state.specialistServiceIds[specialistId] = state.specialistServiceIds[specialistId] || []
         state.specialistServiceIds[specialistId].push({ serviceNameId, serviceId: res.data.id })
         state.serviceIds.push(res.data.id)
@@ -599,13 +418,13 @@ async function run(args: Args) {
     // [customers]
     for (let i = 0; i < 150; i++) {
       const res = await api.customers.create({
-        name: `Customer ${i}`,
+        name: `Customer ${i.toString().padStart(4, '0')}`,
         email: `customer-${i}@test.com`,
         cpf: '11431287962',
         birthdate: random.date(1960, 2010),
-        phone: `21987654${i.toString().padStart(3, '0')}`,
+        phone: `87654${i.toString().padStart(3, '0')}`,
       })
-      if (res.status !== 200) throw new Error(`customers ${i}: ${JSON.stringify(res.data)}`)
+      if (res.status !== 201) throw new Error(`customers ${i}: ${JSON.stringify(res.data)}`)
       state.customerIds.push(res.data.id)
     }
 
@@ -636,12 +455,12 @@ async function run(args: Args) {
             customerId: random.choice(state.customerIds),
             serviceId: random.choice(state.specialistServiceIds[specialistIds[ix]]).serviceId,
           })
-          if (res.status !== 200) throw new Error(`appointments ${ix}: ${JSON.stringify(res.data)}`)
+          if (res.status !== 201) throw new Error(`appointments ${ix}: ${JSON.stringify(res.data)}`)
           state.appointmentIds.push(res.data.id)
         }
       },
     })
-    WRITE_RESPONSE = true
+    enableWriteResponse(true)
   }
 
   // await api.services.getAll({ page: 1, pageSize: 5, specialist: '' })
@@ -649,37 +468,37 @@ async function run(args: Args) {
   await api.customers.getAll({ page: 0, pageSize: 5, name: 'CustomerX' })
   await api.customers.getAll({ page: 0, pageSize: 5, name: '1' })
   await api.customers.getAll({ page: 1, pageSize: 5, name: '1' })
-  await api.customers.getAll({ phone: '21987654002' })
+  await api.customers.getAll({ phone: '87654002' })
   await api.customers.getAll({ page: 0, pageSize: 5, cpf: '11431287962' })
 
   await api.customers.count({ name: 'CustomerX' })
   await api.customers.count({ name: '1' })
-  await api.customers.count({ phone: '21987654002' })
+  await api.customers.count({ phone: '87654002' })
   await api.customers.count({ cpf: '11431287962' })
 
   await api.secretaries.getAll({ page: 0, pageSize: 5, name: 'SecretaryX' })
   await api.secretaries.getAll({ page: 0, pageSize: 5, name: '1' })
   await api.secretaries.getAll({ page: 1, pageSize: 5, name: '1' })
-  await api.secretaries.getAll({ page: 0, pageSize: 5, phone: '119876543210' })
+  await api.secretaries.getAll({ page: 0, pageSize: 5, phone: '76543210' })
   await api.secretaries.getAll({ page: 0, pageSize: 5, cpf: '72730805001' })
   await api.secretaries.getAll({ page: 0, pageSize: 5, cnpj: '08130896000135' })
 
   await api.secretaries.count({ name: 'SecretaryX' })
   await api.secretaries.count({ name: '1' })
-  await api.secretaries.count({ phone: '119876543210' })
+  await api.secretaries.count({ phone: '76543210' })
   await api.secretaries.count({ cpf: '72730805001' })
   await api.secretaries.count({ cnpj: '08130896000135' })
 
   await api.specialists.getAll({ page: 0, pageSize: 5, name: 'SpecialistX' })
   await api.specialists.getAll({ page: 0, pageSize: 5, name: '1' })
   await api.specialists.getAll({ page: 1, pageSize: 5, name: '1' })
-  await api.specialists.getAll({ page: 0, pageSize: 5, phone: '219876543210' })
+  await api.specialists.getAll({ page: 0, pageSize: 5, phone: '76543210' })
   await api.specialists.getAll({ page: 0, pageSize: 5, cpf: '96156338012' })
   await api.specialists.getAll({ page: 0, pageSize: 5, cnpj: '16833374000128' })
 
   await api.specialists.count({ name: 'SpecialistX' })
   await api.specialists.count({ name: '1' })
-  await api.specialists.count({ phone: '219876543210' })
+  await api.specialists.count({ phone: '76543210' })
   await api.specialists.count({ cpf: '96156338012' })
   await api.specialists.count({ cnpj: '16833374000128' })
 
@@ -688,7 +507,6 @@ async function run(args: Args) {
   await api.services.getAll({ page: 0, pageSize: 5, specialist: '10' })
   await api.services.getAll({ page: 0, pageSize: 5, specialization: '0' })
 
-  await api.services.count({ service: '1' })
   await api.services.count({ service: '1' })
   await api.services.count({ specialist: '10' })
   await api.services.count({ specialization: '0' })
@@ -707,19 +525,58 @@ async function run(args: Args) {
   await api.appointments.getCalendar({ startDate: '2031-01-01', endDate: '2031-12-31' })
   await api.appointments.getCalendarCount({ startDate: '2031-01-01', endDate: '2031-12-31' })
 
-  complete(args)
+  // TODO: limit startDate and endDate range
+  // await api.appointments.getCalendar({ startDate: '2031-01-01', endDate: '2031-01-31' })
+  // await api.appointments.getCalendarCount({ startDate: '2031-01-01', endDate: '2031-01-31' })
+
+  complete(w.value(), args)
 }
 
-const startAt = new Date()
-const timeMessage = `[${startAt.toISOString()}] Time`
-console.time(timeMessage)
+function main() {
+  const SNAPSHOTS_DIR = Path.from(import.meta.dirname).append('snapshots')
+  const SNAPSHOT_LOG_PATH = SNAPSHOTS_DIR.append('api.log')
+  const ACTUAL_SNAPSHOT_PATH = SNAPSHOTS_DIR.append('api.actual.txt')
+  const CURRENT_SNAPSHOT_PATH = SNAPSHOTS_DIR.append('api.txt')
 
-run({ record: process.argv[2] === 'record' })
-  .catch((error) => {
-    ACTUAL_SNAPSHOT_PATH.writeText(output.toString())
-    throw error
+  SNAPSHOTS_DIR.mkdir({ existsOk: true })
+  const snapshotLog = SNAPSHOT_LOG_PATH.open('w')
+  const logger = new WriteCombined([snapshotLog, new WriteStdout()])
+
+  const w = new WriteStr()
+
+  plugInterceptors('api.ts', baseApi._config.instance, {
+    writter: w,
+    logger,
   })
-  .finally(() => {
-    console.timeEnd(timeMessage)
-    logger.close()
+
+  const startAt = new Date()
+  const timeMessage = `[${startAt.toISOString()}]`
+  console.log(timeMessage + ' Start')
+  console.time(timeMessage + ' Time')
+
+  run(w, tracker.proxy, {
+    record: process.argv[2] === 'record',
+    currentSnapshotPath: CURRENT_SNAPSHOT_PATH,
+    actualSnapshotPath: ACTUAL_SNAPSHOT_PATH,
   })
+    .catch((error) => {
+      ACTUAL_SNAPSHOT_PATH.writeText(w.value())
+      throw error
+    })
+    .finally(() => {
+      {
+        const timing = tracker.timing()
+        const formatted = Object.entries(timing).map(([key, value]) => [key, formatJson(value)])
+        const size = formatted.reduce((curr, pair) => Math.max(curr, pair[0].length), 0)
+        snapshotLog.write('Timing:\n')
+        for (const [key, value] of formatted) {
+          snapshotLog.write(` - ${key.padEnd(size, ' ')} = Timing${value}\n`)
+        }
+      }
+      console.log(timeMessage + ` End api snapshot: ${API_URL}`)
+      console.timeEnd(timeMessage + ' Time')
+      snapshotLog.close()
+    })
+}
+
+main()

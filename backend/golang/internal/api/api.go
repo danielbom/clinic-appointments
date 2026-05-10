@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	_ "backend/internal/api/docs"
+	"backend/internal/api/presenter"
 	"backend/internal/env"
 	"backend/internal/infra"
 
@@ -11,6 +12,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
 	"github.com/go-chi/jwtauth"
+	"github.com/go-chi/render"
 	"github.com/jackc/pgx/v5/pgxpool"
 	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
@@ -59,60 +61,60 @@ func NewApi(pool *pgxpool.Pool, auth *jwtauth.JWTAuth) http.Handler {
 	r.With(h.JWT).Post("/api/auth/refresh", h.authRefresh)
 	r.With(h.JWT).Get("/api/auth/me", h.authMe)
 
-	r.With(h.JWT).Get("/api/appointments", h.getAppointments)
+	r.With(h.JWT).Get("/api/appointments", h.listAppointments)
 	r.With(h.JWT).Get("/api/appointments/count", h.countAppointments)
 	r.With(h.JWT).Get("/api/appointments/calendar", h.getAppointmentsCalendar)
 	r.With(h.JWT).Get("/api/appointments/calendar/count", h.getAppointmentsCalendarCount)
-	r.With(h.JWT).Get("/api/appointments/{appointment_id}", h.getAppointment)
+	r.With(h.JWT).Get("/api/appointments/{id}", h.getAppointment)
 	r.With(h.JWT).Post("/api/appointments", h.createAppointment)
-	r.With(h.JWT).Put("/api/appointments/{appointment_id}", h.updateAppointment)
-	r.With(h.JWT).Delete("/api/appointments/{appointment_id}", h.deleteAppointment)
+	r.With(h.JWT).Put("/api/appointments/{id}", h.updateAppointment)
+	r.With(h.JWT).Delete("/api/appointments/{id}", h.deleteAppointment)
 
-	r.With(h.JWT).Get("/api/customers", h.getCustomers)
+	r.With(h.JWT).Get("/api/customers", h.listCustomers)
 	r.With(h.JWT).Get("/api/customers/count", h.countCustomers)
-	r.With(h.JWT).Get("/api/customers/{customer_id}", h.getCustomer)
+	r.With(h.JWT).Get("/api/customers/{id}", h.getCustomer)
 	r.With(h.JWT).Post("/api/customers", h.createCustomer)
-	r.With(h.JWT).Put("/api/customers/{customer_id}", h.updateCustomer)
-	r.With(h.JWT).Delete("/api/customers/{customer_id}", h.deleteCustomer)
+	r.With(h.JWT).Put("/api/customers/{id}", h.updateCustomer)
+	r.With(h.JWT).Delete("/api/customers/{id}", h.deleteCustomer)
 
-	r.With(h.JWT).Get("/api/secretaries", h.getSecretaries)
+	r.With(h.JWT).Get("/api/secretaries", h.listSecretaries)
 	r.With(h.JWT).Get("/api/secretaries/count", h.countSecretaries)
-	r.With(h.JWT).Get("/api/secretaries/{secretary_id}", h.getSecretary)
+	r.With(h.JWT).Get("/api/secretaries/{id}", h.getSecretary)
 	r.With(h.JWT).Post("/api/secretaries", h.createSecretary)
-	r.With(h.JWT).Put("/api/secretaries/{secretary_id}", h.updateSecretary)
-	r.With(h.JWT).Delete("/api/secretaries/{secretary_id}", h.deleteSecretary)
+	r.With(h.JWT).Put("/api/secretaries/{id}", h.updateSecretary)
+	r.With(h.JWT).Delete("/api/secretaries/{id}", h.deleteSecretary)
 
 	r.With(h.JWT).Get("/api/specialists", h.listSpecialists)
 	r.With(h.JWT).Get("/api/specialists/count", h.countSpecialists)
-	r.With(h.JWT).Get("/api/specialists/{specialist_id}", h.getSpecialist)
-	r.With(h.JWT).Get("/api/specialists/{specialist_id}/appointments", h.getSpecialistAppointments)
-	r.With(h.JWT).Get("/api/specialists/{specialist_id}/specializations", h.getSpecialistSpecializations)
-	r.With(h.JWT).Get("/api/specialists/{specialist_id}/services", h.getSpecialistServices)
-	r.With(h.JWT).Get("/api/specialists/{specialist_id}/services/{service_id}", h.getSpecialistService)
+	r.With(h.JWT).Get("/api/specialists/{id}", h.getSpecialist)
+	r.With(h.JWT).Get("/api/specialists/{id}/appointments", h.getSpecialistAppointments)
+	r.With(h.JWT).Get("/api/specialists/{id}/specializations", h.getSpecialistSpecializations)
+	r.With(h.JWT).Get("/api/specialists/{id}/services", h.getSpecialistServices)
+	r.With(h.JWT).Get("/api/specialists/{id}/services/{service_id}", h.getSpecialistService)
 	r.With(h.JWT).Post("/api/specialists", h.createSpecialist)
-	r.With(h.JWT).Put("/api/specialists/{specialist_id}", h.updateSpecialist)
-	r.With(h.JWT).Delete("/api/specialists/{specialist_id}", h.deleteSpecialist)
+	r.With(h.JWT).Put("/api/specialists/{id}", h.updateSpecialist)
+	r.With(h.JWT).Delete("/api/specialists/{id}", h.deleteSpecialist)
 
-	r.With(h.JWT).Get("/api/specializations", h.getSpecializations)
+	r.With(h.JWT).Get("/api/specializations", h.listSpecializations)
 	r.With(h.JWT).Post("/api/specializations", h.createSpecialization)
-	r.With(h.JWT).Put("/api/specializations/{specialization_id}", h.updateSpecialization)
-	r.With(h.JWT).Delete("/api/specializations/{specialization_id}", h.deleteSpecialization)
+	r.With(h.JWT).Put("/api/specializations/{id}", h.updateSpecialization)
+	r.With(h.JWT).Delete("/api/specializations/{id}", h.deleteSpecialization)
 
-	r.With(h.JWT).Get("/api/service-groups", h.getServiceGroups)
+	r.With(h.JWT).Get("/api/service-groups", h.listServiceGroups)
 
-	r.With(h.JWT).Get("/api/services", h.getServices)
+	r.With(h.JWT).Get("/api/services", h.listServices)
 	r.With(h.JWT).Get("/api/services/count", h.countServices)
-	r.With(h.JWT).Get("/api/services/{service_id}", h.getService)
+	r.With(h.JWT).Get("/api/services/{id}", h.getService)
 	r.With(h.JWT).Post("/api/services", h.createService)
-	r.With(h.JWT).Put("/api/services/{service_id}", h.updateService)
-	r.With(h.JWT).Delete("/api/services/{service_id}", h.deleteService)
+	r.With(h.JWT).Put("/api/services/{id}", h.updateService)
+	r.With(h.JWT).Delete("/api/services/{id}", h.deleteService)
 
-	r.With(h.JWT).Get("/api/services-available", h.getServicesAvailable)
+	r.With(h.JWT).Get("/api/services-available", h.listServicesAvailable)
 	// r.With(h.JWT).Get("/api/services-available/count", h.countAvailableServices)
-	r.With(h.JWT).Get("/api/services-available/{service_id}", h.getServiceAvailable)
+	r.With(h.JWT).Get("/api/services-available/{id}", h.getServiceAvailable)
 	r.With(h.JWT).Post("/api/services-available", h.createServiceAvailable)
-	r.With(h.JWT).Put("/api/services-available/{service_id}", h.updateServiceAvailable)
-	r.With(h.JWT).Delete("/api/services-available/{service_id}", h.deleteServiceAvailable)
+	r.With(h.JWT).Put("/api/services-available/{id}", h.updateServiceAvailable)
+	r.With(h.JWT).Delete("/api/services-available/{id}", h.deleteServiceAvailable)
 
 	if env.Get(env.APP_ENVIRONMENT) == "test" {
 		r.Get("/api/test/stats", h.getTestStats)
@@ -122,6 +124,14 @@ func NewApi(pool *pgxpool.Pool, auth *jwtauth.JWTAuth) http.Handler {
 	r.Get("/api/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("http://localhost:8080/swagger/doc.json"), //The url pointing to API definition
 	))
+
+	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
+		// Format the response
+		response := presenter.RouteNotFoundProblem(r.Method, r.URL.String())
+		EnhanceProblem(w, r, &response)
+		render.Status(r, http.StatusNotFound)
+		render.JSON(w, r, response)
+	})
 
 	return r
 }
