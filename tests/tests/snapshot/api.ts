@@ -352,7 +352,7 @@ async function run(w: WriteStr, api: Api, args: Args) {
         birthdate: random.date(1980, 2010),
         cnpj: '08130896000135',
         cpf: '72730805001',
-        phone: '119876543210',
+        phone: '76543210',
       })
       if (res.status !== 201) throw new Error(`secretaries ${i}: ${JSON.stringify(res.data)}`)
       state.secretaryIds.push(res.data.id)
@@ -385,7 +385,7 @@ async function run(w: WriteStr, api: Api, args: Args) {
       const res = await api.specialists.create({
         name: `Specialist ${i.toString().padStart(4, '0')}`,
         email: `specialist-${i}@test.com`,
-        phone: '219876543210',
+        phone: '76543210',
         cnpj: '16833374000128',
         cpf: '96156338012',
         birthdate: random.date(1980, 2000),
@@ -422,7 +422,7 @@ async function run(w: WriteStr, api: Api, args: Args) {
         email: `customer-${i}@test.com`,
         cpf: '11431287962',
         birthdate: random.date(1960, 2010),
-        phone: `21987654${i.toString().padStart(3, '0')}`,
+        phone: `87654${i.toString().padStart(3, '0')}`,
       })
       if (res.status !== 201) throw new Error(`customers ${i}: ${JSON.stringify(res.data)}`)
       state.customerIds.push(res.data.id)
@@ -468,37 +468,37 @@ async function run(w: WriteStr, api: Api, args: Args) {
   await api.customers.getAll({ page: 0, pageSize: 5, name: 'CustomerX' })
   await api.customers.getAll({ page: 0, pageSize: 5, name: '1' })
   await api.customers.getAll({ page: 1, pageSize: 5, name: '1' })
-  await api.customers.getAll({ phone: '21987654002' })
+  await api.customers.getAll({ phone: '87654002' })
   await api.customers.getAll({ page: 0, pageSize: 5, cpf: '11431287962' })
 
   await api.customers.count({ name: 'CustomerX' })
   await api.customers.count({ name: '1' })
-  await api.customers.count({ phone: '21987654002' })
+  await api.customers.count({ phone: '87654002' })
   await api.customers.count({ cpf: '11431287962' })
 
   await api.secretaries.getAll({ page: 0, pageSize: 5, name: 'SecretaryX' })
   await api.secretaries.getAll({ page: 0, pageSize: 5, name: '1' })
   await api.secretaries.getAll({ page: 1, pageSize: 5, name: '1' })
-  await api.secretaries.getAll({ page: 0, pageSize: 5, phone: '119876543210' })
+  await api.secretaries.getAll({ page: 0, pageSize: 5, phone: '76543210' })
   await api.secretaries.getAll({ page: 0, pageSize: 5, cpf: '72730805001' })
   await api.secretaries.getAll({ page: 0, pageSize: 5, cnpj: '08130896000135' })
 
   await api.secretaries.count({ name: 'SecretaryX' })
   await api.secretaries.count({ name: '1' })
-  await api.secretaries.count({ phone: '119876543210' })
+  await api.secretaries.count({ phone: '76543210' })
   await api.secretaries.count({ cpf: '72730805001' })
   await api.secretaries.count({ cnpj: '08130896000135' })
 
   await api.specialists.getAll({ page: 0, pageSize: 5, name: 'SpecialistX' })
   await api.specialists.getAll({ page: 0, pageSize: 5, name: '1' })
   await api.specialists.getAll({ page: 1, pageSize: 5, name: '1' })
-  await api.specialists.getAll({ page: 0, pageSize: 5, phone: '219876543210' })
+  await api.specialists.getAll({ page: 0, pageSize: 5, phone: '76543210' })
   await api.specialists.getAll({ page: 0, pageSize: 5, cpf: '96156338012' })
   await api.specialists.getAll({ page: 0, pageSize: 5, cnpj: '16833374000128' })
 
   await api.specialists.count({ name: 'SpecialistX' })
   await api.specialists.count({ name: '1' })
-  await api.specialists.count({ phone: '219876543210' })
+  await api.specialists.count({ phone: '76543210' })
   await api.specialists.count({ cpf: '96156338012' })
   await api.specialists.count({ cnpj: '16833374000128' })
 

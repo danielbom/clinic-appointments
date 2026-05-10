@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"backend/internal/infra"
+	"backend/internal/validate"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -15,8 +16,14 @@ func (args *AuthLoginArgs) Validate() *UsecaseError {
 	if args.Email == "" {
 		return NewInvalidArgumentError(ACTION_MUTATION, "email", ErrFieldIsRequired)
 	}
+	if !validate.IsEmailValid(args.Email) {
+		return NewInvalidArgumentError(ACTION_MUTATION, "email", ErrInvalidEmail)
+	}
 	if args.Password == "" {
 		return NewInvalidArgumentError(ACTION_MUTATION, "password", ErrFieldIsRequired)
+	}
+	if !validate.IsPasswordValid(args.Email) {
+		return NewInvalidArgumentError(ACTION_MUTATION, "password", ErrInvalidPattern)
 	}
 	return nil
 }

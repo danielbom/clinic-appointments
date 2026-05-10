@@ -12,12 +12,12 @@ RETURNING "id";
 SELECT "id", "specialist_id", "weekday", "start_time", "end_time"
 FROM specialist_hours
 WHERE "specialist_id" = sqlc.arg('specialistId')
-    AND "weekday" = sqlc.arg('weekday')
-    AND (
-        sqlc.arg('startTime')::time BETWEEN "start_time" AND "end_time"
-        OR 
-        sqlc.arg('endTime')::time BETWEEN "start_time" AND "end_time"
-    )
+  AND "weekday" = sqlc.arg('weekday')
+  AND (
+    sqlc.arg('startTime')::time BETWEEN "start_time" AND "end_time"
+    OR 
+    sqlc.arg('endTime')::time BETWEEN "start_time" AND "end_time"
+  )
 ORDER BY "start_time" ASC;
 
 -- name: UpdateSpecialistHourStartAndEndTime :exec

@@ -101,7 +101,7 @@ func (q *Queries) ListServiceNames(ctx context.Context) ([]ServiceName, error) {
 const updateServiceName = `-- name: UpdateServiceName :one
 UPDATE "service_names"
 SET
-    "name" = $1
+  "name" = $1
 WHERE "id" = $2
 RETURNING "id"
 `

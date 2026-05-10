@@ -9,7 +9,7 @@ RETURNING "id";
 -- name: UpdateServiceName :one
 UPDATE "service_names"
 SET
-    "name" = sqlc.arg('name')
+  "name" = sqlc.arg('name')
 WHERE "id" = sqlc.arg('id')
 RETURNING "id";
 

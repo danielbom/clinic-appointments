@@ -102,8 +102,8 @@ func (q *Queries) GetServiceByID(ctx context.Context, serviceid pgtype.UUID) (Se
 const updateService = `-- name: UpdateService :one
 UPDATE "services" 
 SET
-    "price"    = $1,
-    "duration" = $2
+  "price"    = $1,
+  "duration" = $2
 WHERE "id" = $3
 RETURNING "id"
 `

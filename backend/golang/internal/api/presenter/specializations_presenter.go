@@ -7,7 +7,7 @@ import (
 
 func GetSpecializations(specializations []infra.Specialization) []dtos.Specialization {
 	response := make([]dtos.Specialization, 0, len(specializations))
-	
+
 	for _, s := range specializations {
 		response = append(response, GetSpecialization(s))
 	}
@@ -17,7 +17,7 @@ func GetSpecializations(specializations []infra.Specialization) []dtos.Specializ
 
 func GetSpecialization(s infra.Specialization) dtos.Specialization {
 	return dtos.Specialization{
-		ID: s.ID.String(),
+		ID:   s.ID.String(),
 		Name: s.Name,
 	}
 }

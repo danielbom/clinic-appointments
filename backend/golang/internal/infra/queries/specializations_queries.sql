@@ -1,14 +1,14 @@
 -- name: CreateSpecialization :one
 INSERT INTO "specializations" ("id", "name")
 VALUES ( sqlc.arg('id')
-			 , sqlc.arg('name')
-			 )
+       , sqlc.arg('name')
+       )
 RETURNING "id";
 
 -- name: UpdateSpecialization :one
 UPDATE "specializations"
 SET 
-	"name" = sqlc.arg('name')
+  "name" = sqlc.arg('name')
 WHERE "id" = sqlc.arg('id')
 RETURNING "id";
 
@@ -31,10 +31,10 @@ ORDER BY "name" ASC;
 SELECT "sp"."id", "sp"."name"
 FROM "specializations" "sp"
 WHERE "sp"."id" IN (
-	SELECT "sn"."specialization_id" 
-	FROM "services" "s" 
-	JOIN "service_names" "sn" ON "sn"."id" = "s"."service_name_id"
-	WHERE "s"."specialist_id" = sqlc.arg('specialistId')
+  SELECT "sn"."specialization_id" 
+  FROM "services" "s" 
+  JOIN "service_names" "sn" ON "sn"."id" = "s"."service_name_id"
+  WHERE "s"."specialist_id" = sqlc.arg('specialistId')
 )
 ORDER BY "name" ASC;
 

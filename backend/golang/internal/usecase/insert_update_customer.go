@@ -34,11 +34,25 @@ func (args *CustomerInfoArgs) Validate() *UsecaseError {
 	if args.Phone == "" {
 		return NewInvalidArgumentError(ACTION_MUTATION, "phone", ErrFieldIsRequired)
 	}
+	if !validate.IsPhoneValid(args.Phone) {
+		return NewInvalidArgumentError(ACTION_MUTATION, "phone", ErrInvalidPhone)
+	}
 	if args.Cpf == "" {
 		return NewInvalidArgumentError(ACTION_MUTATION, "cpf", ErrFieldIsRequired)
 	}
 	if !validate.IsCpfValid(args.Cpf) {
-		return NewInvalidArgumentError(ACTION_MUTATION, "cpf", ErrInvalidFormat)
+		return NewInvalidArgumentError(ACTION_MUTATION, "cpf", ErrInvalidCpf)
+	}
+	if !validate.IsCpfValid(args.Cpf) {
+		return NewInvalidArgumentError(ACTION_MUTATION, "cpf", ErrInvalidCpf)
+	}
+	if args.EmailText.String != "" {
+		if args.EmailText.String == "" {
+			return NewInvalidArgumentError(ACTION_MUTATION, "email", ErrFieldIsRequired)
+		}
+		if !validate.IsEmailValid(args.EmailText.String) {
+			return NewInvalidArgumentError(ACTION_MUTATION, "email", ErrInvalidEmail)
+		}
 	}
 	return nil
 }

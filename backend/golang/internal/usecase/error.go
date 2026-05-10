@@ -71,8 +71,12 @@ var (
 	ErrInvalidUuid     = errors.New("invalid uuid")
 	ErrInvalidDate     = errors.New("invalid date")
 	ErrInvalidTime     = errors.New("invalid time")
-	ErrInvalidFormat   = errors.New("invalid format")
+	ErrInvalidCpf      = errors.New("invalid cpf")
+	ErrInvalidCnpj     = errors.New("invalid cnpj")
+	ErrInvalidEmail    = errors.New("invalid email")
 	ErrInvalidRange    = errors.New("invalid range")
+	ErrInvalidPhone    = errors.New("invalid phone")
+	ErrInvalidPattern  = errors.New("invalid pattern")
 	ErrInvalidDuration = errors.New("invalid duration")
 
 	ErrExpectPositiveValue = errors.New("expect positive value")

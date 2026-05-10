@@ -14,8 +14,8 @@ import (
 const createSpecialization = `-- name: CreateSpecialization :one
 INSERT INTO "specializations" ("id", "name")
 VALUES ( $1
-			 , $2
-			 )
+       , $2
+       )
 RETURNING "id"
 `
 
@@ -100,10 +100,10 @@ const listSpecializationsBySpecialistID = `-- name: ListSpecializationsBySpecial
 SELECT "sp"."id", "sp"."name"
 FROM "specializations" "sp"
 WHERE "sp"."id" IN (
-	SELECT "sn"."specialization_id" 
-	FROM "services" "s" 
-	JOIN "service_names" "sn" ON "sn"."id" = "s"."service_name_id"
-	WHERE "s"."specialist_id" = $1
+  SELECT "sn"."specialization_id" 
+  FROM "services" "s" 
+  JOIN "service_names" "sn" ON "sn"."id" = "s"."service_name_id"
+  WHERE "s"."specialist_id" = $1
 )
 ORDER BY "name" ASC
 `
@@ -131,7 +131,7 @@ func (q *Queries) ListSpecializationsBySpecialistID(ctx context.Context, special
 const updateSpecialization = `-- name: UpdateSpecialization :one
 UPDATE "specializations"
 SET 
-	"name" = $1
+  "name" = $1
 WHERE "id" = $2
 RETURNING "id"
 `

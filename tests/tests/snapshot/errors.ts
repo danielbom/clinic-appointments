@@ -305,6 +305,22 @@ async function run(w: WriteStr, api: Api, args: Args) {
     time: '10:00:00',
   })
 
+  // validate formats
+  w.write('# api.secretaries.create\n\n')
+  {
+    const values: Record<string, any[]> = {
+      cnpj: ['12345678910123'],
+      cpf: ['12345678910'],
+      phone: ['4678x9012'],
+      email: ['xxx'],
+    }
+    for (const key in values) {
+      for (const value of values[key]) {
+        await api.secretaries.create({ ...baseData.secretary, [key]: value })
+      }
+    }
+  }
+
   // token expired
   w.write('# Token expired\n\n')
   {

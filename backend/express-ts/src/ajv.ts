@@ -1,7 +1,15 @@
 import Ajv from 'ajv'
 import { Path } from './lib/path'
 import { validate as isUuid } from 'uuid'
-import { isValidISODate, isValidISOTime } from './utils'
+import {
+  isValidCnpj,
+  isValidCpf,
+  isValidEmail,
+  isValidISODate,
+  isValidISOTime,
+  isValidPhone,
+  onlyDigits,
+} from './utils'
 
 export const ajv = new Ajv({})
 
@@ -17,13 +25,7 @@ for (const component of ['domain', 'body', 'schemas']) {
 
 ajv.addFormat('email', {
   type: 'string',
-  validate: (data) => {
-    const parts = data.split('@')
-    if (parts.length !== 2) return false
-    if (parts[0].length === 0) return false
-    if (parts[1].length === 0) return false
-    return true
-  },
+  validate: (data) => isValidEmail(data),
 })
 
 ajv.addFormat('uuid', {
@@ -43,17 +45,17 @@ ajv.addFormat('time', {
 
 ajv.addFormat('phone', {
   type: 'string',
-  validate: (data) => true,
+  validate: (data) => isValidPhone(data),
 })
 
 ajv.addFormat('cpf', {
   type: 'string',
-  validate: (data) => true,
+  validate: (data) => isValidCpf(onlyDigits(data)),
 })
 
 ajv.addFormat('cnpj', {
   type: 'string',
-  validate: (data) => true,
+  validate: (data) => isValidCnpj(onlyDigits(data)),
 })
 
 ajv.addFormat('integer', {

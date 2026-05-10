@@ -38,28 +38,37 @@ func (args *SecretaryInfoArgs) Validate() *UsecaseError {
 	if args.Phone == "" {
 		return NewInvalidArgumentError(ACTION_MUTATION, "phone", ErrFieldIsRequired)
 	}
+	if !validate.IsPhoneValid(args.Phone) {
+		return NewInvalidArgumentError(ACTION_MUTATION, "phone", ErrInvalidPhone)
+	}
 	if args.Cpf == "" {
 		return NewInvalidArgumentError(ACTION_MUTATION, "cpf", ErrFieldIsRequired)
 	}
 	if !validate.IsCpfValid(args.Cpf) {
-		return NewInvalidArgumentError(ACTION_MUTATION, "cpf", ErrInvalidFormat)
+		return NewInvalidArgumentError(ACTION_MUTATION, "cpf", ErrInvalidCpf)
 	}
 	if args.Cnpj == "" {
 		return NewInvalidArgumentError(ACTION_MUTATION, "cnpj", ErrFieldIsRequired)
 	}
 	if !validate.IsCnpjValid(args.Cnpj) {
-		return NewInvalidArgumentError(ACTION_MUTATION, "cnpj", ErrInvalidFormat)
+		return NewInvalidArgumentError(ACTION_MUTATION, "cnpj", ErrInvalidCnpj)
+	}
+	if args.Email == "" {
+		return NewInvalidArgumentError(ACTION_MUTATION, "email", ErrFieldIsRequired)
+	}
+	if !validate.IsEmailValid(args.Email) {
+		return NewInvalidArgumentError(ACTION_MUTATION, "email", ErrInvalidEmail)
 	}
 	if args.Update {
 		if args.Password != "" && !validate.IsPasswordValid(args.Password) {
-			return NewInvalidArgumentError(ACTION_MUTATION, "password", ErrInvalidFormat)
+			return NewInvalidArgumentError(ACTION_MUTATION, "password", ErrInvalidPattern)
 		}
 	} else {
 		if args.Password == "" {
 			return NewInvalidArgumentError(ACTION_MUTATION, "password", ErrFieldIsRequired)
 		}
 		if !validate.IsPasswordValid(args.Password) {
-			return NewInvalidArgumentError(ACTION_MUTATION, "password", ErrInvalidFormat)
+			return NewInvalidArgumentError(ACTION_MUTATION, "password", ErrInvalidPattern)
 		}
 	}
 	return nil

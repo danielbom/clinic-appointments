@@ -24,7 +24,7 @@ export function plugInterceptors(
   axiosInstance.interceptors.response.use(
     (response) => {
       const endTime = performance.now()
-      const location = findInStack([fileName, 'async run']) + '\n'
+      const location = (findInStack([fileName, 'async run']) + '\n').replace(/\(.*tests(.*)\)/, '(tests$1)')
       if (writeResponses) {
         writter.write(location)
         writeResponse(writter, redactResponse(response))

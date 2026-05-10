@@ -16,12 +16,12 @@ export const baseData = {
     birthdate: '2000-10-10',
     cnpj: '08130896000135',
     cpf: '72730805001',
-    phone: '119876543210',
+    phone: '76543210',
   },
   specialist: {
     name: 'Specialist Test',
     email: 'specialist@test.com',
-    phone: '219876543210',
+    phone: '86543210',
     cnpj: '16833374000128',
     cpf: '96156338012',
     birthdate: '1999-09-09',
@@ -32,6 +32,6 @@ export const baseData = {
     email: 'customer@test.com',
     cpf: '11431287962',
     birthdate: '1999-08-08',
-    phone: '21987654321',
+    phone: '97654321',
   },
 }

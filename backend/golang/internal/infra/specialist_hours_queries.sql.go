@@ -47,12 +47,12 @@ const listSpecialistHoursIntersecting = `-- name: ListSpecialistHoursIntersectin
 SELECT "id", "specialist_id", "weekday", "start_time", "end_time"
 FROM specialist_hours
 WHERE "specialist_id" = $1
-    AND "weekday" = $2
-    AND (
-        $3::time BETWEEN "start_time" AND "end_time"
-        OR 
-        $4::time BETWEEN "start_time" AND "end_time"
-    )
+  AND "weekday" = $2
+  AND (
+    $3::time BETWEEN "start_time" AND "end_time"
+    OR 
+    $4::time BETWEEN "start_time" AND "end_time"
+  )
 ORDER BY "start_time" ASC
 `
 

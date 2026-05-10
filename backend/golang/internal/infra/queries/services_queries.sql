@@ -11,8 +11,8 @@ RETURNING "id";
 -- name: UpdateService :one
 UPDATE "services" 
 SET
-    "price"    = sqlc.arg('price'),
-    "duration" = sqlc.arg('duration')
+  "price"    = sqlc.arg('price'),
+  "duration" = sqlc.arg('duration')
 WHERE "id" = sqlc.arg('id')
 RETURNING "id";
 
