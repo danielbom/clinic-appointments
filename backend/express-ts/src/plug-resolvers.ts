@@ -1,24 +1,5 @@
-import type { Router, NextFunction, Request, Response } from 'express'
-import resolvers from './resolvers'
-
-function createHandler(resolver: (req: Request, res: Response) => Promise<void>) {
-  return async function handler(req: Request, res: Response, next: NextFunction) {
-    try {
-      await resolver(req, res)
-    } catch (error) {
-      next(error)
-    }
-  }
-}
-
-function getResolver(key: string) {
-  const path = key.split('.')
-  const maybeResolver: null | ((req: Request, res: Response) => Promise<void>) = path.reduce(
-    (obj, key) => (obj && typeof obj === 'object' ? (obj as any)[key] : null),
-    resolvers as any,
-  )
-  return maybeResolver
-}
+import type { Router } from 'express'
+import { expressResolversAdapter } from './adapter'
 
 export default function plugOpenApiResolvers(router: Router, openApiJson: any) {
   const missing: string[] = []
@@ -27,12 +8,11 @@ export default function plugOpenApiResolvers(router: Router, openApiJson: any) {
     for (const method in operations) {
       const operation = operations[method]
       const expressPath = path.replaceAll(/\{(\w+)\}/g, ':$1')
-      const resolver = getResolver(operation.operationId)
+      const resolver = expressResolversAdapter(operation.operationId)
       if (!resolver) {
         missing.push(operation.operationId)
       } else {
-        const handler = createHandler(resolver)
-        router[method as 'get' | 'post' | 'put' | 'delete'](expressPath, handler)
+        router[method as 'get' | 'post' | 'put' | 'delete'](expressPath, resolver)
       }
     }
   }

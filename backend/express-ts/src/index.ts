@@ -2,33 +2,25 @@ import 'dotenv/config'
 import openApiJson from './public/api/openapi.json' with { type: 'json' }
 import swaggerUI from 'swagger-ui-express'
 import express, { NextFunction, Request, Response, Router } from 'express'
-import crypto from 'node:crypto'
 import path from 'node:path'
 import cors from 'cors'
 import helmet from 'helmet'
 import morgan from 'morgan'
-import plugOpenApiResolvers from './plug-resolvers'
-import { getAppConfig } from './config'
-import { context } from './context'
-import { errors } from './errors'
-import { replier } from './utils'
+import { getAppConfig } from './core/config'
+import { errors } from './core/errors'
+import { replier } from './lib/http-adapter'
+import { routes } from './routes'
+import { ExpressRequestAdapter } from './adapter'
 
 const appConfig = getAppConfig()
 const app = express()
-
-app.use((req, res, next) => {
-  const id = req.header('x-request-id') || crypto.randomUUID()
-  context.set(req, 'id', id)
-  res.setHeader('X-Request-Id', id)
-  next()
-})
 
 // Security middleware
 app.use(helmet())
 app.use(
   cors({
     origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     credentials: true,
   }),
 )
@@ -44,21 +36,23 @@ app.use(morgan(':method :url :status :response-time ms - :res[content-length]'))
   api.use('/api/schemas', express.static(path.join(import.meta.dirname, 'public/schemas')))
   api.use('/api/redoc', express.static(path.join(import.meta.dirname, 'public/redoc')))
   api.use(express.json({ type: 'application/json' }))
-  plugOpenApiResolvers(api, openApiJson)
+  api.use(routes)
   app.use(api)
 }
 
 // not found
 app.use('/', (req, res, _next) => {
-  const reply = replier(res)
-  reply.fail(errors.routeNotFound(req.method, req.url))
+  const request = new ExpressRequestAdapter(req, res)
+  const reply = replier(request)
+  return request.send(reply.fail(errors.routeNotFound(req.method, request.getUrl())))
 })
 
 // handle unexpected errors
-app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
-  const reply = replier(res)
+app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
   console.error(err)
-  reply.fail(errors.internal('An unexpected error occured'))
+  const request = new ExpressRequestAdapter(req, res)
+  const reply = replier(request)
+  return request.send(reply.fail(errors.internal('An unexpected error occured')))
 })
 
 app.listen(appConfig.port, () => {

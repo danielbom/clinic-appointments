@@ -534,7 +534,8 @@ async function run(w: WriteStr, api: Api, args: Args) {
 
 function main() {
   const SNAPSHOTS_DIR = Path.from(import.meta.dirname).append('snapshots')
-  const SNAPSHOT_LOG_PATH = SNAPSHOTS_DIR.append('api.log')
+  const port = API_URL.match(/:(\d+)/)?.[1]
+  const SNAPSHOT_LOG_PATH = SNAPSHOTS_DIR.append(`api.${port}.log`)
   const ACTUAL_SNAPSHOT_PATH = SNAPSHOTS_DIR.append('api.actual.txt')
   const CURRENT_SNAPSHOT_PATH = SNAPSHOTS_DIR.append('api.txt')
 

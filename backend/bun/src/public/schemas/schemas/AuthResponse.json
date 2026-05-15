@@ -1,0 +1,16 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/schemas/AuthResponse.json",
+  "type": "object",
+  "properties": {
+    "accessToken": {
+      "type": "string"
+    },
+    "refreshToken": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "accessToken",
+    "refreshToken"
+  ]
+}

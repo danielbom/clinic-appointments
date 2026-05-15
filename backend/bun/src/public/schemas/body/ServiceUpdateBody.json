@@ -1,0 +1,16 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/body/ServiceUpdateBody.json",
+  "type": "object",
+  "properties": {
+    "price": {
+      "$ref": "https://dev-clinic-appointments.com.br/schemas/domain/Price.json"
+    },
+    "duration": {
+      "$ref": "https://dev-clinic-appointments.com.br/schemas/domain/Duration.json"
+    }
+  },
+  "required": [
+    "price",
+    "duration"
+  ]
+}

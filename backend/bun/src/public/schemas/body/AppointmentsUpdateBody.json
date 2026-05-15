@@ -1,0 +1,20 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/body/AppointmentsUpdateBody.json",
+  "type": "object",
+  "properties": {
+    "date": {
+      "$ref": "https://dev-clinic-appointments.com.br/schemas/domain/Date.json"
+    },
+    "time": {
+      "$ref": "https://dev-clinic-appointments.com.br/schemas/domain/Time.json"
+    },
+    "status": {
+      "$ref": "https://dev-clinic-appointments.com.br/schemas/schemas/AppointmentStatus.json"
+    }
+  },
+  "required": [
+    "date",
+    "time",
+    "status"
+  ]
+}

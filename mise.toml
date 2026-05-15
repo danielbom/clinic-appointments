@@ -85,6 +85,40 @@ description = "Run error scenario end-to-end snapshot tests against port 3000"
 run = "npx cross-env API_URL=http://localhost:3000 npm run snapshot:errors replay"
 dir = "./tests"
 
+######################
+# backend/bun #
+######################
+
+[tasks."backend:bun:generate"]
+description = "Generate Bun API code and artifacts"
+run = "bun generate"
+dir = "./backend/bun"
+
+[tasks."backend:bun:run"]
+description = "Run Bun API locally on port 4000"
+run = "bun start"
+dir = "./backend/bun"
+
+[tasks."backend:bun:watch"]
+description = "Run Bun API with hot reload on port 4000"
+run = "bun dev"
+dir = "./backend/bun"
+
+[tasks."backend:bun:format"]
+description = "Format Bun source files"
+run = "bun format"
+dir = "./backend/bun"
+
+[tasks."backend:bun:e2e:api"]
+description = "Run API end-to-end snapshot tests against port 4000"
+run = "npx cross-env API_URL=http://localhost:4000 npm run snapshot:api replay"
+dir = "./tests"
+
+[tasks."backend:bun:e2e:errors"]
+description = "Run error scenario end-to-end snapshot tests against port 4000"
+run = "npx cross-env API_URL=http://localhost:4000 npm run snapshot:errors replay"
+dir = "./tests"
+
 ##################
 # backend/dotnet #
 ##################

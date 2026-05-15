@@ -1,0 +1,16 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/body/AuthLogin.json",
+  "type": "object",
+  "properties": {
+    "email": {
+      "$ref": "https://dev-clinic-appointments.com.br/schemas/domain/Email.json"
+    },
+    "password": {
+      "$ref": "https://dev-clinic-appointments.com.br/schemas/domain/Password.json"
+    }
+  },
+  "required": [
+    "email",
+    "password"
+  ]
+}

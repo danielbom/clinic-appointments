@@ -17,7 +17,7 @@ function mapSchema(baseUrl: string, schema: any) {
   if (schema.type === 'object') {
     schema.properties = { ...schema.properties }
     for (const key in schema.properties) {
-      schema.properties[key] = mapSchema(baseUrl, schema.properties[key])
+      schema.properties[key] = mapSchema(baseUrl, { ...schema.properties[key] })
     }
   }
   if (schema.type === 'array') {
@@ -166,7 +166,7 @@ function generateAjvValidations(w: Writable, { baseUrl }: { baseUrl: string }) {
 
   const validationsPath = Path.from(import.meta.dirname)
     .parent()
-    .append('validations.ts')
+    .append('core/validations.ts')
   const file = validationsPath.open('w')
   try {
     generateAjvValidations(file, { baseUrl })

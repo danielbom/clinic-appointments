@@ -1,0 +1,20 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/body/SpecialistsCreateBodyService.json",
+  "type": "object",
+  "properties": {
+    "serviceNameId": {
+      "$ref": "https://dev-clinic-appointments.com.br/schemas/domain/Uuid.json"
+    },
+    "price": {
+      "$ref": "https://dev-clinic-appointments.com.br/schemas/domain/Price.json"
+    },
+    "duration": {
+      "$ref": "https://dev-clinic-appointments.com.br/schemas/domain/Duration.json"
+    }
+  },
+  "required": [
+    "serviceNameId",
+    "price",
+    "duration"
+  ]
+}

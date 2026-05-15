@@ -1,0 +1,38 @@
+{
+  "$id": "https://dev-clinic-appointments.com.br/schemas/errors/ConflictProblemDetails.json",
+  "description": "Represents a resource conflict. Uses code 'resource_conflict' and HTTP status 409. Occurs when attempting to create or modify a resource that would violate a uniqueness constraint.",
+  "allOf": [
+    {
+      "$ref": "#/components/errors/ProblemDetails"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "resource_conflict"
+          ]
+        },
+        "status": {
+          "type": "number",
+          "enum": [
+            409
+          ]
+        },
+        "title": {
+          "type": "string",
+          "enum": [
+            "Resource conflict",
+            "Schedule conflict"
+          ]
+        }
+      },
+      "required": [
+        "code",
+        "status",
+        "title"
+      ]
+    }
+  ]
+}

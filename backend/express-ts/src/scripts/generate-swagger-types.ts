@@ -337,7 +337,7 @@ if (DEBUG) {
 } else {
   const swaggerTypesPath = Path.from(import.meta.dirname)
     .parent()
-    .append('swagger-types.ts')
+    .append('core/swagger-types.ts')
   const file = swaggerTypesPath.open('w')
   try {
     generateSwaggerTypes(file)
