@@ -2,12 +2,12 @@
 # docker/database #
 ###################
 
-[tasks."docker/database:up"]
+[tasks."docker-database-up"]
 description = "Start PostgreSQL database container"
 run = "docker-compose --project-name appointments up db --detach"
 dir = "./backend/golang"
 
-[tasks."docker/database:down"]
+[tasks."docker-database-down"]
 description = "Stop and remove PostgreSQL database container"
 run = "docker-compose --project-name appointments down db"
 dir = "./backend/golang"
@@ -16,37 +16,37 @@ dir = "./backend/golang"
 # backend/golang #
 ##################
 
-[tasks."backend:golang:generate"]
+[tasks."generate-golang"]
 description = "Generate Go API code and artifacts"
 run = "go generate"
 dir = "./backend/golang"
 
-[tasks."backend:golang:run"]
+[tasks."run-golang"]
 description = "Run Go API locally on port 8080"
 run = "go run ./cmd/api/main.go"
 dir = "./backend/golang"
 
-[tasks."backend:golang:watch"]
+[tasks."watch-golang"]
 description = "Run Go API with hot reload on port 8080"
 run = "air -c .air.toml"
 dir = "./backend/golang"
 
-[tasks."backend:golang:test"]
+[tasks."test-golang"]
 description = "Run Go unit and integration tests"
 run = "go test ./..."
 dir = "./backend/golang"
 
-[tasks."backend:golang:format"]
+[tasks."format-golang"]
 description = "Format Go source files"
 run = "go fmt ./..."
 dir = "./backend/golang"
 
-[tasks."backend:golang:e2e:api"]
+[tasks."e2e-api-golang"]
 description = "Run API end-to-end snapshot tests against port 8080"
 run = "npx cross-env API_URL=http://localhost:8080 npm run snapshot:api replay"
 dir = "./tests"
 
-[tasks."backend:golang:e2e:errors"]
+[tasks."e2e-errors-golang"]
 description = "Run error scenario end-to-end snapshot tests against port 8080"
 run = "npx cross-env API_URL=http://localhost:8080 npm run snapshot:errors replay"
 dir = "./tests"
@@ -55,32 +55,32 @@ dir = "./tests"
 # backend/express-ts #
 ######################
 
-[tasks."backend:express-ts:generate"]
+[tasks."generate-express.ts"]
 description = "Generate Express TypeScript API code and artifacts"
 run = "npm run generate"
 dir = "./backend/express-ts"
 
-[tasks."backend:express-ts:run"]
+[tasks."run-express.ts"]
 description = "Run Express TypeScript API locally on port 3000"
 run = "node --import tsx src/index.ts"
 dir = "./backend/express-ts"
 
-[tasks."backend:express-ts:watch"]
+[tasks."watch-express.ts"]
 description = "Run Express TypeScript API with hot reload on port 3000"
 run = "node --watch-path=src --import tsx src/index.ts"
 dir = "./backend/express-ts"
 
-[tasks."backend:express-ts:format"]
+[tasks."format-express.ts"]
 description = "Format Express TypeScript source files"
 run = "npm run format"
 dir = "./backend/express-ts"
 
-[tasks."backend:express-ts:e2e:api"]
+[tasks."e2e-api-express.ts"]
 description = "Run API end-to-end snapshot tests against port 3000"
 run = "npx cross-env API_URL=http://localhost:3000 npm run snapshot:api replay"
 dir = "./tests"
 
-[tasks."backend:express-ts:e2e:errors"]
+[tasks."e2e-errors-express.ts"]
 description = "Run error scenario end-to-end snapshot tests against port 3000"
 run = "npx cross-env API_URL=http://localhost:3000 npm run snapshot:errors replay"
 dir = "./tests"
@@ -89,32 +89,32 @@ dir = "./tests"
 # backend/bun #
 ######################
 
-[tasks."backend:bun:generate"]
+[tasks."generate-bun"]
 description = "Generate Bun API code and artifacts"
 run = "bun generate"
 dir = "./backend/bun"
 
-[tasks."backend:bun:run"]
+[tasks."run-bun"]
 description = "Run Bun API locally on port 4000"
 run = "bun start"
 dir = "./backend/bun"
 
-[tasks."backend:bun:watch"]
+[tasks."watch-bun"]
 description = "Run Bun API with hot reload on port 4000"
 run = "bun dev"
 dir = "./backend/bun"
 
-[tasks."backend:bun:format"]
+[tasks."format-bun"]
 description = "Format Bun source files"
 run = "bun format"
 dir = "./backend/bun"
 
-[tasks."backend:bun:e2e:api"]
+[tasks."e2e-api-bun"]
 description = "Run API end-to-end snapshot tests against port 4000"
 run = "npx cross-env API_URL=http://localhost:4000 npm run snapshot:api replay"
 dir = "./tests"
 
-[tasks."backend:bun:e2e:errors"]
+[tasks."e2e-errors-bun"]
 description = "Run error scenario end-to-end snapshot tests against port 4000"
 run = "npx cross-env API_URL=http://localhost:4000 npm run snapshot:errors replay"
 dir = "./tests"
@@ -123,22 +123,31 @@ dir = "./tests"
 # backend/dotnet #
 ##################
 
-[tasks."backend:dotnet:run"]
+[tasks."run-dotnet"]
 description = "Run .NET API locally on port 5186"
 run = "dotnet run --project ./ClinicAppointments.Api/"
 dir = "./backend/dotnet"
 
-[tasks."backend:dotnet:watch"]
+[tasks."watch-dotnet"]
 description = "Run .NET API with hot reload on port 5186"
 run = "dotnet watch run --project ./ClinicAppointments.Api/"
 dir = "./backend/dotnet"
 
-[tasks."backend:dotnet:e2e:api"]
+[tasks."e2e-api-dotnet"]
 description = "Run API end-to-end snapshot tests against port 5186"
 run = "npx cross-env API_URL=http://localhost:5186 npm run snapshot:api replay"
 dir = "./tests"
 
-[tasks."backend:dotnet:e2e:errors"]
+[tasks."e2e-errors-dotnet"]
 description = "Run error scenario end-to-end snapshot tests against port 5186"
 run = "npx cross-env API_URL=http://localhost:5186 npm run snapshot:errors replay"
 dir = "./tests"
+
+###########
+# general #
+###########
+
+[tasks."sync"]
+description = "Check if the described files in sync.txt is synchronized"
+run = "python sync.py"
+

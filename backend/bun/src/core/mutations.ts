@@ -4,9 +4,9 @@ import { queryAppointmentIntersects, queryIdentity } from './queries'
 import { parseISODateToUTC, parseISOTimeToUTC } from './utils'
 
 import { type UUID, generateId, parseUuid } from '../id'
-import { db } from '../db'
+import { db } from './db'
 import { hashPassword, verifyPassword } from '../password'
-import { extractJwtData, generateAccessJWT, generateRefreshJWT, isRefreshToken, JwtData, verifyJWT } from '../jwt'
+import { extractJwtData, generateAccessJWT, generateRefreshJWT, isRefreshToken, JwtData, verifyJWT } from './jwt'
 
 type Res<TOk, TError> = { ok: true; value: TOk } | { ok: false; error: TError }
 

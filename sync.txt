@@ -1,13 +1,13 @@
-[api]
+[lib/api]
 tests/src/lib/api
 !tests/src/lib/api/validation
 frontend/src/lib/api
 
-[writable.ts]
+[lib/writable.ts]
 tests/src/lib/writable.ts
 backend/express-ts/src/lib/writable.ts
 
-[path.ts]
+[lib/path.ts]
 tests/src/lib/path.ts
 backend/express-ts/src/lib/path.ts
 
@@ -18,6 +18,12 @@ backend/bun/prisma
 [bun/src/core]
 backend/express-ts/src/core
 backend/bun/src/core
+
+[bun/src/scripts]
+backend/express-ts/src/scripts
+!backend/express-ts/src/scripts/generate-express-routes.ts
+!backend/express-ts/src/scripts/generate-routes.ts
+backend/bun/src/scripts
 
 [bun/src/lib]
 backend/express-ts/src/lib

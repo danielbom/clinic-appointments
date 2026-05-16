@@ -1,6 +1,6 @@
 import type { RequestAdapter } from '../lib/http-adapter'
 
-import { extractJwtData, isRefreshToken, verifyJWT } from '../jwt'
+import { extractJwtData, isRefreshToken, verifyJWT } from './jwt'
 import { parseUuid } from '../id'
 
 // request

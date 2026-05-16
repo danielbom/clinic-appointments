@@ -24,6 +24,7 @@ The frontend UI was inspired by:
 
 ```text
 backend/
+├── bun/           # Bun API
 ├── dotnet/        # .NET API
 ├── express-ts/    # Node.js + Express + TypeScript API
 └── golang/        # Go API
@@ -89,6 +90,7 @@ Mise documentation:
 Depending on which backend you want to run, you may need:
 
 - Docker
+- Bun
 - Node.js
 - Go
 - .NET SDK

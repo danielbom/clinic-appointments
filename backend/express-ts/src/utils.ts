@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { extractJwtData, isRefreshToken, verifyJWT } from './jwt'
+import { extractJwtData, isRefreshToken, verifyJWT } from './core/jwt'
 import { context } from './lib/context'
 import { parseUuid } from './id'
 

@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import { getJwtConfig } from './core/config'
+import { getJwtConfig } from './config'
 
 export class JwtData {
   constructor(
