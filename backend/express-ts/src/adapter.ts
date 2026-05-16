@@ -1,11 +1,13 @@
-import { NextFunction, Request, Response } from 'express'
+import type { Request, Response } from 'express'
 
-import { replier, RequestAdapter, Resolver, ResponseAdapter } from './lib/http-adapter'
+import { replier } from './lib/http-adapter'
+import type { RequestAdapter, Resolver, ResponseAdapter } from './lib/http-adapter'
 import resolvers from './core/resolvers'
 import { errors } from './core/errors'
 
 type State = {
   id: string
+  operationId: string
 }
 
 function getResolver(key: string) {
@@ -33,7 +35,7 @@ export class ExpressRequestAdapter implements RequestAdapter<State> {
   private plugId() {
     const id = this.getHeader('x-request-id') || crypto.randomUUID()
     this.setToContext('id', id)
-    this.setHeader('X-Request-Id', id)
+    this.setHeader('x-request-id', id)
   }
 
   getId(): string {
@@ -49,7 +51,7 @@ export class ExpressRequestAdapter implements RequestAdapter<State> {
   }
 
   setHeader(key: string, value: string) {
-    this.headers[key] = value
+    this.headers[key.toLowerCase()] = value
   }
 
   getPathParam(key: string): string | null {
@@ -86,7 +88,7 @@ export class ExpressRequestAdapter implements RequestAdapter<State> {
 
   send(response: ResponseAdapter): any {
     for (const header in this.headers) {
-      this.res.setHeader(header, this.headers[header])
+      this.res.setHeader(header, this.headers[header]!)
     }
     return this.res.status(response.status).json(response.json)
   }
@@ -94,8 +96,10 @@ export class ExpressRequestAdapter implements RequestAdapter<State> {
 
 export function expressResolversAdapter(operationId: string) {
   const resolver = getResolver(operationId)
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (req: Request, res: Response) => {
     const request = new ExpressRequestAdapter(req, res)
+    request.setToContext('operationId', operationId)
+    request.setHeader('x-operation-id', operationId)
     if (!resolver) {
       const reply = replier(request)
       const response = reply.fail(errors.internal(`Resolver for ${operationId} not implemented`))
@@ -111,7 +115,9 @@ export function expressResolversAdapter(operationId: string) {
         return request.send(reply.fail(errors.internal(`Adapter for ${operationId} return type not implemented`)))
       }
     } catch (error) {
-      next(error)
+      console.error(error)
+      const reply = replier(request)
+      return request.send(reply.fail(errors.internal(`An unexpected error occured`)))
     }
   }
 }

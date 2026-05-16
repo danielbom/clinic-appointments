@@ -24,7 +24,16 @@ export function withLog(handler: (req: BunRequest) => Promise<Response>) {
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+  'Access-Control-Allow-Headers': [
+    'Accept',
+    'Origin',
+    'Content-Type',
+    'Authorization',
+    'Access-Control-Expose-Headers',
+    'Access-Control-Allow-Credentials',
+    'X-Request-Id',
+    'X-Operation-Id',
+  ].join(','),
 }
 
 export function withCors(handler: (req: BunRequest) => Response | Promise<Response>) {

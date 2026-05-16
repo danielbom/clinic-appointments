@@ -22,7 +22,7 @@ function getResolver(key: string) {
 
 export class BunRequestAdapter implements RequestAdapter {
   private url: URL
-  private state: any = {}
+  private state: Partial<State> = {}
   private headers: Record<string, string> = {}
 
   constructor(private req: BunRequest) {
@@ -33,11 +33,11 @@ export class BunRequestAdapter implements RequestAdapter {
   private plugId() {
     const id = this.getHeader('x-request-id') || crypto.randomUUID()
     this.setToContext('id', id)
-    this.setHeader('X-Request-Id', id)
+    this.setHeader('x-request-id', id)
   }
 
   getId() {
-    return this.getFromContext('id')
+    return this.getFromContext('id')!
   }
 
   getUrl(): URL {
@@ -61,7 +61,7 @@ export class BunRequestAdapter implements RequestAdapter {
   }
 
   getQueryParams(): Record<string, string | undefined> {
-    return this.url.searchParams.entries().reduce(
+    return Array.from(this.url.searchParams.entries()).reduce(
       (dict, [key, value]) => {
         dict[key] = value
         return dict
@@ -71,7 +71,7 @@ export class BunRequestAdapter implements RequestAdapter {
   }
 
   async getJsonBody(): Promise<{} | null> {
-    return (await this.req.body?.json()) ?? null
+    return (await this.req.json()) ?? null
   }
 
   getFromContext<K extends keyof State>(key: K) {
@@ -95,7 +95,7 @@ export function bunResolversAdapter(operationId: string) {
   return withMiddlewares(async (req) => {
     const request = new BunRequestAdapter(req)
     request.setToContext('operationId', operationId)
-    request.setHeader('operation-id', operationId)
+    request.setHeader('x-operation-id', operationId)
     if (!resolver) {
       const reply = replier(request)
       return request.send(reply.fail(errors.internal(`Resolver for ${operationId} not implemented`)))

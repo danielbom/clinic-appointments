@@ -2,12 +2,14 @@ export interface RequestAdapter<State = {}> {
   getId(): string
   getUrl(): URL
   getHeader(key: string): string | null
+  setHeader(key: string, value: string): void
   getPathParam(key: string): string | null
   getQueryParam(key: string): string | null
   getQueryParams(): Record<string, string | undefined>
   getJsonBody(): Promise<{} | null>
   getFromContext<K extends keyof State>(key: K): State[K] | null
   setToContext<K extends keyof State>(key: K, value: State[K]): void
+  send(response: ResponseAdapter): any
 }
 
 export interface ResponseAdapter {

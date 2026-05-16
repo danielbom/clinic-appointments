@@ -33,7 +33,7 @@ Bun.serve({
 })
 
 console.log(`🐎   App     ${appConfig.name}`)
-console.log(`🔧   Env     ${appConfig.environemnt}`)
+console.log(`🔧   Env     ${appConfig.environment}`)
 console.log(`🚀   Server  http://localhost:${appConfig.port}`)
 console.log(`📚   API     http://localhost:${appConfig.port}/api`)
 console.log(`📖   Docs    http://localhost:${appConfig.port}/api/docs`)

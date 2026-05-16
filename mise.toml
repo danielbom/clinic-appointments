@@ -75,6 +75,11 @@ description = "Format Express TypeScript source files"
 run = "npm run format"
 dir = "./backend/express-ts"
 
+[tasks."check-express.ts"]
+description = "Check Express TypeScript source files"
+run = "npm run check"
+dir = "./backend/express-ts"
+
 [tasks."e2e-api-express.ts"]
 description = "Run API end-to-end snapshot tests against port 3000"
 run = "npx cross-env API_URL=http://localhost:3000 npm run snapshot:api replay"
@@ -107,6 +112,11 @@ dir = "./backend/bun"
 [tasks."format-bun"]
 description = "Format Bun source files"
 run = "bun format"
+dir = "./backend/bun"
+
+[tasks."check-bun"]
+description = "Check Bun TypeScript source files"
+run = "npm run check"
 dir = "./backend/bun"
 
 [tasks."e2e-api-bun"]

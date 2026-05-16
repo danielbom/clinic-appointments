@@ -21,7 +21,7 @@ export function getDatabaseConfig() {
 export function getAppConfig() {
   return registerConfig('app', () => ({
     name: assertNotNull('APPOINTMENTS_NAME', process.env.APPOINTMENTS_NAME),
-    environemnt: assertStringEnum('APPOINTMENTS_ENVIRONMENT', process.env.APPOINTMENTS_ENVIRONMENT, [
+    environment: assertStringEnum('APPOINTMENTS_ENVIRONMENT', process.env.APPOINTMENTS_ENVIRONMENT, [
       'test',
       'development',
       'production',

@@ -8,7 +8,8 @@
     "start": "node --import tsx src/index.ts",
     "dev": "node --watch --import tsx src/index.ts",
     "format": "prettier --write ./src",
-    "generate": "node --import tsx ./src/scripts/generate.ts"
+    "generate": "node --import tsx ./src/scripts/generate.ts",
+    "check": "npx tsc --noEmit"
   },
   "keywords": [],
   "author": "",

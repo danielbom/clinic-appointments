@@ -1,7 +1,8 @@
 import 'dotenv/config'
 import openApiJson from './public/api/openapi.json' with { type: 'json' }
 import swaggerUI from 'swagger-ui-express'
-import express, { NextFunction, Request, Response, Router } from 'express'
+import express, { Router } from 'express'
+import type { NextFunction, Request, Response } from 'express'
 import path from 'node:path'
 import cors from 'cors'
 import helmet from 'helmet'
@@ -57,7 +58,7 @@ app.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
 
 app.listen(appConfig.port, () => {
   console.log(`🐎   App     ${appConfig.name}`)
-  console.log(`🔧   Env     ${appConfig.environemnt}`)
+  console.log(`🔧   Env     ${appConfig.environment}`)
   console.log(`🚀   Server  http://localhost:${appConfig.port}`)
   console.log(`📚   API     http://localhost:${appConfig.port}/api`)
   console.log(`📖   Docs    http://localhost:${appConfig.port}/api/docs`)
