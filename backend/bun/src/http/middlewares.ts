@@ -1,21 +1,32 @@
 import { type BunRequest } from 'bun'
+import { logger } from '../core/logger'
+import { BunRequestAdapter } from './adapter'
 
 // morgan ':method :url :status :response-time ms - :res[content-length]'
 export function withLog(handler: (req: BunRequest) => Promise<Response>) {
   return async (req: BunRequest): Promise<Response> => {
     // Enter
-    const startedAt = Date.now()
+    const start = process.hrtime.bigint()
+    const request = new BunRequestAdapter(req)
 
     // Act
     const res = await handler(req)
 
     // Exit
-    const url = new URL(req.url)
-    const responseTime = Date.now() - startedAt
-    const contentLength = res.headers.get('content-length') ?? res.headers.get('Content-Length') ?? '-'
-    const id = res.headers.get('operation-id') ?? '-'
-    const time = new Date().toISOString()
-    console.log(`[${time}] ${req.method} ${url.pathname} (${id}) ${res.status} ${responseTime} ms - ${contentLength}`)
+    const durationMs = Number(process.hrtime.bigint() - start) / 1e6
+    const log = {
+      method: req.method,
+      url: req.url,
+      status: res.status ?? 0,
+      durationMs: Math.round(durationMs * 1000) / 1000,
+      traceId: request.getId(),
+      operationId: request.getOperationId(),
+    }
+    const message = `${log.method} ${log.url} ${log.status} ${log.durationMs}ms`
+    if (log.status >= 500) logger.error(log, message)
+    else if (log.status >= 400) logger.warn(log, message)
+    else logger.info(log, message)
+
     return res
   }
 }

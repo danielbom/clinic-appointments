@@ -7,6 +7,7 @@ import { routes } from './routes'
 import { BunRequestAdapter } from './adapter'
 import { errors } from './errors/presenter'
 import { replier } from '../lib/http-adapter'
+import { logger } from '../core/logger'
 
 export function startWebServer() {
   const publicDir = Path.from(import.meta.dirname).append('public')
@@ -33,11 +34,12 @@ export function startWebServer() {
     },
   })
 
-  console.log(`🐎   App     ${app.name}`)
-  console.log(`🔧   Env     ${app.environment}`)
-  console.log(`🚀   Server  http://localhost:${app.port}`)
-  console.log(`📚   API     http://localhost:${app.port}/api`)
-  console.log(`📖   Docs    http://localhost:${app.port}/api/docs`)
-  console.log(`📖   Redoc   http://localhost:${app.port}/api/redoc`)
-  console.log(`🔐   Auth    http://localhost:${app.port}/api/auth`)
+  logger.info(`App     ${app.name}`)
+  logger.info(`Env     ${app.environment}`)
+  logger.info(`Server  http://localhost:${app.port}`)
+  logger.info(`API     http://localhost:${app.port}/api`)
+  logger.info(`Docs    http://localhost:${app.port}/api/docs`)
+  logger.info(`Redoc   http://localhost:${app.port}/api/redoc`)
+  logger.info(`Auth    http://localhost:${app.port}/api/auth`)
+  logger.info(`Health  http://localhost:${app.port}/api/health`)
 }

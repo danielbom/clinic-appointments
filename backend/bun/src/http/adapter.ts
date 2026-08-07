@@ -1,23 +1,11 @@
 import { type BunRequest } from 'bun'
 
-import { withMiddlewares } from './middlewares'
-import resolvers from './resolvers'
-
-import { replier, type RequestAdapter, type Resolver, type ResponseAdapter } from '../lib/http-adapter'
-import { errors } from './errors/presenter'
+import { type RequestAdapter, type ResponseAdapter } from '../lib/http-adapter'
+import { requestLogger } from '../core/logger'
 
 type State = {
   id: string
   operationId: string
-}
-
-function getResolver(key: string) {
-  const path = key.split('.')
-  const maybeResolver: null | Resolver = path.reduce(
-    (obj, key) => (obj && typeof obj === 'object' ? (obj as any)[key] : null),
-    resolvers as any,
-  )
-  return maybeResolver
 }
 
 export class BunRequestAdapter implements RequestAdapter {
@@ -27,17 +15,20 @@ export class BunRequestAdapter implements RequestAdapter {
 
   constructor(private req: BunRequest) {
     this.url = new URL(req.url)
-    this.plugId()
+    const state = (this.req as any)._state || {}
+    this.state = (this.req as any)._state = state
   }
 
-  private plugId() {
-    const id = this.getHeader('x-request-id') || crypto.randomUUID()
-    this.setToContext('id', id)
-    this.setHeader('x-request-id', id)
+  getId(): string {
+    return this.getFromContext('id') || crypto.randomUUID()
   }
 
-  getId() {
-    return this.getFromContext('id')!
+  getOperationId(): string | null {
+    return this.getFromContext('operationId')
+  }
+
+  getLogger() {
+    return requestLogger(this.getId(), this.getOperationId() ?? undefined)
   }
 
   getUrl(): URL {
@@ -71,6 +62,7 @@ export class BunRequestAdapter implements RequestAdapter {
   }
 
   async getJsonBody(): Promise<{} | null> {
+    if (!this.req.body) return null
     return (await this.req.json()) ?? null
   }
 
@@ -88,31 +80,4 @@ export class BunRequestAdapter implements RequestAdapter {
     }
     return Response.json(response.json, { status: response.status, headers: this.headers })
   }
-}
-
-export function bunResolversAdapter(operationId: string) {
-  const resolver = getResolver(operationId)
-  return withMiddlewares(async (req) => {
-    const request = new BunRequestAdapter(req)
-    request.setToContext('operationId', operationId)
-    request.setHeader('x-operation-id', operationId)
-    if (!resolver) {
-      const reply = replier(request)
-      return request.send(reply.fail(errors.internal(`Resolver for ${operationId} not implemented`)))
-    }
-    try {
-      const response = await resolver(request)
-      if (response.json !== undefined) {
-        return request.send(response)
-      }
-      {
-        const reply = replier(request)
-        return request.send(reply.fail(errors.internal(`Adapter for ${operationId} return type not implemented`)))
-      }
-    } catch (error) {
-      console.error(error)
-      const reply = replier(request)
-      return request.send(reply.fail(errors.internal('An unexpected error occured')))
-    }
-  })
 }

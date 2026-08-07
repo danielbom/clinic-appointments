@@ -6,12 +6,13 @@ import type { NextFunction, Request, Response } from 'express'
 import path from 'node:path'
 import cors from 'cors'
 import helmet from 'helmet'
-import morgan from 'morgan'
 import { getAppConfig } from '../core/config'
 import { errors } from './errors/presenter'
 import { replier } from '../lib/http-adapter'
 import { routes } from './routes'
 import { ExpressRequestAdapter } from './adapter'
+import { logger } from '../core/logger'
+import { logRequest } from './middlewares'
 
 export function createServer() {
   const server = express()
@@ -27,7 +28,7 @@ export function createServer() {
   )
   server.set('trust proxy', 1)
 
-  server.use(morgan(':method :url :status :response-time ms - :res[content-length]'))
+  server.use(logRequest)
 
   {
     const api = Router()
@@ -49,9 +50,9 @@ export function createServer() {
 
   // handle unexpected errors
   server.use((err: Error, req: Request, res: Response, _next: NextFunction) => {
-    console.error(err)
     const request = new ExpressRequestAdapter(req, res)
     const reply = replier(request)
+    request.getLogger().error({ err }, 'unhandled error')
     return request.send(reply.fail(errors.internal('An unexpected error occured')))
   })
 
@@ -63,12 +64,13 @@ export function startWebServer() {
   const server = createServer()
 
   server.listen(app.port, () => {
-    console.log(`🐎   App     ${app.name}`)
-    console.log(`🔧   Env     ${app.environment}`)
-    console.log(`🚀   Server  http://localhost:${app.port}`)
-    console.log(`📚   API     http://localhost:${app.port}/api`)
-    console.log(`📖   Docs    http://localhost:${app.port}/api/docs`)
-    console.log(`📖   Redoc   http://localhost:${app.port}/api/redoc`)
-    console.log(`🔐   Auth    http://localhost:${app.port}/api/auth`)
+    logger.info(`App     ${app.name}`)
+    logger.info(`Env     ${app.environment}`)
+    logger.info(`Server  http://localhost:${app.port}`)
+    logger.info(`API     http://localhost:${app.port}/api`)
+    logger.info(`Docs    http://localhost:${app.port}/api/docs`)
+    logger.info(`Redoc   http://localhost:${app.port}/api/redoc`)
+    logger.info(`Auth    http://localhost:${app.port}/api/auth`)
+    logger.info(`Health  http://localhost:${app.port}/api/health`)
   })
 }

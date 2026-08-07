@@ -1,2 +1,4 @@
 src/prisma/
 src/public/
+src/specs/
+src/http/types.ts

@@ -1,8 +1,8 @@
-import path from 'node:path';
+import path from 'node:path'
 import { WriteStr, type Writable } from '../../lib/writable'
 import { collectApi } from './_internal'
 import { VALIDATIONS_PATH } from './_config'
-import { refToSchemaId } from './_internal';
+import { refToSchemaId } from './_internal'
 
 function hasBodyOrQuery(actions: Record<string, { body?: any; query?: any }>): boolean {
   for (const key in actions) {

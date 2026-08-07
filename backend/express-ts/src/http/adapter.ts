@@ -1,22 +1,11 @@
 import type { Request, Response } from 'express'
 
-import { replier } from '../lib/http-adapter'
-import type { RequestAdapter, Resolver, ResponseAdapter } from '../lib/http-adapter'
-import resolvers from './resolvers'
-import { errors } from './errors/presenter'
+import type { RequestAdapter, ResponseAdapter } from '../lib/http-adapter'
+import { requestLogger } from '../core/logger'
 
 type State = {
   id: string
   operationId: string
-}
-
-function getResolver(key: string) {
-  const path = key.split('.')
-  const maybeResolver: null | Resolver = path.reduce(
-    (obj, key) => (obj && typeof obj === 'object' ? (obj as any)[key] : null),
-    resolvers as any,
-  )
-  return maybeResolver
 }
 
 export class ExpressRequestAdapter implements RequestAdapter<State> {
@@ -29,17 +18,20 @@ export class ExpressRequestAdapter implements RequestAdapter<State> {
     private res: Response,
   ) {
     this.url = new URL(`http://${process.env.HOST ?? 'localhost'}${req.url}`)
-    this.plugId()
-  }
-
-  private plugId() {
-    const id = this.getHeader('x-request-id') || crypto.randomUUID()
-    this.setToContext('id', id)
-    this.setHeader('x-request-id', id)
+    const state = (this.req as any)._state || {}
+    this.state = (this.req as any)._state = state
   }
 
   getId(): string {
-    return this.getFromContext('id')!
+    return this.getFromContext('id') || crypto.randomUUID()
+  }
+
+  getOperationId(): string | null {
+    return this.getFromContext('operationId')
+  }
+
+  getLogger() {
+    return requestLogger(this.getId(), this.getOperationId() ?? undefined)
   }
 
   getUrl(): URL {
@@ -91,33 +83,5 @@ export class ExpressRequestAdapter implements RequestAdapter<State> {
       this.res.setHeader(header, this.headers[header]!)
     }
     return this.res.status(response.status).json(response.json)
-  }
-}
-
-export function expressResolversAdapter(operationId: string) {
-  const resolver = getResolver(operationId)
-  return async (req: Request, res: Response) => {
-    const request = new ExpressRequestAdapter(req, res)
-    request.setToContext('operationId', operationId)
-    request.setHeader('x-operation-id', operationId)
-    if (!resolver) {
-      const reply = replier(request)
-      const response = reply.fail(errors.internal(`Resolver for ${operationId} not implemented`))
-      return request.send(response)
-    }
-    try {
-      const response = await resolver(request)
-      if (response.json !== undefined) {
-        return request.send(response)
-      }
-      {
-        const reply = replier(request)
-        return request.send(reply.fail(errors.internal(`Adapter for ${operationId} return type not implemented`)))
-      }
-    } catch (error) {
-      console.error(error)
-      const reply = replier(request)
-      return request.send(reply.fail(errors.internal(`An unexpected error occured`)))
-    }
   }
 }
