@@ -1,23 +1,21 @@
-import type * as types from './swagger-types'
+import type * as types from '../http/types'
 import { AppointmentStatus } from './presenter'
 import { queryAppointmentIntersects, queryIdentity } from './queries'
 import { parseISODateToUTC, parseISOTimeToUTC } from './utils'
 
-import { type UUID, generateId, parseUuid } from '../id'
+import { type UUID, generateId, parseUuid } from './id'
 import { db } from './db'
-import { hashPassword, verifyPassword } from '../password'
+import { hashPassword, verifyPassword } from './password'
 import { extractJwtData, generateAccessJWT, generateRefreshJWT, isRefreshToken, JwtData, verifyJWT } from './jwt'
-
-type Res<TOk, TError> = { ok: true; value: TOk } | { ok: false; error: TError }
-
-type Id = { id: string }
-type Resource = 'appointment' | 'customer' | 'service' | 'secretary' | 'service_name' | 'specialization' | 'specialist'
-export type InvalidCredentialsError = { kind: 'invalid credentials' }
-export type InvalidTokenError = { kind: 'invalid token' }
-export type NotFoundError = { kind: 'not found'; resource: Resource }
-export type AlreadyExistsError = { kind: 'already exists'; resource: Resource; key: string }
-export type ScheduleConflictError = { kind: 'schedule conflict'; resource: Resource; key: string }
-export type InternalError = { kind: 'internal'; detail: string }
+import type {
+  InvalidCredentialsError,
+  AlreadyExistsError,
+  InternalError,
+  InvalidTokenError,
+  NotFoundError,
+  ScheduleConflictError,
+} from '../http/errors/domain'
+import type { Res } from '../lib/res'
 
 // auth
 
@@ -79,7 +77,7 @@ export async function refresh({
 
 export async function createAppointment(
   args: types.api.appointments.createAppointment.body,
-): Promise<Res<Id, NotFoundError | ScheduleConflictError>> {
+): Promise<Res<types.schemas.Id, NotFoundError | ScheduleConflictError>> {
   const service = await db.services.findUnique({
     where: { id: args.serviceId },
   })
@@ -119,7 +117,7 @@ export async function createAppointment(
 export async function updateAppointment(
   appointmentId: UUID,
   args: types.api.appointments.updateAppointment.body,
-): Promise<Res<Id, ScheduleConflictError | NotFoundError>> {
+): Promise<Res<types.schemas.Id, ScheduleConflictError | NotFoundError>> {
   const row = await db.appointments.findFirst({
     where: { id: appointmentId },
   })
@@ -150,7 +148,7 @@ export async function updateAppointment(
   return { ok: true, value: { id: row.id } }
 }
 
-export async function deleteAppointment(appointmentId: UUID): Promise<Res<Id, NotFoundError>> {
+export async function deleteAppointment(appointmentId: UUID): Promise<Res<types.schemas.Id, NotFoundError>> {
   const row = await db.appointments.delete({
     where: { id: appointmentId },
   })
@@ -164,7 +162,7 @@ export async function deleteAppointment(appointmentId: UUID): Promise<Res<Id, No
 
 export async function createCustomer(
   args: types.api.customers.createCustomer.body,
-): Promise<Res<Id, AlreadyExistsError>> {
+): Promise<Res<types.schemas.Id, AlreadyExistsError>> {
   const exists = await db.customers.findUnique({
     where: { phone: args.phone },
   })
@@ -189,7 +187,7 @@ export async function createCustomer(
 export async function updateCustomer(
   customerId: UUID,
   args: types.api.customers.updateCustomer.body,
-): Promise<Res<Id, AlreadyExistsError | NotFoundError>> {
+): Promise<Res<types.schemas.Id, AlreadyExistsError | NotFoundError>> {
   const exists = await db.customers.findUnique({
     where: { phone: args.phone },
   })
@@ -216,7 +214,7 @@ export async function updateCustomer(
   return { ok: true, value: { id: row.id } }
 }
 
-export async function deleteCustomer(customerId: UUID): Promise<Res<Id, NotFoundError>> {
+export async function deleteCustomer(customerId: UUID): Promise<Res<types.schemas.Id, NotFoundError>> {
   const row = await db.customers.delete({
     where: { id: customerId },
   })
@@ -230,7 +228,7 @@ export async function deleteCustomer(customerId: UUID): Promise<Res<Id, NotFound
 
 export async function createSecretary(
   args: types.api.secretaries.createSecretary.body,
-): Promise<Res<Id, AlreadyExistsError>> {
+): Promise<Res<types.schemas.Id, AlreadyExistsError>> {
   const exists = await db.secretaries.findUnique({
     where: { email: args.email },
   })
@@ -258,7 +256,7 @@ export async function createSecretary(
 export async function updateSecretary(
   secretaryId: UUID,
   args: types.api.secretaries.updateSecretary.body,
-): Promise<Res<Id, AlreadyExistsError | NotFoundError>> {
+): Promise<Res<types.schemas.Id, AlreadyExistsError | NotFoundError>> {
   const exists = await db.secretaries.findUnique({
     where: { email: args.email },
   })
@@ -287,7 +285,7 @@ export async function updateSecretary(
   return { ok: true, value: { id: row.id } }
 }
 
-export async function deleteSecretary(secretaryId: UUID): Promise<Res<Id, NotFoundError>> {
+export async function deleteSecretary(secretaryId: UUID): Promise<Res<types.schemas.Id, NotFoundError>> {
   const row = await db.secretaries.delete({
     where: { id: secretaryId },
   })
@@ -301,7 +299,7 @@ export async function deleteSecretary(secretaryId: UUID): Promise<Res<Id, NotFou
 
 export async function createServiceAvailable(
   args: types.api.servicesAvailable.createServiceAvailable.body,
-): Promise<Res<Id, AlreadyExistsError | NotFoundError>> {
+): Promise<Res<types.schemas.Id, AlreadyExistsError | NotFoundError>> {
   if (args.specialization && !args.specializationId) {
     let specialization = await db.specializations.findUnique({
       where: { name: args.specialization },
@@ -350,7 +348,7 @@ export async function createServiceAvailable(
 export async function updateServiceAvailable(
   serviceAvailableId: UUID,
   args: types.api.servicesAvailable.updateServiceAvailable.body,
-): Promise<Res<Id, AlreadyExistsError | NotFoundError>> {
+): Promise<Res<types.schemas.Id, AlreadyExistsError | NotFoundError>> {
   const exists = await db.service_names.findUnique({
     where: { name: args.name },
   })
@@ -371,7 +369,7 @@ export async function updateServiceAvailable(
   return { ok: true, value: { id: row.id } }
 }
 
-export async function deleteServiceAvailable(serviceAvailableId: UUID): Promise<Res<Id, NotFoundError>> {
+export async function deleteServiceAvailable(serviceAvailableId: UUID): Promise<Res<types.schemas.Id, NotFoundError>> {
   const row = await db.service_names.delete({
     where: { id: serviceAvailableId },
   })
@@ -383,7 +381,9 @@ export async function deleteServiceAvailable(serviceAvailableId: UUID): Promise<
 
 // services
 
-export async function createService(args: types.api.services.createService.body): Promise<Res<Id, AlreadyExistsError>> {
+export async function createService(
+  args: types.api.services.createService.body,
+): Promise<Res<types.schemas.Id, AlreadyExistsError>> {
   const exists = await db.services.findUnique({
     where: {
       service_name_id_specialist_id: {
@@ -412,7 +412,7 @@ export async function createService(args: types.api.services.createService.body)
 export async function updateService(
   serviceId: UUID,
   args: types.api.services.updateService.body,
-): Promise<Res<Id, NotFoundError>> {
+): Promise<Res<types.schemas.Id, NotFoundError>> {
   const row = await db.services.update({
     where: { id: serviceId },
     data: {
@@ -428,7 +428,7 @@ export async function updateService(
   return { ok: true, value: { id: row.id } }
 }
 
-export async function deleteService(serviceId: UUID): Promise<Res<Id, NotFoundError>> {
+export async function deleteService(serviceId: UUID): Promise<Res<types.schemas.Id, NotFoundError>> {
   const row = await db.services.delete({
     where: { id: serviceId },
   })
@@ -442,7 +442,7 @@ export async function deleteService(serviceId: UUID): Promise<Res<Id, NotFoundEr
 
 export async function createSpecialist(
   args: types.api.specialists.createSpecialist.body,
-): Promise<Res<Id, AlreadyExistsError | NotFoundError>> {
+): Promise<Res<types.schemas.Id, AlreadyExistsError | NotFoundError>> {
   const exists = await db.specialists.findUnique({
     where: { email: args.email },
   })
@@ -493,7 +493,7 @@ export async function createSpecialist(
 export async function updateSpecialist(
   specialistId: UUID,
   args: types.api.specialists.updateSpecialist.body,
-): Promise<Res<Id, AlreadyExistsError | NotFoundError>> {
+): Promise<Res<types.schemas.Id, AlreadyExistsError | NotFoundError>> {
   const exists = await db.specialists.findUnique({
     where: { email: args.email },
   })
@@ -521,7 +521,7 @@ export async function updateSpecialist(
   return { ok: true, value: { id: row.id } }
 }
 
-export async function deleteSpecialist(specialistId: UUID): Promise<Res<Id, NotFoundError>> {
+export async function deleteSpecialist(specialistId: UUID): Promise<Res<types.schemas.Id, NotFoundError>> {
   const row = await db.specialists.delete({
     where: { id: specialistId },
   })
@@ -535,7 +535,7 @@ export async function deleteSpecialist(specialistId: UUID): Promise<Res<Id, NotF
 
 export async function createSpecialization(
   args: types.api.specializations.createSpecialization.body,
-): Promise<Res<Id, AlreadyExistsError>> {
+): Promise<Res<types.schemas.Id, AlreadyExistsError>> {
   const exists = await db.specializations.findUnique({
     where: { name: args.name },
   })
@@ -557,7 +557,7 @@ export async function createSpecialization(
 export async function updateSpecialization(
   specializationId: UUID,
   args: types.api.specializations.updateSpecialization.body,
-): Promise<Res<Id, AlreadyExistsError | NotFoundError>> {
+): Promise<Res<types.schemas.Id, AlreadyExistsError | NotFoundError>> {
   const exists = await db.specializations.findUnique({
     where: { name: args.name },
   })
@@ -578,7 +578,7 @@ export async function updateSpecialization(
   return { ok: true, value: { id: row.id } }
 }
 
-export async function deleteSpecialization(specializationId: UUID): Promise<Res<Id, NotFoundError>> {
+export async function deleteSpecialization(specializationId: UUID): Promise<Res<types.schemas.Id, NotFoundError>> {
   const row = await db.specializations.delete({
     where: { id: specializationId },
   })

@@ -1,0 +1,8 @@
+{
+  "type": "string",
+  "format": "cpf",
+  "description": "CPF digits with or without punctuations",
+  "example": "900.394.636-13 or 90039463613",
+  "minLength": 11,
+  "maxLength": 14
+}

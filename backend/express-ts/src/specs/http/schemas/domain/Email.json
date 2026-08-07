@@ -1,0 +1,7 @@
+{
+  "type": "string",
+  "format": "email",
+  "example": "user@domain.com",
+  "minLength": 1,
+  "maxLength": 200
+}

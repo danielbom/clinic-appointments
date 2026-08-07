@@ -1,0 +1,27 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "$ref": "#/components/domain/Uuid"
+    },
+    "date": {
+      "$ref": "#/components/core/Date"
+    },
+    "time": {
+      "$ref": "#/components/core/Time"
+    },
+    "specialistName": {
+      "$ref": "#/components/domain/Name"
+    },
+    "status": {
+      "$ref": "#/components/schemas/AppointmentStatus"
+    }
+  },
+  "required": [
+    "id",
+    "date",
+    "time",
+    "specialistName",
+    "status"
+  ]
+}

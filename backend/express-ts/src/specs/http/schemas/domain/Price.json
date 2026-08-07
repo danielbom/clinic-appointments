@@ -1,0 +1,6 @@
+{
+  "type": "number",
+  "format": "integer",
+  "description": "Integer value in cents.",
+  "minimum": 0
+}

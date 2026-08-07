@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "properties": {
+    "status": { "$ref": "#/components/core/HealthStatus" },
+    "timestamp": { "$ref": "#/components/core/DateTime" },
+    "environment": { "$ref": "#/components/core/Environment" }
+  },
+  "required": ["status", "environment", "timestamp"]
+}

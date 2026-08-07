@@ -1,0 +1,41 @@
+{
+  "/api/service-groups": {
+    "get": {
+      "operationId": "serviceGroups.listServiceGroups",
+      "summary": "Get all services grouped by specification",
+      "tags": ["Service Groups"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/ServiceGroup" }
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

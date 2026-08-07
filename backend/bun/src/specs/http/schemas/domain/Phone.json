@@ -1,0 +1,7 @@
+{
+  "type": "string",
+  "format": "phone",
+  "description": "Phone digits with punctuations (spaces matter)",
+  "example": "+55 (94) 4019-9572",
+  "maxLength": 24
+}

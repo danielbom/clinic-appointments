@@ -1,0 +1,8 @@
+{
+  "type": "string",
+  "format": "cnpj",
+  "description": "CNPJ digits with or without punctuations",
+  "example": "20.573.002/0001-87 or 20573002000187",
+  "minLength": 14,
+  "maxLength": 18
+}

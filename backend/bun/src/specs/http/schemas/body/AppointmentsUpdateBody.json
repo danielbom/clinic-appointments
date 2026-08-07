@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "properties": {
+    "date": {
+      "$ref": "#/components/core/Date"
+    },
+    "time": {
+      "$ref": "#/components/core/Time"
+    },
+    "status": {
+      "$ref": "#/components/schemas/AppointmentStatus"
+    }
+  },
+  "required": [
+    "date",
+    "time",
+    "status"
+  ]
+}

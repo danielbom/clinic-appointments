@@ -6,30 +6,37 @@ frontend/src/lib/api
 [lib/writable.ts]
 tests/src/lib/writable.ts
 backend/express-ts/src/lib/writable.ts
+backend/bun/src/lib/writable.ts
 
 [lib/path.ts]
 tests/src/lib/path.ts
 backend/express-ts/src/lib/path.ts
+backend/bun/src/lib/path.ts
 
-[bun/prisma]
+[specs/http]
+backend/express-ts/src/specs/http/
+backend/bun/src/specs/http/
+
+[js/prisma]
 backend/express-ts/prisma
 backend/bun/prisma
 
-[bun/src/core]
+[js/src/core]
 backend/express-ts/src/core
 backend/bun/src/core
 
-[bun/src/scripts]
-backend/express-ts/src/scripts
-!backend/express-ts/src/scripts/generate-express-routes.ts
-!backend/express-ts/src/scripts/generate-routes.ts
-backend/bun/src/scripts
-
-[bun/src/lib]
+[js/src/lib]
 backend/express-ts/src/lib
 backend/bun/src/lib
 
-[bun/src/public]
-backend/express-ts/src/public
-!backend/express-ts/src/public/schemas
-backend/bun/src/public
+[js/src/http]
+backend/express-ts/src/http
+!backend/express-ts/src/http/adapter.ts
+!backend/express-ts/src/http/routes.ts
+!backend/express-ts/src/http/server.ts
+backend/bun/src/http
+
+[js/src/scripts/generate]
+backend/express-ts/src/scripts/generate
+!backend/express-ts/src/scripts/generate/generate-routes.ts
+backend/bun/src/scripts/generate

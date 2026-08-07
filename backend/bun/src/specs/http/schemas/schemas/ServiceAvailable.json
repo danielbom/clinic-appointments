@@ -1,0 +1,22 @@
+{
+  "type": "object",
+  "properties": {
+    "serviceNameId": {
+      "$ref": "#/components/domain/Uuid"
+    },
+    "serviceName": {
+      "$ref": "#/components/domain/Name"
+    },
+    "specializationId": {
+      "$ref": "#/components/domain/Uuid"
+    },
+    "specialization": {
+      "$ref": "#/components/domain/Name"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "items"
+  ]
+}

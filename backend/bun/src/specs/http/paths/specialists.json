@@ -1,0 +1,517 @@
+{
+  "/api/specialists": {
+    "get": {
+      "operationId": "specialists.listSpecialists",
+      "summary": "Get all specialists",
+      "tags": ["Specialists"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [
+        { "$ref": "#/components/query/Page" },
+        { "$ref": "#/components/query/PageSize" },
+        { "$ref": "#/components/query/Name" },
+        { "$ref": "#/components/query/Cpf" },
+        { "$ref": "#/components/query/Cnpj" },
+        { "$ref": "#/components/query/Phone" }
+      ],
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/Specialist" }
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    },
+    "post": {
+      "operationId": "specialists.createSpecialist",
+      "summary": "Create a specialist",
+      "tags": ["Specialists"],
+      "security": [{ "BearerAuth": [] }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/body/SpecialistCreateBody"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Specialist created successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Id"
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        },
+        "404": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/NotFoundProblemDetails"
+              }
+            }
+          }
+        },
+        "409": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ConflictProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/specialists/count": {
+    "get": {
+      "operationId": "specialists.countSpecialists",
+      "summary": "Count specialists",
+      "tags": ["Specialists"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [
+        { "$ref": "#/components/query/Name" },
+        { "$ref": "#/components/query/Cpf" },
+        { "$ref": "#/components/query/Cnpj" },
+        { "$ref": "#/components/query/Phone" }
+      ],
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Count"
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/specialists/{id}/services": {
+    "get": {
+      "operationId": "specialists.getSpecialistServices",
+      "summary": "Get specialist services",
+      "tags": ["Specialists"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/SpecialistService"
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        },
+        "404": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/NotFoundProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/specialists/{id}/specializations": {
+    "get": {
+      "operationId": "specialists.getSpecialistSpecializations",
+      "summary": "Get specialist specializations",
+      "tags": ["Specialists"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Specialization"
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        },
+        "404": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/NotFoundProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/specialists/{id}/appointments": {
+    "get": {
+      "operationId": "specialists.getSpecialistAppointments",
+      "summary": "Get specialist appointments",
+      "tags": ["Specialists"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [
+        { "$ref": "#/components/parameters/Id" },
+        { "$ref": "#/components/query/Page" },
+        { "$ref": "#/components/query/PageSize" }
+      ],
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/SpecialistAppointment"
+                }
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        },
+        "404": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/NotFoundProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/specialists/{id}/services/{service_id}": {
+    "get": {
+      "operationId": "specialists.getSpecialistService",
+      "summary": "Get specialist service",
+      "tags": ["Specialists"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [
+        { "$ref": "#/components/parameters/Id" },
+        {
+          "name": "service_id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "$ref": "#/components/domain/Uuid"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Service"
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        },
+        "404": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/NotFoundProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/specialists/{id}": {
+    "get": {
+      "operationId": "specialists.getSpecialistById",
+      "summary": "Get specialists by id",
+      "tags": ["Specialists"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Specialist"
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        },
+        "404": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/NotFoundProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    },
+    "put": {
+      "operationId": "specialists.updateSpecialist",
+      "summary": "Update a specialists",
+      "tags": ["Specialists"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/body/SpecialistUpdateBody"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Specialist updated successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Id"
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        },
+        "404": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/NotFoundProblemDetails"
+              }
+            }
+          }
+        },
+        "409": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ConflictProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    },
+    "delete": {
+      "operationId": "specialists.deleteSpecialist",
+      "summary": "Delete a specialists",
+      "tags": ["Specialists"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "responses": {
+        "204": {
+          "description": "Specialist deleted successfully"
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        },
+        "404": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/NotFoundProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

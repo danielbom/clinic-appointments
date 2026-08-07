@@ -1,0 +1,35 @@
+{
+  "/api/test/init": {
+    "get": {
+      "operationId": "test.initTest",
+      "summary": "Init tests",
+      "tags": ["Test"],
+      "description": "Available only in TEST environments",
+      "responses": {
+        "200": {}
+      }
+    }
+  },
+  "/api/test/stats": {
+    "get": {
+      "operationId": "test.statsTest",
+      "summary": "Stats in test",
+      "tags": ["Test"],
+      "description": "Available only in TEST environments",
+      "responses": {
+        "200": {}
+      }
+    }
+  },
+  "/api/test/debug-claims": {
+    "get": {
+      "operationId": "test.debugClaimsTest",
+      "summary": "Debug claims in test",
+      "tags": ["Test"],
+      "description": "Available only in TEST environments",
+      "responses": {
+        "200": {}
+      }
+    }
+  }
+}

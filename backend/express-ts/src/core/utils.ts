@@ -1,7 +1,7 @@
 import type { RequestAdapter } from '../lib/http-adapter'
 
 import { extractJwtData, isRefreshToken, verifyJWT } from './jwt'
-import { parseUuid } from '../id'
+import { parseUuid } from './id'
 
 // request
 export function getAccessTokenFromRequest(req: RequestAdapter) {

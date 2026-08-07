@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "properties": {
+    "primary": { "type": "boolean" },
+    "status": { "$ref": "#/components/core/HealthStatus" },
+    "latencyMs": { "type": "number" }
+  },
+  "required": ["primary", "status", "latencyMs"]
+}

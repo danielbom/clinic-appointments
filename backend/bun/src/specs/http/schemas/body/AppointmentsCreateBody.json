@@ -1,0 +1,23 @@
+{
+    "type": "object",
+  "properties": {
+    "customerId": {
+      "$ref": "#/components/domain/Uuid"
+    },
+    "serviceId": {
+      "$ref": "#/components/domain/Uuid"
+    },
+    "date": {
+      "$ref": "#/components/core/Date"
+    },
+    "time": {
+      "$ref": "#/components/core/Time"
+    }
+  },
+  "required": [
+    "customerId",
+    "serviceId",
+    "date",
+    "time"
+  ]
+}

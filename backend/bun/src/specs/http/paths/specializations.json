@@ -1,0 +1,202 @@
+{
+  "/api/specializations": {
+    "get": {
+      "operationId": "specializations.listSpecializations",
+      "summary": "Get all specializations",
+      "tags": ["Specializations"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [],
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/Specialization" }
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    },
+    "post": {
+      "operationId": "specializations.createSpecialization",
+      "summary": "Create a specialization",
+      "tags": ["Specializations"],
+      "security": [{ "BearerAuth": [] }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/body/SpecializationCreateBody"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Specialization created successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Id"
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        },
+        "409": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ConflictProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/specializations/{id}": {
+    "put": {
+      "operationId": "specializations.updateSpecialization",
+      "summary": "Update an specializations",
+      "tags": ["Specializations"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/body/SpecializationUpdateBody"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Specialization updated successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Id"
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        },
+        "404": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/NotFoundProblemDetails"
+              }
+            }
+          }
+        },
+        "409": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ConflictProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    },
+    "delete": {
+      "operationId": "specializations.deleteSpecialization",
+      "summary": "Delete a specializations",
+      "tags": ["Specializations"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "responses": {
+        "204": {
+          "description": "Specialization deleted successfully"
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        },
+        "404": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/NotFoundProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

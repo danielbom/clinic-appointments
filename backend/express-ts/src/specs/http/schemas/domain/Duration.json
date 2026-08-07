@@ -1,0 +1,7 @@
+{
+  "type": "number",
+  "format": "integer",
+  "description": "Integer value in minutes.",
+  "minimum": 0,
+  "maximum": 600
+}

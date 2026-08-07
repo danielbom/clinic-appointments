@@ -4,10 +4,10 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "start": "bun run src/index.ts",
-    "dev": "bun run --watch src/index.ts",
+    "server:start": "bun run src/server.ts",
+    "server:dev": "bun run --watch src/server.ts",
     "format": "bun x prettier --write ./src",
-    "generate": "bun run ./src/scripts/generate.ts",
+    "generate": "bun run ./src/scripts/generate/index.ts",
     "check": "bun x tsc --noEmit"
   },
   "devDependencies": {

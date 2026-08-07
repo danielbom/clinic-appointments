@@ -1,0 +1,55 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "$ref": "#/components/domain/Uuid"
+    },
+    "customerName": {
+      "$ref": "#/components/domain/Name"
+    },
+    "customerId": {
+      "$ref": "#/components/domain/Uuid"
+    },
+    "serviceName": {
+      "$ref": "#/components/domain/Name"
+    },
+    "serviceNameId": {
+      "$ref": "#/components/domain/Uuid"
+    },
+    "specialistName": {
+      "$ref": "#/components/domain/Name"
+    },
+    "specialistId": {
+      "$ref": "#/components/domain/Uuid"
+    },
+    "price": {
+      "$ref": "#/components/domain/Price"
+    },
+    "duration": {
+      "$ref": "#/components/domain/Duration"
+    },
+    "date": {
+      "$ref": "#/components/core/Date"
+    },
+    "time": {
+      "$ref": "#/components/core/Time"
+    },
+    "status": {
+      "$ref": "#/components/schemas/AppointmentStatus"
+    }
+  },
+  "required": [
+    "id",
+    "customerName",
+    "customerId",
+    "serviceName",
+    "serviceNameId",
+    "specialistName",
+    "specialistId",
+    "price",
+    "duration",
+    "date",
+    "time",
+    "status"
+  ]
+}

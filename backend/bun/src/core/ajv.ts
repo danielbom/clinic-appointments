@@ -10,7 +10,7 @@ import {
 } from './utils'
 import { Path } from '../lib/path'
 
-import { isUuid } from '../id'
+import { isUuid } from './id'
 
 export const ajv = new Ajv({})
 
@@ -18,7 +18,7 @@ const SCHEMAS_DIR = Path.from(import.meta.dirname)
   .parent()
   .append('public/schemas')
 
-for (const component of ['domain', 'body', 'schemas']) {
+for (const component of ['core', 'domain', 'body', 'schemas']) {
   for (const file of SCHEMAS_DIR.append(component).listDir()) {
     const content = file.readText()
     const schema = JSON.parse(content)

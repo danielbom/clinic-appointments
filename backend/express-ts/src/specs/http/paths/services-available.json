@@ -1,0 +1,256 @@
+{
+  "/api/services-available": {
+    "get": {
+      "operationId": "servicesAvailable.listServicesAvailable",
+      "summary": "Get all services available",
+      "tags": ["Services Available"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [{ "$ref": "#/components/query/Page" }, { "$ref": "#/components/query/PageSize" }],
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/ServiceGroup" }
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    },
+    "post": {
+      "operationId": "servicesAvailable.createServiceAvailable",
+      "summary": "Create a service available",
+      "tags": ["Services Available"],
+      "security": [{ "BearerAuth": [] }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/body/ServiceAvailableCreateBody"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Service Available created successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Id"
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        },
+        "404": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/NotFoundProblemDetails"
+              }
+            }
+          }
+        },
+        "409": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ConflictProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/services-available/{id}": {
+    "get": {
+      "operationId": "servicesAvailable.getServiceAvailableById",
+      "summary": "Get a service available by id",
+      "tags": ["Services Available"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ServiceAvailable"
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        },
+        "404": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/NotFoundProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    },
+    "put": {
+      "operationId": "servicesAvailable.updateServiceAvailable",
+      "summary": "Update an service available",
+      "tags": ["Services Available"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/body/ServiceAvailableUpdateBody"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Service Available updated successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Id"
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        },
+        "404": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/NotFoundProblemDetails"
+              }
+            }
+          }
+        },
+        "409": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ConflictProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    },
+    "delete": {
+      "operationId": "servicesAvailable.deleteServiceAvailable",
+      "summary": "Delete a service available",
+      "tags": ["Services Available"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "responses": {
+        "204": {
+          "description": "Service Available deleted successfully"
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        },
+        "404": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/NotFoundProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

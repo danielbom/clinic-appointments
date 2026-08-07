@@ -5,10 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node --import tsx src/index.ts",
-    "dev": "node --watch --import tsx src/index.ts",
+    "server:start": "node --import tsx src/server.ts",
+    "server:dev": "node --watch --import tsx src/server.ts",
     "format": "prettier --write ./src",
-    "generate": "node --import tsx ./src/scripts/generate.ts",
+    "generate": "node --import tsx ./src/scripts/generate/index.ts",
     "check": "npx tsc --noEmit"
   },
   "keywords": [],

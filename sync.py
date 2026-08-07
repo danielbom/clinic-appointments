@@ -1,3 +1,5 @@
+import argparse
+
 from pathlib import Path
 from typing import NamedTuple
 
@@ -25,7 +27,7 @@ class SyncParser:
     
     def parse_line(self, line: str):
         line = line.strip()
-        if not line:
+        if not line or line.startswith("//"):
             return
         if line.startswith("[") and line.endswith("]"):
             self.update_module(line)
@@ -43,8 +45,9 @@ class SyncParser:
 
 
 class SyncChecker:
-    def __init__(self, syncs: list[Sync]):
+    def __init__(self, syncs: list[Sync], verbose: bool):
         self.syncs = syncs
+        self.verbose = verbose
 
     def check_entries(self, paths: list[Path], exclude: list[Path]):
         reference = paths[0]
@@ -66,6 +69,8 @@ class SyncChecker:
                 if other_content != content:
                     print(f"[ERROR] {path} != {other_path}: different")
                     continue
+                if self.verbose:
+                    print(f"[OK] {path} == {other_path}")
         else:
             for path in reference.glob("*"):
                 if path in exclude:
@@ -84,6 +89,8 @@ class SyncChecker:
                         if other_content != content:
                             print(f"[ERROR] {path} != {other_path}: different")
                             continue
+                        if self.verbose:
+                            print(f"[OK] {path} == {other_path}")
                 else:
                     other_paths = [path]
                     for other in others:
@@ -98,7 +105,7 @@ class SyncChecker:
                     self.check_entries(other_paths, exclude)
 
     def check_sync(self, sync: Sync):
-        print('[INFO] checking dirs:', sync.module)
+        print('[INFO] checking:', sync.module)
         self.check_entries(sync.paths, sync.exclude)
         print()
 
@@ -112,8 +119,16 @@ class SyncChecker:
             self.check_sync(sync)
 
 
-def parse_sync() -> list[Sync]:
-    return SyncParser().parse_path(Path("./sync.txt"))
+def main():
+    parser = argparse.ArgumentParser("Sync files")
+    parser.add_argument("--path", default="sync.txt")
+    parser.add_argument("-v", "--verbose", action="store_true", default=False)
+
+    args = parser.parse_args()
+
+    files = SyncParser().parse_path(Path(args.path))
+    SyncChecker(files, args.verbose).check()
 
 
-SyncChecker(parse_sync()).check()
+if __name__ == "__main__":
+    main()

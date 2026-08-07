@@ -1,8 +1,0 @@
-{
-  "$id": "https://dev-clinic-appointments.com.br/schemas/domain/Time.json",
-  "type": "string",
-  "format": "time",
-  "description": "time only string in format HH:MM:SS",
-  "minLength": 8,
-  "maxLength": 8
-}

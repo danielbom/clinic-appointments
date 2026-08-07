@@ -1,0 +1,26 @@
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "month": {
+        "type": "number"
+      },
+      "pendingCount": {
+        "type": "number"
+      },
+      "realizedCount": {
+        "type": "number"
+      },
+      "canceledCount": {
+        "type": "number"
+      }
+    },
+    "required": [
+      "month",
+      "pendingCount",
+      "realizedCount",
+      "canceledCount"
+    ]
+  }
+}

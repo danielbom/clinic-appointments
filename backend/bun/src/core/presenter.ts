@@ -1,4 +1,4 @@
-import * as types from './swagger-types'
+import * as types from '../http/types'
 import type { Calendar, CalendarCount, Identity, ServiceEnriched } from './queries'
 
 import type * as models from '../prisma/models'

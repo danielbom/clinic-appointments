@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "$ref": "#/components/domain/Uuid"
+    },
+    "name": {
+      "$ref": "#/components/domain/Name"
+    }
+  },
+  "required": [
+    "id",
+    "name"
+  ]
+}

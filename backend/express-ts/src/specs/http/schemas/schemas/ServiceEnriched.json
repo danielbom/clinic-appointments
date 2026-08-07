@@ -1,0 +1,43 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "$ref": "#/components/domain/Uuid"
+    },
+    "serviceName": {
+      "$ref": "#/components/domain/Name"
+    },
+    "serviceNameId": {
+      "$ref": "#/components/domain/Uuid"
+    },
+    "specialistName": {
+      "$ref": "#/components/domain/Name"
+    },
+    "specialistId": {
+      "$ref": "#/components/domain/Uuid"
+    },
+    "specialization": {
+      "$ref": "#/components/domain/Name"
+    },
+    "specializationId": {
+      "$ref": "#/components/domain/Uuid"
+    },
+    "price": {
+      "$ref": "#/components/domain/Price"
+    },
+    "duration": {
+      "$ref": "#/components/domain/Duration"
+    }
+  },
+  "required": [
+    "id",
+    "serviceName",
+    "serviceNameId",
+    "specialistName",
+    "specialistId",
+    "specialization",
+    "specializationId",
+    "price",
+    "duration"
+  ]
+}

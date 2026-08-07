@@ -1,0 +1,8 @@
+{
+  "type": "string",
+  "format": "time",
+  "description": "time only string in format HH:MM:SS",
+  "example": "12:21:50",
+  "minLength": 8,
+  "maxLength": 8
+}

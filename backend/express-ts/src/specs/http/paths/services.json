@@ -1,0 +1,286 @@
+{
+  "/api/services": {
+    "get": {
+      "operationId": "services.listServices",
+      "summary": "Get all services",
+      "tags": ["Services"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [
+        { "$ref": "#/components/query/Page" },
+        { "$ref": "#/components/query/PageSize" },
+        { "$ref": "#/components/query/Service" },
+        { "$ref": "#/components/query/Specialist" },
+        { "$ref": "#/components/query/Specialization" }
+      ],
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/ServiceEnriched" }
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    },
+    "post": {
+      "operationId": "services.createService",
+      "summary": "Create a service",
+      "tags": ["Services"],
+      "security": [{ "BearerAuth": [] }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/body/ServiceCreateBody"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Service created successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Id"
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        },
+        "409": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ConflictProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/services/count": {
+    "get": {
+      "operationId": "services.countServices",
+      "summary": "Count services",
+      "tags": ["Services"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [
+        { "$ref": "#/components/query/Service" },
+        { "$ref": "#/components/query/Specialist" },
+        { "$ref": "#/components/query/Specialization" }
+      ],
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Count"
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/services/{id}": {
+    "get": {
+      "operationId": "services.getServiceById",
+      "summary": "Get services by id",
+      "tags": ["Services"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Service"
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        },
+        "404": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/NotFoundProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    },
+    "put": {
+      "operationId": "services.updateService",
+      "summary": "Update a services",
+      "tags": ["Services"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/body/ServiceUpdateBody"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Service updated successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Id"
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        },
+        "404": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/NotFoundProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    },
+    "delete": {
+      "operationId": "services.deleteService",
+      "summary": "Delete a services",
+      "tags": ["Services"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "responses": {
+        "204": {
+          "description": "Service deleted successfully"
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        },
+        "404": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/NotFoundProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

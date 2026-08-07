@@ -1,0 +1,23 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "$ref": "#/components/domain/Uuid"
+    },
+    "name": {
+      "$ref": "#/components/domain/Name"
+    },
+    "email": {
+      "$ref": "#/components/domain/Email"
+    },
+    "role": {
+      "$ref": "#/components/domain/Role"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "email",
+    "role"
+  ]
+}

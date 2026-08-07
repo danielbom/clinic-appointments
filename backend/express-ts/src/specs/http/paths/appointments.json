@@ -1,0 +1,386 @@
+{
+  "/api/appointments": {
+    "get": {
+      "operationId": "appointments.listAppointments",
+      "summary": "Get all appointments",
+      "tags": ["Appointments"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [
+        { "$ref": "#/components/query/Page" },
+        { "$ref": "#/components/query/PageSize" },
+        { "$ref": "#/components/query/StartDate" },
+        { "$ref": "#/components/query/EndDate" },
+        { "$ref": "#/components/query/ServiceName" },
+        { "$ref": "#/components/query/Specialist" },
+        { "$ref": "#/components/query/Customer" },
+        { "$ref": "#/components/query/Status" }
+      ],
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/Appointment" }
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    },
+    "post": {
+      "operationId": "appointments.createAppointment",
+      "summary": "Create an appointment",
+      "tags": ["Appointments"],
+      "security": [{ "BearerAuth": [] }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/body/AppointmentsCreateBody"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Id"
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        },
+        "404": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/NotFoundProblemDetails"
+              }
+            }
+          }
+        },
+        "409": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ConflictProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/appointments/count": {
+    "get": {
+      "operationId": "appointments.countAppointments",
+      "summary": "Count appointments",
+      "tags": ["Appointments"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [
+        { "$ref": "#/components/query/StartDate" },
+        { "$ref": "#/components/query/EndDate" },
+        { "$ref": "#/components/query/ServiceName" },
+        { "$ref": "#/components/query/Specialist" },
+        { "$ref": "#/components/query/Customer" },
+        { "$ref": "#/components/query/Status" }
+      ],
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Count"
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/appointments/calendar": {
+    "get": {
+      "operationId": "appointments.getAppointmentsCalendar",
+      "summary": "Get appointments calendar",
+      "tags": ["Appointments"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [{ "$ref": "#/components/query/StartDate" }, { "$ref": "#/components/query/EndDate" }],
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/AppointmentCalendar" }
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/appointments/calendar/count": {
+    "get": {
+      "operationId": "appointments.getAppointmentsCalendarCount",
+      "summary": "Get appointments calendar count",
+      "tags": ["Appointments"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [{ "$ref": "#/components/query/StartDate" }, { "$ref": "#/components/query/EndDate" }],
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/AppointmentCalendarCount" }
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/appointments/{id}": {
+    "get": {
+      "operationId": "appointments.getAppointmentById",
+      "summary": "Get appointment by id",
+      "tags": ["Appointments"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Appointment"
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        },
+        "404": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/NotFoundProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    },
+    "put": {
+      "operationId": "appointments.updateAppointment",
+      "summary": "Update an appointment",
+      "tags": ["Appointments"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/body/AppointmentsUpdateBody"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Id"
+              }
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        },
+        "404": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/NotFoundProblemDetails"
+              }
+            }
+          }
+        },
+        "409": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ConflictProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    },
+    "delete": {
+      "operationId": "appointments.deleteAppointment",
+      "summary": "Delete an appointment",
+      "tags": ["Appointments"],
+      "security": [{ "BearerAuth": [] }],
+      "parameters": [{ "$ref": "#/components/parameters/Id" }],
+      "responses": {
+        "204": {
+          "description": "Item deleted successfully"
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        },
+        "404": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/NotFoundProblemDetails"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

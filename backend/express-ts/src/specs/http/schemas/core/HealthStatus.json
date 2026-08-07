@@ -1,0 +1,6 @@
+{
+  "type": "string",
+  "description": "Service status",
+  "enum": ["UP", "DEGRADED", "DOWN"],
+  "example": "UP"
+}

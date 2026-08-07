@@ -1,0 +1,16 @@
+{
+  "type": "object",
+  "properties": {
+    "status": { "$ref": "#/components/core/HealthStatus" },
+    "timestamp": { "$ref": "#/components/core/DateTime" },
+    "environment": { "$ref": "#/components/core/Environment" },
+    "details": {
+      "type": "object",
+      "properties": {
+        "database": { "$ref": "#/components/core/HealthDetails" }
+      },
+      "required": ["database"]
+    }
+  },
+  "required": ["status", "environment", "timestamp", "details"]
+}

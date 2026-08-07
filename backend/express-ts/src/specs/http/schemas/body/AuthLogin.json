@@ -1,0 +1,15 @@
+{
+  "type": "object",
+  "properties": {
+    "email": {
+      "$ref": "#/components/domain/Email"
+    },
+    "password": {
+      "$ref": "#/components/domain/Password"
+    }
+  },
+  "required": [
+    "email",
+    "password"
+  ]
+}

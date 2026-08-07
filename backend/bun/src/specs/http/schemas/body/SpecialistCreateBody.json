@@ -1,0 +1,40 @@
+{
+  "type": "object",
+  "properties": {
+    "name": {
+      "$ref": "#/components/domain/Name"
+    },
+    "email": {
+      "$ref": "#/components/domain/Email"
+    },
+    "phone": {
+      "$ref": "#/components/domain/Phone"
+    },
+    "birthdate": {
+      "$ref": "#/components/core/Date"
+    },
+    "cpf": {
+      "$ref": "#/components/domain/Cpf"
+    },
+    "cnpj": {
+      "$ref": "#/components/domain/Cnpj"
+    },
+    "services": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/body/SpecialistsCreateBodyService"
+      },
+      "minItems": 0,
+      "maxItems": 10
+    }
+  },
+  "required": [
+    "name",
+    "email",
+    "phone",
+    "birthdate",
+    "cpf",
+    "cnpj",
+    "services"
+  ]
+}

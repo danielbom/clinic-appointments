@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "$ref": "#/components/domain/Uuid"
+    },
+    "name": {
+      "$ref": "#/components/domain/Name"
+    },
+    "email": {
+      "$ref": "#/components/domain/Email"
+    },
+    "phone": {
+      "$ref": "#/components/domain/Phone"
+    },
+    "birthdate": {
+      "$ref": "#/components/core/Date"
+    },
+    "cpf": {
+      "$ref": "#/components/domain/Cpf"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "phone",
+    "birthdate",
+    "cpf"
+  ]
+}

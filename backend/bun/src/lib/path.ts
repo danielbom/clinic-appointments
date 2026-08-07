@@ -61,7 +61,7 @@ export class Path {
     fs.writeFileSync(this.path, content, { encoding })
   }
 
-  mkdir(options: Mkdir) {
+  mkdir(options: Mkdir = {}) {
     if (!this.exists()) {
       fs.mkdirSync(this.path, { recursive: options.parents })
     } else if (!options.existsOk) {
@@ -73,9 +73,9 @@ export class Path {
     fs.unlinkSync(this.path)
   }
 
-  rmdir(options: Rmdir) {
+  rmdir(options: Rmdir = {}) {
     if (!this.exists()) {
-      if (options.existsOk) return
+      if (options.notExistsOk) return
       throw new Error(`Path '${this.path}' does not exist.`)
     }
 
@@ -112,6 +112,14 @@ export class Path {
   suffix() {
     return path.extname(this.path)
   }
+
+  name() {
+    return path.basename(this.path)
+  }
+
+  stem() {
+    return this.name().slice(0, -this.suffix().length)
+  }
 }
 
 interface Mkdir {
@@ -121,5 +129,5 @@ interface Mkdir {
 
 interface Rmdir {
   recursive?: boolean
-  existsOk?: boolean
+  notExistsOk?: boolean
 }

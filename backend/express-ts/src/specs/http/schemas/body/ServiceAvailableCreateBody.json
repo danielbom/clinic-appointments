@@ -1,0 +1,17 @@
+{
+  "type": "object",
+  "properties": {
+    "name": {
+      "$ref": "#/components/domain/Name"
+    },
+    "specialization": {
+      "$ref": "#/components/domain/Name"
+    },
+    "specializationId": {
+      "$ref": "#/components/domain/Uuid"
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

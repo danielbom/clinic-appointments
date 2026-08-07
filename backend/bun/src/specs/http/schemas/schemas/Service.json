@@ -1,0 +1,27 @@
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "$ref": "#/components/domain/Uuid"
+    },
+    "serviceNameId": {
+      "$ref": "#/components/domain/Uuid"
+    },
+    "specialistId": {
+      "$ref": "#/components/domain/Uuid"
+    },
+    "price": {
+      "$ref": "#/components/domain/Price"
+    },
+    "duration": {
+      "$ref": "#/components/domain/Duration"
+    }
+  },
+  "required": [
+    "id",
+    "serviceNameId",
+    "specialistId",
+    "price",
+    "duration"
+  ]
+}

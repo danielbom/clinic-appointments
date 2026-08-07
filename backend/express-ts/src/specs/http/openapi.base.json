@@ -1,0 +1,152 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Clinic Appointments API",
+    "version": "1.0.0",
+    "description": "Clinic Appointments API documentation using OpenAPI 3.1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local development"
+    }
+  ],
+  "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
+
+  "paths": {},
+
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+
+    "parameters": {
+      "Id": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/domain/Uuid"
+        }
+      },
+      "ServiceId": {
+        "name": "service_id",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "$ref": "#/components/domain/Uuid"
+        }
+      }
+    },
+    "query": {
+      "StartDate": {
+        "in": "query",
+        "name": "startDate",
+        "schema": {
+          "$ref": "#/components/core/Date"
+        }
+      },
+      "EndDate": {
+        "in": "query",
+        "name": "endDate",
+        "schema": {
+          "$ref": "#/components/core/Date"
+        }
+      },
+      "ServiceName": {
+        "in": "query",
+        "name": "serviceName",
+        "schema": {
+          "$ref": "#/components/domain/Name"
+        }
+      },
+      "Service": {
+        "in": "query",
+        "name": "service",
+        "schema": {
+          "$ref": "#/components/domain/Name"
+        }
+      },
+      "Specialist": {
+        "in": "query",
+        "name": "specialist",
+        "schema": {
+          "$ref": "#/components/domain/Name"
+        }
+      },
+      "Specialization": {
+        "in": "query",
+        "name": "specialization",
+        "schema": {
+          "$ref": "#/components/domain/Name"
+        }
+      },
+      "Customer": {
+        "in": "query",
+        "name": "customer",
+        "schema": {
+          "$ref": "#/components/domain/Name"
+        }
+      },
+      "Status": {
+        "in": "query",
+        "name": "status",
+        "schema": {
+          "$ref": "#/components/schemas/AppointmentStatus"
+        }
+      },
+      "Name": {
+        "in": "query",
+        "name": "name",
+        "schema": {
+          "$ref": "#/components/domain/Name"
+        }
+      },
+      "Cpf": {
+        "in": "query",
+        "name": "cpf",
+        "schema": {
+          "$ref": "#/components/domain/Cpf"
+        }
+      },
+      "Cnpj": {
+        "in": "query",
+        "name": "cnpj",
+        "schema": {
+          "$ref": "#/components/domain/Cnpj"
+        }
+      },
+      "Phone": {
+        "in": "query",
+        "name": "phone",
+        "schema": {
+          "$ref": "#/components/domain/Phone"
+        }
+      },
+      "Page": {
+        "in": "query",
+        "name": "page",
+        "schema": {
+          "type": "number",
+          "format": "integer",
+          "minimum": 0,
+          "default": 0
+        }
+      },
+      "PageSize": {
+        "in": "query",
+        "name": "pageSize",
+        "schema": {
+          "type": "number",
+          "format": "integer",
+          "minimum": 1,
+          "default": 10
+        }
+      }
+    }
+  }
+}
