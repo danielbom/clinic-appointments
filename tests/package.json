@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "format": "prettier --write ./src ./tests",
-    "typecheck": "tsc --noEmit",
+    "check": "tsc --noEmit",
     "snapshot:api": "node --import tsx ./tests/snapshot/api.ts",
     "snapshot:errors": "node --import tsx ./tests/snapshot/errors.ts",
     "test": "vitest run",

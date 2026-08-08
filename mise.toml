@@ -62,12 +62,12 @@ dir = "./backend/express-ts"
 
 [tasks."run-express.ts"]
 description = "Run Express TypeScript API locally on port 3000"
-run = "node --import tsx src/index.ts"
+run = "npm run server:start"
 dir = "./backend/express-ts"
 
 [tasks."watch-express.ts"]
 description = "Run Express TypeScript API with hot reload on port 3000"
-run = "node --watch-path=src --import tsx src/index.ts"
+run = "npm run server:dev"
 dir = "./backend/express-ts"
 
 [tasks."format-express.ts"]
@@ -96,22 +96,22 @@ dir = "./tests"
 
 [tasks."generate-bun"]
 description = "Generate Bun API code and artifacts"
-run = "bun generate"
+run = "npm run generate"
 dir = "./backend/bun"
 
 [tasks."run-bun"]
 description = "Run Bun API locally on port 4000"
-run = "bun start"
+run = "npm run server:start"
 dir = "./backend/bun"
 
 [tasks."watch-bun"]
 description = "Run Bun API with hot reload on port 4000"
-run = "bun dev"
+run = "npm run server:dev"
 dir = "./backend/bun"
 
 [tasks."format-bun"]
 description = "Format Bun source files"
-run = "bun format"
+run = "npm run format"
 dir = "./backend/bun"
 
 [tasks."check-bun"]
@@ -151,6 +151,20 @@ dir = "./tests"
 [tasks."e2e-errors-dotnet"]
 description = "Run error scenario end-to-end snapshot tests against port 5186"
 run = "npx cross-env API_URL=http://localhost:5186 npm run snapshot:errors replay"
+dir = "./tests"
+
+#########
+# tests #
+#########
+
+[tasks."format-tests"]
+description = "Format Bun source files"
+run = "npm run format"
+dir = "./tests"
+
+[tasks."check-tests"]
+description = "Check Express TypeScript source files"
+run = "npm run check"
 dir = "./tests"
 
 ###########

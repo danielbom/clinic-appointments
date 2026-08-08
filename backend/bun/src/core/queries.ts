@@ -417,7 +417,7 @@ WHERE true
    AND (${specialist}::text = ''     OR LOWER(unaccent("sp"."name")) LIKE '%' || LOWER(unaccent(${specialist})) || '%')
    AND (${specialization}::text = '' OR LOWER(unaccent("sz"."name")) LIKE '%' || LOWER(unaccent(${specialization})) || '%')
    AND (${service}::text = ''        OR LOWER(unaccent("sn"."name")) LIKE '%' || LOWER(unaccent(${service})) || '%')
-ORDER BY "specialization_name", "service_name"
+ORDER BY "service_name", "specialist_name"
 OFFSET ${page * pageSize}::integer
 LIMIT ${pageSize}::integer`
   return rows

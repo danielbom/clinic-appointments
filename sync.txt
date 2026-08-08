@@ -43,3 +43,7 @@ backend/bun/src/http
 backend/express-ts/src/scripts/generate
 !backend/express-ts/src/scripts/generate/generate-routes.ts
 backend/bun/src/scripts/generate
+
+[js/public]
+backend/express-ts/src/public
+backend/bun/src/public

@@ -64,14 +64,16 @@ async function run(w: WriteStr, api: Api, args: Args) {
     appointmentIds: [] as string[],
   }
 
-  await api.health.healthCheck().then((res) => {
-    if (!res.data.status) {
+  await api.health.healthLiveness().then((res) => {
+    if (res.data.status !== 'UP') {
       throw new Error('API is not healthy')
     }
     if (res.data.environment !== 'test') {
       throw new Error('API is not in test environment')
     }
   })
+  await api.health.healthCheck()
+  await api.health.healthReadiness()
   await api.test.stats()
   await api.test.init()
 
@@ -431,11 +433,11 @@ async function run(w: WriteStr, api: Api, args: Args) {
     // appointments
     const frequencyRanges: [number, number][] = [
       [0, 0],
-      [5, 6],
-      [5, 6],
-      [4, 5],
-      [3, 4],
-      [4, 5],
+      [2, 3],
+      [2, 3],
+      [1, 2],
+      [0, 1],
+      [1, 2],
       [0, 0],
     ]
     const specialistIds = Object.keys(state.specialistServiceIds)
@@ -528,6 +530,11 @@ async function run(w: WriteStr, api: Api, args: Args) {
   // TODO: limit startDate and endDate range
   // await api.appointments.getCalendar({ startDate: '2031-01-01', endDate: '2031-01-31' })
   // await api.appointments.getCalendarCount({ startDate: '2031-01-01', endDate: '2031-01-31' })
+
+  w.write('Report: \n')
+  w.write(JSON.stringify(tracker.report(), null, 2))
+  w.write('\n')
+  w.write('\n')
 
   complete(w.value(), args)
 }

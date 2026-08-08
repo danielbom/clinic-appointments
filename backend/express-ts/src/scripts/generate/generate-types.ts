@@ -115,29 +115,27 @@ function generateType(w: Writable, ident: string, item: any) {
     w.write(formatRef(item.$ref))
   } else if (item.type) {
     if (item.type === 'object') {
-      if (item.additionalProperties) {
-        w.write('Record<string, ')
-        generateType(w, ident + '  ', item.additionalProperties)
-        w.write('>')
-      } else {
-        const required: string[] = item.required || []
-        w.write(`{\n`)
-        for (const prop in item.properties) {
-          const value = (item.properties as any)[prop]
-          generateDocs(w, ident + '  ', value)
-          w.write(ident)
-          w.write(`  ${prop}`)
-          if (required.includes(prop)) {
-            w.write(`: `)
-          } else {
-            w.write(`?: `)
-          }
-          generateType(w, ident + '  ', value)
-          w.write('\n')
-        }
+      const required: string[] = item.required || []
+      w.write(`{\n`)
+      for (const prop in item.properties) {
+        const value = (item.properties as any)[prop]
+        generateDocs(w, ident + '  ', value)
         w.write(ident)
-        w.write('}')
+        w.write(`  ${prop}`)
+        if (required.includes(prop)) {
+          w.write(`: `)
+        } else {
+          w.write(`?: `)
+        }
+        generateType(w, ident + '  ', value)
+        w.write('\n')
       }
+      if (item.additionalProperties) {
+        w.write(ident)
+        w.write('  [key: string]: any\n')
+      }
+      w.write(ident)
+      w.write('}')
     } else if (item.type === 'array') {
       if (item.items.$ref) {
         w.write(formatRef(item.items.$ref))
@@ -170,7 +168,7 @@ function generateRootType(w: Writable, name: string, item: any) {
       w.write(`  export type ${name} = `)
       generateType(w, '  ', item.items)
     } else if (item.type === 'object') {
-      w.write(`  export interface ${name} `)
+      w.write(`  export type ${name} = `)
       generateType(w, '  ', item)
     } else if (item.type === 'string') {
       w.write(`  export type ${name} = `)

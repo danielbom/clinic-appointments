@@ -50,6 +50,10 @@ export function getDateParam(value: any) {
   return result
 }
 
+export function getUuidParam(value: string | null) {
+  return parseUuid(value)
+}
+
 // datetime
 
 const ISO_DATE_PATTERN = /^\d\d\d\d-\d\d-\d\d$/

@@ -1,15 +1,18 @@
 - at async run (tests\snapshot\errors.ts:62:3)
-Request: GET /api/health 200
+Request: GET /api/health/check 200
 Response: {
-  "status": true,
-  "updatedAt": "[temporal]",
+  "status": "UP",
   "environment": "test",
-  "database": {
-    "status": "connected",
-    "version": "16.10 (Debian 16.10-1.pgdg13+1)",
-    "maxConnections": 100,
-    "openedConnections": 1,
-    "schemaVersion": 11
+  "timestamp": "[temporal]",
+  "details": {
+    "database": {
+      "status": "UP",
+      "latencyMs": "[variable]",
+      "version": "16.10 (Debian 16.10-1.pgdg13+1)",
+      "maxConnections": 100,
+      "openedConnections": 1,
+      "schemaVersion": 11
+    }
   }
 }
 

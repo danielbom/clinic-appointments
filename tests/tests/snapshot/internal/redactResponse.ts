@@ -13,6 +13,8 @@ export function redactResponse(response: AxiosResponse | undefined): any {
     if (newData.refreshToken) newData.refreshToken = '[access-token]'
     if (newData.createdAt) newData.createdAt = '[temporal]'
     if (newData.updatedAt) newData.updatedAt = '[temporal]'
+    if (newData.timestamp) newData.timestamp = '[temporal]'
+    if (newData.latencyMs) newData.latencyMs = '[variable]'
     if (newData.traceId) newData.traceId = '[trace-id]'
     if (newData.instance) {
       for (const match of newData.instance.matchAll(PATH_UUID_REGEX)) {

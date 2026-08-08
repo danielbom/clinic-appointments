@@ -65,7 +65,7 @@ describe('clinic-appointments', () => {
   beforeAll(async () => {
     await api.health.healthCheck().then((res) => {
       const status = formatJson(res.data)
-      if (!res.data.status) {
+      if (res.data.status !== 'UP') {
         throw new Error('API is not up: ' + status)
       }
       if (res.data.environment !== 'test') {

@@ -1,16 +1,64 @@
 {
-  "/api/health": {
+  "/api/health/check": {
     "get": {
       "operationId": "health.healthCheck",
-      "summary": "Health check",
+      "summary": "Liveness / readiness probe",
       "tags": ["Health"],
       "responses": {
         "200": {
-          "description": "API is healthy",
+          "description": "Service status",
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Status"
+                "$ref": "#/components/schemas/HealthCheck"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/health/liveness": {
+    "get": {
+      "operationId": "health.healthLiveness",
+      "summary": "Liveness probe",
+      "tags": ["Health"],
+      "responses": {
+        "200": {
+          "description": "Liveness status",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HealthLiveness"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/api/health/readiness": {
+    "get": {
+      "operationId": "health.healthReadiness",
+      "summary": "Readiness probe",
+      "tags": ["Health"],
+      "responses": {
+        "200": {
+          "description": "Readiness status up or degraded",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HealthReadiness"
+              }
+            }
+          }
+        },
+        "503": {
+          "description": "Readiness status down",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HealthReadiness"
               }
             }
           }

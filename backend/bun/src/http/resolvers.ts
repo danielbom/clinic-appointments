@@ -1,7 +1,8 @@
 import type * as types from './types'
 import * as queries from '../core/queries'
 import * as mutations from '../core/mutations'
-import { getAppConfig, getDatabaseConfig, listConfiguredResources } from '../core/config'
+import * as health from '../core/health'
+import { getAppConfig, getDatabaseConfig } from '../core/config'
 import { replier, type RequestAdapter, type Resolver, type ResponseAdapter } from '../lib/http-adapter'
 import {
   getAccessTokenFromRequest,
@@ -9,68 +10,55 @@ import {
   getIntParam,
   getJwtDataFromRequest,
   getStringParam,
+  getUuidParam,
 } from '../core/utils'
 import { validations } from './validations'
 import { errors } from './errors/presenter'
 import { mapError } from './errors/domain'
 import { presenter } from '../core/presenter'
-import { parseUuid } from '../core/id'
 
 export default {
   health: {
     async healthCheck(req: RequestAdapter) {
+      /**
+       * Returns a comprehensive health report intended for monitoring systems and dashboards.
+       *
+       * The report checks the health of all critical dependencies, including the database,
+       * Redis, RabbitMQ, Elasticsearch, and external APIs. This endpoint always responds
+       * with HTTP 200 OK. The health of each dependency is reported independently using one
+       * of the following statuses:
+       *
+       * * UP: The dependency is operational and responding within expected performance thresholds.
+       * * DEGRADED: The dependency is operational, but performance or functionality is reduced.
+       *   The API remains available and core functionality continues to work.
+       * * DOWN: The dependency is unavailable or unable to perform its intended function.
+       */
       const reply = replier<types.api.health.healthCheck.responses>(req)
-
-      const resourcesCheck: Record<string, (() => Promise<any>) | undefined> = {
-        app: async () => {},
-        jwt: async () => {},
-        database: async () => {
-          const dbConfig = getDatabaseConfig()
-
-          try {
-            const row = await queries.queryDatabaseInfo({ databaseName: dbConfig.name })
-            response.database = {
-              status: 'connected',
-              version: row.version,
-              maxConnections: row.max_connections,
-              openedConnections: row.opened_connections,
-              schemaVersion: row.schema_version,
-            }
-          } catch (error) {
-            console.error(error)
-            response.status = false
-            response.database = {
-              status: 'disconnected',
-              version: '',
-              maxConnections: 0,
-              openedConnections: 0,
-              schemaVersion: 0,
-            }
-          }
-        },
-      }
-
-      // Collect query parameters, path parameters, and request body
-      const appConfig = getAppConfig()
-
-      // Validate e execute the usecase
-      const response: types.schemas.Status = {
-        status: true,
-        updatedAt: new Date().toISOString(),
-        environment: appConfig.environment,
-      }
-
-      for (const resource of listConfiguredResources()) {
-        const resourceCheck = resourcesCheck[resource]
-        if (!resourceCheck) {
-          console.warn('WARNING: resource check not implemented: ' + resource)
-          continue
-        }
-        await resourceCheck()
-      }
-
-      // Format the response
+      const result = await health.healthCheck()
+      return reply.send(200, result)
+    },
+    async healthLiveness(req: RequestAdapter) {
+      /**
+       * Verifies that the application process is running and able to respond to requests.
+       * This endpoint performs no I/O or external dependency checks. It returns HTTP 200 OK
+       * as long as the process and event loop are responsive.
+       */
+      const reply = replier<types.api.health.healthLiveness.responses>(req)
+      const response = health.healthLiveness()
       return reply.send(200, response)
+    },
+    async healthReadiness(req: RequestAdapter) {
+      /**
+       * Verifies that the application is ready to receive traffic.
+       *
+       * This endpoint checks only the critical dependencies required to serve requests,
+       * such as the primary database. It returns HTTP 200 OK when the application is ready
+       * and HTTP 503 Service Unavailable when it is not, allowing orchestrators or load
+       * balancers to temporarily remove the instance from service.
+       */
+      const reply = replier<types.api.health.healthReadiness.responses>(req)
+      const response = await health.healthReadiness()
+      return reply.send(response.status === 'DOWN' ? 503 : 200, response)
     },
   },
   auth: {
@@ -292,7 +280,7 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      const id = parseUuid(req.getPathParam('id'))
+      const id = getUuidParam(req.getPathParam('id'))
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
@@ -316,7 +304,7 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      const id = parseUuid(req.getPathParam('id'))
+      const id = getUuidParam(req.getPathParam('id'))
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
@@ -346,7 +334,7 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      const id = parseUuid(req.getPathParam('id'))
+      const id = getUuidParam(req.getPathParam('id'))
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
@@ -439,7 +427,7 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      const id = parseUuid(req.getPathParam('id'))
+      const id = getUuidParam(req.getPathParam('id'))
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
@@ -463,7 +451,7 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      const id = parseUuid(req.getPathParam('id'))
+      const id = getUuidParam(req.getPathParam('id'))
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
@@ -493,7 +481,7 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      const id = parseUuid(req.getPathParam('id'))
+      const id = getUuidParam(req.getPathParam('id'))
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
@@ -600,7 +588,7 @@ export default {
         return reply.fail(errors.invalidAccess('Role without access'))
       }
 
-      const id = parseUuid(req.getPathParam('id'))
+      const id = getUuidParam(req.getPathParam('id'))
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
@@ -630,7 +618,7 @@ export default {
         return reply.fail(errors.invalidAccess('Role without access'))
       }
 
-      const id = parseUuid(req.getPathParam('id'))
+      const id = getUuidParam(req.getPathParam('id'))
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
@@ -666,7 +654,7 @@ export default {
         return reply.fail(errors.invalidAccess('Role without access'))
       }
 
-      const id = parseUuid(req.getPathParam('id'))
+      const id = getUuidParam(req.getPathParam('id'))
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
@@ -740,7 +728,7 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      const id = parseUuid(req.getPathParam('id'))
+      const id = getUuidParam(req.getPathParam('id'))
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
@@ -764,7 +752,7 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      const id = parseUuid(req.getPathParam('id'))
+      const id = getUuidParam(req.getPathParam('id'))
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
@@ -794,7 +782,7 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      const id = parseUuid(req.getPathParam('id'))
+      const id = getUuidParam(req.getPathParam('id'))
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
@@ -887,7 +875,7 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      const id = parseUuid(req.getPathParam('id'))
+      const id = getUuidParam(req.getPathParam('id'))
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
@@ -911,7 +899,7 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      const id = parseUuid(req.getPathParam('id'))
+      const id = getUuidParam(req.getPathParam('id'))
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
@@ -941,7 +929,7 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      const id = parseUuid(req.getPathParam('id'))
+      const id = getUuidParam(req.getPathParam('id'))
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
@@ -1053,7 +1041,7 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      const id = parseUuid(req.getPathParam('id'))
+      const id = getUuidParam(req.getPathParam('id'))
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
@@ -1077,7 +1065,7 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      const id = parseUuid(req.getPathParam('id'))
+      const id = getUuidParam(req.getPathParam('id'))
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
@@ -1097,7 +1085,7 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      const id = parseUuid(req.getPathParam('id'))
+      const id = getUuidParam(req.getPathParam('id'))
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
@@ -1117,7 +1105,7 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      const id = parseUuid(req.getPathParam('id'))
+      const id = getUuidParam(req.getPathParam('id'))
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
@@ -1141,11 +1129,11 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      const id = parseUuid(req.getPathParam('id'))
+      const id = getUuidParam(req.getPathParam('id'))
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
-      const serviceId = parseUuid(req.getPathParam('service_id'))
+      const serviceId = getUuidParam(req.getPathParam('service_id'))
       if (!serviceId) {
         return reply.fail(errors.validation('path', 'service_id', 'invalid uuid'))
       }
@@ -1169,7 +1157,7 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      const id = parseUuid(req.getPathParam('id'))
+      const id = getUuidParam(req.getPathParam('id'))
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
@@ -1199,7 +1187,7 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      const id = parseUuid(req.getPathParam('id'))
+      const id = getUuidParam(req.getPathParam('id'))
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
@@ -1265,7 +1253,7 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      const id = parseUuid(req.getPathParam('id'))
+      const id = getUuidParam(req.getPathParam('id'))
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
@@ -1295,7 +1283,7 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      const id = parseUuid(req.getPathParam('id'))
+      const id = getUuidParam(req.getPathParam('id'))
       if (!id) {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }

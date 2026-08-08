@@ -43,8 +43,14 @@ export const routes = {
     PUT: h(resolvers.customers.updateCustomer),
     DELETE: h(resolvers.customers.deleteCustomer),
   },
-  '/api/health': {
+  '/api/health/check': {
     GET: h(resolvers.health.healthCheck),
+  },
+  '/api/health/liveness': {
+    GET: h(resolvers.health.healthLiveness),
+  },
+  '/api/health/readiness': {
+    GET: h(resolvers.health.healthReadiness),
   },
   '/api/secretaries': {
     GET: h(resolvers.secretaries.listSecretaries),

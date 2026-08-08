@@ -41,5 +41,5 @@ export function startWebServer() {
   logger.info(`Docs    http://localhost:${app.port}/api/docs`)
   logger.info(`Redoc   http://localhost:${app.port}/api/redoc`)
   logger.info(`Auth    http://localhost:${app.port}/api/auth`)
-  logger.info(`Health  http://localhost:${app.port}/api/health`)
+  logger.info(`Health  http://localhost:${app.port}/api/health/check`)
 }

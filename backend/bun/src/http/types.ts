@@ -23,10 +23,10 @@ export namespace core {
    */
   export type Environment = 'test' | 'stagging' | 'development' | 'production'
 
-  export interface HealthDetails {
-    primary: boolean
+  export type HealthDetails = {
     status: core.HealthStatus
     latencyMs: number
+    [key: string]: any
   }
 
   /**
@@ -133,7 +133,7 @@ export namespace domain {
 }
 
 export namespace schemas {
-  export interface Appointment {
+  export type Appointment = {
     id: domain.Uuid
     customerName: domain.Name
     customerId: domain.Uuid
@@ -148,7 +148,7 @@ export namespace schemas {
     status: schemas.AppointmentStatus
   }
 
-  export interface AppointmentCalendar {
+  export type AppointmentCalendar = {
     id: domain.Uuid
     date: core.Date
     time: core.Time
@@ -168,21 +168,21 @@ export namespace schemas {
    */
   export type AppointmentStatus = number
 
-  export interface AuthIdentity {
+  export type AuthIdentity = {
     id: domain.Uuid
     name: domain.Name
     email: domain.Email
     role: domain.Role
   }
 
-  export interface AuthResponse {
+  export type AuthResponse = {
     accessToken: string
     refreshToken: string
   }
 
   export type Count = number
 
-  export interface Customer {
+  export type Customer = {
     id: domain.Uuid
     name: domain.Name
     email?: domain.Email
@@ -191,7 +191,7 @@ export namespace schemas {
     cpf: domain.Cpf
   }
 
-  export interface HealthCheck {
+  export type HealthCheck = {
     status: core.HealthStatus
     timestamp: core.DateTime
     environment: core.Environment
@@ -200,13 +200,13 @@ export namespace schemas {
     }
   }
 
-  export interface HealthLiveness {
+  export type HealthLiveness = {
     status: core.HealthStatus
     timestamp: core.DateTime
     environment: core.Environment
   }
 
-  export interface HealthReadiness {
+  export type HealthReadiness = {
     status: core.HealthStatus
     timestamp: core.DateTime
     environment: core.Environment
@@ -215,11 +215,11 @@ export namespace schemas {
     }
   }
 
-  export interface Id {
+  export type Id = {
     id: domain.Uuid
   }
 
-  export interface Secretary {
+  export type Secretary = {
     id: domain.Uuid
     name: domain.Name
     email: domain.Email
@@ -229,7 +229,7 @@ export namespace schemas {
     cnpj?: domain.Cnpj
   }
 
-  export interface Service {
+  export type Service = {
     id: domain.Uuid
     serviceNameId: domain.Uuid
     specialistId: domain.Uuid
@@ -237,14 +237,14 @@ export namespace schemas {
     duration: domain.Duration
   }
 
-  export interface ServiceAvailable {
+  export type ServiceAvailable = {
     serviceNameId?: domain.Uuid
     serviceName?: domain.Name
     specializationId?: domain.Uuid
     specialization?: domain.Name
   }
 
-  export interface ServiceEnriched {
+  export type ServiceEnriched = {
     id: domain.Uuid
     serviceName: domain.Name
     serviceNameId: domain.Uuid
@@ -256,7 +256,7 @@ export namespace schemas {
     duration: domain.Duration
   }
 
-  export interface ServiceGroup {
+  export type ServiceGroup = {
     id: domain.Uuid
     name: domain.Name
     items: Array<{
@@ -265,7 +265,7 @@ export namespace schemas {
     }>
   }
 
-  export interface Specialist {
+  export type Specialist = {
     id: domain.Uuid
     name: domain.Name
     email: domain.Email
@@ -275,7 +275,7 @@ export namespace schemas {
     cnpj?: domain.Cnpj
   }
 
-  export interface SpecialistAppointment {
+  export type SpecialistAppointment = {
     id: domain.Uuid
     customerName: domain.Name
     customerId: domain.Uuid
@@ -288,7 +288,7 @@ export namespace schemas {
     status: schemas.AppointmentStatus
   }
 
-  export interface SpecialistService {
+  export type SpecialistService = {
     id: domain.Uuid
     specializationId: domain.Uuid
     serviceName: domain.Name
@@ -297,22 +297,9 @@ export namespace schemas {
     duration: domain.Duration
   }
 
-  export interface Specialization {
+  export type Specialization = {
     id: domain.Uuid
     name: domain.Name
-  }
-
-  export interface Status {
-    status: boolean
-    updatedAt: core.DateTime
-    environment: string
-    database?: {
-      status: 'connected' | 'disconnected'
-      version: string
-      maxConnections: number
-      openedConnections: number
-      schemaVersion: number
-    }
   }
 }
 
@@ -366,7 +353,7 @@ export namespace errors {
   /**
    * Represents a standardized error response following RFC 7807. Provides both machine-readable and human-readable information about an error condition.
    */
-  export interface ProblemDetails {
+  export type ProblemDetails = {
     /**
      * A machine-readable, domain-specific error code used by clients to implement conditional logic.
      */
@@ -412,7 +399,9 @@ export namespace errors {
     /**
      * A map of validation errors where each key is a field or parameter name and the value is a list of associated validation messages.
      */
-    errors?: Record<string, string[]>
+    errors?: {
+      [key: string]: any
+    }
   }
 
   /**
@@ -426,25 +415,25 @@ export namespace errors {
 }
 
 export namespace body {
-  export interface AppointmentsCreateBody {
+  export type AppointmentsCreateBody = {
     customerId: domain.Uuid
     serviceId: domain.Uuid
     date: core.Date
     time: core.Time
   }
 
-  export interface AppointmentsUpdateBody {
+  export type AppointmentsUpdateBody = {
     date: core.Date
     time: core.Time
     status: schemas.AppointmentStatus
   }
 
-  export interface AuthLogin {
+  export type AuthLogin = {
     email: domain.Email
     password: domain.Password
   }
 
-  export interface CustomerCreateBody {
+  export type CustomerCreateBody = {
     name: domain.Name
     email: domain.Email
     phone: domain.Phone
@@ -452,7 +441,7 @@ export namespace body {
     cpf: domain.Cpf
   }
 
-  export interface CustomerUpdateBody {
+  export type CustomerUpdateBody = {
     name: domain.Name
     email: domain.Email
     phone: domain.Phone
@@ -460,7 +449,7 @@ export namespace body {
     cpf: domain.Cpf
   }
 
-  export interface SecretaryCreateBody {
+  export type SecretaryCreateBody = {
     name: domain.Name
     email: domain.Email
     phone: domain.Phone
@@ -470,7 +459,7 @@ export namespace body {
     cnpj: domain.Cnpj
   }
 
-  export interface SecretaryUpdateBody {
+  export type SecretaryUpdateBody = {
     name: domain.Name
     email: domain.Email
     phone: domain.Phone
@@ -480,29 +469,29 @@ export namespace body {
     cnpj: domain.Cnpj
   }
 
-  export interface ServiceAvailableCreateBody {
+  export type ServiceAvailableCreateBody = {
     name: domain.Name
     specialization?: domain.Name
     specializationId?: domain.Uuid
   }
 
-  export interface ServiceAvailableUpdateBody {
+  export type ServiceAvailableUpdateBody = {
     name: domain.Name
   }
 
-  export interface ServiceCreateBody {
+  export type ServiceCreateBody = {
     specialistId: domain.Uuid
     serviceNameId: domain.Uuid
     price: domain.Price
     duration: domain.Duration
   }
 
-  export interface ServiceUpdateBody {
+  export type ServiceUpdateBody = {
     price: domain.Price
     duration: domain.Duration
   }
 
-  export interface SpecialistCreateBody {
+  export type SpecialistCreateBody = {
     name: domain.Name
     email: domain.Email
     phone: domain.Phone
@@ -516,13 +505,13 @@ export namespace body {
     services: body.SpecialistsCreateBodyService[]
   }
 
-  export interface SpecialistsCreateBodyService {
+  export type SpecialistsCreateBodyService = {
     serviceNameId: domain.Uuid
     price: domain.Price
     duration: domain.Duration
   }
 
-  export interface SpecialistUpdateBody {
+  export type SpecialistUpdateBody = {
     name: domain.Name
     email: domain.Email
     phone: domain.Phone
@@ -532,11 +521,11 @@ export namespace body {
     services: body.SpecialistsCreateBodyService[]
   }
 
-  export interface SpecializationCreateBody {
+  export type SpecializationCreateBody = {
     name: domain.Name
   }
 
-  export interface SpecializationUpdateBody {
+  export type SpecializationUpdateBody = {
     name: domain.Name
   }
 }
@@ -883,14 +872,44 @@ export namespace api {
   export namespace health {
     /**
      * @id health.healthCheck
-     * @route GET /api/health
+     * @route GET /api/health/check
      */
     export namespace healthCheck {
       export type responses = {
         /**
-         * API is healthy
+         * Service status
          */
-        200: schemas.Status
+        200: schemas.HealthCheck
+      }
+    }
+
+    /**
+     * @id health.healthLiveness
+     * @route GET /api/health/liveness
+     */
+    export namespace healthLiveness {
+      export type responses = {
+        /**
+         * Liveness status
+         */
+        200: schemas.HealthLiveness
+      }
+    }
+
+    /**
+     * @id health.healthReadiness
+     * @route GET /api/health/readiness
+     */
+    export namespace healthReadiness {
+      export type responses = {
+        /**
+         * Readiness status up or degraded
+         */
+        200: schemas.HealthReadiness
+        /**
+         * Readiness status down
+         */
+        503: schemas.HealthReadiness
       }
     }
   }
