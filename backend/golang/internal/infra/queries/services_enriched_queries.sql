@@ -11,7 +11,7 @@ WHERE true
   AND (sqlc.arg('specialist')::text = ''     OR LOWER(unaccent("sp"."name")) LIKE '%' || LOWER(unaccent(sqlc.arg('specialist'))) || '%')
   AND (sqlc.arg('specialization')::text = '' OR LOWER(unaccent("sz"."name")) LIKE '%' || LOWER(unaccent(sqlc.arg('specialization'))) || '%')
   AND (sqlc.arg('serviceName')::text = ''    OR LOWER(unaccent("sn"."name")) LIKE '%' || LOWER(unaccent(sqlc.arg('serviceName'))) || '%')
-ORDER BY "specialization_name" ASC, "service_name" ASC
+ORDER BY "service_name", "specialist_name"
 OFFSET sqlc.arg('offset')::integer
 LIMIT sqlc.arg('limit')::integer;
 

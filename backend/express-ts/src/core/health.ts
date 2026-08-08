@@ -42,7 +42,7 @@ export function healthLiveness(): types.schemas.HealthLiveness {
   return { status: 'UP', environment, timestamp }
 }
 
-export async function healthReadiness(): Promise<types.schemas.HealthReadiness> {
+export async function healthReadiness(): Promise<types.schemas.HealthCheck> {
   const timestamp = new Date().toISOString()
   const { environment } = getAppConfig()
 

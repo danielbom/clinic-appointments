@@ -8,7 +8,7 @@ Content-Type: application/json
 }
 
 # @name IsHealthy
-GET {{$dotenv BASE_URL}}/api/health
+GET {{$dotenv BASE_URL}}/api/health/check
 
 ###
 

@@ -49,7 +49,7 @@ WHERE true
   AND ($1::text = ''     OR LOWER(unaccent("sp"."name")) LIKE '%' || LOWER(unaccent($1)) || '%')
   AND ($2::text = '' OR LOWER(unaccent("sz"."name")) LIKE '%' || LOWER(unaccent($2)) || '%')
   AND ($3::text = ''    OR LOWER(unaccent("sn"."name")) LIKE '%' || LOWER(unaccent($3)) || '%')
-ORDER BY "specialization_name" ASC, "service_name" ASC
+ORDER BY "service_name", "specialist_name"
 OFFSET $4::integer
 LIMIT $5::integer
 `

@@ -25,3 +25,14 @@ func (q *Queries) GetDbSettings(ctx context.Context, database string) (DbSetting
 	err := row.Scan(&s.Version, &s.MaxConnections, &s.OpenedConnections, &s.SchemaVersion)
 	return s, err
 }
+
+const ping = `-- name: Ping :one
+SELECT 1;
+`
+
+func (q *Queries) Ping(ctx context.Context) (int32, error) {
+	row := q.db.QueryRow(ctx, ping)
+	var s int32
+	err := row.Scan(&s)
+	return s, err
+}

@@ -206,15 +206,6 @@ export namespace schemas {
     environment: core.Environment
   }
 
-  export type HealthReadiness = {
-    status: core.HealthStatus
-    timestamp: core.DateTime
-    environment: core.Environment
-    details: {
-      database: core.HealthDetails
-    }
-  }
-
   export type Id = {
     id: domain.Uuid
   }
@@ -905,11 +896,11 @@ export namespace api {
         /**
          * Readiness status up or degraded
          */
-        200: schemas.HealthReadiness
+        200: schemas.HealthCheck
         /**
          * Readiness status down
          */
-        503: schemas.HealthReadiness
+        503: schemas.HealthCheck
       }
     }
   }

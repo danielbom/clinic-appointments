@@ -54,7 +54,9 @@ func NewApi(pool *pgxpool.Pool, auth *jwtauth.JWTAuth) http.Handler {
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
 	}))
 
-	r.Get("/api/health", h.health)
+	r.Get("/api/health/check", h.healthCheck)
+	r.Get("/api/health/liveness", h.healthLiveness)
+	r.Get("/api/health/readiness", h.healthReadiness)
 
 	r.Post("/api/auth/login", h.authLogin)
 
