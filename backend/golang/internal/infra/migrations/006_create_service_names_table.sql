@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS service_names (
-    "id"                UUID         PRIMARY KEY  NOT NULL   DEFAULT gen_random_uuid(),
+    "id"                UUID         PRIMARY KEY  NOT NULL,
     "name"              VARCHAR(255)              NOT NULL,
     "specialization_id" UUID                      NOT NULL,
 

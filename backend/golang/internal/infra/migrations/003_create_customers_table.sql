@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS customers (
-    "id"                UUID         PRIMARY KEY  NOT NULL   DEFAULT gen_random_uuid(),
+    "id"                UUID         PRIMARY KEY  NOT NULL,
     "name"              VARCHAR(255)              NOT NULL,
     "email"             VARCHAR(255)                  NULL,
     "phone"             VARCHAR(255)              NOT NULL, -- UNIQUE

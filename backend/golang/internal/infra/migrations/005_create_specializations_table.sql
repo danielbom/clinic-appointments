@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS specializations (
-    "id"                UUID         PRIMARY KEY  NOT NULL   DEFAULT gen_random_uuid(),
+    "id"                UUID         PRIMARY KEY  NOT NULL,
     "name"              VARCHAR(255)              NOT NULL  -- UNIQUE
 );
 

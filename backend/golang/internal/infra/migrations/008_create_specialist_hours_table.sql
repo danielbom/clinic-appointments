@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS specialist_hours (
-    "id"                UUID         PRIMARY KEY  NOT NULL   DEFAULT gen_random_uuid(),
+    "id"                UUID         PRIMARY KEY  NOT NULL,
     "specialist_id"     UUID                      NOT NULL,
     "weekday"           INT                       NOT NULL, -- 0 = Sunday, 1 = Monday, ..., 6 = Saturday
     "start_time"        TIME                      NOT NULL,

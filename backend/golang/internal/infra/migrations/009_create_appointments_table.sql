@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS appointments (
-    "id"                UUID   PRIMARY KEY        NOT NULL   DEFAULT gen_random_uuid(),
+    "id"                UUID   PRIMARY KEY        NOT NULL,
     "customer_id"       UUID                      NOT NULL,
     "specialist_id"     UUID                      NOT NULL,
     "service_name_id"   UUID                      NOT NULL,

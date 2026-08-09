@@ -12,6 +12,25 @@ description = "Stop and remove PostgreSQL database container"
 run = "docker-compose --project-name appointments down db"
 dir = "./backend/golang"
 
+#############
+# migration #
+#############
+
+[tasks."migration"]
+description = ""
+run = "go run ./cmd/wenv/main.go tern"
+dir = "./backend/golang"
+
+[tasks."migration-status"]
+description = ""
+run = "go run ./cmd/wenv/main.go tern status   --migrations ./internal/infra/migrations/ --config ./internal/infra/migrations/tern.conf"
+dir = "./backend/golang"
+
+[tasks."migration-migrate"]
+description = ""
+run = "go run ./cmd/wenv/main.go tern migrate  --migrations ./internal/infra/migrations/ --config ./internal/infra/migrations/tern.conf"
+dir = "./backend/golang"
+
 ##################
 # backend/golang #
 ##################
