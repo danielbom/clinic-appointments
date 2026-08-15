@@ -18,7 +18,7 @@ func (h *api) getSpecialist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	rs := NewRequestState(h.q, r)
 
 	specialist, err := usecase.GetSpecialist(rs, specialistID)
@@ -43,7 +43,7 @@ func (h *api) listSpecialists(w http.ResponseWriter, r *http.Request) {
 	cnpj := query.Get("cnpj")
 	phone := query.Get("phone")
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.ListSpecialistsArgs{
 		PaginationArgs: usecase.PaginationArgs{
 			PageSize: pageSize,
@@ -83,7 +83,7 @@ func (h *api) countSpecialists(w http.ResponseWriter, r *http.Request) {
 	cnpj := query.Get("cnpj")
 	phone := query.Get("phone")
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.CountSpecialistArgs{
 		Cpf:   cpf,
 		Cnpj:  cnpj,
@@ -116,7 +116,7 @@ func (h *api) createSpecialist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	var args usecase.SpecialistWithServicesInfoArgs
 	args.Specialist = usecase.SpecialistInfoArgs{
 		Name:      body.Name,
@@ -176,7 +176,7 @@ func (h *api) updateSpecialist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	var args usecase.SpecialistWithServicesInfoArgs
 	args.Specialist = usecase.SpecialistInfoArgs{
 		Name:      body.Name,
@@ -231,7 +231,7 @@ func (h *api) deleteSpecialist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	rs := NewRequestState(h.q, r)
 
 	err := usecase.DeleteSpecialist(rs, specialistID)
@@ -254,7 +254,7 @@ func (h *api) getSpecialistAppointments(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	rs := NewRequestState(h.q, r)
 
 	args := usecase.ListSpecialistAppointmentsArgs{
@@ -285,7 +285,7 @@ func (h *api) getSpecialistSpecializations(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	rs := NewRequestState(h.q, r)
 
 	specializations, err := rs.Queries().ListSpecializationsBySpecialistID(rs.Context(), specialistID)
@@ -307,7 +307,7 @@ func (h *api) getSpecialistServices(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	rs := NewRequestState(h.q, r)
 
 	services, err := usecase.GetServicesBySpecialistID(rs, specialistID)
@@ -333,7 +333,7 @@ func (h *api) getSpecialistService(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	rs := NewRequestState(h.q, r)
 
 	service, err := usecase.GetSpecialistService(rs, specialistID, serviceNameId)

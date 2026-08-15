@@ -25,7 +25,7 @@ func (h *api) getCustomer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	rs := NewRequestState(h.q, r)
 
 	customer, err := usecase.GetCustomer(rs, customerId)
@@ -61,7 +61,7 @@ func (h *api) listCustomers(w http.ResponseWriter, r *http.Request) {
 	cpf := query.Get("cpf")
 	phone := query.Get("phone")
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.ListCustomersArgs{
 		PaginationArgs: usecase.PaginationArgs{
 			PageSize: pageSize,
@@ -109,7 +109,7 @@ func (h *api) countCustomers(w http.ResponseWriter, r *http.Request) {
 	cpf := query.Get("cpf")
 	phone := query.Get("phone")
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.CountCustomersArgs{
 		Cpf:   cpf,
 		Phone: phone,
@@ -149,7 +149,7 @@ func (h *api) createCustomer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.CustomerInfoArgs{
 		Name:      body.Name,
 		Email:     body.Email,
@@ -195,7 +195,7 @@ func (h *api) updateCustomer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.CustomerInfoArgs{
 		Name:      body.Name,
 		Email:     body.Email,
@@ -236,7 +236,7 @@ func (h *api) deleteCustomer(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	rs := NewRequestState(h.q, r)
 
 	err := usecase.DeleteCustomer(rs, customerId)

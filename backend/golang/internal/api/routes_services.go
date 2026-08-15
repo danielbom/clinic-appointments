@@ -25,7 +25,7 @@ func (h *api) getService(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	rs := NewRequestState(h.q, r)
 
 	service, err := usecase.GetService(rs, serviceId)
@@ -61,7 +61,7 @@ func (h *api) listServices(w http.ResponseWriter, r *http.Request) {
 	specialist := query.Get("specialist")
 	specialization := query.Get("specialization")
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.ListServicesEnrichedArgs{
 		PageSize:           pageSize,
 		Page:               page,
@@ -106,7 +106,7 @@ func (h *api) countServices(w http.ResponseWriter, r *http.Request) {
 	specialist := query.Get("specialist")
 	specialization := query.Get("specialization")
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.CountServicesEnrichedArgs{
 		SpecialistName:     specialist,
 		SpecializationName: specialization,
@@ -147,7 +147,7 @@ func (h *api) createService(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.SpecialistServiceInfoArgs{
 		ServiceNameIDRaw:  body.ServiceNameID,
 		SpecialistIDRaw:   body.SpecialistID,
@@ -195,7 +195,7 @@ func (h *api) updateService(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.SpecialistServiceInfoArgs{
 		ServiceNameIDRaw:  body.ServiceNameID,
 		Price:             body.Price,
@@ -235,7 +235,7 @@ func (h *api) deleteService(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	rs := NewRequestState(h.q, r)
 
 	err := usecase.DeleteSpecialistService(rs, serviceId)

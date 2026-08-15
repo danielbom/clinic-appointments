@@ -23,7 +23,7 @@ import (
 func (h *api) listSpecializations(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	rs := NewRequestState(h.q, r)
 
 	specializations, err := usecase.ListSpecializations(rs)
@@ -54,7 +54,7 @@ func (h *api) createSpecialization(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.SpecializationInfoArgs{
 		Name: body.Name,
 	}
@@ -96,7 +96,7 @@ func (h *api) updateSpecialization(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.SpecializationInfoArgs{
 		Name: body.Name,
 	}
@@ -133,7 +133,7 @@ func (h *api) deleteSpecialization(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	rs := NewRequestState(h.q, r)
 
 	err := usecase.DeleteSpecialization(rs, specializationId)

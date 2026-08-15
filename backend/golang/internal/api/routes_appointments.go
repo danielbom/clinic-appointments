@@ -25,7 +25,7 @@ func (h *api) getAppointment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	rs := NewRequestState(h.q, r)
 
 	appointment, err := usecase.GetAppointment(rs, appointmentID)
@@ -62,7 +62,7 @@ func (h *api) listAppointments(w http.ResponseWriter, r *http.Request) {
 	specialist := query.Get("specialist")
 	customer := query.Get("customer")
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.ListAppointmentsArgs{
 		PaginationArgs: usecase.PaginationArgs{
 			Page:     page,
@@ -118,7 +118,7 @@ func (h *api) countAppointments(w http.ResponseWriter, r *http.Request) {
 	specialist := query.Get("specialist")
 	customer := query.Get("customer")
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.CountAppointmentsArgs{
 		ServiceName:    serviceName,
 		SpecialistName: specialist,
@@ -162,7 +162,7 @@ func (h *api) getAppointmentsCalendar(w http.ResponseWriter, r *http.Request) {
 	startDate := query.Get("startDate")
 	endDate := query.Get("endDate")
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.ListAppointmentsCalendarArgs{
 		Year:         int(year),
 		StartDateRaw: startDate,
@@ -205,7 +205,7 @@ func (h *api) getAppointmentsCalendarCount(w http.ResponseWriter, r *http.Reques
 	startDate := query.Get("startDate")
 	endDate := query.Get("endDate")
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.ListAppointmentsCalendarCountArgs{
 		Year:         int(year),
 		StartDateRaw: startDate,
@@ -248,7 +248,7 @@ func (h *api) createAppointment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.CreateAppointmentArgs{
 		CustomerIDRaw: body.CustomerID,
 		ServiceIDRaw:  body.ServiceID,
@@ -298,7 +298,7 @@ func (h *api) updateAppointment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.UpdateAppointmentArgs{
 		Date:   body.Date,
 		Time:   body.Time,
@@ -338,7 +338,7 @@ func (h *api) deleteAppointment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	rs := NewRequestState(h.q, r)
 
 	err := usecase.DeleteAppointment(rs, appointmentID)

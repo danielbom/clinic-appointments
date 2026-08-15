@@ -21,7 +21,7 @@ import (
 func (h *api) healthCheck(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	timestamp := time.Now().UTC().Format(time.RFC3339)
 	environment := env.Get(env.APP_ENVIRONMENT)
 	status := dtos.HEALTH_UP
@@ -61,7 +61,7 @@ func (h *api) healthCheck(w http.ResponseWriter, r *http.Request) {
 func (h *api) healthLiveness(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	timestamp := time.Now().UTC().Format(time.RFC3339)
 	environment := env.Get(env.APP_ENVIRONMENT)
 	status := dtos.HEALTH_UP
@@ -79,7 +79,7 @@ func (h *api) healthLiveness(w http.ResponseWriter, r *http.Request) {
 func (h *api) healthReadiness(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	timestamp := time.Now().UTC().Format(time.RFC3339)
 	environment := env.Get(env.APP_ENVIRONMENT)
 	status := dtos.HEALTH_UP

@@ -12,7 +12,7 @@ import (
 func (h *api) listServiceGroups(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	rs := NewRequestState(h.q, r)
 
 	specializations, serviceNames, err := usecase.ListServiceGroups(rs)

@@ -82,7 +82,7 @@ export default {
       }
       const args: types.api.auth.login.body = body
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const result = await mutations.login(args, { accessTokenExpireIn, refreshTokenExpireIn })
 
       if (!result.ok) {
@@ -119,7 +119,7 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const identity = await queries.queryIdentity({ userId: jwtData.userId })
       if (!identity) {
         console.error('jwt userId without identity:', jwtData.userId)
@@ -150,7 +150,7 @@ export default {
       const customer = getStringParam(query.customer)
       const status = getIntParam(query.status, 0 /** all */)
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const rows = await queries.queryAppointments({
         page,
         pageSize,
@@ -180,7 +180,7 @@ export default {
       }
       const args: types.api.appointments.createAppointment.body = body
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const result = await mutations.createAppointment(args)
 
       if (!result.ok) {
@@ -207,7 +207,7 @@ export default {
       const customer = getStringParam(query.customer)
       const status = getIntParam(query.status, 0 /** all */)
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const count = await queries.queryAppointmentsCount({
         startDate,
         endDate,
@@ -239,7 +239,7 @@ export default {
         return reply.fail(errors.validation('query', 'endDate', 'invalid date format'))
       }
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const rows = await queries.queryAppointmentsCalendar({ startDate, endDate })
 
       // Format the response
@@ -264,7 +264,7 @@ export default {
         return reply.fail(errors.validation('query', 'endDate', 'invalid date format'))
       }
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const calendarCount = await queries.queryAppointmentsCalendarCount({ startDate, endDate })
 
       // Format the response
@@ -285,7 +285,7 @@ export default {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const row = await queries.queryAppointment({ appointmentId: id })
 
       if (!row) {
@@ -315,7 +315,7 @@ export default {
       }
       const args: types.api.appointments.updateAppointment.body = body
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const result = await mutations.updateAppointment(id, args)
 
       if (!result.ok) {
@@ -339,7 +339,7 @@ export default {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const result = await mutations.deleteAppointment(id)
 
       if (!result.ok) {
@@ -367,7 +367,7 @@ export default {
       const cpf = getStringParam(query.cpf, '')
       const phone = getStringParam(query.phone, '')
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const rows = await queries.queryCustomers({ page, pageSize, name, cpf, phone })
 
       // Format the response
@@ -388,7 +388,7 @@ export default {
       }
       const args: types.api.customers.createCustomer.body = body
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const result = await mutations.createCustomer(args)
 
       if (!result.ok) {
@@ -412,7 +412,7 @@ export default {
       const cpf = getStringParam(query.cpf, '')
       const phone = getStringParam(query.phone, '')
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const count = await queries.queryCustomersCount({ name, cpf, phone })
 
       // Format the response
@@ -432,7 +432,7 @@ export default {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const row = await queries.queryCustomer({ customerId: id })
 
       if (!row) {
@@ -462,7 +462,7 @@ export default {
       }
       const args: types.api.customers.updateCustomer.body = body
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const result = await mutations.updateCustomer(id, args)
 
       if (!result.ok) {
@@ -486,7 +486,7 @@ export default {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const result = await mutations.deleteCustomer(id)
 
       if (!result.ok) {
@@ -518,7 +518,7 @@ export default {
       const cnpj = getStringParam(query.cnpj, '')
       const phone = getStringParam(query.phone, '')
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const rows = await queries.querySecretaries({ page, pageSize, name, cpf, cnpj, phone })
 
       // Format the response
@@ -542,7 +542,7 @@ export default {
       }
       const args: types.api.secretaries.createSecretary.body = body
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const result = await mutations.createSecretary(args)
 
       if (!result.ok) {
@@ -570,7 +570,7 @@ export default {
       const cnpj = getStringParam(query.cnpj, '')
       const phone = getStringParam(query.phone, '')
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const count = await queries.querySecretariesCount({ name, cpf, cnpj, phone })
 
       // Format the response
@@ -596,7 +596,7 @@ export default {
         return reply.fail(errors.invalidAccess('User without access'))
       }
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const row = await queries.querySecretary({ secretaryId: id })
 
       if (!row) {
@@ -632,7 +632,7 @@ export default {
       }
       const args: types.api.secretaries.updateSecretary.body = body
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const result = await mutations.updateSecretary(id, args)
 
       if (!result.ok) {
@@ -659,7 +659,7 @@ export default {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const result = await mutations.deleteSecretary(id)
 
       if (!result.ok) {
@@ -684,7 +684,7 @@ export default {
       const page = getIntParam(query.page, 0)
       const pageSize = getIntParam(query.pageSize, 10)
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const rows = await queries.queryServiceAvailables({ page, pageSize })
 
       // Format the response
@@ -709,7 +709,7 @@ export default {
         return reply.fail(errors.missingValue('body', 'specializationId'))
       }
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const result = await mutations.createServiceAvailable(args)
 
       if (!result.ok) {
@@ -733,7 +733,7 @@ export default {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const row = await queries.queryServiceAvailable({ serviceAvailableId: id })
 
       if (!row) {
@@ -763,7 +763,7 @@ export default {
       }
       const args: types.api.servicesAvailable.updateServiceAvailable.body = body
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const result = await mutations.updateServiceAvailable(id, args)
 
       if (!result.ok) {
@@ -787,7 +787,7 @@ export default {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const result = await mutations.deleteServiceAvailable(id)
 
       if (!result.ok) {
@@ -815,7 +815,7 @@ export default {
       const specialist = getStringParam(query.specialist).toLowerCase()
       const specialization = getStringParam(query.specialization).toLowerCase()
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const rows = await queries.queryServices({ page, pageSize, service, specialist, specialization })
 
       // Format the response
@@ -836,7 +836,7 @@ export default {
       }
       const args: types.api.services.createService.body = body
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const result = await mutations.createService(args)
 
       if (!result.ok) {
@@ -860,7 +860,7 @@ export default {
       const specialist = getStringParam(query.specialist).toLowerCase()
       const specialization = getStringParam(query.specialization).toLowerCase()
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const count = await queries.queryServicesCount({ service, specialist, specialization })
 
       // Format the response
@@ -880,7 +880,7 @@ export default {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const row = await queries.queryService({ serviceId: id })
 
       if (!row) {
@@ -910,7 +910,7 @@ export default {
       }
       const args: types.api.services.updateService.body = body
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const result = await mutations.updateService(id, args)
 
       if (!result.ok) {
@@ -934,7 +934,7 @@ export default {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const result = await mutations.deleteService(id)
 
       if (!result.ok) {
@@ -955,7 +955,7 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const rows = await queries.queryServiceGroups()
 
       // Format the response
@@ -980,7 +980,7 @@ export default {
       const cnpj = getStringParam(query.cnpj)
       const phone = getStringParam(query.phone)
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const rows = await queries.querySpecialists({ page, pageSize, name, cpf, cnpj, phone })
 
       // Format the response
@@ -1001,7 +1001,7 @@ export default {
       }
       const args: types.api.specialists.createSpecialist.body = body
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const result = await mutations.createSpecialist(args)
 
       if (!result.ok) {
@@ -1026,7 +1026,7 @@ export default {
       const cnpj = getStringParam(query.cnpj)
       const phone = getStringParam(query.phone)
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const count = await queries.querySpecialistsCount({ name, cpf, cnpj, phone })
 
       // Format the response
@@ -1046,7 +1046,7 @@ export default {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const row = await queries.querySpecialist({ specialistId: id })
 
       if (!row) {
@@ -1070,7 +1070,7 @@ export default {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const rows = await queries.querySpecialistServices({ specialistId: id })
 
       // Format the response
@@ -1090,7 +1090,7 @@ export default {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const rows = await queries.querySpecialistSpecializations({ specialistId: id })
 
       // Format the response
@@ -1114,7 +1114,7 @@ export default {
       const page = getIntParam(query.page, 0)
       const pageSize = getIntParam(query.pageSize, 10)
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const rows = await queries.querySpecialistAppointments({ page, pageSize, specialistId: id })
 
       // Format the response
@@ -1138,7 +1138,7 @@ export default {
         return reply.fail(errors.validation('path', 'service_id', 'invalid uuid'))
       }
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const row = await queries.querySpecialistService({ specialistId: id, serviceId })
 
       if (!row) {
@@ -1168,7 +1168,7 @@ export default {
       }
       const args: types.api.specialists.updateSpecialist.body = body
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const result = await mutations.updateSpecialist(id, args)
 
       if (!result.ok) {
@@ -1192,7 +1192,7 @@ export default {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const result = await mutations.deleteSpecialist(id)
 
       if (!result.ok) {
@@ -1213,7 +1213,7 @@ export default {
         return reply.fail(errors.invalidToken())
       }
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const rows = await queries.querySpecializations()
 
       // Format the response
@@ -1234,7 +1234,7 @@ export default {
       }
       const args: types.api.specializations.createSpecialization.body = body
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const result = await mutations.createSpecialization(args)
 
       if (!result.ok) {
@@ -1264,7 +1264,7 @@ export default {
       }
       const args: types.api.specializations.updateSpecialization.body = body
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const result = await mutations.updateSpecialization(id, args)
 
       if (!result.ok) {
@@ -1288,7 +1288,7 @@ export default {
         return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
       }
 
-      // Validate e execute the usecase
+      // Validate and execute the usecase
       const result = await mutations.deleteSpecialization(id)
 
       if (!result.ok) {

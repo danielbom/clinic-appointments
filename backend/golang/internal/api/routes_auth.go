@@ -28,7 +28,7 @@ func (h *api) authLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.AuthLoginArgs{
 		Email:    body.Email,
 		Password: body.Password,
@@ -88,7 +88,7 @@ func (h *api) authRefresh(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	rs := NewRequestState(h.q, r)
 
 	identity, err := usecase.AuthMe(rs, userID)
@@ -132,7 +132,7 @@ func (h *api) authMe(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	rs := NewRequestState(h.q, r)
 
 	identity, err := usecase.AuthMe(rs, userID)

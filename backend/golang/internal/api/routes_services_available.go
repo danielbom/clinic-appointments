@@ -22,7 +22,7 @@ func (h *api) getServiceAvailable(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	rs := NewRequestState(h.q, r)
 
 	service, err := usecase.GetServiceAvailable(rs, serviceId)
@@ -45,7 +45,7 @@ func (h *api) createServiceAvailable(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.CreateServiceNameArgs{
 		Name:                body.Name,
 		Specialization:      body.Specialization,
@@ -83,7 +83,7 @@ func (h *api) updateServiceAvailable(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.UpdateServiceNameArgs{
 		Name: body.Name,
 	}
@@ -113,7 +113,7 @@ func (h *api) deleteServiceAvailable(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	rs := NewRequestState(h.q, r)
 
 	err := usecase.DeleteServiceName(rs, serviceId)

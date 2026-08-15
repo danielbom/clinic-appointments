@@ -59,7 +59,7 @@ export async function refresh({
     return { ok: false, error: { kind: 'internal', detail: 'jwt userId is not an uuid' } }
   }
 
-  // Validate e execute the usecase
+  // Validate and execute the usecase
   const identity = await queryIdentity({ userId: id })
   if (!identity) {
     console.error('jwt userId without identity:', id)

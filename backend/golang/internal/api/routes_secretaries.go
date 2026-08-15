@@ -37,7 +37,7 @@ func (h *api) getSecretary(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	rs := NewRequestState(h.q, r)
 
 	secretary, err := usecase.GetSecretary(rs, secretaryId)
@@ -81,7 +81,7 @@ func (h *api) listSecretaries(w http.ResponseWriter, r *http.Request) {
 	cnpj := query.Get("cnpj")
 	phone := query.Get("phone")
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.ListSecretariesArgs{
 		PaginationArgs: usecase.PaginationArgs{
 			PageSize: pageSize,
@@ -138,7 +138,7 @@ func (h *api) countSecretaries(w http.ResponseWriter, r *http.Request) {
 	cnpj := query.Get("cnpj")
 	phone := query.Get("phone")
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.CountSecretariesArgs{
 		Cpf:   cpf,
 		Cnpj:  cnpj,
@@ -186,7 +186,7 @@ func (h *api) createSecretary(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.SecretaryInfoArgs{
 		Name:      body.Name,
 		Email:     body.Email,
@@ -247,7 +247,7 @@ func (h *api) updateSecretary(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	args := usecase.SecretaryInfoArgs{
 		Name:      body.Name,
 		Email:     body.Email,
@@ -298,7 +298,7 @@ func (h *api) deleteSecretary(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate e execute the usecase
+	// Validate and execute the usecase
 	rs := NewRequestState(h.q, r)
 
 	err := usecase.DeleteSecretary(rs, secretaryId)
