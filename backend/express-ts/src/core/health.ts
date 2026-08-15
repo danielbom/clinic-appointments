@@ -1,11 +1,11 @@
 import { getAppConfig, getDatabaseConfig } from './config'
-import { checkDatabase } from './db'
+import { pingDatabase } from './db'
 import type { InfraStatus } from './infra'
 import type * as types from '../http/types'
 import * as queries from './queries'
 
 async function getInfraStatus({ withInfo }: { withInfo: boolean }) {
-  const database = await checkDatabase()
+  const database = await pingDatabase()
   if (withInfo && database.status === 'UP') {
     const { name: databaseName } = getDatabaseConfig()
     const info = await queries.queryDatabaseInfo({ databaseName })

@@ -2,6 +2,7 @@
 /tmp
 .env*
 
-src/generated/prisma
+src/validators
+src/prisma
 src/public/api
 src/public/schemas
