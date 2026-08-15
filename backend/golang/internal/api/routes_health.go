@@ -100,7 +100,12 @@ func (h *api) healthReadiness(w http.ResponseWriter, r *http.Request) {
 			Database: database,
 		},
 	}
-	render.Status(r, http.StatusOK)
+
+	if response.Status == dtos.HEALTH_DOWN {
+		render.Status(r, http.StatusServiceUnavailable)
+	} else {
+		render.Status(r, http.StatusOK)
+	}
 	render.JSON(w, r, response)
 }
 
