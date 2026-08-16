@@ -19,8 +19,14 @@ export const routes = {
   },
   '/api/appointments/:id': {
     GET: h(resolvers.appointments.getAppointmentById),
-    PUT: h(resolvers.appointments.updateAppointment),
+    PATCH: h(resolvers.appointments.updateAppointment),
     DELETE: h(resolvers.appointments.deleteAppointment),
+  },
+  '/api/appointments/:id/realized': {
+    PATCH: h(resolvers.appointments.appointmentRealized),
+  },
+  '/api/appointments/:id/canceled': {
+    PATCH: h(resolvers.appointments.appointmentCanceled),
   },
   '/api/auth/login': {
     POST: h(resolvers.auth.login),
@@ -51,6 +57,9 @@ export const routes = {
   },
   '/api/health/readiness': {
     GET: h(resolvers.health.healthReadiness),
+  },
+  '/api/invoices/preview': {
+    POST: h(resolvers.invoices.preview),
   },
   '/api/secretaries': {
     GET: h(resolvers.secretaries.listSecretaries),

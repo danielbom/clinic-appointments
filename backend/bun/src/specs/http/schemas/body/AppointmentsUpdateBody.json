@@ -6,14 +6,7 @@
     },
     "time": {
       "$ref": "#/components/core/Time"
-    },
-    "status": {
-      "$ref": "#/components/schemas/AppointmentStatus"
     }
   },
-  "required": [
-    "date",
-    "time",
-    "status"
-  ]
+  "required": ["date", "time"]
 }

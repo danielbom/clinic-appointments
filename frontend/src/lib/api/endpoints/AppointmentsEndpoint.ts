@@ -30,7 +30,15 @@ export class AppointmentsEndpoint {
   }
 
   async update(id: string, data: AppointmentsUpdateBody): Promise<AxiosResponse<Id>> {
-    return await this._config.instance.put(`/api/appointments/${id}`, data)
+    return await this._config.instance.patch(`/api/appointments/${id}`, data)
+  }
+
+  async realized(id: string): Promise<AxiosResponse<Id>> {
+    return await this._config.instance.patch(`/api/appointments/${id}/realized`)
+  }
+
+  async canceled(id: string): Promise<AxiosResponse<Id>> {
+    return await this._config.instance.patch(`/api/appointments/${id}/canceled`)
   }
 
   async delete(id: string): Promise<AxiosResponse<void>> {
@@ -105,5 +113,4 @@ export type AppointmentsCreateBody = {
 export type AppointmentsUpdateBody = {
   date: string
   time: string
-  status: number
 }

@@ -69,8 +69,10 @@ func NewApi(pool *pgxpool.Pool, auth *jwtauth.JWTAuth) http.Handler {
 	r.With(h.JWT).Get("/api/appointments/calendar/count", h.getAppointmentsCalendarCount)
 	r.With(h.JWT).Get("/api/appointments/{id}", h.getAppointment)
 	r.With(h.JWT).Post("/api/appointments", h.createAppointment)
-	r.With(h.JWT).Put("/api/appointments/{id}", h.updateAppointment)
+	r.With(h.JWT).Patch("/api/appointments/{id}", h.updateAppointment)
 	r.With(h.JWT).Delete("/api/appointments/{id}", h.deleteAppointment)
+	r.With(h.JWT).Patch("/api/appointments/{id}/realized", h.appointmentRealized)
+	r.With(h.JWT).Patch("/api/appointments/{id}/canceled", h.appointmentCanceled)
 
 	r.With(h.JWT).Get("/api/customers", h.listCustomers)
 	r.With(h.JWT).Get("/api/customers/count", h.countCustomers)

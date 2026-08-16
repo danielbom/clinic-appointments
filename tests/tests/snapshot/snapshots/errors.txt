@@ -11,7 +11,7 @@ Response: {
       "version": "16.10 (Debian 16.10-1.pgdg13+1)",
       "maxConnections": 100,
       "openedConnections": 1,
-      "schemaVersion": 11
+      "schemaVersion": 13
     }
   }
 }
@@ -42,13 +42,13 @@ Response: {
 }
 
 - at async run (tests\snapshot\errors.ts:75:3)
-Request: PUT /api/appointments/ 404
+Request: PATCH /api/appointments/ 404
 Body: {}
 Response: {
   "code": "resource_not_found",
   "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceNotFound.json",
   "title": "Route not found",
-  "detail": "PUT /api/appointments/ not found",
+  "detail": "PATCH /api/appointments/ not found",
   "status": 404,
   "instance": "/api/appointments/",
   "traceId": "[trace-id]"
@@ -146,7 +146,7 @@ Response: {
 }
 
 - at async run (tests\snapshot\errors.ts:86:5)
-Request: PUT /api/appointments/x 401
+Request: PATCH /api/appointments/x 401
 Body: {}
 Response: {
   "code": "auth_error",
@@ -1591,7 +1591,7 @@ Body: {
 Response: {
   "code": "resource_conflict",
   "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceConflict.json",
-  "title": "Resource conflict",
+  "title": "Already exists",
   "detail": "secretary with the same email already exists",
   "status": 409,
   "instance": "/api/secretaries",
@@ -1606,7 +1606,7 @@ Body: {
 Response: {
   "code": "resource_conflict",
   "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceConflict.json",
-  "title": "Resource conflict",
+  "title": "Already exists",
   "detail": "specialization with the same name already exists",
   "status": 409,
   "instance": "/api/specializations",
@@ -1637,7 +1637,7 @@ Body: {
 Response: {
   "code": "resource_conflict",
   "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceConflict.json",
-  "title": "Resource conflict",
+  "title": "Already exists",
   "detail": "specialist with the same email already exists",
   "status": 409,
   "instance": "/api/specialists",
@@ -1655,7 +1655,7 @@ Body: {
 Response: {
   "code": "resource_conflict",
   "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceConflict.json",
-  "title": "Resource conflict",
+  "title": "Already exists",
   "detail": "service with the same specialist_id,service_name_id already exists",
   "status": 409,
   "instance": "/api/services",
@@ -1674,7 +1674,7 @@ Body: {
 Response: {
   "code": "resource_conflict",
   "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceConflict.json",
-  "title": "Resource conflict",
+  "title": "Already exists",
   "detail": "customer with the same phone already exists",
   "status": 409,
   "instance": "/api/customers",

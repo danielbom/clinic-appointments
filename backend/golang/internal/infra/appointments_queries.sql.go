@@ -503,26 +503,51 @@ const updateAppointment = `-- name: UpdateAppointment :one
 UPDATE "appointments"
 SET
   "date" = $1,
-  "time" = $2,
-  "status" = $3
-WHERE "id" = $4
+  "time" = $2
+WHERE "id" = $3
 RETURNING "id", "customer_id", "specialist_id", "service_name_id", "price", "duration", "date", "time", "status", "notified_at", "notified_by"
 `
 
 type UpdateAppointmentParams struct {
-	Date   pgtype.Date
-	Time   pgtype.Time
+	Date pgtype.Date
+	Time pgtype.Time
+	ID   pgtype.UUID
+}
+
+func (q *Queries) UpdateAppointment(ctx context.Context, arg UpdateAppointmentParams) (Appointment, error) {
+	row := q.db.QueryRow(ctx, updateAppointment, arg.Date, arg.Time, arg.ID)
+	var i Appointment
+	err := row.Scan(
+		&i.ID,
+		&i.CustomerID,
+		&i.SpecialistID,
+		&i.ServiceNameID,
+		&i.Price,
+		&i.Duration,
+		&i.Date,
+		&i.Time,
+		&i.Status,
+		&i.NotifiedAt,
+		&i.NotifiedBy,
+	)
+	return i, err
+}
+
+const updateAppointmentStatus = `-- name: UpdateAppointmentStatus :one
+UPDATE "appointments"
+SET
+  "status" = $1
+WHERE "id" = $2
+RETURNING "id", "customer_id", "specialist_id", "service_name_id", "price", "duration", "date", "time", "status", "notified_at", "notified_by"
+`
+
+type UpdateAppointmentStatusParams struct {
 	Status int32
 	ID     pgtype.UUID
 }
 
-func (q *Queries) UpdateAppointment(ctx context.Context, arg UpdateAppointmentParams) (Appointment, error) {
-	row := q.db.QueryRow(ctx, updateAppointment,
-		arg.Date,
-		arg.Time,
-		arg.Status,
-		arg.ID,
-	)
+func (q *Queries) UpdateAppointmentStatus(ctx context.Context, arg UpdateAppointmentStatusParams) (Appointment, error) {
+	row := q.db.QueryRow(ctx, updateAppointmentStatus, arg.Status, arg.ID)
 	var i Appointment
 	err := row.Scan(
 		&i.ID,

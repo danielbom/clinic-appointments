@@ -1,5 +1,17 @@
-# @name GetHealth
+# @name HealthCheck
+
+GET {{$dotenv BASE_URL}}/api/health/check
+
+###
+
+# @name HealthLiveness
 
 # Use it to load test:
-# ab -n 1000 -c 100 http://172.30.16.1:3000/api/health
-GET {{$dotenv BASE_URL}}/api/health
+# ab -n 1000 -c 100 http://172.30.16.1:3000/api/health/liveness
+GET {{$dotenv BASE_URL}}/api/health/liveness
+
+### 
+
+# @name HealthReadiness
+
+GET {{$dotenv BASE_URL}}/api/health/readiness

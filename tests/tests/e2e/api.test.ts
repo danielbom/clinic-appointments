@@ -1059,7 +1059,6 @@ describe('clinic-appointments', () => {
         const res = await api.appointments.update(ids[0], {
           date: getDatePart(updateDateIso),
           time: getHourPart(updateDateIso),
-          status: 2,
         })
         expect(res.status, JSON.stringify(res.data)).toBe(200)
         features.push('appointments.update')

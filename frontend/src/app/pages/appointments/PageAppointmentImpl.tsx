@@ -198,7 +198,6 @@ function PageAppointmentImpl() {
               data: {
                 time: values.time.format('hh:mm:ss'),
                 date: values.date.format('YYYY-MM-DD'),
-                status: values.status,
               },
             })
             .then(() => {

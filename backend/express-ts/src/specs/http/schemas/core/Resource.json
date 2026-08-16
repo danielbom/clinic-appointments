@@ -2,7 +2,9 @@
   "type": "string",
   "enum": [
     "appointment",
+    "billing_period",
     "customer",
+    "invoice",
     "secretary",
     "service",
     "service_name",

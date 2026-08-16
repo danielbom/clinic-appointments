@@ -1,3 +1,4 @@
+import { startOfDay, endOfDay } from 'date-fns'
 import type * as types from './types'
 import * as queries from '../core/queries'
 import * as mutations from '../core/mutations'
@@ -349,6 +350,55 @@ export default {
       // Format the response
       return reply.send(204, '')
     },
+    async appointmentRealized(req: RequestAdapter) {
+      const reply = replier<types.api.appointments.appointmentRealized.responses>(req)
+
+      // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
+      const id = getUuidParam(req.getPathParam('id'))
+      if (!id) {
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
+      }
+
+      // Validate and execute the usecase
+      // TODO: confirm payment
+      const result = await mutations.appointmentRealized(id)
+
+      if (!result.ok) {
+        return reply.fail(mapError(result.error))
+      }
+
+      return reply.send(200, result.value)
+    },
+    async appointmentCanceled(req: RequestAdapter) {
+      const reply = replier<types.api.appointments.appointmentCanceled.responses>(req)
+
+      // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
+      const id = getUuidParam(req.getPathParam('id'))
+      if (!id) {
+        return reply.fail(errors.validation('path', 'id', 'invalid uuid'))
+      }
+
+      // Validate and execute the usecase
+      // TODO: require a reason
+      // TODO: notify specialist & customer
+      const result = await mutations.appointmentCanceled(id)
+
+      if (!result.ok) {
+        return reply.fail(mapError(result.error))
+      }
+
+      return reply.send(200, result.value)
+    },
   },
   customers: {
     async listCustomers(req: RequestAdapter) {
@@ -495,6 +545,35 @@ export default {
 
       // Format the response
       return reply.send(204, '')
+    },
+  },
+  invoices: {
+    async preview(req: RequestAdapter) {
+      const reply = replier<types.api.invoices.preview.responses>(req)
+
+      // Collect query parameters, path parameters, and request body
+      const jwtData = await getJwtDataFromRequest(req)
+      if (!jwtData) {
+        return reply.fail(errors.invalidToken())
+      }
+
+      const body = await req.getJsonBody()
+      if (!validations.invoices.preview.body(body)) {
+        return reply.fail(errors.ajv(validations.invoices.preview.body.errors![0]!))
+      }
+      const args: types.api.invoices.preview.body = body
+
+      // Validate and execute the usecase
+      const appointmentsRealized = await queries.querySpecialistAppointmentsRealized({
+        specialistId: args.specialistId,
+        startDate: startOfDay(new Date(args.startDate)),
+        endDate: endOfDay(new Date(args.endDate)),
+      })
+      // WIP
+      console.log(appointmentsRealized)
+
+      // Format the response
+      return reply.send(200, {})
     },
   },
   secretaries: {

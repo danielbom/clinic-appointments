@@ -19,7 +19,7 @@ Response: {
       "version": "16.10 (Debian 16.10-1.pgdg13+1)",
       "maxConnections": 100,
       "openedConnections": 1,
-      "schemaVersion": 11
+      "schemaVersion": 13
     }
   }
 }
@@ -108,7 +108,7 @@ Body: {
 Response: {
   "code": "resource_conflict",
   "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceConflict.json",
-  "title": "Resource conflict",
+  "title": "Already exists",
   "detail": "secretary with the same email already exists",
   "status": 409,
   "instance": "/api/secretaries",
@@ -264,7 +264,7 @@ Body: {
 Response: {
   "code": "resource_conflict",
   "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceConflict.json",
-  "title": "Resource conflict",
+  "title": "Already exists",
   "detail": "specialization with the same name already exists",
   "status": 409,
   "instance": "/api/specializations",
@@ -1390,17 +1390,39 @@ Response: {
 }
 
 - at async run (tests\snapshot\api.ts:305:3)
-Request: PUT /api/appointments/[uuid] 200
+Request: PATCH /api/appointments/[uuid] 200
 Body: {
   "date": "2030-01-04",
-  "time": "04:00:00",
-  "status": 2
+  "time": "04:00:00"
 }
 Response: {
   "id": "[uuid]"
 }
 
+- at async run (tests\snapshot\api.ts:309:3)
+Request: GET /api/appointments/[uuid] 200
+Response: {
+  "id": "[uuid]",
+  "customerName": "Customer Test",
+  "customerId": "[uuid]",
+  "serviceName": "Service Available 2",
+  "serviceNameId": "[uuid]",
+  "specialistName": "Specialist Test",
+  "specialistId": "[uuid]",
+  "price": 1000,
+  "duration": 60,
+  "date": "2030-01-04",
+  "time": "04:00:00",
+  "status": 1
+}
+
 - at async run (tests\snapshot\api.ts:310:3)
+Request: PATCH /api/appointments/[uuid]/realized 200
+Response: {
+  "id": "[uuid]"
+}
+
+- at async run (tests\snapshot\api.ts:311:3)
 Request: GET /api/appointments/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -1417,7 +1439,31 @@ Response: {
   "status": 2
 }
 
-- at async run (tests\snapshot\api.ts:311:3)
+- at async run (tests\snapshot\api.ts:312:3)
+Request: PATCH /api/appointments/[uuid]/realized 409
+Response: {
+  "code": "resource_conflict",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceConflict.json",
+  "title": "Invalid state transition",
+  "detail": "appointment cannot transition from realized to realized",
+  "status": 409,
+  "instance": "/api/appointments/[uuid]/realized",
+  "traceId": "[trace-id]"
+}
+
+- at async run (tests\snapshot\api.ts:313:3)
+Request: PATCH /api/appointments/[uuid]/canceled 409
+Response: {
+  "code": "resource_conflict",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceConflict.json",
+  "title": "Invalid state transition",
+  "detail": "appointment cannot transition from realized to canceled",
+  "status": 409,
+  "instance": "/api/appointments/[uuid]/canceled",
+  "traceId": "[trace-id]"
+}
+
+- at async run (tests\snapshot\api.ts:314:3)
 Request: GET /api/appointments 200
 Params: {}
 Response: [
@@ -1437,11 +1483,11 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:312:3)
+- at async run (tests\snapshot\api.ts:315:3)
 Request: DELETE /api/appointments/[uuid] 204
 Response: ""
 
-- at async run (tests\snapshot\api.ts:313:3)
+- at async run (tests\snapshot\api.ts:316:3)
 Request: GET /api/appointments/[uuid] 404
 Response: {
   "code": "resource_not_found",
@@ -1453,17 +1499,17 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (tests\snapshot\api.ts:314:3)
+- at async run (tests\snapshot\api.ts:317:3)
 Request: GET /api/appointments 200
 Params: {}
 Response: []
 
-- at async run (tests\snapshot\api.ts:315:3)
+- at async run (tests\snapshot\api.ts:318:3)
 Request: GET /api/appointments/count 200
 Params: {}
 Response: 0
 
-- at async run (tests\snapshot\api.ts:317:3)
+- at async run (tests\snapshot\api.ts:320:3)
 Request: POST /api/appointments 201
 Body: {
   "date": "2030-01-02",
@@ -1475,7 +1521,87 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:327:3)
+- at async run (tests\snapshot\api.ts:328:3)
+Request: GET /api/appointments/[uuid] 200
+Response: {
+  "id": "[uuid]",
+  "customerName": "Customer Test",
+  "customerId": "[uuid]",
+  "serviceName": "Service Available 2",
+  "serviceNameId": "[uuid]",
+  "specialistName": "Specialist Test",
+  "specialistId": "[uuid]",
+  "price": 1000,
+  "duration": 60,
+  "date": "2030-01-02",
+  "time": "03:00:00",
+  "status": 1
+}
+
+- at async run (tests\snapshot\api.ts:329:3)
+Request: PATCH /api/appointments/[uuid]/canceled 200
+Response: {
+  "id": "[uuid]"
+}
+
+- at async run (tests\snapshot\api.ts:330:3)
+Request: GET /api/appointments/[uuid] 200
+Response: {
+  "id": "[uuid]",
+  "customerName": "Customer Test",
+  "customerId": "[uuid]",
+  "serviceName": "Service Available 2",
+  "serviceNameId": "[uuid]",
+  "specialistName": "Specialist Test",
+  "specialistId": "[uuid]",
+  "price": 1000,
+  "duration": 60,
+  "date": "2030-01-02",
+  "time": "03:00:00",
+  "status": 3
+}
+
+- at async run (tests\snapshot\api.ts:331:3)
+Request: PATCH /api/appointments/[uuid]/realized 409
+Response: {
+  "code": "resource_conflict",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceConflict.json",
+  "title": "Invalid state transition",
+  "detail": "appointment cannot transition from canceled to realized",
+  "status": 409,
+  "instance": "/api/appointments/[uuid]/realized",
+  "traceId": "[trace-id]"
+}
+
+- at async run (tests\snapshot\api.ts:332:3)
+Request: PATCH /api/appointments/[uuid]/canceled 409
+Response: {
+  "code": "resource_conflict",
+  "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceConflict.json",
+  "title": "Invalid state transition",
+  "detail": "appointment cannot transition from canceled to canceled",
+  "status": 409,
+  "instance": "/api/appointments/[uuid]/canceled",
+  "traceId": "[trace-id]"
+}
+
+- at async run (tests\snapshot\api.ts:333:3)
+Request: DELETE /api/appointments/[uuid] 204
+Response: ""
+
+- at async run (tests\snapshot\api.ts:335:3)
+Request: POST /api/appointments 201
+Body: {
+  "date": "2030-01-02",
+  "time": "03:00:00",
+  "customerId": "[uuid]",
+  "serviceId": "[uuid]"
+}
+Response: {
+  "id": "[uuid]"
+}
+
+- at async run (tests\snapshot\api.ts:345:3)
 Request: GET /api/specialists/[uuid]/appointments 200
 Params: {}
 Response: [
@@ -1493,7 +1619,7 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:329:3)
+- at async run (tests\snapshot\api.ts:347:3)
 Request: GET /api/service-groups 200
 Response: [
   {
@@ -1526,7 +1652,7 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:331:3)
+- at async run (tests\snapshot\api.ts:349:3)
 Request: GET /api/specialists/[uuid]/services 200
 Response: [
   {
@@ -1555,7 +1681,7 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:332:3)
+- at async run (tests\snapshot\api.ts:350:3)
 Request: GET /api/specialists/[uuid]/services/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -1571,10 +1697,12 @@ Report:
   "api.appointments.count": 3,
   "api.appointments.getCalendar": 1,
   "api.appointments.getCalendarCount": 1,
-  "api.appointments.getById": 3,
-  "api.appointments.create": 2,
+  "api.appointments.getById": 6,
+  "api.appointments.create": 3,
   "api.appointments.update": 1,
-  "api.appointments.delete": 1,
+  "api.appointments.realized": 3,
+  "api.appointments.canceled": 3,
+  "api.appointments.delete": 2,
   "api.auth.login": 2,
   "api.auth.refresh": 0,
   "api.auth.me": 2,
@@ -1624,7 +1752,7 @@ Report:
   "api.test.debugClaims": 0
 }
 
-- at async run (tests\snapshot\api.ts:470:3)
+- at async run (tests\snapshot\api.ts:498:3)
 Request: GET /api/customers 200
 Params: {
   "page": 0,
@@ -1633,7 +1761,7 @@ Params: {
 }
 Response: []
 
-- at async run (tests\snapshot\api.ts:471:3)
+- at async run (tests\snapshot\api.ts:499:3)
 Request: GET /api/customers 200
 Params: {
   "page": 0,
@@ -1683,7 +1811,7 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:472:3)
+- at async run (tests\snapshot\api.ts:500:3)
 Request: GET /api/customers 200
 Params: {
   "page": 1,
@@ -1733,7 +1861,7 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:473:3)
+- at async run (tests\snapshot\api.ts:501:3)
 Request: GET /api/customers 200
 Params: {
   "phone": "87654002"
@@ -1749,7 +1877,7 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:474:3)
+- at async run (tests\snapshot\api.ts:502:3)
 Request: GET /api/customers 200
 Params: {
   "page": 0,
@@ -1799,35 +1927,35 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:476:3)
+- at async run (tests\snapshot\api.ts:504:3)
 Request: GET /api/customers/count 200
 Params: {
   "name": "CustomerX"
 }
 Response: 0
 
-- at async run (tests\snapshot\api.ts:477:3)
+- at async run (tests\snapshot\api.ts:505:3)
 Request: GET /api/customers/count 200
 Params: {
   "name": "1"
 }
 Response: 69
 
-- at async run (tests\snapshot\api.ts:478:3)
+- at async run (tests\snapshot\api.ts:506:3)
 Request: GET /api/customers/count 200
 Params: {
   "phone": "87654002"
 }
 Response: 1
 
-- at async run (tests\snapshot\api.ts:479:3)
+- at async run (tests\snapshot\api.ts:507:3)
 Request: GET /api/customers/count 200
 Params: {
   "cpf": "11431287962"
 }
 Response: 150
 
-- at async run (tests\snapshot\api.ts:481:3)
+- at async run (tests\snapshot\api.ts:509:3)
 Request: GET /api/secretaries 200
 Params: {
   "page": 0,
@@ -1836,7 +1964,7 @@ Params: {
 }
 Response: []
 
-- at async run (tests\snapshot\api.ts:482:3)
+- at async run (tests\snapshot\api.ts:510:3)
 Request: GET /api/secretaries 200
 Params: {
   "page": 0,
@@ -1891,7 +2019,7 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:483:3)
+- at async run (tests\snapshot\api.ts:511:3)
 Request: GET /api/secretaries 200
 Params: {
   "page": 1,
@@ -1946,7 +2074,7 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:484:3)
+- at async run (tests\snapshot\api.ts:512:3)
 Request: GET /api/secretaries 200
 Params: {
   "page": 0,
@@ -2001,7 +2129,7 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:485:3)
+- at async run (tests\snapshot\api.ts:513:3)
 Request: GET /api/secretaries 200
 Params: {
   "page": 0,
@@ -2056,7 +2184,7 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:486:3)
+- at async run (tests\snapshot\api.ts:514:3)
 Request: GET /api/secretaries 200
 Params: {
   "page": 0,
@@ -2111,42 +2239,42 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:488:3)
+- at async run (tests\snapshot\api.ts:516:3)
 Request: GET /api/secretaries/count 200
 Params: {
   "name": "SecretaryX"
 }
 Response: 0
 
-- at async run (tests\snapshot\api.ts:489:3)
+- at async run (tests\snapshot\api.ts:517:3)
 Request: GET /api/secretaries/count 200
 Params: {
   "name": "1"
 }
 Response: 11
 
-- at async run (tests\snapshot\api.ts:490:3)
+- at async run (tests\snapshot\api.ts:518:3)
 Request: GET /api/secretaries/count 200
 Params: {
   "phone": "76543210"
 }
 Response: 20
 
-- at async run (tests\snapshot\api.ts:491:3)
+- at async run (tests\snapshot\api.ts:519:3)
 Request: GET /api/secretaries/count 200
 Params: {
   "cpf": "72730805001"
 }
 Response: 20
 
-- at async run (tests\snapshot\api.ts:492:3)
+- at async run (tests\snapshot\api.ts:520:3)
 Request: GET /api/secretaries/count 200
 Params: {
   "cnpj": "08130896000135"
 }
 Response: 20
 
-- at async run (tests\snapshot\api.ts:494:3)
+- at async run (tests\snapshot\api.ts:522:3)
 Request: GET /api/specialists 200
 Params: {
   "page": 0,
@@ -2155,7 +2283,7 @@ Params: {
 }
 Response: []
 
-- at async run (tests\snapshot\api.ts:495:3)
+- at async run (tests\snapshot\api.ts:523:3)
 Request: GET /api/specialists 200
 Params: {
   "page": 0,
@@ -2210,7 +2338,7 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:496:3)
+- at async run (tests\snapshot\api.ts:524:3)
 Request: GET /api/specialists 200
 Params: {
   "page": 1,
@@ -2265,7 +2393,7 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:497:3)
+- at async run (tests\snapshot\api.ts:525:3)
 Request: GET /api/specialists 200
 Params: {
   "page": 0,
@@ -2320,7 +2448,7 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:498:3)
+- at async run (tests\snapshot\api.ts:526:3)
 Request: GET /api/specialists 200
 Params: {
   "page": 0,
@@ -2375,7 +2503,7 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:499:3)
+- at async run (tests\snapshot\api.ts:527:3)
 Request: GET /api/specialists 200
 Params: {
   "page": 0,
@@ -2430,42 +2558,42 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:501:3)
+- at async run (tests\snapshot\api.ts:529:3)
 Request: GET /api/specialists/count 200
 Params: {
   "name": "SpecialistX"
 }
 Response: 0
 
-- at async run (tests\snapshot\api.ts:502:3)
+- at async run (tests\snapshot\api.ts:530:3)
 Request: GET /api/specialists/count 200
 Params: {
   "name": "1"
 }
 Response: 14
 
-- at async run (tests\snapshot\api.ts:503:3)
+- at async run (tests\snapshot\api.ts:531:3)
 Request: GET /api/specialists/count 200
 Params: {
   "phone": "76543210"
 }
 Response: 50
 
-- at async run (tests\snapshot\api.ts:504:3)
+- at async run (tests\snapshot\api.ts:532:3)
 Request: GET /api/specialists/count 200
 Params: {
   "cpf": "96156338012"
 }
 Response: 50
 
-- at async run (tests\snapshot\api.ts:505:3)
+- at async run (tests\snapshot\api.ts:533:3)
 Request: GET /api/specialists/count 200
 Params: {
   "cnpj": "16833374000128"
 }
 Response: 50
 
-- at async run (tests\snapshot\api.ts:507:3)
+- at async run (tests\snapshot\api.ts:535:3)
 Request: GET /api/services 200
 Params: {
   "page": 0,
@@ -2530,7 +2658,7 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:508:3)
+- at async run (tests\snapshot\api.ts:536:3)
 Request: GET /api/services 200
 Params: {
   "page": 1,
@@ -2595,7 +2723,7 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:509:3)
+- at async run (tests\snapshot\api.ts:537:3)
 Request: GET /api/services 200
 Params: {
   "page": 0,
@@ -2649,7 +2777,7 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:510:3)
+- at async run (tests\snapshot\api.ts:538:3)
 Request: GET /api/services 200
 Params: {
   "page": 0,
@@ -2714,28 +2842,28 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:512:3)
+- at async run (tests\snapshot\api.ts:540:3)
 Request: GET /api/services/count 200
 Params: {
   "service": "1"
 }
 Response: 43
 
-- at async run (tests\snapshot\api.ts:513:3)
+- at async run (tests\snapshot\api.ts:541:3)
 Request: GET /api/services/count 200
 Params: {
   "specialist": "10"
 }
 Response: 4
 
-- at async run (tests\snapshot\api.ts:514:3)
+- at async run (tests\snapshot\api.ts:542:3)
 Request: GET /api/services/count 200
 Params: {
   "specialization": "0"
 }
 Response: 158
 
-- at async run (tests\snapshot\api.ts:516:3)
+- at async run (tests\snapshot\api.ts:544:3)
 Request: GET /api/appointments 200
 Params: {
   "page": 0,
@@ -2747,27 +2875,13 @@ Response: [
     "id": "[uuid]",
     "customerName": "Customer 0100",
     "customerId": "[uuid]",
-    "serviceName": "Service Available 4-0002",
+    "serviceName": "Service Available 4-0003",
     "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0047",
+    "specialistName": "Specialist 0033",
     "specialistId": "[uuid]",
-    "price": 50,
-    "duration": 75,
-    "date": "2031-11-17",
-    "time": "09:00:00",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "customerName": "Customer 0100",
-    "customerId": "[uuid]",
-    "serviceName": "Service Available 4-0001",
-    "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0001",
-    "specialistId": "[uuid]",
-    "price": 200,
+    "price": 75,
     "duration": 30,
-    "date": "2031-11-06",
+    "date": "2031-07-25",
     "time": "09:00:00",
     "status": 1
   },
@@ -2775,71 +2889,28 @@ Response: [
     "id": "[uuid]",
     "customerName": "Customer 0100",
     "customerId": "[uuid]",
-    "serviceName": "Service Available 9-0000",
+    "serviceName": "Service Available 3-0003",
     "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0037",
-    "specialistId": "[uuid]",
-    "price": 150,
-    "duration": 75,
-    "date": "2031-08-25",
-    "time": "09:00:00",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "customerName": "Customer 0100",
-    "customerId": "[uuid]",
-    "serviceName": "Service Available 9-0000",
-    "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0043",
-    "specialistId": "[uuid]",
-    "price": 150,
-    "duration": 30,
-    "date": "2031-06-03",
-    "time": "11:00:00",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "customerName": "Customer 0100",
-    "customerId": "[uuid]",
-    "serviceName": "Service Available 7-0002",
-    "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0013",
+    "specialistName": "Specialist 0008",
     "specialistId": "[uuid]",
     "price": 75,
     "duration": 90,
-    "date": "2031-05-27",
-    "time": "11:00:00",
-    "status": 1
+    "date": "2031-02-24",
+    "time": "09:00:00",
+    "status": 2
   }
 ]
 
-- at async run (tests\snapshot\api.ts:517:3)
+- at async run (tests\snapshot\api.ts:545:3)
 Request: GET /api/appointments 200
 Params: {
   "page": 1,
   "pageSize": 5,
   "customer": "100"
 }
-Response: [
-  {
-    "id": "[uuid]",
-    "customerName": "Customer 0100",
-    "customerId": "[uuid]",
-    "serviceName": "Service Available 9-0002",
-    "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0006",
-    "specialistId": "[uuid]",
-    "price": 250,
-    "duration": 90,
-    "date": "2031-04-29",
-    "time": "09:00:00",
-    "status": 1
-  }
-]
+Response: []
 
-- at async run (tests\snapshot\api.ts:518:3)
+- at async run (tests\snapshot\api.ts:546:3)
 Request: GET /api/appointments 200
 Params: {
   "page": 0,
@@ -2850,37 +2921,23 @@ Params: {
 Response: [
   {
     "id": "[uuid]",
-    "customerName": "Customer 0004",
+    "customerName": "Customer 0003",
     "customerId": "[uuid]",
-    "serviceName": "Service Available 8-0001",
+    "serviceName": "Service Available 9-0000",
     "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0032",
+    "specialistName": "Specialist 0039",
     "specialistId": "[uuid]",
-    "price": 25,
-    "duration": 75,
-    "date": "2031-07-01",
-    "time": "11:00:00",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "customerName": "Customer 0023",
-    "customerId": "[uuid]",
-    "serviceName": "Service Available 9-0002",
-    "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0013",
-    "specialistId": "[uuid]",
-    "price": 200,
-    "duration": 90,
+    "price": 250,
+    "duration": 30,
     "date": "2031-07-01",
     "time": "10:00:00",
-    "status": 1
+    "status": 3
   },
   {
     "id": "[uuid]",
-    "customerName": "Customer 0064",
+    "customerName": "Customer 0070",
     "customerId": "[uuid]",
-    "serviceName": "Service Available 0-0003",
+    "serviceName": "Service Available 1-0000",
     "serviceNameId": "[uuid]",
     "specialistName": "Specialist 0005",
     "specialistId": "[uuid]",
@@ -2892,35 +2949,49 @@ Response: [
   },
   {
     "id": "[uuid]",
-    "customerName": "Customer 0071",
+    "customerName": "Customer 0049",
     "customerId": "[uuid]",
-    "serviceName": "Service Available 7-0003",
+    "serviceName": "Service Available 9-0000",
     "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0049",
+    "specialistName": "Specialist 0039",
+    "specialistId": "[uuid]",
+    "price": 250,
+    "duration": 30,
+    "date": "2031-06-30",
+    "time": "11:00:00",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "customerName": "Customer 0062",
+    "customerId": "[uuid]",
+    "serviceName": "Service Available 2-0001",
+    "serviceNameId": "[uuid]",
+    "specialistName": "Specialist 0018",
     "specialistId": "[uuid]",
     "price": 75,
-    "duration": 75,
+    "duration": 60,
     "date": "2031-06-30",
     "time": "10:00:00",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "customerName": "Customer 0068",
+    "customerName": "Customer 0025",
     "customerId": "[uuid]",
-    "serviceName": "Service Available 9-0004",
+    "serviceName": "Service Available 4-0003",
     "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0009",
+    "specialistName": "Specialist 0033",
     "specialistId": "[uuid]",
-    "price": 150,
-    "duration": 45,
+    "price": 75,
+    "duration": 30,
     "date": "2031-06-30",
     "time": "09:00:00",
-    "status": 1
+    "status": 3
   }
 ]
 
-- at async run (tests\snapshot\api.ts:519:3)
+- at async run (tests\snapshot\api.ts:547:3)
 Request: GET /api/appointments 200
 Params: {
   "page": 0,
@@ -2930,63 +3001,7 @@ Params: {
 Response: [
   {
     "id": "[uuid]",
-    "customerName": "Customer 0060",
-    "customerId": "[uuid]",
-    "serviceName": "Service Available 8-0001",
-    "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0010",
-    "specialistId": "[uuid]",
-    "price": 200,
-    "duration": 30,
-    "date": "2031-11-20",
-    "time": "09:00:00",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "customerName": "Customer 0083",
-    "customerId": "[uuid]",
-    "serviceName": "Service Available 8-0001",
-    "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0010",
-    "specialistId": "[uuid]",
-    "price": 200,
-    "duration": 30,
-    "date": "2031-11-12",
-    "time": "10:00:00",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "customerName": "Customer 0105",
-    "customerId": "[uuid]",
-    "serviceName": "Service Available 8-0003",
-    "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0010",
-    "specialistId": "[uuid]",
-    "price": 200,
-    "duration": 75,
-    "date": "2031-08-11",
-    "time": "09:00:00",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "customerName": "Customer 0082",
-    "customerId": "[uuid]",
-    "serviceName": "Service Available 8-0001",
-    "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0010",
-    "specialistId": "[uuid]",
-    "price": 200,
-    "duration": 30,
-    "date": "2031-05-06",
-    "time": "09:00:00",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "customerName": "Customer 0042",
+    "customerName": "Customer 0106",
     "customerId": "[uuid]",
     "serviceName": "Service Available 0-0001",
     "serviceNameId": "[uuid]",
@@ -2994,13 +3009,69 @@ Response: [
     "specialistId": "[uuid]",
     "price": 50,
     "duration": 30,
-    "date": "2031-04-14",
+    "date": "2031-12-05",
     "time": "09:00:00",
     "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "customerName": "Customer 0118",
+    "customerId": "[uuid]",
+    "serviceName": "Service Available 0-0001",
+    "serviceNameId": "[uuid]",
+    "specialistName": "Specialist 0010",
+    "specialistId": "[uuid]",
+    "price": 50,
+    "duration": 30,
+    "date": "2031-11-25",
+    "time": "11:00:00",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "customerName": "Customer 0062",
+    "customerId": "[uuid]",
+    "serviceName": "Service Available 8-0003",
+    "serviceNameId": "[uuid]",
+    "specialistName": "Specialist 0010",
+    "specialistId": "[uuid]",
+    "price": 200,
+    "duration": 75,
+    "date": "2031-10-16",
+    "time": "09:00:00",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "customerName": "Customer 0129",
+    "customerId": "[uuid]",
+    "serviceName": "Service Available 8-0001",
+    "serviceNameId": "[uuid]",
+    "specialistName": "Specialist 0010",
+    "specialistId": "[uuid]",
+    "price": 200,
+    "duration": 30,
+    "date": "2031-10-13",
+    "time": "11:00:00",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "customerName": "Customer 0036",
+    "customerId": "[uuid]",
+    "serviceName": "Service Available 8-0001",
+    "serviceNameId": "[uuid]",
+    "specialistName": "Specialist 0010",
+    "specialistId": "[uuid]",
+    "price": 200,
+    "duration": 30,
+    "date": "2031-09-03",
+    "time": "10:00:00",
+    "status": 2
   }
 ]
 
-- at async run (tests\snapshot\api.ts:520:3)
+- at async run (tests\snapshot\api.ts:548:3)
 Request: GET /api/appointments 200
 Params: {
   "page": 0,
@@ -3009,7 +3080,7 @@ Params: {
 }
 Response: []
 
-- at async run (tests\snapshot\api.ts:521:3)
+- at async run (tests\snapshot\api.ts:549:3)
 Request: GET /api/appointments 200
 Params: {
   "page": 0,
@@ -3019,27 +3090,13 @@ Params: {
 Response: [
   {
     "id": "[uuid]",
-    "customerName": "Customer 0040",
+    "customerName": "Customer 0121",
     "customerId": "[uuid]",
-    "serviceName": "Service Available 8-0002",
+    "serviceName": "Service Available 1-0000",
     "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0026",
+    "specialistName": "Specialist 0002",
     "specialistId": "[uuid]",
-    "price": 75,
-    "duration": 45,
-    "date": "2031-12-29",
-    "time": "11:00:00",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "customerName": "Customer 0098",
-    "customerId": "[uuid]",
-    "serviceName": "Service Available 0-0001",
-    "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0021",
-    "specialistId": "[uuid]",
-    "price": 150,
+    "price": 200,
     "duration": 60,
     "date": "2031-12-29",
     "time": "10:00:00",
@@ -3047,49 +3104,63 @@ Response: [
   },
   {
     "id": "[uuid]",
-    "customerName": "Customer 0000",
+    "customerName": "Customer 0131",
     "customerId": "[uuid]",
-    "serviceName": "Service Available 3-0002",
+    "serviceName": "Service Available 8-0001",
     "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0022",
+    "specialistName": "Specialist 0045",
     "specialistId": "[uuid]",
-    "price": 150,
-    "duration": 45,
+    "price": 125,
+    "duration": 90,
     "date": "2031-12-29",
     "time": "09:00:00",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "customerName": "Customer 0050",
+    "customerName": "Customer 0058",
     "customerId": "[uuid]",
-    "serviceName": "Service Available 3-0001",
+    "serviceName": "Service Available 3-0000",
     "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0032",
+    "specialistName": "Specialist 0019",
     "specialistId": "[uuid]",
-    "price": 75,
+    "price": 100,
     "duration": 75,
+    "date": "2031-12-26",
+    "time": "10:00:00",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "customerName": "Customer 0142",
+    "customerId": "[uuid]",
+    "serviceName": "Service Available 7-0001",
+    "serviceNameId": "[uuid]",
+    "specialistName": "Specialist 0041",
+    "specialistId": "[uuid]",
+    "price": 250,
+    "duration": 30,
     "date": "2031-12-26",
     "time": "09:00:00",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "customerName": "Customer 0135",
+    "customerName": "Customer 0005",
     "customerId": "[uuid]",
-    "serviceName": "Service Available 7-0000",
+    "serviceName": "Service Available 8-0004",
     "serviceNameId": "[uuid]",
-    "specialistName": "Specialist 0005",
+    "specialistName": "Specialist 0049",
     "specialistId": "[uuid]",
-    "price": 200,
-    "duration": 60,
+    "price": 250,
+    "duration": 45,
     "date": "2031-12-24",
     "time": "09:00:00",
     "status": 1
   }
 ]
 
-- at async run (tests\snapshot\api.ts:523:3)
+- at async run (tests\snapshot\api.ts:551:3)
 Request: GET /api/services-available 200
 Response: [
   {
@@ -3354,7 +3425,7 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:525:3)
+- at async run (tests\snapshot\api.ts:553:3)
 Request: GET /api/specializations 200
 Response: [
   {
@@ -3399,7 +3470,7 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:527:3)
+- at async run (tests\snapshot\api.ts:555:3)
 Request: GET /api/appointments/calendar 200
 Params: {
   "startDate": "2031-01-01",
@@ -3409,204 +3480,218 @@ Response: [
   {
     "id": "[uuid]",
     "date": "2031-12-29",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0026",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-29",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0021",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-29",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0022",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-26",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0032",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-24",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0005",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-23",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0046",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-23",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0032",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-23",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0023",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-22",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0017",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-22",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0033",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-19",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0029",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-19",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0016",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-18",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0049",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-17",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0032",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-16",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0004",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-16",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0043",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-15",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0030",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-15",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0049",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-15",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0011",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-12",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0031",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-12",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0018",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-10",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0046",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-09",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0022",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-09",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0027",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-09",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0003",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-08",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0000",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-08",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0035",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-12-05",
     "time": "10:00:00",
     "specialistName": "Specialist 0002",
     "status": 1
   },
   {
     "id": "[uuid]",
+    "date": "2031-12-29",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0045",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-26",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0019",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-26",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0041",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-24",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0049",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-23",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0047",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-23",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0038",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-22",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0020",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-22",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0026",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-22",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0005",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-19",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0015",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-18",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0048",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-17",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0001",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-17",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0042",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-16",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0048",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-16",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0047",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-16",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0032",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-15",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0028",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-15",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0039",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-15",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0026",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-12",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0027",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-12",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0016",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-11",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0025",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-10",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0016",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-09",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0001",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-09",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0022",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-09",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0009",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-08",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0009",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-08",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0031",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-08",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0011",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
     "date": "2031-12-05",
     "time": "09:00:00",
-    "specialistName": "Specialist 0029",
+    "specialistName": "Specialist 0010",
     "status": 1
   },
   {
@@ -3620,680 +3705,631 @@ Response: [
     "id": "[uuid]",
     "date": "2031-12-03",
     "time": "09:00:00",
-    "specialistName": "Specialist 0034",
+    "specialistName": "Specialist 0032",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-12-02",
     "time": "10:00:00",
-    "specialistName": "Specialist 0046",
+    "specialistName": "Specialist 0021",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-12-02",
     "time": "09:00:00",
-    "specialistName": "Specialist 0019",
+    "specialistName": "Specialist 0015",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-12-01",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0049",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-12-01",
     "time": "10:00:00",
-    "specialistName": "Specialist 0034",
+    "specialistName": "Specialist 0043",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-12-01",
     "time": "09:00:00",
-    "specialistName": "Specialist 0045",
+    "specialistName": "Specialist 0025",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-11-28",
     "time": "10:00:00",
-    "specialistName": "Specialist 0034",
+    "specialistName": "Specialist 0039",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-11-28",
     "time": "09:00:00",
-    "specialistName": "Specialist 0024",
+    "specialistName": "Specialist 0023",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-11-27",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0016",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-11-26",
     "time": "09:00:00",
-    "specialistName": "Specialist 0007",
+    "specialistName": "Specialist 0018",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-11-25",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0025",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-25",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0041",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-24",
     "time": "11:00:00",
-    "specialistName": "Specialist 0030",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-24",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0031",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-24",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0009",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-21",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0003",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-20",
-    "time": "09:00:00",
     "specialistName": "Specialist 0010",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-11-19",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0048",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-19",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0022",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-18",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0028",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-18",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0034",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-17",
+    "date": "2031-11-25",
     "time": "10:00:00",
     "specialistName": "Specialist 0032",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-11-17",
+    "date": "2031-11-25",
     "time": "09:00:00",
-    "specialistName": "Specialist 0047",
+    "specialistName": "Specialist 0048",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-11-14",
+    "date": "2031-11-24",
     "time": "10:00:00",
-    "specialistName": "Specialist 0015",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-14",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0013",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-13",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0029",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-12",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0010",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-12",
-    "time": "09:00:00",
     "specialistName": "Specialist 0024",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-11-11",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0013",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-11",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0027",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-11",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0049",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-10",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0031",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-10",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0018",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-10",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0041",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-07",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0020",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-07",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0028",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-06",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0001",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-05",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0026",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-05",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0046",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-04",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0049",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-04",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0018",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-04",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0039",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-03",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0038",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-11-03",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0037",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-10-31",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0005",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-10-31",
+    "date": "2031-11-24",
     "time": "09:00:00",
     "specialistName": "Specialist 0006",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-10-30",
+    "date": "2031-11-21",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0019",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-11-21",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0039",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-11-19",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0042",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-11-18",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0020",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-11-18",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0013",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-11-17",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0016",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-11-17",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0013",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-11-17",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0018",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-11-14",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0005",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-11-14",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0000",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-11-12",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0030",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-11-11",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0013",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-11-11",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0018",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-11-11",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0040",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-11-10",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0003",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-11-10",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0038",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-11-10",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0027",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-11-07",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0016",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-11-06",
     "time": "09:00:00",
     "specialistName": "Specialist 0041",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-11-05",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0006",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-11-04",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0048",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-11-04",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0023",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-11-03",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0039",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-11-03",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0040",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-10-31",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0037",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-10-29",
     "time": "09:00:00",
-    "specialistName": "Specialist 0036",
+    "specialistName": "Specialist 0038",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-10-28",
     "time": "11:00:00",
-    "specialistName": "Specialist 0019",
-    "status": 1
+    "specialistName": "Specialist 0030",
+    "status": 2
   },
   {
     "id": "[uuid]",
     "date": "2031-10-28",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0021",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-10-28",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0026",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-10-27",
     "time": "10:00:00",
     "specialistName": "Specialist 0043",
     "status": 1
   },
   {
     "id": "[uuid]",
+    "date": "2031-10-28",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0032",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-10-27",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0046",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-10-27",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0011",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
     "date": "2031-10-27",
     "time": "09:00:00",
-    "specialistName": "Specialist 0004",
+    "specialistName": "Specialist 0044",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-10-24",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0006",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-10-24",
     "time": "09:00:00",
-    "specialistName": "Specialist 0011",
+    "specialistName": "Specialist 0044",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-10-22",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0035",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-10-23",
+    "date": "2031-10-21",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0002",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-10-21",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0025",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-10-20",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0026",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-10-20",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0006",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-10-17",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0008",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-10-17",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0020",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-10-16",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0010",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-10-15",
     "time": "09:00:00",
     "specialistName": "Specialist 0018",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-10-22",
+    "date": "2031-10-14",
     "time": "10:00:00",
-    "specialistName": "Specialist 0028",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-10-22",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0038",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-10-21",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0034",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-10-21",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0033",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-10-21",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0046",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-10-20",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0040",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-10-20",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0037",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-10-20",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0031",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-10-17",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0035",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-10-17",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0009",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-10-16",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0036",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-10-15",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0045",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-10-15",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0001",
+    "specialistName": "Specialist 0013",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-10-14",
-    "time": "10:00:00",
+    "time": "09:00:00",
     "specialistName": "Specialist 0044",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-10-14",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0035",
+    "date": "2031-10-13",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0010",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-10-13",
     "time": "10:00:00",
-    "specialistName": "Specialist 0019",
+    "specialistName": "Specialist 0017",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-10-13",
     "time": "09:00:00",
-    "specialistName": "Specialist 0009",
+    "specialistName": "Specialist 0005",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-10-10",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0025",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-10-10",
     "time": "09:00:00",
-    "specialistName": "Specialist 0046",
+    "specialistName": "Specialist 0027",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-10-09",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0018",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-10-08",
     "time": "09:00:00",
-    "specialistName": "Specialist 0043",
+    "specialistName": "Specialist 0041",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-10-07",
     "time": "11:00:00",
-    "specialistName": "Specialist 0020",
-    "status": 1
+    "specialistName": "Specialist 0024",
+    "status": 2
   },
   {
     "id": "[uuid]",
     "date": "2031-10-07",
     "time": "10:00:00",
-    "specialistName": "Specialist 0047",
+    "specialistName": "Specialist 0018",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-10-07",
     "time": "09:00:00",
-    "specialistName": "Specialist 0045",
+    "specialistName": "Specialist 0008",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-10-06",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0032",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-10-06",
     "time": "10:00:00",
-    "specialistName": "Specialist 0045",
+    "specialistName": "Specialist 0046",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-10-06",
     "time": "09:00:00",
-    "specialistName": "Specialist 0027",
+    "specialistName": "Specialist 0035",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-10-03",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0042",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-10-03",
     "time": "09:00:00",
-    "specialistName": "Specialist 0018",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-10-02",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0022",
+    "specialistName": "Specialist 0048",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-10-01",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0033",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-10-01",
     "time": "09:00:00",
-    "specialistName": "Specialist 0049",
-    "status": 1
+    "specialistName": "Specialist 0042",
+    "status": 2
   },
   {
     "id": "[uuid]",
     "date": "2031-09-30",
     "time": "10:00:00",
-    "specialistName": "Specialist 0008",
-    "status": 1
+    "specialistName": "Specialist 0015",
+    "status": 3
   },
   {
     "id": "[uuid]",
     "date": "2031-09-30",
     "time": "09:00:00",
-    "specialistName": "Specialist 0047",
+    "specialistName": "Specialist 0013",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-09-29",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0044",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-09-29",
     "time": "10:00:00",
-    "specialistName": "Specialist 0022",
+    "specialistName": "Specialist 0027",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-09-29",
     "time": "09:00:00",
-    "specialistName": "Specialist 0003",
+    "specialistName": "Specialist 0005",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-09-26",
     "time": "09:00:00",
-    "specialistName": "Specialist 0040",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-24",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0026",
+    "specialistName": "Specialist 0004",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-09-24",
     "time": "09:00:00",
-    "specialistName": "Specialist 0018",
+    "specialistName": "Specialist 0049",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-09-23",
     "time": "10:00:00",
-    "specialistName": "Specialist 0022",
+    "specialistName": "Specialist 0000",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-09-23",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0008",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-09-22",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0003",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-09-22",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0034",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-09-19",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0021",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-09-17",
     "time": "09:00:00",
     "specialistName": "Specialist 0040",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-22",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0032",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-22",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0044",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-22",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0015",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-19",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0032",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-19",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0038",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-18",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0043",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-17",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0006",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-17",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0028",
-    "status": 1
+    "status": 3
   },
   {
     "id": "[uuid]",
@@ -4306,701 +4342,610 @@ Response: [
     "id": "[uuid]",
     "date": "2031-09-16",
     "time": "10:00:00",
-    "specialistName": "Specialist 0004",
+    "specialistName": "Specialist 0027",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-09-16",
     "time": "09:00:00",
-    "specialistName": "Specialist 0017",
+    "specialistName": "Specialist 0032",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-09-15",
     "time": "11:00:00",
-    "specialistName": "Specialist 0025",
+    "specialistName": "Specialist 0018",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-09-15",
     "time": "10:00:00",
-    "specialistName": "Specialist 0049",
-    "status": 1
+    "specialistName": "Specialist 0006",
+    "status": 3
   },
   {
     "id": "[uuid]",
     "date": "2031-09-15",
     "time": "09:00:00",
-    "specialistName": "Specialist 0032",
+    "specialistName": "Specialist 0008",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-09-12",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0023",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-09-12",
     "time": "09:00:00",
-    "specialistName": "Specialist 0031",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-11",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0041",
-    "status": 1
+    "specialistName": "Specialist 0032",
+    "status": 3
   },
   {
     "id": "[uuid]",
     "date": "2031-09-10",
     "time": "09:00:00",
-    "specialistName": "Specialist 0036",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-09",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0013",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-09",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0037",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-09",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0030",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-08",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0049",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-08",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0035",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-08",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0019",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-05",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0005",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-05",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0026",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-04",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0018",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-03",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0041",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-02",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0040",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-02",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0012",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-02",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0021",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-01",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0032",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-01",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0042",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-09-01",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0026",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-29",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0009",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-29",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0042",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-27",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0009",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-27",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0011",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-26",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0030",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-26",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0041",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-26",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0001",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-25",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0026",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-25",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0000",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-25",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0037",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-22",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0003",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-22",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0020",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-20",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0014",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-19",
-    "time": "11:00:00",
     "specialistName": "Specialist 0002",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-08-19",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0030",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-19",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0025",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-18",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0023",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-18",
+    "date": "2031-09-09",
     "time": "10:00:00",
     "specialistName": "Specialist 0004",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-08-18",
+    "date": "2031-09-09",
     "time": "09:00:00",
-    "specialistName": "Specialist 0006",
+    "specialistName": "Specialist 0016",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-08-15",
+    "date": "2031-09-08",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0009",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-09-08",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0036",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-09-08",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0048",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-09-05",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0038",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-09-05",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0004",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-09-04",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0016",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-09-03",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0010",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-09-03",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0039",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-09-02",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0049",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-09-02",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0016",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-09-01",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0046",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-09-01",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0012",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-08-29",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0047",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-08-29",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0028",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-08-28",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0002",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-08-27",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0045",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-08-26",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0040",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-08-26",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0039",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-08-25",
     "time": "10:00:00",
     "specialistName": "Specialist 0039",
     "status": 1
   },
   {
     "id": "[uuid]",
+    "date": "2031-08-25",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0034",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-08-22",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0016",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-08-20",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0039",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-08-19",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0043",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-08-19",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0046",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-08-19",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0021",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-08-18",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0040",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-08-18",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0039",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-08-18",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0009",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-08-15",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0046",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
     "date": "2031-08-15",
     "time": "09:00:00",
-    "specialistName": "Specialist 0027",
+    "specialistName": "Specialist 0003",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-08-14",
     "time": "09:00:00",
-    "specialistName": "Specialist 0028",
+    "specialistName": "Specialist 0011",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-08-13",
     "time": "09:00:00",
-    "specialistName": "Specialist 0007",
+    "specialistName": "Specialist 0024",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-08-12",
     "time": "11:00:00",
-    "specialistName": "Specialist 0007",
+    "specialistName": "Specialist 0001",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-08-12",
     "time": "10:00:00",
-    "specialistName": "Specialist 0037",
-    "status": 1
+    "specialistName": "Specialist 0005",
+    "status": 3
   },
   {
     "id": "[uuid]",
     "date": "2031-08-12",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0016",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-11",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0040",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-11",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0010",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-08",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0007",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-08",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0013",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-07",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0014",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-06",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0032",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-05",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0003",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-05",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0041",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-08-05",
     "time": "09:00:00",
     "specialistName": "Specialist 0031",
     "status": 1
   },
   {
     "id": "[uuid]",
+    "date": "2031-08-11",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0013",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-08-11",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0020",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-08-08",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0040",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-08-07",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0030",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-08-06",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0008",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-08-06",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0049",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-08-05",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0018",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-08-05",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0026",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
     "date": "2031-08-04",
     "time": "11:00:00",
-    "specialistName": "Specialist 0045",
+    "specialistName": "Specialist 0015",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-08-04",
     "time": "10:00:00",
-    "specialistName": "Specialist 0016",
+    "specialistName": "Specialist 0005",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-08-04",
     "time": "09:00:00",
-    "specialistName": "Specialist 0046",
+    "specialistName": "Specialist 0008",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-08-01",
     "time": "09:00:00",
-    "specialistName": "Specialist 0049",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-07-31",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0037",
+    "specialistName": "Specialist 0016",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-07-30",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0011",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-07-30",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0041",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-07-29",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0018",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-07-29",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0001",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-07-28",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0049",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-07-28",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0012",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-07-28",
     "time": "09:00:00",
     "specialistName": "Specialist 0021",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-07-29",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0026",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-07-29",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0002",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-07-28",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0019",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-07-28",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0023",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-07-25",
     "time": "09:00:00",
-    "specialistName": "Specialist 0043",
+    "specialistName": "Specialist 0033",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-07-23",
     "time": "09:00:00",
-    "specialistName": "Specialist 0011",
+    "specialistName": "Specialist 0015",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-07-22",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0031",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-07-22",
     "time": "10:00:00",
-    "specialistName": "Specialist 0003",
+    "specialistName": "Specialist 0023",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-07-22",
     "time": "09:00:00",
-    "specialistName": "Specialist 0035",
+    "specialistName": "Specialist 0038",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-07-21",
     "time": "10:00:00",
-    "specialistName": "Specialist 0046",
+    "specialistName": "Specialist 0017",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-07-21",
     "time": "09:00:00",
-    "specialistName": "Specialist 0030",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-07-18",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0004",
-    "status": 1
+    "specialistName": "Specialist 0029",
+    "status": 3
   },
   {
     "id": "[uuid]",
     "date": "2031-07-18",
     "time": "09:00:00",
-    "specialistName": "Specialist 0007",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-07-17",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0020",
+    "specialistName": "Specialist 0021",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-07-16",
     "time": "09:00:00",
-    "specialistName": "Specialist 0005",
+    "specialistName": "Specialist 0028",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-07-15",
     "time": "10:00:00",
-    "specialistName": "Specialist 0022",
+    "specialistName": "Specialist 0010",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-07-15",
     "time": "09:00:00",
-    "specialistName": "Specialist 0049",
-    "status": 1
+    "specialistName": "Specialist 0003",
+    "status": 2
   },
   {
     "id": "[uuid]",
     "date": "2031-07-14",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0007",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-07-14",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0043",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-07-11",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0020",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-07-11",
-    "time": "09:00:00",
+    "time": "11:00:00",
     "specialistName": "Specialist 0042",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-07-09",
+    "date": "2031-07-14",
     "time": "10:00:00",
-    "specialistName": "Specialist 0031",
+    "specialistName": "Specialist 0043",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-07-14",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0029",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-07-11",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0048",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-07-10",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0003",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-07-09",
     "time": "09:00:00",
-    "specialistName": "Specialist 0000",
-    "status": 1
+    "specialistName": "Specialist 0005",
+    "status": 3
   },
   {
     "id": "[uuid]",
     "date": "2031-07-08",
     "time": "10:00:00",
-    "specialistName": "Specialist 0017",
+    "specialistName": "Specialist 0030",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-07-08",
     "time": "09:00:00",
-    "specialistName": "Specialist 0038",
+    "specialistName": "Specialist 0029",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-07-07",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0020",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-07-07",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0021",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-07-07",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0031",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-07-04",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0031",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-07-04",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0027",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-07-02",
     "time": "10:00:00",
     "specialistName": "Specialist 0039",
-    "status": 1
+    "status": 3
   },
   {
     "id": "[uuid]",
-    "date": "2031-07-02",
+    "date": "2031-07-07",
     "time": "09:00:00",
     "specialistName": "Specialist 0036",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-07-01",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0032",
+    "date": "2031-07-04",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0012",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-07-04",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0007",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-07-02",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0037",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-07-01",
     "time": "10:00:00",
-    "specialistName": "Specialist 0013",
-    "status": 1
+    "specialistName": "Specialist 0039",
+    "status": 3
   },
   {
     "id": "[uuid]",
@@ -5012,295 +4957,302 @@ Response: [
   {
     "id": "[uuid]",
     "date": "2031-06-30",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0049",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0039",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-06-30",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0009",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-27",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0030",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-25",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0002",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-24",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0046",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-24",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0017",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-23",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0001",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-23",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0040",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-23",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0027",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-20",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0019",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-20",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0031",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-19",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0037",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-18",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0042",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-18",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0047",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-17",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0004",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-17",
     "time": "10:00:00",
     "specialistName": "Specialist 0018",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-06-17",
+    "date": "2031-06-30",
     "time": "09:00:00",
-    "specialistName": "Specialist 0024",
-    "status": 1
+    "specialistName": "Specialist 0033",
+    "status": 3
   },
   {
     "id": "[uuid]",
-    "date": "2031-06-16",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0034",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-16",
+    "date": "2031-06-27",
     "time": "09:00:00",
-    "specialistName": "Specialist 0030",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-13",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0039",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-11",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0023",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-10",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0016",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-10",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0029",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-09",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0043",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-09",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0014",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-06",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0001",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-05",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0004",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-04",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0020",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-04",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0007",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-03",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0043",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-03",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0035",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-03",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0039",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-02",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0038",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-06-02",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0004",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-05-30",
-    "time": "10:00:00",
     "specialistName": "Specialist 0005",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-05-30",
+    "date": "2031-06-26",
     "time": "09:00:00",
     "specialistName": "Specialist 0008",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-05-28",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0027",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-05-28",
+    "date": "2031-06-25",
     "time": "09:00:00",
-    "specialistName": "Specialist 0015",
+    "specialistName": "Specialist 0039",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-05-27",
+    "date": "2031-06-24",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0049",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-24",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0018",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-23",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0046",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-23",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0021",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-20",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0025",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-20",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0037",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-19",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0007",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-18",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0026",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-18",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0021",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-17",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0031",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-17",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0037",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-16",
     "time": "11:00:00",
-    "specialistName": "Specialist 0013",
+    "specialistName": "Specialist 0022",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-05-27",
+    "date": "2031-06-16",
     "time": "10:00:00",
     "specialistName": "Specialist 0009",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-16",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0005",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-13",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0024",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-13",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0022",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-11",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0017",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-10",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0005",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-10",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0019",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-10",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0022",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-09",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0006",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-09",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0005",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-06",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0035",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-06",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0003",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-04",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0026",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-03",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0022",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-03",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0010",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-03",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0005",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-02",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0041",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-06-02",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0000",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-05-30",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0030",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-05-29",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0011",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-05-28",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0005",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-05-27",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0036",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-05-27",
     "time": "09:00:00",
-    "specialistName": "Specialist 0017",
+    "specialistName": "Specialist 0018",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-05-26",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0034",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-05-26",
     "time": "10:00:00",
-    "specialistName": "Specialist 0003",
+    "specialistName": "Specialist 0016",
     "status": 1
   },
   {
@@ -5308,432 +5260,425 @@ Response: [
     "date": "2031-05-26",
     "time": "09:00:00",
     "specialistName": "Specialist 0036",
-    "status": 1
+    "status": 2
   },
   {
     "id": "[uuid]",
     "date": "2031-05-23",
     "time": "09:00:00",
-    "specialistName": "Specialist 0019",
+    "specialistName": "Specialist 0003",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-05-22",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0014",
+    "date": "2031-05-21",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0028",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-05-21",
     "time": "09:00:00",
-    "specialistName": "Specialist 0011",
+    "specialistName": "Specialist 0042",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-05-20",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0023",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-05-20",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0046",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-05-19",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0022",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-05-19",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0015",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-05-16",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0020",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-05-16",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0041",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-05-15",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0000",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-05-14",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0008",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-05-14",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0027",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-05-13",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0026",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-05-13",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0014",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-05-12",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0037",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-05-12",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0035",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-05-09",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0037",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-05-08",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0024",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-05-07",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0003",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-05-06",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0017",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-05-06",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0010",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-05-05",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0013",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-05-05",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0026",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-05-02",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0003",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-05-02",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0002",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-05-01",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0037",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-30",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0045",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-30",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0007",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-29",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0043",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-29",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0008",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-29",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0006",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-28",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0032",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-28",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0021",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-28",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0029",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-25",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0028",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-24",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0043",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-23",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0014",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-22",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0043",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-22",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0030",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-22",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0003",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-21",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0017",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-21",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0001",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-21",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0048",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-18",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0029",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-17",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0043",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-16",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0009",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-15",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0027",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-15",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0035",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-14",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0023",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-14",
     "time": "10:00:00",
     "specialistName": "Specialist 0044",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-04-14",
+    "date": "2031-05-20",
     "time": "09:00:00",
-    "specialistName": "Specialist 0010",
+    "specialistName": "Specialist 0023",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-04-11",
+    "date": "2031-05-19",
     "time": "10:00:00",
-    "specialistName": "Specialist 0025",
+    "specialistName": "Specialist 0028",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-04-11",
+    "date": "2031-05-19",
     "time": "09:00:00",
-    "specialistName": "Specialist 0037",
+    "specialistName": "Specialist 0024",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-04-10",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0042",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-09",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0048",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-08",
+    "date": "2031-05-16",
     "time": "10:00:00",
-    "specialistName": "Specialist 0040",
+    "specialistName": "Specialist 0009",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-04-08",
+    "date": "2031-05-16",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0019",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-05-14",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0000",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-05-13",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0033",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-05-13",
     "time": "09:00:00",
     "specialistName": "Specialist 0026",
     "status": 1
   },
   {
     "id": "[uuid]",
+    "date": "2031-05-12",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0005",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-05-12",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0035",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-05-12",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0031",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-05-09",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0033",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-05-08",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0041",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-05-07",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0047",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-05-07",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0011",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-05-06",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0023",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-05-06",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0040",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-05-05",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0046",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-05-05",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0016",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-05-02",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0023",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-05-02",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0038",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-30",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0012",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-29",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0029",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-29",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0019",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-29",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0020",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-28",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0043",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-28",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0037",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-25",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0001",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-24",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0042",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-23",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0036",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-23",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0007",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-22",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0001",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-22",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0048",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-22",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0045",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-21",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0011",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-21",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0030",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-18",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0006",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-18",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0039",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-17",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0044",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-16",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0000",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-15",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0000",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-15",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0029",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-14",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0010",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-14",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0045",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-11",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0029",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-11",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0032",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-10",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0046",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-09",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0006",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-09",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0017",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-08",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0019",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-08",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0030",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
     "date": "2031-04-07",
     "time": "11:00:00",
-    "specialistName": "Specialist 0013",
+    "specialistName": "Specialist 0014",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-04-07",
     "time": "10:00:00",
-    "specialistName": "Specialist 0007",
+    "specialistName": "Specialist 0028",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-04-07",
     "time": "09:00:00",
-    "specialistName": "Specialist 0005",
+    "specialistName": "Specialist 0006",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-04-04",
     "time": "09:00:00",
+    "specialistName": "Specialist 0028",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-04-02",
+    "time": "10:00:00",
     "specialistName": "Specialist 0003",
     "status": 1
   },
@@ -5741,645 +5686,645 @@ Response: [
     "id": "[uuid]",
     "date": "2031-04-02",
     "time": "09:00:00",
-    "specialistName": "Specialist 0000",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-01",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0037",
+    "specialistName": "Specialist 0021",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-04-01",
     "time": "10:00:00",
-    "specialistName": "Specialist 0003",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-04-01",
-    "time": "09:00:00",
     "specialistName": "Specialist 0015",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-03-31",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0007",
-    "status": 1
+    "date": "2031-04-01",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0048",
+    "status": 3
   },
   {
     "id": "[uuid]",
     "date": "2031-03-31",
     "time": "10:00:00",
-    "specialistName": "Specialist 0020",
-    "status": 1
+    "specialistName": "Specialist 0028",
+    "status": 2
   },
   {
     "id": "[uuid]",
     "date": "2031-03-31",
     "time": "09:00:00",
-    "specialistName": "Specialist 0034",
+    "specialistName": "Specialist 0002",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-03-28",
     "time": "09:00:00",
-    "specialistName": "Specialist 0046",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-27",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0038",
-    "status": 1
+    "specialistName": "Specialist 0035",
+    "status": 2
   },
   {
     "id": "[uuid]",
     "date": "2031-03-26",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0035",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-03-25",
     "time": "10:00:00",
+    "specialistName": "Specialist 0021",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-03-25",
+    "time": "09:00:00",
     "specialistName": "Specialist 0043",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-03-26",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0016",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-25",
+    "date": "2031-03-24",
     "time": "11:00:00",
-    "specialistName": "Specialist 0034",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-25",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0028",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-25",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0024",
-    "status": 1
+    "specialistName": "Specialist 0015",
+    "status": 2
   },
   {
     "id": "[uuid]",
     "date": "2031-03-24",
     "time": "10:00:00",
-    "specialistName": "Specialist 0007",
-    "status": 1
+    "specialistName": "Specialist 0014",
+    "status": 2
   },
   {
     "id": "[uuid]",
     "date": "2031-03-24",
     "time": "09:00:00",
-    "specialistName": "Specialist 0026",
+    "specialistName": "Specialist 0027",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-03-21",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0009",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-20",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0011",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-19",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0005",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-19",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0014",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-18",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0013",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-18",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0023",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-17",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0025",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-17",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0040",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-17",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0012",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-14",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0014",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-14",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0003",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-13",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0040",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-12",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0005",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-11",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0048",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-11",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0003",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-11",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0022",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-10",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0011",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-10",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0043",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-10",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0013",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-07",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0017",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-07",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0005",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-05",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0004",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-04",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0022",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-04",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0024",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-04",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0016",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-03",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0039",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-03-03",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0028",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-28",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0005",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-26",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0001",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-26",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0010",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-25",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0002",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-25",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0018",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-24",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0003",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-24",
     "time": "10:00:00",
     "specialistName": "Specialist 0047",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-02-24",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0032",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-21",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0003",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-19",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0033",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-19",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0013",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-18",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0024",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-18",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0007",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-17",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0030",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-17",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0018",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-14",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0004",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-14",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0020",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-12",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0045",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-11",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0020",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-11",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0026",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-10",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0041",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-10",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0046",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-10",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0008",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-07",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0019",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-07",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0008",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-05",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0004",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-05",
+    "date": "2031-03-21",
     "time": "09:00:00",
     "specialistName": "Specialist 0000",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-02-04",
+    "date": "2031-03-19",
     "time": "10:00:00",
-    "specialistName": "Specialist 0019",
+    "specialistName": "Specialist 0013",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-02-04",
+    "date": "2031-03-19",
     "time": "09:00:00",
-    "specialistName": "Specialist 0031",
+    "specialistName": "Specialist 0014",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-02-03",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0009",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-02-03",
+    "date": "2031-03-18",
     "time": "10:00:00",
+    "specialistName": "Specialist 0048",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-03-18",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0015",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-03-17",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0012",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-03-17",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0014",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-03-14",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0032",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-03-14",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0037",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-03-13",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0029",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-03-12",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0039",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-03-11",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0011",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-03-11",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0034",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-03-10",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0010",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-03-10",
+    "time": "09:00:00",
     "specialistName": "Specialist 0022",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-02-03",
+    "date": "2031-03-07",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0022",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-03-07",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0021",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-03-06",
     "time": "09:00:00",
     "specialistName": "Specialist 0008",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-01-31",
+    "date": "2031-03-05",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0010",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-03-05",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0032",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-03-04",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0001",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-03-04",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0015",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-03-04",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0021",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-03-03",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0002",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-03-03",
     "time": "09:00:00",
     "specialistName": "Specialist 0030",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-01-30",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0026",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-01-29",
+    "date": "2031-02-28",
     "time": "10:00:00",
-    "specialistName": "Specialist 0020",
+    "specialistName": "Specialist 0048",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-01-29",
+    "date": "2031-02-28",
     "time": "09:00:00",
-    "specialistName": "Specialist 0022",
+    "specialistName": "Specialist 0035",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-01-28",
+    "date": "2031-02-27",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0005",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-26",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0034",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-26",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0035",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-25",
     "time": "11:00:00",
-    "specialistName": "Specialist 0041",
+    "specialistName": "Specialist 0007",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-01-28",
+    "date": "2031-02-25",
     "time": "10:00:00",
-    "specialistName": "Specialist 0042",
+    "specialistName": "Specialist 0030",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-01-28",
+    "date": "2031-02-25",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0042",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-24",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0045",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-24",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0038",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-24",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0008",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-21",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0013",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-20",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0012",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-19",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0010",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-19",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0035",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-18",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0001",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-18",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0037",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-17",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0048",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-17",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0018",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-17",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0017",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-14",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0021",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-14",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0043",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-12",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0035",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-11",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0015",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-11",
     "time": "09:00:00",
     "specialistName": "Specialist 0024",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-01-27",
-    "time": "11:00:00",
+    "date": "2031-02-10",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0026",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-10",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0004",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-07",
+    "time": "10:00:00",
     "specialistName": "Specialist 0038",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-01-27",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0014",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-01-27",
+    "date": "2031-02-07",
     "time": "09:00:00",
-    "specialistName": "Specialist 0004",
+    "specialistName": "Specialist 0047",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-06",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0005",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-01-24",
+    "date": "2031-02-05",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0017",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-04",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0020",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-04",
     "time": "10:00:00",
     "specialistName": "Specialist 0006",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-01-24",
+    "date": "2031-02-04",
     "time": "09:00:00",
-    "specialistName": "Specialist 0036",
+    "specialistName": "Specialist 0039",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-01-22",
+    "date": "2031-02-03",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0002",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-02-03",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0009",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-01-31",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0033",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-01-31",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0008",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-01-29",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0041",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-01-29",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0025",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-01-28",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0037",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-01-28",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0019",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-01-27",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0031",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-01-27",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0047",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-01-24",
     "time": "10:00:00",
     "specialistName": "Specialist 0039",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-01-22",
+    "date": "2031-01-24",
     "time": "09:00:00",
-    "specialistName": "Specialist 0015",
+    "specialistName": "Specialist 0028",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-01-23",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0021",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-01-21",
+    "date": "2031-01-22",
     "time": "10:00:00",
+    "specialistName": "Specialist 0033",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-01-22",
+    "time": "09:00:00",
     "specialistName": "Specialist 0043",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-01-21",
-    "time": "09:00:00",
+    "time": "11:00:00",
     "specialistName": "Specialist 0007",
     "status": 1
   },
   {
     "id": "[uuid]",
+    "date": "2031-01-21",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0019",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-01-21",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0024",
+    "status": 3
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-01-20",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0040",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
     "date": "2031-01-20",
     "time": "10:00:00",
-    "specialistName": "Specialist 0005",
-    "status": 1
+    "specialistName": "Specialist 0021",
+    "status": 2
   },
   {
     "id": "[uuid]",
@@ -6392,14 +6337,21 @@ Response: [
     "id": "[uuid]",
     "date": "2031-01-17",
     "time": "09:00:00",
-    "specialistName": "Specialist 0010",
+    "specialistName": "Specialist 0024",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-01-16",
     "time": "09:00:00",
-    "specialistName": "Specialist 0031",
+    "specialistName": "Specialist 0033",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-01-15",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0033",
     "status": 1
   },
   {
@@ -6412,106 +6364,106 @@ Response: [
   {
     "id": "[uuid]",
     "date": "2031-01-14",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0016",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0003",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-01-14",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0013",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-01-14",
     "time": "09:00:00",
+    "specialistName": "Specialist 0033",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-01-13",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0049",
+    "status": 2
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-01-13",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0000",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-01-10",
+    "time": "10:00:00",
     "specialistName": "Specialist 0022",
     "status": 1
   },
   {
     "id": "[uuid]",
-    "date": "2031-01-13",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0001",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-01-13",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0048",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-01-13",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0005",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-01-10",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0038",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
     "date": "2031-01-10",
     "time": "09:00:00",
-    "specialistName": "Specialist 0008",
+    "specialistName": "Specialist 0037",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-01-09",
     "time": "09:00:00",
-    "specialistName": "Specialist 0020",
-    "status": 1
+    "specialistName": "Specialist 0009",
+    "status": 2
   },
   {
     "id": "[uuid]",
     "date": "2031-01-08",
-    "time": "09:00:00",
-    "specialistName": "Specialist 0036",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-01-07",
-    "time": "11:00:00",
-    "specialistName": "Specialist 0036",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-01-07",
-    "time": "10:00:00",
-    "specialistName": "Specialist 0027",
-    "status": 1
-  },
-  {
-    "id": "[uuid]",
-    "date": "2031-01-07",
     "time": "09:00:00",
     "specialistName": "Specialist 0007",
     "status": 1
   },
   {
     "id": "[uuid]",
+    "date": "2031-01-07",
+    "time": "11:00:00",
+    "specialistName": "Specialist 0005",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-01-07",
+    "time": "10:00:00",
+    "specialistName": "Specialist 0045",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
+    "date": "2031-01-07",
+    "time": "09:00:00",
+    "specialistName": "Specialist 0022",
+    "status": 1
+  },
+  {
+    "id": "[uuid]",
     "date": "2031-01-06",
     "time": "11:00:00",
-    "specialistName": "Specialist 0021",
+    "specialistName": "Specialist 0041",
     "status": 1
   },
   {
     "id": "[uuid]",
     "date": "2031-01-06",
     "time": "10:00:00",
-    "specialistName": "Specialist 0009",
-    "status": 1
+    "specialistName": "Specialist 0003",
+    "status": 3
   },
   {
     "id": "[uuid]",
     "date": "2031-01-06",
     "time": "09:00:00",
-    "specialistName": "Specialist 0031",
+    "specialistName": "Specialist 0040",
     "status": 1
   },
   {
@@ -6526,11 +6478,11 @@ Response: [
     "date": "2031-01-03",
     "time": "09:00:00",
     "specialistName": "Specialist 0045",
-    "status": 1
+    "status": 2
   }
 ]
 
-- at async run (tests\snapshot\api.ts:528:3)
+- at async run (tests\snapshot\api.ts:556:3)
 Request: GET /api/appointments/calendar/count 200
 Params: {
   "startDate": "2031-01-01",
@@ -6539,75 +6491,75 @@ Params: {
 Response: [
   {
     "month": 0,
-    "pendingCount": 38,
-    "realizedCount": 0,
-    "canceledCount": 0
+    "pendingCount": 26,
+    "realizedCount": 9,
+    "canceledCount": 5
   },
   {
     "month": 1,
-    "pendingCount": 32,
-    "realizedCount": 0,
-    "canceledCount": 0
+    "pendingCount": 29,
+    "realizedCount": 6,
+    "canceledCount": 1
   },
   {
     "month": 2,
-    "pendingCount": 39,
-    "realizedCount": 0,
-    "canceledCount": 0
+    "pendingCount": 25,
+    "realizedCount": 7,
+    "canceledCount": 3
   },
   {
     "month": 3,
-    "pendingCount": 39,
-    "realizedCount": 0,
-    "canceledCount": 0
+    "pendingCount": 30,
+    "realizedCount": 6,
+    "canceledCount": 2
   },
   {
     "month": 4,
-    "pendingCount": 35,
-    "realizedCount": 0,
-    "canceledCount": 0
+    "pendingCount": 28,
+    "realizedCount": 3,
+    "canceledCount": 2
   },
   {
     "month": 5,
-    "pendingCount": 34,
-    "realizedCount": 0,
-    "canceledCount": 0
+    "pendingCount": 26,
+    "realizedCount": 7,
+    "canceledCount": 3
   },
   {
     "month": 6,
-    "pendingCount": 38,
-    "realizedCount": 0,
-    "canceledCount": 0
+    "pendingCount": 24,
+    "realizedCount": 2,
+    "canceledCount": 5
   },
   {
     "month": 7,
-    "pendingCount": 39,
-    "realizedCount": 0,
-    "canceledCount": 0
+    "pendingCount": 29,
+    "realizedCount": 4,
+    "canceledCount": 2
   },
   {
     "month": 8,
-    "pendingCount": 42,
-    "realizedCount": 0,
-    "canceledCount": 0
+    "pendingCount": 27,
+    "realizedCount": 4,
+    "canceledCount": 5
   },
   {
     "month": 9,
-    "pendingCount": 38,
-    "realizedCount": 0,
-    "canceledCount": 0
+    "pendingCount": 23,
+    "realizedCount": 10,
+    "canceledCount": 5
   },
   {
     "month": 10,
-    "pendingCount": 37,
-    "realizedCount": 0,
-    "canceledCount": 0
+    "pendingCount": 27,
+    "realizedCount": 5,
+    "canceledCount": 1
   },
   {
     "month": 11,
-    "pendingCount": 35,
-    "realizedCount": 0,
-    "canceledCount": 0
+    "pendingCount": 27,
+    "realizedCount": 8,
+    "canceledCount": 3
   }
 ]
 
@@ -6617,10 +6569,12 @@ Report:
   "api.appointments.count": 3,
   "api.appointments.getCalendar": 2,
   "api.appointments.getCalendarCount": 2,
-  "api.appointments.getById": 3,
-  "api.appointments.create": 448,
+  "api.appointments.getById": 6,
+  "api.appointments.create": 432,
   "api.appointments.update": 1,
-  "api.appointments.delete": 1,
+  "api.appointments.realized": 74,
+  "api.appointments.canceled": 40,
+  "api.appointments.delete": 2,
   "api.auth.login": 3,
   "api.auth.refresh": 0,
   "api.auth.me": 2,

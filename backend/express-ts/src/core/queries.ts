@@ -1,5 +1,6 @@
 import { parseISODateToUTC, parseISOTimeToUTC } from './utils'
 
+import { AppointmentStatus } from './presenter'
 import { db } from './db'
 import type * as models from '../prisma/models'
 
@@ -548,6 +549,26 @@ export async function querySpecialistAppointments({
     include: { service_names: {}, customers: {} },
     take: pageSize,
     skip: page * pageSize,
+  })
+  return rows
+}
+
+export async function querySpecialistAppointmentsRealized({
+  specialistId,
+  startDate,
+  endDate,
+}: {
+  specialistId: string
+  startDate: Date
+  endDate: Date
+}) {
+  const rows = await db.appointments.findMany({
+    where: {
+      specialist_id: specialistId,
+      status: AppointmentStatus.Realized,
+      AND: [{ date: { gte: startDate } }, { date: { lte: endDate } }],
+    },
+    include: { service_names: {}, customers: {} },
   })
   return rows
 }

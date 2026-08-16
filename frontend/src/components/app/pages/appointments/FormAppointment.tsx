@@ -9,15 +9,9 @@ import { CREATE_APPOINTMENTS_DATA_KEY } from '../../../../lib/keys'
 import normalizeCPF from '../../../../lib/normalizers/normalizeCPF'
 import { appointmentDateIsRequired, appointmentDateIsInvalid } from '../../../../lib/rules/appointmentDate'
 import { appointmentTimeIsRequired } from '../../../../lib/rules/appointmentTime'
-import { Appointment, AppointmentStatus } from '../../../../lib/api'
+import { Appointment } from '../../../../lib/api'
 import renderDuration from '../../../../lib/renders/renderDuration'
 import { getSessionStorage } from '../../../../lib/json-storage'
-
-const OPTIONS_STATUS = [
-  { label: 'Pendente', value: AppointmentStatus.Pending },
-  { label: 'Cancelado', value: AppointmentStatus.Canceled },
-  { label: 'Realizado', value: AppointmentStatus.Realized },
-]
 
 type FormAppointmentService = {
   id: string
@@ -40,7 +34,6 @@ type FormAppointmentValues = {
   serviceId: string
   date: Dayjs
   time: Dayjs
-  status: number
 }
 
 const INITIAL_VALUES: FormAppointmentValues = {
@@ -48,7 +41,6 @@ const INITIAL_VALUES: FormAppointmentValues = {
   serviceId: '',
   date: null as any,
   time: null as any,
-  status: AppointmentStatus.Pending,
 }
 
 export interface FormAppointmentProps {
@@ -129,10 +121,6 @@ function FormAppointment({
           <Descriptions>
             <Descriptions.Item label="Hora de Término">{endTime()}</Descriptions.Item>
           </Descriptions>
-
-          <Form.Item<FormAppointmentValues> label="Status" name="status" required>
-            <Select options={OPTIONS_STATUS} aria-readonly disabled={!editing} />
-          </Form.Item>
 
           <FormX.Save
             onClick={() => {
@@ -262,7 +250,6 @@ function prepareInitialValues(record?: Appointment): FormAppointmentValues {
     customerId: record.customerId,
     time: dayjs(record.time, 'HH:mm:ss'),
     date: dayjs(record.date),
-    status: record.status,
   }
 }
 

@@ -43,3 +43,15 @@ func NewUuid() (pgtype.UUID, error) {
 	}
 	return result, nil
 }
+
+func AppointmentStatusToString(status AppointmentStatus) string {
+	switch status {
+	case AppointmentStatusCanceled:
+		return "canceled"
+	case AppointmentStatusPending:
+		return "pending"
+	case AppointmentStatusRealized:
+		return "realized"
+	}
+	return "?"
+}

@@ -38,6 +38,8 @@ func UsecaseError(w http.ResponseWriter, r *http.Request, err *usecase.UsecaseEr
 		response = presenter.NotFoundProblem(err.Resource)
 	case usecase.ErrorKindAlreadyExists:
 		response = presenter.AlreadyExistsProblem(err.Resource, err.Key)
+	case usecase.ErrorKindInvalidStateTransition:
+		response = presenter.InvalidStateTransitionProblem(err.Resource, err.From, err.To)
 	case usecase.ErrorKindScheduleConflict:
 		response = presenter.ScheduleConflictProblem(err.Resource, err.Key)
 	case usecase.ErrorKindUnexpected:

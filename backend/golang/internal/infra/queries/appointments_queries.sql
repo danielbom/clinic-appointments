@@ -16,7 +16,13 @@ RETURNING "id";
 UPDATE "appointments"
 SET
   "date" = sqlc.arg('date'),
-  "time" = sqlc.arg('time'),
+  "time" = sqlc.arg('time')
+WHERE "id" = sqlc.arg('id')
+RETURNING "id", "customer_id", "specialist_id", "service_name_id", "price", "duration", "date", "time", "status", "notified_at", "notified_by";
+
+-- name: UpdateAppointmentStatus :one
+UPDATE "appointments"
+SET
   "status" = sqlc.arg('status')
 WHERE "id" = sqlc.arg('id')
 RETURNING "id", "customer_id", "specialist_id", "service_name_id", "price", "duration", "date", "time", "status", "notified_at", "notified_by";

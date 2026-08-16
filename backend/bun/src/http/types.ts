@@ -37,7 +37,9 @@ export namespace core {
 
   export type Resource = //
     | 'appointment' //
+    | 'billing_period'
     | 'customer'
+    | 'invoice'
     | 'secretary'
     | 'service'
     | 'service_name'
@@ -310,7 +312,7 @@ export namespace errors {
   export type ConflictProblemDetails = errors.ProblemDetails & {
     code: 'resource_conflict'
     status: 409
-    title: 'Resource conflict' | 'Schedule conflict'
+    title: 'Already exists' | 'Schedule conflict' | 'Invalid state transition'
   }
 
   /**
@@ -416,7 +418,6 @@ export namespace body {
   export type AppointmentsUpdateBody = {
     date: core.Date
     time: core.Time
-    status: schemas.AppointmentStatus
   }
 
   export type AuthLogin = {
@@ -438,6 +439,12 @@ export namespace body {
     phone: domain.Phone
     birthdate: core.Date
     cpf: domain.Cpf
+  }
+
+  export type InvoicesPreview = {
+    specialistId: domain.Uuid
+    startDate: core.Date
+    endDate: core.Date
   }
 
   export type SecretaryCreateBody = {
@@ -678,7 +685,7 @@ export namespace api {
 
     /**
      * @id appointments.updateAppointment
-     * @route PUT /api/appointments/{id}
+     * @route PATCH /api/appointments/{id}
      * @security BearerAuth
      */
     export namespace updateAppointment {
@@ -707,6 +714,36 @@ export namespace api {
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
+      }
+    }
+
+    /**
+     * @id appointments.appointmentRealized
+     * @route PATCH /api/appointments/{id}/realized
+     * @security BearerAuth
+     */
+    export namespace appointmentRealized {
+      export type responses = {
+        200: schemas.Id
+        400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
+        404: errors.NotFoundProblemDetails
+        409: errors.ConflictProblemDetails
+      }
+    }
+
+    /**
+     * @id appointments.appointmentCanceled
+     * @route PATCH /api/appointments/{id}/canceled
+     * @security BearerAuth
+     */
+    export namespace appointmentCanceled {
+      export type responses = {
+        200: schemas.Id
+        400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
+        404: errors.NotFoundProblemDetails
+        409: errors.ConflictProblemDetails
       }
     }
   }
@@ -901,6 +938,24 @@ export namespace api {
          * Readiness status down
          */
         503: schemas.HealthCheck
+      }
+    }
+  }
+
+  export namespace invoices {
+    /**
+     * @id invoices.preview
+     * @route POST /api/invoices/preview
+     * @security BearerAuth
+     */
+    export namespace preview {
+      export type body = body.InvoicesPreview
+
+      export type responses = {
+        200: {
+        }
+        400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
       }
     }
   }

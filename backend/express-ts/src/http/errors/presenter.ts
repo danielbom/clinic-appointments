@@ -123,7 +123,7 @@ export const errors = {
     return {
       code: 'resource_conflict' as const,
       type: `${devUrl}/schemas/errors/ResourceConflict.json`,
-      title: 'Resource conflict',
+      title: 'Already exists',
       detail: `${resource} with the same ${key} already exists`,
       status: 409 as const,
     }
@@ -135,6 +135,16 @@ export const errors = {
       type: `${devUrl}/schemas/errors/ResourceConflict.json`,
       title: 'Schedule conflict',
       detail: `${resource} already scheduled at the specified ${key}`,
+      status: 409 as const,
+    }
+  },
+
+  invalidStateTransition(resource: types.core.Resource, from: string, to: string): types.errors.ConflictProblemDetails {
+    return {
+      code: 'resource_conflict' as const,
+      type: `${devUrl}/schemas/errors/ResourceConflict.json`,
+      title: 'Invalid state transition',
+      detail: `${resource} cannot transition from ${from} to ${to}`,
       status: 409 as const,
     }
   },

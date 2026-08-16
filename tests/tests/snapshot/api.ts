@@ -305,14 +305,32 @@ async function run(w: WriteStr, api: Api, args: Args) {
   await api.appointments.update(state.appointmentId, {
     date: getDatePart(updateDateIso),
     time: getHourPart(updateDateIso),
-    status: 2,
   })
   await api.appointments.getById(state.appointmentId)
+  await api.appointments.realized(state.appointmentId)
+  await api.appointments.getById(state.appointmentId)
+  await api.appointments.realized(state.appointmentId)
+  await api.appointments.canceled(state.appointmentId)
   await api.appointments.getAll()
   await api.appointments.delete(state.appointmentId)
   await api.appointments.getById(state.appointmentId)
   await api.appointments.getAll()
   await api.appointments.count()
+
+  await api.appointments
+    .create({
+      date: getDatePart(createDateIso),
+      time: getHourPart(createDateIso),
+      customerId: state.customerId,
+      serviceId: state.serviceId,
+    })
+    .then((res) => (state.appointmentId = res.data.id))
+  await api.appointments.getById(state.appointmentId)
+  await api.appointments.canceled(state.appointmentId)
+  await api.appointments.getById(state.appointmentId)
+  await api.appointments.realized(state.appointmentId)
+  await api.appointments.canceled(state.appointmentId)
+  await api.appointments.delete(state.appointmentId)
 
   await api.appointments
     .create({
@@ -458,6 +476,16 @@ async function run(w: WriteStr, api: Api, args: Args) {
             serviceId: random.choice(state.specialistServiceIds[specialistIds[ix]]).serviceId,
           })
           if (res.status !== 201) throw new Error(`appointments ${ix}: ${JSON.stringify(res.data)}`)
+          switch (random.choice([0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 3])) {
+            case 2:
+              await api.appointments.realized(res.data.id)
+              break
+            case 3:
+              await api.appointments.canceled(res.data.id)
+              break
+            default:
+              break
+          }
           state.appointmentIds.push(res.data.id)
         }
       },

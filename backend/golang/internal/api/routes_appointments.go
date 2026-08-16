@@ -300,9 +300,8 @@ func (h *api) updateAppointment(w http.ResponseWriter, r *http.Request) {
 
 	// Validate and execute the usecase
 	args := usecase.UpdateAppointmentArgs{
-		Date:   body.Date,
-		Time:   body.Time,
-		Status: body.Status,
+		Date: body.Date,
+		Time: body.Time,
 	}
 
 	if err := args.Validate(); err != nil {
@@ -349,4 +348,66 @@ func (h *api) deleteAppointment(w http.ResponseWriter, r *http.Request) {
 
 	// Format the response
 	render.NoContent(w, r)
+}
+
+func (h *api) appointmentRealized(w http.ResponseWriter, r *http.Request) {
+	// Collect query parameters, path parameters, and request body
+	appointmentID, ok := GetAndParseUuidParam(w, r, "id")
+	if !ok {
+		return
+	}
+
+	// Validate and execute the usecase
+	args := usecase.UpdateAppointmentStatusArgs{
+		Status: usecase.AppointmentStatusRealized,
+	}
+
+	if err := args.Validate(); err != nil {
+		UsecaseError(w, r, err)
+		return
+	}
+
+	rs := NewRequestState(h.q, r)
+
+	appointment, err := usecase.UpdateAppointmentStatus(rs, appointmentID, args)
+	if err != nil {
+		UsecaseError(w, r, err)
+		return
+	}
+
+	// Format the response
+	response := dtos.Id{ID: appointment.ID.String()}
+	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
+}
+
+func (h *api) appointmentCanceled(w http.ResponseWriter, r *http.Request) {
+	// Collect query parameters, path parameters, and request body
+	appointmentID, ok := GetAndParseUuidParam(w, r, "id")
+	if !ok {
+		return
+	}
+
+	// Validate and execute the usecase
+	args := usecase.UpdateAppointmentStatusArgs{
+		Status: usecase.AppointmentStatusCanceled,
+	}
+
+	if err := args.Validate(); err != nil {
+		UsecaseError(w, r, err)
+		return
+	}
+
+	rs := NewRequestState(h.q, r)
+
+	appointment, err := usecase.UpdateAppointmentStatus(rs, appointmentID, args)
+	if err != nil {
+		UsecaseError(w, r, err)
+		return
+	}
+
+	// Format the response
+	response := dtos.Id{ID: appointment.ID.String()}
+	render.Status(r, http.StatusOK)
+	render.JSON(w, r, response)
 }

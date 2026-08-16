@@ -11,7 +11,6 @@ type UpdateAppointmentArgs struct {
 	DateDate pgtype.Date
 	Time     string
 	TimeTime pgtype.Time
-	Status   int32
 }
 
 func (args *UpdateAppointmentArgs) Validate() *UsecaseError {
@@ -24,9 +23,6 @@ func (args *UpdateAppointmentArgs) Validate() *UsecaseError {
 		if err := args.TimeTime.Scan(args.Time); err != nil {
 			return NewInvalidArgumentError(ACTION_MUTATION, "time", ErrInvalidTime)
 		}
-	}
-	if args.Status < 0 || args.Status >= int32(AppointmentStatusCount) {
-		return NewInvalidArgumentError(ACTION_MUTATION, "status", ErrInvalidAppointmentStatus)
 	}
 
 	return nil
@@ -43,10 +39,9 @@ func UpdateAppointment(state State, appointmentId pgtype.UUID, args UpdateAppoin
 	}
 
 	params := infra.UpdateAppointmentParams{
-		ID:     appointmentId,
-		Date:   args.DateDate,
-		Time:   args.TimeTime,
-		Status: args.Status,
+		ID:   appointmentId,
+		Date: args.DateDate,
+		Time: args.TimeTime,
 	}
 	appointment, err := state.Queries().UpdateAppointment(state.Context(), params)
 	if err != nil {

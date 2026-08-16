@@ -22,8 +22,9 @@
         "title": {
           "type": "string",
           "enum": [
-            "Resource conflict",
-            "Schedule conflict"
+            "Already exists",
+            "Schedule conflict",
+            "Invalid state transition"
           ]
         }
       },

@@ -41,6 +41,18 @@ export const presenter = {
       status: row.status,
     }
   },
+  appointmentStatus(status: number): string {
+    switch (status) {
+      case AppointmentStatus.Pending:
+        return 'pending'
+      case AppointmentStatus.Realized:
+        return 'realized'
+      case AppointmentStatus.Canceled:
+        return 'canceled'
+      default:
+        throw new Error(`invalid appointment status: ${status}`)
+    }
+  },
   calendar(row: Calendar): types.schemas.AppointmentCalendar {
     return {
       id: row.id,

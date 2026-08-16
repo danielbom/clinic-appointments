@@ -29,6 +29,16 @@ type Appointment struct {
 	NotifiedBy    pgtype.UUID
 }
 
+type BillingPeriod struct {
+	ID        pgtype.UUID
+	StartsAt  pgtype.Timestamp
+	EndsAt    pgtype.Timestamp
+	Status    int32
+	CreatedAt pgtype.Timestamp
+	UpdatedAt pgtype.Timestamp
+	ClosedAt  pgtype.Timestamp
+}
+
 type Customer struct {
 	ID        pgtype.UUID
 	Name      string
@@ -36,6 +46,33 @@ type Customer struct {
 	Phone     string
 	Birthdate pgtype.Date
 	Cpf       string
+}
+
+type Invoice struct {
+	ID              pgtype.UUID
+	Number          int32
+	SpecialistID    pgtype.UUID
+	BillingPeriodID pgtype.UUID
+	Status          int32
+	GeneratedAt     pgtype.Timestamp
+	ReviewedAt      pgtype.Timestamp
+	ApprovedAt      pgtype.Timestamp
+	FinalizedAt     pgtype.Timestamp
+	SentAt          pgtype.Timestamp
+}
+
+type InvoiceItem struct {
+	ID             pgtype.UUID
+	InvoiceID      pgtype.UUID
+	Type           int32
+	SourceType     string
+	Description    string
+	Quantity       int32
+	UnitAmount     int32
+	GrossAmount    int32
+	DiscountAmount int32
+	TaxAmount      int32
+	NetAmount      int32
 }
 
 type Secretary struct {

@@ -105,8 +105,18 @@ func AlreadyExistsProblem(resource, key string) dtos.ProblemDetails {
 	var p dtos.ProblemDetails
 	p.Code = "resource_conflict"
 	p.Type = fmt.Sprintf("%s/schemas/errors/ResourceConflict.json", DEV_URL)
-	p.Title = "Resource conflict"
+	p.Title = "Already exists"
 	p.Detail = fmt.Sprintf("%s with the same %s already exists", resource, key)
+	p.Status = 409
+	return p
+}
+
+func InvalidStateTransitionProblem(resource, from, to string) dtos.ProblemDetails {
+	var p dtos.ProblemDetails
+	p.Code = "resource_conflict"
+	p.Type = fmt.Sprintf("%s/schemas/errors/ResourceConflict.json", DEV_URL)
+	p.Title = "Invalid state transition"
+	p.Detail = fmt.Sprintf("%s cannot transition from %s to %s", resource, from, to)
 	p.Status = 409
 	return p
 }

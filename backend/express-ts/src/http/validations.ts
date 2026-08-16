@@ -35,6 +35,13 @@ export const validations = {
       }),
     },
   },
+  invoices: {
+    preview: {
+      body: ajv.compile<types.api.invoices.preview.body>({
+        $ref: 'https://dev-clinic-appointments.com.br/schemas/body/InvoicesPreview.json',
+      }),
+    },
+  },
   secretaries: {
     createSecretary: {
       body: ajv.compile<types.api.secretaries.createSecretary.body>({

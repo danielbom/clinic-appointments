@@ -6,6 +6,12 @@ export type InvalidTokenError = { kind: 'invalid token' }
 export type NotFoundError = { kind: 'not found'; resource: types.core.Resource }
 export type AlreadyExistsError = { kind: 'already exists'; resource: types.core.Resource; key: string }
 export type ScheduleConflictError = { kind: 'schedule conflict'; resource: types.core.Resource; key: string }
+export type InvalidStateTransitionError = {
+  kind: 'invalid state transition'
+  resource: types.core.Resource
+  from: string
+  to: string
+}
 export type InternalError = { kind: 'internal'; detail: string }
 
 type Errors =
@@ -14,6 +20,7 @@ type Errors =
   | { error: ScheduleConflictError; response: types.errors.ConflictProblemDetails }
   | { error: InvalidCredentialsError; response: types.errors.AuthProblemDetails }
   | { error: InvalidTokenError; response: types.errors.AuthProblemDetails }
+  | { error: InvalidStateTransitionError; response: types.errors.ConflictProblemDetails }
   | { error: InternalError; response: types.errors.InternalProblemDetails }
 
 type ErrorsMap = {
@@ -23,6 +30,7 @@ type ErrorsMap = {
   'invalid credentials': types.errors.AuthProblemDetails
   'invalid token': types.errors.AuthProblemDetails
   'internal': types.errors.AuthProblemDetails
+  'invalid state transition': types.errors.ConflictProblemDetails
 }
 
 export function mapError<TError extends Errors['error'], K extends TError['kind']>(error: TError): ErrorsMap[K] {
@@ -33,6 +41,8 @@ export function mapError<TError extends Errors['error'], K extends TError['kind'
       return errors.alreadyExists(error.resource, error.key) as ErrorsMap[K]
     case 'schedule conflict':
       return errors.scheduleConflict(error.resource, error.key) as ErrorsMap[K]
+    case 'invalid state transition':
+      return errors.invalidStateTransition(error.resource, error.from, error.to) as ErrorsMap[K]
     case 'invalid credentials':
       return errors.invalidCredentials() as ErrorsMap[K]
     case 'invalid token':

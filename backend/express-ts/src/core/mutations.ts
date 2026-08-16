@@ -1,5 +1,5 @@
 import type * as types from '../http/types'
-import { AppointmentStatus } from './presenter'
+import { AppointmentStatus, presenter } from './presenter'
 import { queryAppointmentIntersects, queryIdentity } from './queries'
 import { parseISODateToUTC, parseISOTimeToUTC } from './utils'
 
@@ -14,6 +14,7 @@ import type {
   InvalidTokenError,
   NotFoundError,
   ScheduleConflictError,
+  InvalidStateTransitionError,
 } from '../http/errors/domain'
 import type { Res } from '../lib/res'
 
@@ -141,11 +142,55 @@ export async function updateAppointment(
     data: {
       date: parseISODateToUTC(args.date)!,
       time: parseISOTimeToUTC(args.time)!,
-      status: args.status,
     },
   })
 
   return { ok: true, value: { id: row.id } }
+}
+
+async function appointmentChangeStatus(
+  appointmentId: UUID,
+  newStatus: number,
+): Promise<Res<types.schemas.Id, InvalidStateTransitionError | NotFoundError>> {
+  const row = await db.appointments.findFirst({
+    where: { id: appointmentId },
+  })
+  if (!row) {
+    return { ok: false, error: { kind: 'not found', resource: 'appointment' } }
+  }
+
+  if (row.status !== AppointmentStatus.Pending) {
+    return {
+      ok: false,
+      error: {
+        kind: 'invalid state transition',
+        resource: 'appointment',
+        from: presenter.appointmentStatus(row.status),
+        to: presenter.appointmentStatus(newStatus),
+      },
+    }
+  }
+
+  await db.appointments.update({
+    where: { id: appointmentId },
+    data: {
+      status: newStatus,
+    },
+  })
+
+  return { ok: true, value: { id: row.id } }
+}
+
+export async function appointmentRealized(
+  appointmentId: UUID,
+): Promise<Res<types.schemas.Id, InvalidStateTransitionError | NotFoundError>> {
+  return appointmentChangeStatus(appointmentId, AppointmentStatus.Realized)
+}
+
+export async function appointmentCanceled(
+  appointmentId: UUID,
+): Promise<Res<types.schemas.Id, InvalidStateTransitionError | NotFoundError>> {
+  return appointmentChangeStatus(appointmentId, AppointmentStatus.Canceled)
 }
 
 export async function deleteAppointment(appointmentId: UUID): Promise<Res<types.schemas.Id, NotFoundError>> {

@@ -39,6 +39,7 @@ function _req<T>(data: T): AxiosResponse<T> {
 const _get = _req
 const _post = _req
 const _put = _req
+const _patch = _req
 const _delete = () => _req<void>(void 0)
 
 function choice<T>(list: T[]): T {
@@ -186,7 +187,9 @@ export class ApiFake implements Api {
     _config: this._config,
     count: async () => _get(appointments.length),
     create: async (_data) => _post({ id: 'id' }),
-    update: async (_id, _data) => _put({ id: 'id' }),
+    update: async (_id, _data) => _patch({ id: 'id' }),
+    canceled: async (_id) => _patch({ id: 'id' }),
+    realized: async (_id) => _patch({ id: 'id' }),
     delete: async (_id) => _delete(),
     getAll: async (data) => _get(_paginate(appointments, data)),
     getById: async (id) => _get(appointments.find(filterId(id))!),

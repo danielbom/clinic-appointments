@@ -19,6 +19,7 @@ const (
 	ErrorKindUnexpected UsecaseErrorKind = iota
 	ErrorKindNotFound
 	ErrorKindAlreadyExists
+	ErrorKindInvalidStateTransition
 	ErrorKindScheduleConflict
 	ErrorKindInvalidArgument
 	ErrorKindInvalidState
@@ -32,6 +33,8 @@ type UsecaseError struct {
 	Resource string
 	Detail   string
 	Key      string
+	From     string
+	To       string
 }
 
 func NewUnexpectedError(err error) *UsecaseError {
@@ -53,6 +56,10 @@ func NewInvalidArgumentError(action ActionType, key string, err error) *UsecaseE
 
 func NewResourceAlreadyExistsError(resource, key string) *UsecaseError {
 	return &UsecaseError{Kind: ErrorKindAlreadyExists, Error: ErrResourceAlreadyExists, Resource: resource, Key: key}
+}
+
+func NewInvalidStateTransitionError(resource, from, to string) *UsecaseError {
+	return &UsecaseError{Kind: ErrorKindInvalidStateTransition, Error: ErrResourceAlreadyExists, Resource: resource, From: from, To: to}
 }
 
 func NewScheduleConflictError(resource, key string) *UsecaseError {

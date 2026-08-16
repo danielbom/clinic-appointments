@@ -1,0 +1,19 @@
+{
+  "type": "object",
+  "properties": {
+    "specialistId": {
+      "$ref": "#/components/domain/Uuid"
+    },
+    "startDate": {
+      "$ref": "#/components/core/Date"
+    },
+    "endDate": {
+      "$ref": "#/components/core/Date"
+    }
+  },
+  "required": [
+    "specialistId",
+    "startDate",
+    "endDate"
+  ]
+}

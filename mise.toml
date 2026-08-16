@@ -172,6 +172,25 @@ description = "Run error scenario end-to-end snapshot tests against port 5186"
 run = "npx cross-env API_URL=http://localhost:5186 npm run snapshot:errors replay"
 dir = "./tests"
 
+############
+# frontend #
+############
+
+[tasks."watch-frontend"]
+description = "Run frontend with hot reload on port 5173"
+run = "npm run dev"
+dir = "./frontend"
+
+[tasks."format-frontend"]
+description = "Format frontend source files"
+run = "npm run format"
+dir = "./frontend"
+
+[tasks."check-frontend"]
+description = "Check frontend source files"
+run = "npm run check"
+dir = "./frontend"
+
 #########
 # tests #
 #########
