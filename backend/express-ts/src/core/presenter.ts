@@ -2,6 +2,7 @@ import * as types from '../http/types'
 import type { Calendar, CalendarCount, Identity, ServiceEnriched } from './queries'
 
 import type * as models from '../prisma/models'
+import { AppointmentStatus } from './enums'
 
 export function getDatePart(isodate: string): string {
   return isodate.slice(0, 10)
@@ -9,13 +10,6 @@ export function getDatePart(isodate: string): string {
 
 export function getTimePart(isodate: string): string {
   return isodate.slice(11, 19)
-}
-
-export const AppointmentStatus = {
-  None: 0,
-  Pending: 1,
-  Realized: 2,
-  Canceled: 3,
 }
 
 export const presenter = {
@@ -39,18 +33,6 @@ export const presenter = {
       date: getDatePart(row.date.toISOString()),
       time: getTimePart(row.time.toISOString()),
       status: row.status,
-    }
-  },
-  appointmentStatus(status: number): string {
-    switch (status) {
-      case AppointmentStatus.Pending:
-        return 'pending'
-      case AppointmentStatus.Realized:
-        return 'realized'
-      case AppointmentStatus.Canceled:
-        return 'canceled'
-      default:
-        throw new Error(`invalid appointment status: ${status}`)
     }
   },
   calendar(row: Calendar): types.schemas.AppointmentCalendar {

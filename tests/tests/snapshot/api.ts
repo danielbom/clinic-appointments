@@ -1,6 +1,6 @@
 import axios from 'axios'
 import _ from 'lodash'
-import { addDays, addHours, endOfYear, startOfYear } from 'date-fns'
+import { addDays, addHours, endOfMonth, endOfYear, startOfMonth, startOfYear } from 'date-fns'
 
 import { API_URL } from '../config'
 import { formatJson } from '../api-extensions'
@@ -16,6 +16,8 @@ import { generateDatesFrom } from './internal/generateDatesFrom'
 import { enableWriteResponse, plugInterceptors } from './internal/plugInterceptors'
 import { Args, complete } from './internal/complete'
 import { baseData, credentials } from './internal/data'
+
+const priceFrom = (cents: number) => cents * 100
 
 const random = new Random(rng.mulberry32(12345))
 
@@ -44,6 +46,8 @@ async function run(w: WriteStr, api: Api, args: Args) {
   const createDateIso = createDate.toISOString()
   const updateDate = addHours(addDays(createDate, 2), 1)
   const updateDateIso = updateDate.toISOString()
+  const invoiceStartDate = startOfMonth(Date.UTC(2030, 2, 2))
+  const invoiceEndDate = endOfMonth(Date.UTC(2030, 2, 2))
 
   const state = {
     refreshToken: '',
@@ -201,8 +205,8 @@ async function run(w: WriteStr, api: Api, args: Args) {
     .create({
       ...baseData.specialist,
       services: [
-        { serviceNameId: state.servicesAvailableIds[0], price: 100, duration: 60 },
-        { serviceNameId: state.servicesAvailableIds[2], price: 200, duration: 120 },
+        { serviceNameId: state.servicesAvailableIds[0], price: priceFrom(100), duration: 60 },
+        { serviceNameId: state.servicesAvailableIds[2], price: priceFrom(200), duration: 120 },
       ],
     })
     .then((res) => (state.specialistId = res.data.id))
@@ -215,8 +219,8 @@ async function run(w: WriteStr, api: Api, args: Args) {
     .create({
       ...baseData.specialist,
       services: [
-        { serviceNameId: state.servicesAvailableIds[0], price: 100, duration: 60 },
-        { serviceNameId: state.servicesAvailableIds[1], price: 200, duration: 120 },
+        { serviceNameId: state.servicesAvailableIds[0], price: priceFrom(100), duration: 60 },
+        { serviceNameId: state.servicesAvailableIds[1], price: priceFrom(200), duration: 120 },
       ],
     })
     .then((res) => (state.specialistId = res.data.id))
@@ -227,7 +231,7 @@ async function run(w: WriteStr, api: Api, args: Args) {
   await api.services
     .create({
       duration: 60,
-      price: 1000,
+      price: priceFrom(1000),
       serviceNameId: state.servicesAvailableIds[3],
       specialistId: state.specialistId,
     })
@@ -237,7 +241,7 @@ async function run(w: WriteStr, api: Api, args: Args) {
   await api.services.getById(state.serviceId)
   await api.services.update(state.serviceId, {
     duration: 30,
-    price: 500,
+    price: priceFrom(500),
     serviceNameId: state.servicesAvailableIds[2],
   })
   await api.services.getById(state.serviceId)
@@ -250,7 +254,7 @@ async function run(w: WriteStr, api: Api, args: Args) {
   await api.services
     .create({
       duration: 60,
-      price: 1000,
+      price: priceFrom(1000),
       serviceNameId: state.servicesAvailableIds[3],
       specialistId: state.specialistId,
     })
@@ -349,6 +353,31 @@ async function run(w: WriteStr, api: Api, args: Args) {
   await api.specialists.getServices(state.specialistId)
   await api.specialists.getService(state.specialistId, state.servicesAvailableIds[3])
 
+  {
+    enableWriteResponse(false)
+
+    let currentDate = invoiceStartDate
+    const endAt = invoiceEndDate.getTime()
+    while (currentDate.getTime() <= endAt) {
+      const response = await api.appointments.create({
+        date: getDatePart(currentDate.toISOString()),
+        time: getHourPart(createDateIso),
+        customerId: state.customerId,
+        serviceId: state.serviceId,
+      })
+      await api.appointments.realized(response.data.id)
+      currentDate = addDays(currentDate, 1)
+    }
+
+    enableWriteResponse(true)
+  }
+
+  await api.invoices.preview({
+    specialistId: state.specialistId,
+    startDate: invoiceStartDate.toISOString().slice(0, 10),
+    endDate: invoiceEndDate.toISOString().slice(0, 10),
+  })
+
   w.write('Report: \n')
   w.write(JSON.stringify(tracker.report(), null, 2))
   w.write('\n')
@@ -424,7 +453,7 @@ async function run(w: WriteStr, api: Api, args: Args) {
         const serviceNameId = serviceNameIds[i]
         const res = await api.services.create({
           duration: random.range(30, 90, 15),
-          price: random.range(25, 250, 25),
+          price: priceFrom(random.range(25, 250, 25)),
           serviceNameId,
           specialistId,
         })

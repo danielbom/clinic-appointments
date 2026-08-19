@@ -2,7 +2,7 @@
   "/api/invoices/preview": {
     "post": {
       "operationId": "invoices.preview",
-      "summary": "TODO",
+      "summary": "Invoice preview",
       "tags": ["Invoices"],
       "security": [{ "BearerAuth": [] }],
       "parameters": [],
@@ -42,6 +42,24 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        },
+        "403": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/InvalidAccessProblemDetails"
+              }
+            }
+          }
+        },
+        "404": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/NotFoundProblemDetails"
               }
             }
           }

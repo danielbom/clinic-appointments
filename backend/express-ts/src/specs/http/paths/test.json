@@ -26,6 +26,7 @@
       "operationId": "test.debugClaimsTest",
       "summary": "Debug claims in test",
       "tags": ["Test"],
+      "security": [{ "BearerAuth": [] }],
       "description": "Available only in TEST environments",
       "responses": {
         "200": {}

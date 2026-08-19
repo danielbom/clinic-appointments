@@ -1,5 +1,5 @@
 import type * as types from '../http/types'
-import { AppointmentStatus, presenter } from './presenter'
+import { AppointmentStatus } from './enums'
 import { queryAppointmentIntersects, queryIdentity } from './queries'
 import { parseISODateToUTC, parseISOTimeToUTC } from './utils'
 
@@ -165,8 +165,8 @@ async function appointmentChangeStatus(
       error: {
         kind: 'invalid state transition',
         resource: 'appointment',
-        from: presenter.appointmentStatus(row.status),
-        to: presenter.appointmentStatus(newStatus),
+        from: AppointmentStatus.toString(row.status),
+        to: AppointmentStatus.toString(newStatus),
       },
     }
   }

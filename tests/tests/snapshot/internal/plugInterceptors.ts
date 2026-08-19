@@ -26,7 +26,7 @@ export function plugInterceptors(
       const endTime = performance.now()
       const location = (findInStack([fileName, 'async run']) + '\n').replace(/\(.*tests(.*)\)/, '(tests$1)')
       if (writeResponses) {
-        writter.write(location)
+        // writter.write(location)
         writeResponse(writter, redactResponse(response))
       }
       const startTime = (response.config as any).metadata.startTime

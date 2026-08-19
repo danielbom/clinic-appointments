@@ -1,5 +1,5 @@
-import { startOfDay, endOfDay } from 'date-fns'
 import type * as types from './types'
+import * as usecases from '../core/usecases'
 import * as queries from '../core/queries'
 import * as mutations from '../core/mutations'
 import * as health from '../core/health'
@@ -12,11 +12,13 @@ import {
   getJwtDataFromRequest,
   getStringParam,
   getUuidParam,
+  parseISODateToUTC,
 } from '../core/utils'
 import { validations } from './validations'
 import { errors } from './errors/presenter'
 import { mapError } from './errors/domain'
 import { presenter } from '../core/presenter'
+import { verifyJWT } from '../core/jwt'
 
 export default {
   health: {
@@ -556,6 +558,9 @@ export default {
       if (!jwtData) {
         return reply.fail(errors.invalidToken())
       }
+      if (!jwtData.hasAccess('secretary')) {
+        return reply.fail(errors.invalidAccess('Role without access'))
+      }
 
       const body = await req.getJsonBody()
       if (!validations.invoices.preview.body(body)) {
@@ -564,16 +569,17 @@ export default {
       const args: types.api.invoices.preview.body = body
 
       // Validate and execute the usecase
-      const appointmentsRealized = await queries.querySpecialistAppointmentsRealized({
-        specialistId: args.specialistId,
-        startDate: startOfDay(new Date(args.startDate)),
-        endDate: endOfDay(new Date(args.endDate)),
-      })
-      // WIP
-      console.log(appointmentsRealized)
+      const specialistId = args.specialistId
+      const startDate = parseISODateToUTC(args.startDate)!
+      const endDate = parseISODateToUTC(args.endDate)!
+      const result = await usecases.prepareInvoice({ specialistId, startDate, endDate })
+
+      if (!result.ok) {
+        return reply.fail(mapError(result.error))
+      }
 
       // Format the response
-      return reply.send(200, {})
+      return reply.send(200, result.value)
     },
   },
   secretaries: {
@@ -1398,6 +1404,11 @@ export default {
     },
     async debugClaimsTest(req: RequestAdapter) {
       const reply = replier<types.api.test.debugClaimsTest.responses>(req)
+
+      const bearerToken = getAccessTokenFromRequest(req)
+      const token = bearerToken ? await verifyJWT(bearerToken) : null
+      console.log(bearerToken)
+      console.log(token)
 
       return reply.send(200, 'OK')
     },

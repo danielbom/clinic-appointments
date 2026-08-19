@@ -956,6 +956,8 @@ export namespace api {
         }
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
+        403: errors.InvalidAccessProblemDetails
+        404: errors.NotFoundProblemDetails
       }
     }
   }
@@ -1571,6 +1573,7 @@ export namespace api {
      * Available only in TEST environments
      * @id test.debugClaimsTest
      * @route GET /api/test/debug-claims
+     * @security BearerAuth
      */
     export namespace debugClaimsTest {
       export type responses = {

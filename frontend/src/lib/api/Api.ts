@@ -3,6 +3,7 @@ import { AppointmentsEndpoint } from './endpoints/AppointmentsEndpoint'
 import { AuthEndpoint } from './endpoints/AuthEndpoint'
 import { CustomersEndpoint } from './endpoints/CustomersEndpoint'
 import { HealthEndpoint } from './endpoints/HealthEndpoint'
+import { InvoicesEndpoint } from './endpoints/InvoicesEndpoint'
 import { SecretariesEndpoint } from './endpoints/SecretariesEndpoint'
 import { ServiceGroupsEndpoint } from './endpoints/ServiceGroupsEndpoint'
 import { ServicesAvailableEndpoint } from './endpoints/ServicesAvailableEndpoint'
@@ -16,6 +17,7 @@ export class Api {
   public auth: AuthEndpoint
   public customers: CustomersEndpoint
   public health: HealthEndpoint
+  public invoices: InvoicesEndpoint
   public secretaries: SecretariesEndpoint
   public serviceGroups: ServiceGroupsEndpoint
   public services: ServicesEndpoint
@@ -29,6 +31,7 @@ export class Api {
     this.auth = new AuthEndpoint(_config)
     this.customers = new CustomersEndpoint(_config)
     this.health = new HealthEndpoint(_config)
+    this.invoices = new InvoicesEndpoint(_config)
     this.secretaries = new SecretariesEndpoint(_config)
     this.serviceGroups = new ServiceGroupsEndpoint(_config)
     this.services = new ServicesEndpoint(_config)

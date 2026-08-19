@@ -1,4 +1,3 @@
-- at async run (tests\snapshot\api.ts:67:3)
 Request: GET /api/health/liveness 200
 Response: {
   "status": "UP",
@@ -6,7 +5,6 @@ Response: {
   "timestamp": "[temporal]"
 }
 
-- at async run (tests\snapshot\api.ts:75:3)
 Request: GET /api/health/check 200
 Response: {
   "status": "UP",
@@ -24,7 +22,6 @@ Response: {
   }
 }
 
-- at async run (tests\snapshot\api.ts:76:3)
 Request: GET /api/health/readiness 200
 Response: {
   "status": "UP",
@@ -38,18 +35,15 @@ Response: {
   }
 }
 
-- at async run (tests\snapshot\api.ts:77:3)
 Request: GET /api/test/stats 200
 Response: {
   "database": "user=test_user password=test_password host=localhost port=5432 dbname=test_db",
   "message": "Environment: TEST"
 }
 
-- at async run (tests\snapshot\api.ts:78:3)
 Request: GET /api/test/init 200
 Response: "System initialized to be tested"
 
-- at async run (tests\snapshot\api.ts:80:3)
 Request: POST /api/auth/login 200
 Body: {
   "email": "admin@test.com",
@@ -60,7 +54,6 @@ Response: {
   "refreshToken": "[access-token]"
 }
 
-- at async run (tests\snapshot\api.ts:84:3)
 Request: GET /api/auth/me 200
 Response: {
   "id": "[uuid]",
@@ -69,17 +62,14 @@ Response: {
   "role": "admin"
 }
 
-- at async run (tests\snapshot\api.ts:88:3)
 Request: GET /api/secretaries/count 200
 Params: {}
 Response: 0
 
-- at async run (tests\snapshot\api.ts:89:3)
 Request: GET /api/secretaries 200
 Params: {}
 Response: []
 
-- at async run (tests\snapshot\api.ts:90:3)
 Request: POST /api/secretaries 201
 Body: {
   "name": "Secretary Test",
@@ -94,7 +84,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:91:3)
 Request: POST /api/secretaries 409
 Body: {
   "name": "Secretary Test",
@@ -115,12 +104,10 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (tests\snapshot\api.ts:92:3)
 Request: GET /api/secretaries/count 200
 Params: {}
 Response: 1
 
-- at async run (tests\snapshot\api.ts:93:3)
 Request: GET /api/secretaries 200
 Params: {}
 Response: [
@@ -135,7 +122,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:94:3)
 Request: GET /api/secretaries/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -147,7 +133,6 @@ Response: {
   "cnpj": "08130896000135"
 }
 
-- at async run (tests\snapshot\api.ts:95:3)
 Request: PUT /api/secretaries/[uuid] 200
 Body: {
   "name": "Secretary Test Updated",
@@ -161,7 +146,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:104:3)
 Request: GET /api/secretaries/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -173,11 +157,9 @@ Response: {
   "cnpj": "08130896000135"
 }
 
-- at async run (tests\snapshot\api.ts:105:3)
 Request: DELETE /api/secretaries/[uuid] 204
 Response: ""
 
-- at async run (tests\snapshot\api.ts:106:3)
 Request: GET /api/secretaries/[uuid] 404
 Response: {
   "code": "resource_not_found",
@@ -189,17 +171,14 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (tests\snapshot\api.ts:107:3)
 Request: GET /api/secretaries/count 200
 Params: {}
 Response: 0
 
-- at async run (tests\snapshot\api.ts:108:3)
 Request: GET /api/secretaries 200
 Params: {}
 Response: []
 
-- at async run (tests\snapshot\api.ts:109:3)
 Request: POST /api/secretaries 201
 Body: {
   "name": "Secretary Test",
@@ -214,7 +193,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:111:3)
 Request: POST /api/auth/login 200
 Body: {
   "email": "secretary@test.com",
@@ -225,7 +203,6 @@ Response: {
   "refreshToken": "[access-token]"
 }
 
-- at async run (tests\snapshot\api.ts:112:3)
 Request: GET /api/auth/me 200
 Response: {
   "id": "[uuid]",
@@ -234,11 +211,9 @@ Response: {
   "role": "secretary"
 }
 
-- at async run (tests\snapshot\api.ts:115:3)
 Request: GET /api/specializations 200
 Response: []
 
-- at async run (tests\snapshot\api.ts:116:3)
 Request: POST /api/specializations 201
 Body: {
   "name": "Specialization A"
@@ -247,7 +222,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:117:3)
 Request: POST /api/specializations 201
 Body: {
   "name": "Specialization B"
@@ -256,7 +230,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:118:3)
 Request: POST /api/specializations 409
 Body: {
   "name": "Specialization A"
@@ -271,7 +244,6 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (tests\snapshot\api.ts:119:3)
 Request: POST /api/specializations 400
 Body: {
   "name": ""
@@ -294,7 +266,6 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (tests\snapshot\api.ts:120:3)
 Request: GET /api/specializations 200
 Response: [
   {
@@ -307,7 +278,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:121:3)
 Request: PUT /api/specializations/[uuid] 200
 Body: {
   "name": "Specialization A Updated"
@@ -316,7 +286,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:122:3)
 Request: GET /api/specializations 200
 Response: [
   {
@@ -329,19 +298,15 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:123:3)
 Request: DELETE /api/specializations/[uuid] 204
 Response: ""
 
-- at async run (tests\snapshot\api.ts:124:3)
 Request: DELETE /api/specializations/[uuid] 204
 Response: ""
 
-- at async run (tests\snapshot\api.ts:125:3)
 Request: GET /api/specializations 200
 Response: []
 
-- at async run (tests\snapshot\api.ts:126:3)
 Request: POST /api/specializations 201
 Body: {
   "name": "Specialization A"
@@ -350,7 +315,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:127:3)
 Request: POST /api/specializations 201
 Body: {
   "name": "Specialization B"
@@ -359,7 +323,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:130:3)
 Request: GET /api/services-available 200
 Response: [
   {
@@ -374,7 +337,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:132:17)
 Request: POST /api/services-available 201
 Body: {
   "name": "Service Available A",
@@ -384,7 +346,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:132:17)
 Request: POST /api/services-available 201
 Body: {
   "name": "Service Available B",
@@ -394,7 +355,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:139:17)
 Request: POST /api/services-available 201
 Body: {
   "name": "Service Available 1",
@@ -404,7 +364,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:139:17)
 Request: POST /api/services-available 201
 Body: {
   "name": "Service Available 2",
@@ -414,7 +373,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:145:3)
 Request: GET /api/services-available 200
 Response: [
   {
@@ -447,7 +405,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:147:5)
 Request: GET /api/services-available/[uuid] 200
 Response: {
   "serviceName": "Service Available A",
@@ -456,7 +413,6 @@ Response: {
   "specializationId": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:147:5)
 Request: GET /api/services-available/[uuid] 200
 Response: {
   "serviceName": "Service Available B",
@@ -465,7 +421,6 @@ Response: {
   "specializationId": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:147:5)
 Request: GET /api/services-available/[uuid] 200
 Response: {
   "serviceName": "Service Available 1",
@@ -474,7 +429,6 @@ Response: {
   "specializationId": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:147:5)
 Request: GET /api/services-available/[uuid] 200
 Response: {
   "serviceName": "Service Available 2",
@@ -483,7 +437,6 @@ Response: {
   "specializationId": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:149:3)
 Request: PUT /api/services-available/[uuid] 200
 Body: {
   "name": "Updated"
@@ -492,7 +445,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:152:3)
 Request: GET /api/services-available 200
 Response: [
   {
@@ -525,7 +477,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:153:3)
 Request: GET /api/services-available/[uuid] 200
 Response: {
   "serviceName": "Updated",
@@ -534,23 +485,18 @@ Response: {
   "specializationId": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:155:5)
 Request: DELETE /api/services-available/[uuid] 204
 Response: ""
 
-- at async run (tests\snapshot\api.ts:155:5)
 Request: DELETE /api/services-available/[uuid] 204
 Response: ""
 
-- at async run (tests\snapshot\api.ts:155:5)
 Request: DELETE /api/services-available/[uuid] 204
 Response: ""
 
-- at async run (tests\snapshot\api.ts:155:5)
 Request: DELETE /api/services-available/[uuid] 204
 Response: ""
 
-- at async run (tests\snapshot\api.ts:157:3)
 Request: GET /api/services-available/[uuid] 404
 Response: {
   "code": "resource_not_found",
@@ -562,7 +508,6 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (tests\snapshot\api.ts:159:3)
 Request: GET /api/services-available 200
 Response: [
   {
@@ -577,7 +522,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:162:17)
 Request: POST /api/services-available 201
 Body: {
   "name": "Service Available A",
@@ -587,7 +531,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:162:17)
 Request: POST /api/services-available 201
 Body: {
   "name": "Service Available B",
@@ -597,7 +540,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:169:17)
 Request: POST /api/services-available 201
 Body: {
   "name": "Service Available 1",
@@ -607,7 +549,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:169:17)
 Request: POST /api/services-available 201
 Body: {
   "name": "Service Available 2",
@@ -617,7 +558,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:175:3)
 Request: GET /api/services-available 200
 Response: [
   {
@@ -650,17 +590,14 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:178:3)
 Request: GET /api/specialists 200
 Params: {}
 Response: []
 
-- at async run (tests\snapshot\api.ts:179:3)
 Request: GET /api/specialists/count 200
 Params: {}
 Response: 0
 
-- at async run (tests\snapshot\api.ts:180:3)
 Request: POST /api/specialists 201
 Body: {
   "name": "Specialist Test",
@@ -675,15 +612,12 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:181:3)
 Request: GET /api/specialists/[uuid]/services 200
 Response: []
 
-- at async run (tests\snapshot\api.ts:182:3)
 Request: GET /api/specialists/[uuid]/specializations 200
 Response: []
 
-- at async run (tests\snapshot\api.ts:183:3)
 Request: GET /api/specialists 200
 Params: {}
 Response: [
@@ -698,12 +632,10 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:184:3)
 Request: GET /api/specialists/count 200
 Params: {}
 Response: 1
 
-- at async run (tests\snapshot\api.ts:185:3)
 Request: GET /api/specialists/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -715,7 +647,6 @@ Response: {
   "cnpj": "16833374000128"
 }
 
-- at async run (tests\snapshot\api.ts:186:3)
 Request: PUT /api/specialists/[uuid] 200
 Body: {
   "name": "Specialist Test Updated",
@@ -730,7 +661,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:195:3)
 Request: GET /api/specialists/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -742,7 +672,6 @@ Response: {
   "cnpj": "16833374000128"
 }
 
-- at async run (tests\snapshot\api.ts:196:3)
 Request: GET /api/specialists 200
 Params: {}
 Response: [
@@ -757,21 +686,17 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:197:3)
 Request: DELETE /api/specialists/[uuid] 204
 Response: ""
 
-- at async run (tests\snapshot\api.ts:198:3)
 Request: GET /api/specialists 200
 Params: {}
 Response: []
 
-- at async run (tests\snapshot\api.ts:199:3)
 Request: GET /api/specialists/count 200
 Params: {}
 Response: 0
 
-- at async run (tests\snapshot\api.ts:200:3)
 Request: POST /api/specialists 201
 Body: {
   "name": "Specialist Test",
@@ -783,12 +708,12 @@ Body: {
   "services": [
     {
       "serviceNameId": "[uuid]",
-      "price": 100,
+      "price": 10000,
       "duration": 60
     },
     {
       "serviceNameId": "[uuid]",
-      "price": 200,
+      "price": 20000,
       "duration": 120
     }
   ]
@@ -797,7 +722,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:209:3)
 Request: GET /api/specialists/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -809,7 +733,6 @@ Response: {
   "cnpj": "16833374000128"
 }
 
-- at async run (tests\snapshot\api.ts:210:3)
 Request: GET /api/specialists/[uuid]/services 200
 Response: [
   {
@@ -817,7 +740,7 @@ Response: [
     "specializationId": "[uuid]",
     "serviceName": "Service Available A",
     "serviceNameId": "[uuid]",
-    "price": 100,
+    "price": 10000,
     "duration": 60
   },
   {
@@ -825,12 +748,11 @@ Response: [
     "specializationId": "[uuid]",
     "serviceName": "Service Available 1",
     "serviceNameId": "[uuid]",
-    "price": 200,
+    "price": 20000,
     "duration": 120
   }
 ]
 
-- at async run (tests\snapshot\api.ts:211:3)
 Request: GET /api/specialists/[uuid]/specializations 200
 Response: [
   {
@@ -843,11 +765,9 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:212:3)
 Request: DELETE /api/specialists/[uuid] 204
 Response: ""
 
-- at async run (tests\snapshot\api.ts:214:3)
 Request: POST /api/specialists 201
 Body: {
   "name": "Specialist Test",
@@ -859,12 +779,12 @@ Body: {
   "services": [
     {
       "serviceNameId": "[uuid]",
-      "price": 100,
+      "price": 10000,
       "duration": 60
     },
     {
       "serviceNameId": "[uuid]",
-      "price": 200,
+      "price": 20000,
       "duration": 120
     }
   ]
@@ -873,7 +793,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:225:3)
 Request: GET /api/services 200
 Params: {}
 Response: [
@@ -885,7 +804,7 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization A",
     "specializationId": "[uuid]",
-    "price": 100,
+    "price": 10000,
     "duration": 60
   },
   {
@@ -896,21 +815,19 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization A",
     "specializationId": "[uuid]",
-    "price": 200,
+    "price": 20000,
     "duration": 120
   }
 ]
 
-- at async run (tests\snapshot\api.ts:226:3)
 Request: GET /api/services/count 200
 Params: {}
 Response: 2
 
-- at async run (tests\snapshot\api.ts:227:3)
 Request: POST /api/services 201
 Body: {
   "duration": 60,
-  "price": 1000,
+  "price": 100000,
   "serviceNameId": "[uuid]",
   "specialistId": "[uuid]"
 }
@@ -918,7 +835,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:235:3)
 Request: GET /api/services 200
 Params: {}
 Response: [
@@ -930,7 +846,7 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization B",
     "specializationId": "[uuid]",
-    "price": 1000,
+    "price": 100000,
     "duration": 60
   },
   {
@@ -941,7 +857,7 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization A",
     "specializationId": "[uuid]",
-    "price": 100,
+    "price": 10000,
     "duration": 60
   },
   {
@@ -952,48 +868,43 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization A",
     "specializationId": "[uuid]",
-    "price": 200,
+    "price": 20000,
     "duration": 120
   }
 ]
 
-- at async run (tests\snapshot\api.ts:236:3)
 Request: GET /api/services/count 200
 Params: {}
 Response: 3
 
-- at async run (tests\snapshot\api.ts:237:3)
 Request: GET /api/services/[uuid] 200
 Response: {
   "id": "[uuid]",
   "specialistId": "[uuid]",
   "serviceNameId": "[uuid]",
-  "price": 1000,
+  "price": 100000,
   "duration": 60
 }
 
-- at async run (tests\snapshot\api.ts:238:3)
 Request: PUT /api/services/[uuid] 200
 Body: {
   "duration": 30,
-  "price": 500,
+  "price": 50000,
   "serviceNameId": "[uuid]"
 }
 Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:243:3)
 Request: GET /api/services/[uuid] 200
 Response: {
   "id": "[uuid]",
   "specialistId": "[uuid]",
   "serviceNameId": "[uuid]",
-  "price": 500,
+  "price": 50000,
   "duration": 30
 }
 
-- at async run (tests\snapshot\api.ts:244:3)
 Request: GET /api/services 200
 Params: {}
 Response: [
@@ -1005,7 +916,7 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization B",
     "specializationId": "[uuid]",
-    "price": 500,
+    "price": 50000,
     "duration": 30
   },
   {
@@ -1016,7 +927,7 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization A",
     "specializationId": "[uuid]",
-    "price": 100,
+    "price": 10000,
     "duration": 60
   },
   {
@@ -1027,16 +938,14 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization A",
     "specializationId": "[uuid]",
-    "price": 200,
+    "price": 20000,
     "duration": 120
   }
 ]
 
-- at async run (tests\snapshot\api.ts:245:3)
 Request: DELETE /api/services/[uuid] 204
 Response: ""
 
-- at async run (tests\snapshot\api.ts:246:3)
 Request: GET /api/services/[uuid] 404
 Response: {
   "code": "resource_not_found",
@@ -1048,7 +957,6 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (tests\snapshot\api.ts:247:3)
 Request: GET /api/services 200
 Params: {}
 Response: [
@@ -1060,7 +968,7 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization A",
     "specializationId": "[uuid]",
-    "price": 100,
+    "price": 10000,
     "duration": 60
   },
   {
@@ -1071,21 +979,19 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization A",
     "specializationId": "[uuid]",
-    "price": 200,
+    "price": 20000,
     "duration": 120
   }
 ]
 
-- at async run (tests\snapshot\api.ts:248:3)
 Request: GET /api/services/count 200
 Params: {}
 Response: 2
 
-- at async run (tests\snapshot\api.ts:250:3)
 Request: POST /api/services 201
 Body: {
   "duration": 60,
-  "price": 1000,
+  "price": 100000,
   "serviceNameId": "[uuid]",
   "specialistId": "[uuid]"
 }
@@ -1093,17 +999,14 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:260:3)
 Request: GET /api/customers 200
 Params: {}
 Response: []
 
-- at async run (tests\snapshot\api.ts:261:3)
 Request: GET /api/customers/count 200
 Params: {}
 Response: 0
 
-- at async run (tests\snapshot\api.ts:262:3)
 Request: POST /api/customers 201
 Body: {
   "name": "Customer Test",
@@ -1116,7 +1019,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:263:3)
 Request: GET /api/customers/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -1127,7 +1029,6 @@ Response: {
   "cpf": "11431287962"
 }
 
-- at async run (tests\snapshot\api.ts:264:3)
 Request: GET /api/customers 200
 Params: {}
 Response: [
@@ -1141,12 +1042,10 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:265:3)
 Request: GET /api/customers/count 200
 Params: {}
 Response: 1
 
-- at async run (tests\snapshot\api.ts:266:3)
 Request: PUT /api/customers/[uuid] 200
 Body: {
   "name": "Customer Test Updated",
@@ -1159,7 +1058,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:273:3)
 Request: GET /api/customers/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -1170,7 +1068,6 @@ Response: {
   "cpf": "11431287962"
 }
 
-- at async run (tests\snapshot\api.ts:274:3)
 Request: GET /api/customers 200
 Params: {}
 Response: [
@@ -1184,16 +1081,13 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:275:3)
 Request: GET /api/customers/count 200
 Params: {}
 Response: 1
 
-- at async run (tests\snapshot\api.ts:276:3)
 Request: DELETE /api/customers/[uuid] 204
 Response: ""
 
-- at async run (tests\snapshot\api.ts:277:3)
 Request: GET /api/customers/[uuid] 404
 Response: {
   "code": "resource_not_found",
@@ -1205,17 +1099,14 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (tests\snapshot\api.ts:278:3)
 Request: GET /api/customers 200
 Params: {}
 Response: []
 
-- at async run (tests\snapshot\api.ts:279:3)
 Request: GET /api/customers/count 200
 Params: {}
 Response: 0
 
-- at async run (tests\snapshot\api.ts:281:3)
 Request: POST /api/customers 201
 Body: {
   "name": "Customer Test",
@@ -1228,17 +1119,14 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:284:3)
 Request: GET /api/appointments 200
 Params: {}
 Response: []
 
-- at async run (tests\snapshot\api.ts:285:3)
 Request: GET /api/appointments/count 200
 Params: {}
 Response: 0
 
-- at async run (tests\snapshot\api.ts:286:3)
 Request: POST /api/appointments 201
 Body: {
   "date": "2030-01-02",
@@ -1250,7 +1138,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:294:3)
 Request: GET /api/appointments 200
 Params: {}
 Response: [
@@ -1262,7 +1149,7 @@ Response: [
     "serviceNameId": "[uuid]",
     "specialistName": "Specialist Test",
     "specialistId": "[uuid]",
-    "price": 1000,
+    "price": 100000,
     "duration": 60,
     "date": "2030-01-02",
     "time": "03:00:00",
@@ -1270,12 +1157,10 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:295:3)
 Request: GET /api/appointments/count 200
 Params: {}
 Response: 1
 
-- at async run (tests\snapshot\api.ts:296:3)
 Request: GET /api/appointments/calendar/count 200
 Params: {
   "startDate": "2030-01-01",
@@ -1356,7 +1241,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:300:3)
 Request: GET /api/appointments/calendar 200
 Params: {
   "startDate": "2030-01-01",
@@ -1372,7 +1256,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:304:3)
 Request: GET /api/appointments/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -1382,14 +1265,13 @@ Response: {
   "serviceNameId": "[uuid]",
   "specialistName": "Specialist Test",
   "specialistId": "[uuid]",
-  "price": 1000,
+  "price": 100000,
   "duration": 60,
   "date": "2030-01-02",
   "time": "03:00:00",
   "status": 1
 }
 
-- at async run (tests\snapshot\api.ts:305:3)
 Request: PATCH /api/appointments/[uuid] 200
 Body: {
   "date": "2030-01-04",
@@ -1399,7 +1281,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:309:3)
 Request: GET /api/appointments/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -1409,20 +1290,18 @@ Response: {
   "serviceNameId": "[uuid]",
   "specialistName": "Specialist Test",
   "specialistId": "[uuid]",
-  "price": 1000,
+  "price": 100000,
   "duration": 60,
   "date": "2030-01-04",
   "time": "04:00:00",
   "status": 1
 }
 
-- at async run (tests\snapshot\api.ts:310:3)
 Request: PATCH /api/appointments/[uuid]/realized 200
 Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:311:3)
 Request: GET /api/appointments/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -1432,38 +1311,35 @@ Response: {
   "serviceNameId": "[uuid]",
   "specialistName": "Specialist Test",
   "specialistId": "[uuid]",
-  "price": 1000,
+  "price": 100000,
   "duration": 60,
   "date": "2030-01-04",
   "time": "04:00:00",
   "status": 2
 }
 
-- at async run (tests\snapshot\api.ts:312:3)
 Request: PATCH /api/appointments/[uuid]/realized 409
 Response: {
   "code": "resource_conflict",
   "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceConflict.json",
   "title": "Invalid state transition",
-  "detail": "appointment cannot transition from realized to realized",
+  "detail": "appointment cannot transition from Realized to Realized",
   "status": 409,
   "instance": "/api/appointments/[uuid]/realized",
   "traceId": "[trace-id]"
 }
 
-- at async run (tests\snapshot\api.ts:313:3)
 Request: PATCH /api/appointments/[uuid]/canceled 409
 Response: {
   "code": "resource_conflict",
   "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceConflict.json",
   "title": "Invalid state transition",
-  "detail": "appointment cannot transition from realized to canceled",
+  "detail": "appointment cannot transition from Realized to Canceled",
   "status": 409,
   "instance": "/api/appointments/[uuid]/canceled",
   "traceId": "[trace-id]"
 }
 
-- at async run (tests\snapshot\api.ts:314:3)
 Request: GET /api/appointments 200
 Params: {}
 Response: [
@@ -1475,7 +1351,7 @@ Response: [
     "serviceNameId": "[uuid]",
     "specialistName": "Specialist Test",
     "specialistId": "[uuid]",
-    "price": 1000,
+    "price": 100000,
     "duration": 60,
     "date": "2030-01-04",
     "time": "04:00:00",
@@ -1483,11 +1359,9 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:315:3)
 Request: DELETE /api/appointments/[uuid] 204
 Response: ""
 
-- at async run (tests\snapshot\api.ts:316:3)
 Request: GET /api/appointments/[uuid] 404
 Response: {
   "code": "resource_not_found",
@@ -1499,17 +1373,14 @@ Response: {
   "traceId": "[trace-id]"
 }
 
-- at async run (tests\snapshot\api.ts:317:3)
 Request: GET /api/appointments 200
 Params: {}
 Response: []
 
-- at async run (tests\snapshot\api.ts:318:3)
 Request: GET /api/appointments/count 200
 Params: {}
 Response: 0
 
-- at async run (tests\snapshot\api.ts:320:3)
 Request: POST /api/appointments 201
 Body: {
   "date": "2030-01-02",
@@ -1521,7 +1392,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:328:3)
 Request: GET /api/appointments/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -1531,20 +1401,18 @@ Response: {
   "serviceNameId": "[uuid]",
   "specialistName": "Specialist Test",
   "specialistId": "[uuid]",
-  "price": 1000,
+  "price": 100000,
   "duration": 60,
   "date": "2030-01-02",
   "time": "03:00:00",
   "status": 1
 }
 
-- at async run (tests\snapshot\api.ts:329:3)
 Request: PATCH /api/appointments/[uuid]/canceled 200
 Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:330:3)
 Request: GET /api/appointments/[uuid] 200
 Response: {
   "id": "[uuid]",
@@ -1554,42 +1422,38 @@ Response: {
   "serviceNameId": "[uuid]",
   "specialistName": "Specialist Test",
   "specialistId": "[uuid]",
-  "price": 1000,
+  "price": 100000,
   "duration": 60,
   "date": "2030-01-02",
   "time": "03:00:00",
   "status": 3
 }
 
-- at async run (tests\snapshot\api.ts:331:3)
 Request: PATCH /api/appointments/[uuid]/realized 409
 Response: {
   "code": "resource_conflict",
   "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceConflict.json",
   "title": "Invalid state transition",
-  "detail": "appointment cannot transition from canceled to realized",
+  "detail": "appointment cannot transition from Canceled to Realized",
   "status": 409,
   "instance": "/api/appointments/[uuid]/realized",
   "traceId": "[trace-id]"
 }
 
-- at async run (tests\snapshot\api.ts:332:3)
 Request: PATCH /api/appointments/[uuid]/canceled 409
 Response: {
   "code": "resource_conflict",
   "type": "https://dev-clinic-appointments.com.br/schemas/errors/ResourceConflict.json",
   "title": "Invalid state transition",
-  "detail": "appointment cannot transition from canceled to canceled",
+  "detail": "appointment cannot transition from Canceled to Canceled",
   "status": 409,
   "instance": "/api/appointments/[uuid]/canceled",
   "traceId": "[trace-id]"
 }
 
-- at async run (tests\snapshot\api.ts:333:3)
 Request: DELETE /api/appointments/[uuid] 204
 Response: ""
 
-- at async run (tests\snapshot\api.ts:335:3)
 Request: POST /api/appointments 201
 Body: {
   "date": "2030-01-02",
@@ -1601,7 +1465,6 @@ Response: {
   "id": "[uuid]"
 }
 
-- at async run (tests\snapshot\api.ts:345:3)
 Request: GET /api/specialists/[uuid]/appointments 200
 Params: {}
 Response: [
@@ -1611,7 +1474,7 @@ Response: [
     "customerId": "[uuid]",
     "serviceName": "Service Available 2",
     "serviceNameId": "[uuid]",
-    "price": 1000,
+    "price": 100000,
     "duration": 60,
     "date": "2030-01-02",
     "time": "03:00:00",
@@ -1619,7 +1482,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:347:3)
 Request: GET /api/service-groups 200
 Response: [
   {
@@ -1652,7 +1514,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:349:3)
 Request: GET /api/specialists/[uuid]/services 200
 Response: [
   {
@@ -1660,7 +1521,7 @@ Response: [
     "specializationId": "[uuid]",
     "serviceName": "Service Available A",
     "serviceNameId": "[uuid]",
-    "price": 100,
+    "price": 10000,
     "duration": 60
   },
   {
@@ -1668,7 +1529,7 @@ Response: [
     "specializationId": "[uuid]",
     "serviceName": "Service Available B",
     "serviceNameId": "[uuid]",
-    "price": 200,
+    "price": 20000,
     "duration": 120
   },
   {
@@ -1676,19 +1537,421 @@ Response: [
     "specializationId": "[uuid]",
     "serviceName": "Service Available 2",
     "serviceNameId": "[uuid]",
-    "price": 1000,
+    "price": 100000,
     "duration": 60
   }
 ]
 
-- at async run (tests\snapshot\api.ts:350:3)
 Request: GET /api/specialists/[uuid]/services/[uuid] 200
 Response: {
   "id": "[uuid]",
   "specialistId": "[uuid]",
   "serviceNameId": "[uuid]",
-  "price": 1000,
+  "price": 100000,
   "duration": 60
+}
+
+Request: POST /api/invoices/preview 200
+Body: {
+  "specialistId": "[uuid]",
+  "startDate": "2030-03-01",
+  "endDate": "2030-04-01"
+}
+Response: {
+  "specialist": {
+    "name": "Specialist Test",
+    "email": "specialist@test.com",
+    "phone": "86543210",
+    "cnpj": "16833374000128"
+  },
+  "total": {
+    "chargedAmount": "31000.00",
+    "grossAmount": "31000.00",
+    "netAmount": "28181.82",
+    "taxAmount": "2818.18",
+    "discountAmount": "0.00"
+  },
+  "count": {
+    "APPOINTMENT": 31
+  },
+  "billingPeriod": {
+    "startDate": "2030-03-01",
+    "endDate": "2030-04-01"
+  },
+  "items": [
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-31",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-30",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-29",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-28",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-27",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-26",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-25",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-24",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-23",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-22",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-21",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-20",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-19",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-18",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-17",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-16",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-15",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-14",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-13",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-12",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-11",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-10",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-09",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-08",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-07",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-06",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-05",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-04",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-03",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-02",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-01",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    }
+  ]
 }
 
 Report: 
@@ -1698,9 +1961,9 @@ Report:
   "api.appointments.getCalendar": 1,
   "api.appointments.getCalendarCount": 1,
   "api.appointments.getById": 6,
-  "api.appointments.create": 3,
+  "api.appointments.create": 34,
   "api.appointments.update": 1,
-  "api.appointments.realized": 3,
+  "api.appointments.realized": 34,
   "api.appointments.canceled": 3,
   "api.appointments.delete": 2,
   "api.auth.login": 2,
@@ -1715,6 +1978,7 @@ Report:
   "api.health.healthCheck": 1,
   "api.health.healthLiveness": 1,
   "api.health.healthReadiness": 1,
+  "api.invoices.preview": 1,
   "api.secretaries.getAll": 3,
   "api.secretaries.count": 3,
   "api.secretaries.getById": 3,
@@ -1752,7 +2016,6 @@ Report:
   "api.test.debugClaims": 0
 }
 
-- at async run (tests\snapshot\api.ts:498:3)
 Request: GET /api/customers 200
 Params: {
   "page": 0,
@@ -1761,7 +2024,6 @@ Params: {
 }
 Response: []
 
-- at async run (tests\snapshot\api.ts:499:3)
 Request: GET /api/customers 200
 Params: {
   "page": 0,
@@ -1811,7 +2073,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:500:3)
 Request: GET /api/customers 200
 Params: {
   "page": 1,
@@ -1861,7 +2122,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:501:3)
 Request: GET /api/customers 200
 Params: {
   "phone": "87654002"
@@ -1877,7 +2137,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:502:3)
 Request: GET /api/customers 200
 Params: {
   "page": 0,
@@ -1927,35 +2186,30 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:504:3)
 Request: GET /api/customers/count 200
 Params: {
   "name": "CustomerX"
 }
 Response: 0
 
-- at async run (tests\snapshot\api.ts:505:3)
 Request: GET /api/customers/count 200
 Params: {
   "name": "1"
 }
 Response: 69
 
-- at async run (tests\snapshot\api.ts:506:3)
 Request: GET /api/customers/count 200
 Params: {
   "phone": "87654002"
 }
 Response: 1
 
-- at async run (tests\snapshot\api.ts:507:3)
 Request: GET /api/customers/count 200
 Params: {
   "cpf": "11431287962"
 }
 Response: 150
 
-- at async run (tests\snapshot\api.ts:509:3)
 Request: GET /api/secretaries 200
 Params: {
   "page": 0,
@@ -1964,7 +2218,6 @@ Params: {
 }
 Response: []
 
-- at async run (tests\snapshot\api.ts:510:3)
 Request: GET /api/secretaries 200
 Params: {
   "page": 0,
@@ -2019,7 +2272,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:511:3)
 Request: GET /api/secretaries 200
 Params: {
   "page": 1,
@@ -2074,7 +2326,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:512:3)
 Request: GET /api/secretaries 200
 Params: {
   "page": 0,
@@ -2129,7 +2380,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:513:3)
 Request: GET /api/secretaries 200
 Params: {
   "page": 0,
@@ -2184,7 +2434,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:514:3)
 Request: GET /api/secretaries 200
 Params: {
   "page": 0,
@@ -2239,42 +2488,36 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:516:3)
 Request: GET /api/secretaries/count 200
 Params: {
   "name": "SecretaryX"
 }
 Response: 0
 
-- at async run (tests\snapshot\api.ts:517:3)
 Request: GET /api/secretaries/count 200
 Params: {
   "name": "1"
 }
 Response: 11
 
-- at async run (tests\snapshot\api.ts:518:3)
 Request: GET /api/secretaries/count 200
 Params: {
   "phone": "76543210"
 }
 Response: 20
 
-- at async run (tests\snapshot\api.ts:519:3)
 Request: GET /api/secretaries/count 200
 Params: {
   "cpf": "72730805001"
 }
 Response: 20
 
-- at async run (tests\snapshot\api.ts:520:3)
 Request: GET /api/secretaries/count 200
 Params: {
   "cnpj": "08130896000135"
 }
 Response: 20
 
-- at async run (tests\snapshot\api.ts:522:3)
 Request: GET /api/specialists 200
 Params: {
   "page": 0,
@@ -2283,7 +2526,6 @@ Params: {
 }
 Response: []
 
-- at async run (tests\snapshot\api.ts:523:3)
 Request: GET /api/specialists 200
 Params: {
   "page": 0,
@@ -2338,7 +2580,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:524:3)
 Request: GET /api/specialists 200
 Params: {
   "page": 1,
@@ -2393,7 +2634,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:525:3)
 Request: GET /api/specialists 200
 Params: {
   "page": 0,
@@ -2448,7 +2688,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:526:3)
 Request: GET /api/specialists 200
 Params: {
   "page": 0,
@@ -2503,7 +2742,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:527:3)
 Request: GET /api/specialists 200
 Params: {
   "page": 0,
@@ -2558,42 +2796,36 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:529:3)
 Request: GET /api/specialists/count 200
 Params: {
   "name": "SpecialistX"
 }
 Response: 0
 
-- at async run (tests\snapshot\api.ts:530:3)
 Request: GET /api/specialists/count 200
 Params: {
   "name": "1"
 }
 Response: 14
 
-- at async run (tests\snapshot\api.ts:531:3)
 Request: GET /api/specialists/count 200
 Params: {
   "phone": "76543210"
 }
 Response: 50
 
-- at async run (tests\snapshot\api.ts:532:3)
 Request: GET /api/specialists/count 200
 Params: {
   "cpf": "96156338012"
 }
 Response: 50
 
-- at async run (tests\snapshot\api.ts:533:3)
 Request: GET /api/specialists/count 200
 Params: {
   "cnpj": "16833374000128"
 }
 Response: 50
 
-- at async run (tests\snapshot\api.ts:535:3)
 Request: GET /api/services 200
 Params: {
   "page": 0,
@@ -2609,7 +2841,7 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization 0000",
     "specializationId": "[uuid]",
-    "price": 50,
+    "price": 5000,
     "duration": 30
   },
   {
@@ -2620,7 +2852,7 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization 0000",
     "specializationId": "[uuid]",
-    "price": 150,
+    "price": 15000,
     "duration": 60
   },
   {
@@ -2631,7 +2863,7 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization 0000",
     "specializationId": "[uuid]",
-    "price": 75,
+    "price": 7500,
     "duration": 45
   },
   {
@@ -2642,7 +2874,7 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization 0000",
     "specializationId": "[uuid]",
-    "price": 250,
+    "price": 25000,
     "duration": 75
   },
   {
@@ -2653,12 +2885,11 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization 0001",
     "specializationId": "[uuid]",
-    "price": 200,
+    "price": 20000,
     "duration": 60
   }
 ]
 
-- at async run (tests\snapshot\api.ts:536:3)
 Request: GET /api/services 200
 Params: {
   "page": 1,
@@ -2674,7 +2905,7 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization 0001",
     "specializationId": "[uuid]",
-    "price": 250,
+    "price": 25000,
     "duration": 30
   },
   {
@@ -2685,7 +2916,7 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization 0001",
     "specializationId": "[uuid]",
-    "price": 250,
+    "price": 25000,
     "duration": 75
   },
   {
@@ -2696,7 +2927,7 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization 0001",
     "specializationId": "[uuid]",
-    "price": 175,
+    "price": 17500,
     "duration": 30
   },
   {
@@ -2707,7 +2938,7 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization 0001",
     "specializationId": "[uuid]",
-    "price": 50,
+    "price": 5000,
     "duration": 90
   },
   {
@@ -2718,12 +2949,11 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization 0001",
     "specializationId": "[uuid]",
-    "price": 175,
+    "price": 17500,
     "duration": 45
   }
 ]
 
-- at async run (tests\snapshot\api.ts:537:3)
 Request: GET /api/services 200
 Params: {
   "page": 0,
@@ -2739,7 +2969,7 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization 0000",
     "specializationId": "[uuid]",
-    "price": 50,
+    "price": 5000,
     "duration": 30
   },
   {
@@ -2750,7 +2980,7 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization 0008",
     "specializationId": "[uuid]",
-    "price": 200,
+    "price": 20000,
     "duration": 30
   },
   {
@@ -2761,7 +2991,7 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization 0008",
     "specializationId": "[uuid]",
-    "price": 200,
+    "price": 20000,
     "duration": 75
   },
   {
@@ -2772,12 +3002,11 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization 0009",
     "specializationId": "[uuid]",
-    "price": 175,
+    "price": 17500,
     "duration": 90
   }
 ]
 
-- at async run (tests\snapshot\api.ts:538:3)
 Request: GET /api/services 200
 Params: {
   "page": 0,
@@ -2793,7 +3022,7 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization 0000",
     "specializationId": "[uuid]",
-    "price": 100,
+    "price": 10000,
     "duration": 45
   },
   {
@@ -2804,7 +3033,7 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization 0000",
     "specializationId": "[uuid]",
-    "price": 125,
+    "price": 12500,
     "duration": 90
   },
   {
@@ -2815,7 +3044,7 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization 0000",
     "specializationId": "[uuid]",
-    "price": 150,
+    "price": 15000,
     "duration": 60
   },
   {
@@ -2826,7 +3055,7 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization 0000",
     "specializationId": "[uuid]",
-    "price": 225,
+    "price": 22500,
     "duration": 45
   },
   {
@@ -2837,33 +3066,29 @@ Response: [
     "specialistId": "[uuid]",
     "specialization": "Specialization 0000",
     "specializationId": "[uuid]",
-    "price": 175,
+    "price": 17500,
     "duration": 60
   }
 ]
 
-- at async run (tests\snapshot\api.ts:540:3)
 Request: GET /api/services/count 200
 Params: {
   "service": "1"
 }
 Response: 43
 
-- at async run (tests\snapshot\api.ts:541:3)
 Request: GET /api/services/count 200
 Params: {
   "specialist": "10"
 }
 Response: 4
 
-- at async run (tests\snapshot\api.ts:542:3)
 Request: GET /api/services/count 200
 Params: {
   "specialization": "0"
 }
 Response: 158
 
-- at async run (tests\snapshot\api.ts:544:3)
 Request: GET /api/appointments 200
 Params: {
   "page": 0,
@@ -2879,7 +3104,7 @@ Response: [
     "serviceNameId": "[uuid]",
     "specialistName": "Specialist 0033",
     "specialistId": "[uuid]",
-    "price": 75,
+    "price": 7500,
     "duration": 30,
     "date": "2031-07-25",
     "time": "09:00:00",
@@ -2893,7 +3118,7 @@ Response: [
     "serviceNameId": "[uuid]",
     "specialistName": "Specialist 0008",
     "specialistId": "[uuid]",
-    "price": 75,
+    "price": 7500,
     "duration": 90,
     "date": "2031-02-24",
     "time": "09:00:00",
@@ -2901,7 +3126,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:545:3)
 Request: GET /api/appointments 200
 Params: {
   "page": 1,
@@ -2910,7 +3134,6 @@ Params: {
 }
 Response: []
 
-- at async run (tests\snapshot\api.ts:546:3)
 Request: GET /api/appointments 200
 Params: {
   "page": 0,
@@ -2927,7 +3150,7 @@ Response: [
     "serviceNameId": "[uuid]",
     "specialistName": "Specialist 0039",
     "specialistId": "[uuid]",
-    "price": 250,
+    "price": 25000,
     "duration": 30,
     "date": "2031-07-01",
     "time": "10:00:00",
@@ -2941,7 +3164,7 @@ Response: [
     "serviceNameId": "[uuid]",
     "specialistName": "Specialist 0005",
     "specialistId": "[uuid]",
-    "price": 250,
+    "price": 25000,
     "duration": 30,
     "date": "2031-07-01",
     "time": "09:00:00",
@@ -2955,7 +3178,7 @@ Response: [
     "serviceNameId": "[uuid]",
     "specialistName": "Specialist 0039",
     "specialistId": "[uuid]",
-    "price": 250,
+    "price": 25000,
     "duration": 30,
     "date": "2031-06-30",
     "time": "11:00:00",
@@ -2969,7 +3192,7 @@ Response: [
     "serviceNameId": "[uuid]",
     "specialistName": "Specialist 0018",
     "specialistId": "[uuid]",
-    "price": 75,
+    "price": 7500,
     "duration": 60,
     "date": "2031-06-30",
     "time": "10:00:00",
@@ -2983,7 +3206,7 @@ Response: [
     "serviceNameId": "[uuid]",
     "specialistName": "Specialist 0033",
     "specialistId": "[uuid]",
-    "price": 75,
+    "price": 7500,
     "duration": 30,
     "date": "2031-06-30",
     "time": "09:00:00",
@@ -2991,7 +3214,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:547:3)
 Request: GET /api/appointments 200
 Params: {
   "page": 0,
@@ -3007,7 +3229,7 @@ Response: [
     "serviceNameId": "[uuid]",
     "specialistName": "Specialist 0010",
     "specialistId": "[uuid]",
-    "price": 50,
+    "price": 5000,
     "duration": 30,
     "date": "2031-12-05",
     "time": "09:00:00",
@@ -3021,7 +3243,7 @@ Response: [
     "serviceNameId": "[uuid]",
     "specialistName": "Specialist 0010",
     "specialistId": "[uuid]",
-    "price": 50,
+    "price": 5000,
     "duration": 30,
     "date": "2031-11-25",
     "time": "11:00:00",
@@ -3035,7 +3257,7 @@ Response: [
     "serviceNameId": "[uuid]",
     "specialistName": "Specialist 0010",
     "specialistId": "[uuid]",
-    "price": 200,
+    "price": 20000,
     "duration": 75,
     "date": "2031-10-16",
     "time": "09:00:00",
@@ -3049,7 +3271,7 @@ Response: [
     "serviceNameId": "[uuid]",
     "specialistName": "Specialist 0010",
     "specialistId": "[uuid]",
-    "price": 200,
+    "price": 20000,
     "duration": 30,
     "date": "2031-10-13",
     "time": "11:00:00",
@@ -3063,7 +3285,7 @@ Response: [
     "serviceNameId": "[uuid]",
     "specialistName": "Specialist 0010",
     "specialistId": "[uuid]",
-    "price": 200,
+    "price": 20000,
     "duration": 30,
     "date": "2031-09-03",
     "time": "10:00:00",
@@ -3071,7 +3293,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:548:3)
 Request: GET /api/appointments 200
 Params: {
   "page": 0,
@@ -3080,7 +3301,6 @@ Params: {
 }
 Response: []
 
-- at async run (tests\snapshot\api.ts:549:3)
 Request: GET /api/appointments 200
 Params: {
   "page": 0,
@@ -3096,7 +3316,7 @@ Response: [
     "serviceNameId": "[uuid]",
     "specialistName": "Specialist 0002",
     "specialistId": "[uuid]",
-    "price": 200,
+    "price": 20000,
     "duration": 60,
     "date": "2031-12-29",
     "time": "10:00:00",
@@ -3110,7 +3330,7 @@ Response: [
     "serviceNameId": "[uuid]",
     "specialistName": "Specialist 0045",
     "specialistId": "[uuid]",
-    "price": 125,
+    "price": 12500,
     "duration": 90,
     "date": "2031-12-29",
     "time": "09:00:00",
@@ -3124,7 +3344,7 @@ Response: [
     "serviceNameId": "[uuid]",
     "specialistName": "Specialist 0019",
     "specialistId": "[uuid]",
-    "price": 100,
+    "price": 10000,
     "duration": 75,
     "date": "2031-12-26",
     "time": "10:00:00",
@@ -3138,7 +3358,7 @@ Response: [
     "serviceNameId": "[uuid]",
     "specialistName": "Specialist 0041",
     "specialistId": "[uuid]",
-    "price": 250,
+    "price": 25000,
     "duration": 30,
     "date": "2031-12-26",
     "time": "09:00:00",
@@ -3152,7 +3372,7 @@ Response: [
     "serviceNameId": "[uuid]",
     "specialistName": "Specialist 0049",
     "specialistId": "[uuid]",
-    "price": 250,
+    "price": 25000,
     "duration": 45,
     "date": "2031-12-24",
     "time": "09:00:00",
@@ -3160,7 +3380,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:551:3)
 Request: GET /api/services-available 200
 Response: [
   {
@@ -3425,7 +3644,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:553:3)
 Request: GET /api/specializations 200
 Response: [
   {
@@ -3470,7 +3688,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:555:3)
 Request: GET /api/appointments/calendar 200
 Params: {
   "startDate": "2031-01-01",
@@ -6482,7 +6699,6 @@ Response: [
   }
 ]
 
-- at async run (tests\snapshot\api.ts:556:3)
 Request: GET /api/appointments/calendar/count 200
 Params: {
   "startDate": "2031-01-01",
@@ -6570,9 +6786,9 @@ Report:
   "api.appointments.getCalendar": 2,
   "api.appointments.getCalendarCount": 2,
   "api.appointments.getById": 6,
-  "api.appointments.create": 432,
+  "api.appointments.create": 463,
   "api.appointments.update": 1,
-  "api.appointments.realized": 74,
+  "api.appointments.realized": 105,
   "api.appointments.canceled": 40,
   "api.appointments.delete": 2,
   "api.auth.login": 3,
@@ -6587,6 +6803,7 @@ Report:
   "api.health.healthCheck": 1,
   "api.health.healthLiveness": 1,
   "api.health.healthReadiness": 1,
+  "api.invoices.preview": 1,
   "api.secretaries.getAll": 9,
   "api.secretaries.count": 8,
   "api.secretaries.getById": 3,

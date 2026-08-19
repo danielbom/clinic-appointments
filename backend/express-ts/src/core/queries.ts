@@ -1,6 +1,6 @@
 import { parseISODateToUTC, parseISOTimeToUTC } from './utils'
 
-import { AppointmentStatus } from './presenter'
+import { AppointmentStatus } from './enums'
 import { db } from './db'
 import type * as models from '../prisma/models'
 

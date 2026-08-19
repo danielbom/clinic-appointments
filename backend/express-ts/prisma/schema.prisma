@@ -9,14 +9,14 @@ datasource db {
 }
 
 model admins {
-  id       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id       String @id @db.Uuid
   name     String @db.VarChar(255)
   email    String @unique(map: "idx_admins_email") @db.VarChar(255)
   password String @db.VarChar(255)
 }
 
 model appointments {
-  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id              String        @id @db.Uuid
   customer_id     String        @db.Uuid
   specialist_id   String        @db.Uuid
   service_name_id String        @db.Uuid
@@ -35,7 +35,7 @@ model appointments {
 }
 
 model customers {
-  id           String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id           String         @id @db.Uuid
   name         String         @db.VarChar(255)
   email        String?        @db.VarChar(255)
   phone        String         @unique(map: "idx_customers_phone") @db.VarChar(255)
@@ -44,15 +44,8 @@ model customers {
   appointments appointments[]
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model schema_version {
-  version Int
-
-  @@ignore
-}
-
 model secretaries {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id        String   @id @db.Uuid
   name      String   @db.VarChar(255)
   email     String   @unique(map: "idx_secretaries_email") @db.VarChar(255)
   password  String   @db.VarChar(255)
@@ -63,7 +56,7 @@ model secretaries {
 }
 
 model service_names {
-  id                String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                String          @id @db.Uuid
   name              String          @unique(map: "service_names_name_idx") @db.VarChar(255)
   specialization_id String          @db.Uuid
   appointments      appointments[]
@@ -74,7 +67,7 @@ model service_names {
 }
 
 model services {
-  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id              String        @id @db.Uuid
   service_name_id String        @db.Uuid
   specialist_id   String        @db.Uuid
   price           Int
@@ -88,7 +81,7 @@ model services {
 }
 
 model specialist_hours {
-  id            String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id            String      @id @db.Uuid
   specialist_id String      @db.Uuid
   weekday       Int
   start_time    DateTime    @db.Time(6)
@@ -97,7 +90,7 @@ model specialist_hours {
 }
 
 model specialists {
-  id               String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id               String             @id @db.Uuid
   name             String             @db.VarChar(255)
   email            String             @unique(map: "idx_specialists_email") @db.VarChar(255)
   phone            String             @db.VarChar(255)
@@ -105,12 +98,53 @@ model specialists {
   cpf              String             @db.VarChar(11)
   cnpj             String?            @db.VarChar(14)
   appointments     appointments[]
+  invoices         invoices[]
   services         services[]
   specialist_hours specialist_hours[]
 }
 
 model specializations {
-  id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id            String          @id @db.Uuid
   name          String          @unique(map: "specializations_name_idx") @db.VarChar(255)
   service_names service_names[]
+}
+
+model billing_periods {
+  id         String     @id @db.Uuid
+  starts_at  DateTime   @db.Timestamp(6)
+  ends_at    DateTime   @db.Timestamp(6)
+  status     Int
+  created_at DateTime   @db.Timestamp(6)
+  updated_at DateTime   @db.Timestamp(6)
+  closed_at  DateTime?  @db.Timestamp(6)
+  invoices   invoices[]
+}
+
+model invoice_items {
+  id              String @id @db.Uuid
+  invoice_id      String @db.Uuid
+  type            Int
+  source_type     String @db.VarChar(40)
+  description     String @db.VarChar(255)
+  quantity        Int
+  unit_amount     Int
+  gross_amount    Int
+  discount_amount Int
+  tax_amount      Int
+  net_amount      Int
+}
+
+model invoices {
+  id                String          @id @db.Uuid
+  number            Int
+  specialist_id     String          @db.Uuid
+  billing_period_id String          @db.Uuid
+  status            Int
+  generated_at      DateTime        @db.Timestamp(6)
+  reviewed_at       DateTime?       @db.Timestamp(6)
+  approved_at       DateTime?       @db.Timestamp(6)
+  finalized_at      DateTime?       @db.Timestamp(6)
+  sent_at           DateTime?       @db.Timestamp(6)
+  billing_periods   billing_periods @relation(fields: [billing_period_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  specialists       specialists     @relation(fields: [specialist_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
