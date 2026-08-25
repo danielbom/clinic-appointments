@@ -1,5 +1,6 @@
 export interface RequestAdapter<State = {}> {
   getId(): string
+  getOperationId(): string | null
   getUrl(): URL
   getHeader(key: string): string | null
   setHeader(key: string, value: string): void

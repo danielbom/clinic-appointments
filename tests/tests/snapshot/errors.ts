@@ -59,7 +59,7 @@ async function run(w: WriteStr, api: Api, args: Args) {
     }
   }
 
-  await api.health.healthCheck().then((res) => {
+  await api.health.check().then((res) => {
     if (!res.data.status) {
       throw new Error('API is not healthy')
     }

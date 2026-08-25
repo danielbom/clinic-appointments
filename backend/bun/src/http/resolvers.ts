@@ -37,20 +37,21 @@ export default {
        * * DOWN: The dependency is unavailable or unable to perform its intended function.
        */
       const reply = replier<types.api.health.healthCheck.responses>(req)
-      const result = await health.healthCheck()
-      return reply.send(200, result)
+      const response = await health.healthCheck()
+      return reply.send(200, response)
     },
-    async healthLiveness(req: RequestAdapter) {
+    async healthLive(req: RequestAdapter) {
       /**
        * Verifies that the application process is running and able to respond to requests.
+       *
        * This endpoint performs no I/O or external dependency checks. It returns HTTP 200 OK
        * as long as the process and event loop are responsive.
        */
-      const reply = replier<types.api.health.healthLiveness.responses>(req)
-      const response = health.healthLiveness()
+      const reply = replier<types.api.health.healthLive.responses>(req)
+      const response = health.isAlive()
       return reply.send(200, response)
     },
-    async healthReadiness(req: RequestAdapter) {
+    async healthReady(req: RequestAdapter) {
       /**
        * Verifies that the application is ready to receive traffic.
        *
@@ -59,8 +60,8 @@ export default {
        * and HTTP 503 Service Unavailable when it is not, allowing orchestrators or load
        * balancers to temporarily remove the instance from service.
        */
-      const reply = replier<types.api.health.healthReadiness.responses>(req)
-      const response = await health.healthReadiness()
+      const reply = replier<types.api.health.healthReady.responses>(req)
+      const response = await health.isReady()
       return reply.send(response.status === 'DOWN' ? 503 : 200, response)
     },
   },

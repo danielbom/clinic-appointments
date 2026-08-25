@@ -1,7 +1,7 @@
-import type { Request, Response } from 'express'
 import { replier, type Resolver } from '../lib/http-adapter'
-import { ExpressRequestAdapter } from './adapter'
+import { withAdapter } from './adapter'
 import { errors } from './errors/presenter'
+import { generateId } from '../core/id'
 import resolvers from './resolvers'
 
 for (const resource in resolvers) {
@@ -11,10 +11,9 @@ for (const resource in resolvers) {
   }
 }
 
-export function wrapResolver(operationId: string, resolver: Resolver) {
-  return async (req: Request, res: Response) => {
-    const requestId = crypto.randomUUID()
-    const request = new ExpressRequestAdapter(req, res)
+function wrapResolver(operationId: string, resolver: Resolver) {
+  return withAdapter(async (request) => {
+    const requestId = generateId()
     const reply = replier(request)
     request.setToContext('operationId', operationId)
     request.setHeader('x-operation-id', operationId)
@@ -30,9 +29,9 @@ export function wrapResolver(operationId: string, resolver: Resolver) {
       return request.send(reply.fail(errors.internal(`Adapter for ${operationId} return type not implemented`)))
     } catch (err) {
       logger.error({ err }, 'unhandled error')
-      return request.send(reply.fail(errors.internal(`An unexpected error occured`)))
+      return request.send(reply.fail(errors.internal('An unexpected error occured')))
     }
-  }
+  })
 }
 
 export function bindResolver(resolver: Resolver) {

@@ -2,11 +2,11 @@
   "/api/health/check": {
     "get": {
       "operationId": "health.healthCheck",
-      "summary": "Liveness / readiness probe",
+      "summary": "Returns a comprehensive health report intended for monitoring systems and dashboards.",
       "tags": ["Health"],
       "responses": {
         "200": {
-          "description": "Service status",
+          "description": "Services status",
           "content": {
             "application/json": {
               "schema": {
@@ -18,10 +18,10 @@
       }
     }
   },
-  "/api/health/liveness": {
+  "/api/health/live": {
     "get": {
-      "operationId": "health.healthLiveness",
-      "summary": "Liveness probe",
+      "operationId": "health.healthLive",
+      "summary": "Verifies that the application process is running and able to respond to requests.",
       "tags": ["Health"],
       "responses": {
         "200": {
@@ -37,10 +37,10 @@
       }
     }
   },
-  "/api/health/readiness": {
+  "/api/health/ready": {
     "get": {
-      "operationId": "health.healthReadiness",
-      "summary": "Readiness probe",
+      "operationId": "health.healthReady",
+      "summary": "Verifies that the application is ready to receive traffic.",
       "tags": ["Health"],
       "responses": {
         "200": {

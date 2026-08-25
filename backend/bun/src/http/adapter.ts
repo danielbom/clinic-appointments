@@ -2,6 +2,7 @@ import { type BunRequest } from 'bun'
 
 import { type RequestAdapter, type ResponseAdapter } from '../lib/http-adapter'
 import { requestLogger } from '../core/logger'
+import { withMiddlewares } from './middlewares'
 
 type State = {
   id: string
@@ -76,8 +77,12 @@ export class BunRequestAdapter implements RequestAdapter {
 
   send(response: ResponseAdapter): any {
     if (response.status === 204) {
-      return new Response('', { status: response.status })
+      return new Response('', { status: response.status, headers: this.headers })
     }
     return Response.json(response.json, { status: response.status, headers: this.headers })
   }
+}
+
+export function withAdapter(executeRequest: (req: BunRequestAdapter) => Response | Promise<Response>) {
+  return withMiddlewares(async (req: BunRequest) => executeRequest(new BunRequestAdapter(req)))
 }

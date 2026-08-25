@@ -52,11 +52,11 @@ export const routes = {
   '/api/health/check': {
     GET: h(resolvers.health.healthCheck),
   },
-  '/api/health/liveness': {
-    GET: h(resolvers.health.healthLiveness),
+  '/api/health/live': {
+    GET: h(resolvers.health.healthLive),
   },
-  '/api/health/readiness': {
-    GET: h(resolvers.health.healthReadiness),
+  '/api/health/ready': {
+    GET: h(resolvers.health.healthReady),
   },
   '/api/invoices/preview': {
     POST: h(resolvers.invoices.preview),

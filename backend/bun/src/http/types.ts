@@ -905,17 +905,17 @@ export namespace api {
     export namespace healthCheck {
       export type responses = {
         /**
-         * Service status
+         * Services status
          */
         200: schemas.HealthCheck
       }
     }
 
     /**
-     * @id health.healthLiveness
-     * @route GET /api/health/liveness
+     * @id health.healthLive
+     * @route GET /api/health/live
      */
-    export namespace healthLiveness {
+    export namespace healthLive {
       export type responses = {
         /**
          * Liveness status
@@ -925,10 +925,10 @@ export namespace api {
     }
 
     /**
-     * @id health.healthReadiness
-     * @route GET /api/health/readiness
+     * @id health.healthReady
+     * @route GET /api/health/ready
      */
-    export namespace healthReadiness {
+    export namespace healthReady {
       export type responses = {
         /**
          * Readiness status up or degraded

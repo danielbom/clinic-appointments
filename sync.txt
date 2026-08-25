@@ -32,7 +32,6 @@ backend/bun/src/lib
 
 [js/src/http]
 backend/express-ts/src/http
-!backend/express-ts/src/http/adapter-wrap.ts
 !backend/express-ts/src/http/adapter.ts
 !backend/express-ts/src/http/middlewares.ts
 !backend/express-ts/src/http/routes.ts

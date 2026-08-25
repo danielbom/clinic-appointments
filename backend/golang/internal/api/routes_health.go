@@ -58,7 +58,7 @@ func (h *api) healthCheck(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, response)
 }
 
-func (h *api) healthLiveness(w http.ResponseWriter, r *http.Request) {
+func (h *api) healthLive(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
 
 	// Validate and execute the usecase
@@ -76,7 +76,7 @@ func (h *api) healthLiveness(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, response)
 }
 
-func (h *api) healthReadiness(w http.ResponseWriter, r *http.Request) {
+func (h *api) healthReady(w http.ResponseWriter, r *http.Request) {
 	// Collect query parameters, path parameters, and request body
 
 	// Validate and execute the usecase

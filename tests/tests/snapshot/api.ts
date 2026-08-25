@@ -68,7 +68,7 @@ async function run(w: WriteStr, api: Api, args: Args) {
     appointmentIds: [] as string[],
   }
 
-  await api.health.healthLiveness().then((res) => {
+  await api.health.isAlive().then((res) => {
     if (res.data.status !== 'UP') {
       throw new Error('API is not healthy')
     }
@@ -76,8 +76,8 @@ async function run(w: WriteStr, api: Api, args: Args) {
       throw new Error('API is not in test environment')
     }
   })
-  await api.health.healthCheck()
-  await api.health.healthReadiness()
+  await api.health.check()
+  await api.health.isReady()
   await api.test.stats()
   await api.test.init()
 

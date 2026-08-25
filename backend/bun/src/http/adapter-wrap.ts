@@ -1,7 +1,7 @@
-import { withMiddlewares } from './middlewares'
 import { replier, type Resolver } from '../lib/http-adapter'
+import { withAdapter } from './adapter'
 import { errors } from './errors/presenter'
-import { BunRequestAdapter } from './adapter'
+import { generateId } from '../core/id'
 import resolvers from './resolvers'
 
 for (const resource in resolvers) {
@@ -11,19 +11,9 @@ for (const resource in resolvers) {
   }
 }
 
-function getResolver(key: string) {
-  const path = key.split('.')
-  const maybeResolver: null | Resolver = path.reduce(
-    (obj, key) => (obj && typeof obj === 'object' ? (obj as any)[key] : null),
-    resolvers as any,
-  )
-  return maybeResolver
-}
-
-function wrapResolver(operationId: string, resolver: Resolver | null) {
-  return withMiddlewares(async (req) => {
-    const requestId = crypto.randomUUID()
-    const request = new BunRequestAdapter(req)
+function wrapResolver(operationId: string, resolver: Resolver) {
+  return withAdapter(async (request) => {
+    const requestId = generateId()
     const reply = replier(request)
     request.setToContext('operationId', operationId)
     request.setHeader('x-operation-id', operationId)
@@ -31,10 +21,6 @@ function wrapResolver(operationId: string, resolver: Resolver | null) {
     request.setHeader('x-request-id', requestId)
     const logger = request.getLogger()
 
-    if (!resolver) {
-      const response = reply.fail(errors.internal(`Resolver for ${operationId} not implemented`))
-      return request.send(response)
-    }
     try {
       const response = await resolver(request)
       if (response.json !== undefined) {
@@ -50,8 +36,4 @@ function wrapResolver(operationId: string, resolver: Resolver | null) {
 
 export function bindResolver(resolver: Resolver) {
   return wrapResolver((resolver as any).operationId, resolver)
-}
-
-export function bunResolversAdapter(operationId: string) {
-  return wrapResolver(operationId, getResolver(operationId))
 }

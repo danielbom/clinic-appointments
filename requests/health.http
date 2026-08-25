@@ -4,14 +4,16 @@ GET {{$dotenv BASE_URL}}/api/health/check
 
 ###
 
-# @name HealthLiveness
+# @name HealthLive
 
-# Use it to load test:
-# ab -n 1000 -c 100 http://172.30.16.1:3000/api/health/liveness
-GET {{$dotenv BASE_URL}}/api/health/liveness
+# Load test (only NodeJS):
+# ab -l -n 1000 -c 100 http://127.0.0.1:3000/api/health/live
+# Load test (NodeJS & Bun):
+# wrk -t4 -c100 -d30s --latency http://127.0.0.1:3000/api/health/live 
+GET {{$dotenv BASE_URL}}/api/health/live
 
 ### 
 
-# @name HealthReadiness
+# @name HealthReady
 
-GET {{$dotenv BASE_URL}}/api/health/readiness
+GET {{$dotenv BASE_URL}}/api/health/ready

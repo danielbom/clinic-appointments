@@ -3,12 +3,34 @@ import { pingDatabase } from './db'
 import type { InfraStatus } from './infra'
 import type * as types from '../http/types'
 import * as queries from './queries'
+import { localCache } from './cache'
+
+async function callPingDatabase() {
+  return localCache.getOrLoad({
+    key: 'health.check:database.ping',
+    ttl: 5 * 1000,
+    timeout: 1000,
+    staleTtl: 20 * 1000,
+    task: () => pingDatabase(),
+  })
+}
+
+async function callQueryDatabaseInfo({ databaseName }: { databaseName: string }) {
+  // NOTE: If databaseName can change, use key: `health.check:database.info:${databaseName}`
+  return localCache.getOrLoad({
+    key: 'health.check:database.info',
+    ttl: 5 * 1000,
+    timeout: 1000,
+    staleTtl: 20 * 1000,
+    task: () => queries.queryDatabaseInfo({ databaseName }),
+  })
+}
 
 async function getInfraStatus({ withInfo }: { withInfo: boolean }) {
-  const database = await pingDatabase()
+  const database = Object.assign({}, await callPingDatabase())
   if (withInfo && database.status === 'UP') {
     const { name: databaseName } = getDatabaseConfig()
-    const info = await queries.queryDatabaseInfo({ databaseName })
+    const info = await callQueryDatabaseInfo({ databaseName })
     database.version = info.version
     database.maxConnections = info.max_connections
     database.openedConnections = info.opened_connections
@@ -36,13 +58,13 @@ export async function healthCheck(): Promise<types.schemas.HealthCheck> {
   return { status, environment, timestamp, details }
 }
 
-export function healthLiveness(): types.schemas.HealthLiveness {
+export function isAlive(): types.schemas.HealthLiveness {
   const timestamp = new Date().toISOString()
   const { environment } = getAppConfig()
   return { status: 'UP', environment, timestamp }
 }
 
-export async function healthReadiness(): Promise<types.schemas.HealthCheck> {
+export async function isReady(): Promise<types.schemas.HealthCheck> {
   const timestamp = new Date().toISOString()
   const { environment } = getAppConfig()
 

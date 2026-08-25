@@ -2,6 +2,7 @@ import type { Request, Response } from 'express'
 
 import type { RequestAdapter, ResponseAdapter } from '../lib/http-adapter'
 import { requestLogger } from '../core/logger'
+import { generateId } from '../core/id'
 
 type State = {
   id: string
@@ -23,7 +24,7 @@ export class ExpressRequestAdapter implements RequestAdapter<State> {
   }
 
   getId(): string {
-    return this.getFromContext('id') || crypto.randomUUID()
+    return this.getFromContext('id') || generateId()
   }
 
   getOperationId(): string | null {
@@ -84,4 +85,8 @@ export class ExpressRequestAdapter implements RequestAdapter<State> {
     }
     return this.res.status(response.status).json(response.json)
   }
+}
+
+export function withAdapter(executeRequest: (req: ExpressRequestAdapter) => Promise<void>) {
+  return (req: Request, res: Response) => executeRequest(new ExpressRequestAdapter(req, res))
 }

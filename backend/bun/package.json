@@ -6,9 +6,9 @@
   "scripts": {
     "server:start": "bun run src/server.ts",
     "server:dev": "bun run --watch src/server.ts",
-    "format": "bun x prettier --write ./src",
+    "format": "bun prettier --write ./src",
     "generate": "bun run ./src/scripts/generate/index.ts",
-    "check": "bun x tsc --noEmit"
+    "check": "bun tsc --noEmit"
   },
   "devDependencies": {
     "@types/bun": "latest",

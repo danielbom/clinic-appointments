@@ -11,7 +11,7 @@ export function logRequest(req: Request, res: Response, next: NextFunction) {
     const log = {
       method: req.method,
       url: req.originalUrl,
-      status: req.statusCode ?? 0,
+      status: res.statusCode ?? 0,
       durationMs: Math.round(durationMs * 1000) / 1000,
       traceId: request.getId(),
       operationId: request.getOperationId(),

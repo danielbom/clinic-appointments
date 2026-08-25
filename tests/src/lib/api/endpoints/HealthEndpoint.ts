@@ -4,16 +4,16 @@ import { type Config } from '../Config'
 export class HealthEndpoint {
   constructor(public _config: Config) {}
 
-  async healthCheck(): Promise<AxiosResponse<HealthResponse>> {
+  async check(): Promise<AxiosResponse<HealthResponse>> {
     return await this._config.instance.get(`/api/health/check`)
   }
 
-  async healthLiveness(): Promise<AxiosResponse<HealthResponse>> {
-    return await this._config.instance.get(`/api/health/liveness`)
+  async isAlive(): Promise<AxiosResponse<HealthResponse>> {
+    return await this._config.instance.get(`/api/health/live`)
   }
 
-  async healthReadiness(): Promise<AxiosResponse<HealthResponse>> {
-    return await this._config.instance.get(`/api/health/readiness`)
+  async isReady(): Promise<AxiosResponse<HealthResponse>> {
+    return await this._config.instance.get(`/api/health/ready`)
   }
 }
 

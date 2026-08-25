@@ -55,8 +55,8 @@ func NewApi(pool *pgxpool.Pool, auth *jwtauth.JWTAuth) http.Handler {
 	}))
 
 	r.Get("/api/health/check", h.healthCheck)
-	r.Get("/api/health/liveness", h.healthLiveness)
-	r.Get("/api/health/readiness", h.healthReadiness)
+	r.Get("/api/health/live", h.healthLive)
+	r.Get("/api/health/ready", h.healthReady)
 
 	r.Post("/api/auth/login", h.authLogin)
 
