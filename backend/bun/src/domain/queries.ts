@@ -1,7 +1,7 @@
-import { parseISODateToUTC, parseISOTimeToUTC } from './utils'
+import { parseISODateToUTC, parseISOTimeToUTC } from '../core/utils'
 
 import { AppointmentStatus } from './enums'
-import { db } from './db'
+import { db } from '../core/db'
 import type * as models from '../prisma/models'
 
 // health

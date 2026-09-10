@@ -1,7 +1,7 @@
 import type * as types from './types'
-import * as usecases from '../core/usecases'
-import * as queries from '../core/queries'
-import * as mutations from '../core/mutations'
+import * as usecases from '../domain/usecases'
+import * as queries from '../domain/queries'
+import * as mutations from '../domain/mutations'
 import * as health from '../core/health'
 import { getAppConfig, getDatabaseConfig } from '../core/config'
 import { replier, type RequestAdapter, type Resolver, type ResponseAdapter } from '../lib/http-adapter'
@@ -17,7 +17,7 @@ import {
 import { validations } from './validations'
 import { errors } from './errors/presenter'
 import { mapError } from './errors/domain'
-import { presenter } from '../core/presenter'
+import { presenter } from '../domain/presenter'
 import { verifyJWT } from '../core/jwt'
 
 export default {

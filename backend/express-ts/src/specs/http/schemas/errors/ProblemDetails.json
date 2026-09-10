@@ -48,7 +48,8 @@
           "enum": [
             "body",
             "path",
-            "query"
+            "query",
+            "header"
           ]
         },
         "path": {

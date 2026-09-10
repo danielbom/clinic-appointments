@@ -386,7 +386,7 @@ export namespace errors {
      * Indicates the location of the input associated with the error, such as request body, path parameters, or query parameters.
      */
     source?: {
-      in: 'body' | 'path' | 'query'
+      in: 'body' | 'path' | 'query' | 'header'
       path: string
     }
     /**

@@ -62,6 +62,11 @@ export class BunRequestAdapter implements RequestAdapter {
     )
   }
 
+  async getRawBody(): Promise<string | null> {
+    if (!this.req.body) return null
+    return (await this.req.text()) ?? null
+  }
+
   async getJsonBody(): Promise<{} | null> {
     if (!this.req.body) return null
     return (await this.req.json()) ?? null

@@ -67,6 +67,10 @@ export class ExpressRequestAdapter implements RequestAdapter<State> {
     )
   }
 
+  async getRawBody(): Promise<string | null> {
+    return (this.req as any).rawBody ?? null
+  }
+
   async getJsonBody(): Promise<{} | null> {
     return this.req.body ?? null
   }

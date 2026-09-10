@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 from typing import NamedTuple
 
+
 class Sync(NamedTuple):
     module: str
     paths: list[Path]

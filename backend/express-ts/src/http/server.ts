@@ -32,11 +32,20 @@ export function createServer() {
 
   {
     const api = Router()
-    api.use('/api', express.static(path.join(import.meta.dirname, 'public/api')))
+    api.use('/api', express.static(path.join(import.meta.dirname, '../public/api')))
     api.use('/api/docs', swaggerUI.serve, swaggerUI.setup(openApiJson))
-    api.use('/api/schemas', express.static(path.join(import.meta.dirname, 'public/schemas')))
-    api.use('/api/redoc', express.static(path.join(import.meta.dirname, 'public/redoc')))
-    api.use(express.json({ type: 'application/json' }))
+    api.use('/api/schemas', express.static(path.join(import.meta.dirname, '../public/schemas')))
+    api.use('/api/redoc', express.static(path.join(import.meta.dirname, '../public/redoc')))
+    api.use(
+      express.json({
+        type: 'application/json',
+        verify: (req, _res, buf) => {
+          if (req.url && req.url.includes('/webhooks/')) {
+            ;(req as any).rawBody = buf.toString('utf8')
+          }
+        },
+      }),
+    )
     api.use(routes)
     server.use(api)
   }

@@ -386,7 +386,7 @@ export namespace errors {
      * Indicates the location of the input associated with the error, such as request body, path parameters, or query parameters.
      */
     source?: {
-      in: 'body' | 'path' | 'query'
+      in: 'body' | 'path' | 'query' | 'header'
       path: string
     }
     /**
@@ -503,12 +503,6 @@ export namespace body {
     services: body.SpecialistsCreateBodyService[]
   }
 
-  export type SpecialistsCreateBodyService = {
-    serviceNameId: domain.Uuid
-    price: domain.Price
-    duration: domain.Duration
-  }
-
   export type SpecialistUpdateBody = {
     name: domain.Name
     email: domain.Email
@@ -517,6 +511,12 @@ export namespace body {
     cpf: domain.Cpf
     cnpj: domain.Cnpj
     services: body.SpecialistsCreateBodyService[]
+  }
+
+  export type SpecialistsCreateBodyService = {
+    serviceNameId: domain.Uuid
+    price: domain.Price
+    duration: domain.Duration
   }
 
   export type SpecializationCreateBody = {

@@ -3,7 +3,7 @@ import type * as types from '../types'
 const devUrl = 'https://dev-clinic-appointments.com.br'
 
 export const errors = {
-  missingValue(location: 'body' | 'path' | 'query', path = ''): types.errors.ValidationProblemDetails {
+  missingValue(location: 'body' | 'path' | 'query' | 'header', path = ''): types.errors.ValidationProblemDetails {
     return {
       code: 'validation_error' as const,
       type: `${devUrl}/schemas/errors/ValidationError.json`,

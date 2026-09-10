@@ -46,6 +46,11 @@ ajv.addFormat('time', {
   validate: (data) => isValidISOTime(data),
 })
 
+ajv.addFormat('datetime', {
+  type: 'string',
+  validate: (data) => !isNaN(new Date(data).getTime()),
+})
+
 ajv.addFormat('phone', {
   type: 'string',
   validate: (data) => isValidPhone(data),

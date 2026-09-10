@@ -28,6 +28,9 @@
     "noUnusedParameters": true, // previous: false
     "noPropertyAccessFromIndexSignature": false
   },
+  "include": [
+    "src"
+  ],
   "exclude": [
     "src/public"
   ]

@@ -7,6 +7,7 @@ export interface RequestAdapter<State = {}> {
   getPathParam(key: string): string | null
   getQueryParam(key: string): string | null
   getQueryParams(): Record<string, string | undefined>
+  getRawBody(): Promise<string | null>
   getJsonBody(): Promise<{} | null>
   getFromContext<K extends keyof State>(key: K): State[K] | null
   setToContext<K extends keyof State>(key: K, value: State[K]): void

@@ -1,12 +1,12 @@
 import type * as types from '../http/types'
 import { AppointmentStatus } from './enums'
 import { queryAppointmentIntersects, queryIdentity } from './queries'
-import { parseISODateToUTC, parseISOTimeToUTC } from './utils'
+import { parseISODateToUTC, parseISOTimeToUTC } from '../core/utils'
 
-import { type UUID, generateId, parseUuid } from './id'
-import { db } from './db'
-import { hashPassword, verifyPassword } from './password'
-import { extractJwtData, generateAccessJWT, generateRefreshJWT, isRefreshToken, JwtData, verifyJWT } from './jwt'
+import { type UUID, generateId, parseUuid } from '../core/id'
+import { db } from '../core/db'
+import { hashPassword, verifyPassword } from '../core/password'
+import { extractJwtData, generateAccessJWT, generateRefreshJWT, isRefreshToken, JwtData, verifyJWT } from '../core/jwt'
 import type {
   InvalidCredentialsError,
   AlreadyExistsError,
@@ -353,6 +353,7 @@ export async function createServiceAvailable(
     if (!specialization) {
       specialization = await db.specializations.create({
         data: {
+          id: generateId(),
           name: args.specialization,
         },
       })

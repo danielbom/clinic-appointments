@@ -2,7 +2,7 @@ import { getAppConfig, getDatabaseConfig } from './config'
 import { pingDatabase } from './db'
 import type { InfraStatus } from './infra'
 import type * as types from '../http/types'
-import * as queries from './queries'
+import * as queries from '../domain/queries'
 import { localCache } from './cache'
 
 async function callPingDatabase() {
