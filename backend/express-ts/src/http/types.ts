@@ -1584,7 +1584,7 @@ export namespace api {
     }
 
     /**
-     * ???
+     * Available only in TEST environments. Dispatches a specified action for testing purposes.
      * @id test.testDispatch
      * @route POST /api/test/dispatch
      */

@@ -68,7 +68,7 @@ async function run(w: WriteStr, api: Api, args: Args) {
     }
   })
   await api.test.stats()
-  await api.test.init()
+  await api.test.dispatch({ kind: 'INIT' })
 
   w.write('# Route not found\n\n')
   await api.appointments.delete('')

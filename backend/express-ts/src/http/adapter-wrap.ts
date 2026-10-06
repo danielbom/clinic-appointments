@@ -1,11 +1,11 @@
 import { generateId } from '../core/id'
 import { type Resolver, replier } from '../lib/http-adapter'
 import { withAdapter } from './adapter'
+import * as controllers from './controllers'
 import { errors } from './errors/presenter'
-import resolvers from './resolvers'
 
-for (const resource in resolvers) {
-  const actions = (resolvers as any)[resource]
+for (const resource in controllers) {
+  const actions = (controllers as any)[resource]
   for (const actionName in actions) {
     actions[actionName].operationId = `${resource}.${actionName}`
   }
