@@ -1,7 +1,6 @@
-import { type BunRequest } from 'bun'
-
-import { type RequestAdapter, type ResponseAdapter } from '../lib/http-adapter'
+import type { BunRequest } from 'bun'
 import { requestLogger } from '../core/logger'
+import type { RequestAdapter, ResponseAdapter } from '../lib/http-adapter'
 import { withMiddlewares } from './middlewares'
 
 type State = {
@@ -9,7 +8,7 @@ type State = {
   operationId: string
 }
 
-export class BunRequestAdapter implements RequestAdapter {
+export class BunRequestAdapter implements RequestAdapter<State> {
   private url: URL
   private state: Partial<State> = {}
   private headers: Record<string, string> = {}
@@ -62,12 +61,12 @@ export class BunRequestAdapter implements RequestAdapter {
     )
   }
 
-  async getRawBody(): Promise<string | null> {
+  async getRawBody(): Promise<unknown | null> {
     if (!this.req.body) return null
     return (await this.req.text()) ?? null
   }
 
-  async getJsonBody(): Promise<{} | null> {
+  async getJsonBody(): Promise<object | null> {
     if (!this.req.body) return null
     return (await this.req.json()) ?? null
   }

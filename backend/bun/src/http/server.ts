@@ -1,13 +1,12 @@
 import Bun from 'bun'
-import { Path } from '../lib/path'
-
 import { getAppConfig } from '../core/config'
-import { withCors } from './middlewares'
-import { routes } from './routes'
+import { logger } from '../core/logger'
+import { replier } from '../lib/http-adapter'
+import { Path } from '../lib/path'
 import { BunRequestAdapter } from './adapter'
 import { errors } from './errors/presenter'
-import { replier } from '../lib/http-adapter'
-import { logger } from '../core/logger'
+import { withCors } from './middlewares'
+import { routes } from './routes'
 
 export function startWebServer() {
   const publicDir = Path.from(import.meta.dirname).append('public')

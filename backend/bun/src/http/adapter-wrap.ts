@@ -1,8 +1,8 @@
 import { generateId } from '../core/id'
 import { type Resolver, replier } from '../lib/http-adapter'
 import { withAdapter } from './adapter'
-import { errors } from './errors/presenter'
 import * as controllers from './controllers'
+import { errors } from './errors/presenter'
 
 for (const resource in controllers) {
   const actions = (controllers as any)[resource]

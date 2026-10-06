@@ -6,11 +6,13 @@
   "scripts": {
     "server:start": "bun run src/server.ts",
     "server:dev": "bun run --watch src/server.ts",
-    "format": "bun prettier --write ./src",
+    "lint": "bun biome check .",
+    "format": "bun biome check . --fix",
     "generate": "bun run ./src/scripts/generate/index.ts",
     "check": "bun tsc --noEmit"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.5.15",
     "@types/bun": "latest",
     "@types/jsonwebtoken": "^9.0.10",
     "prettier": "^3.3.2",

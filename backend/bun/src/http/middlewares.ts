@@ -1,4 +1,4 @@
-import { type BunRequest } from 'bun'
+import type { BunRequest } from 'bun'
 import { logger } from '../core/logger'
 import { BunRequestAdapter } from './adapter'
 
