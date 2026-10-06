@@ -52,7 +52,7 @@ export const errors = {
     if (instancePath) {
       key = instancePath.slice(1).replaceAll(/\//g, '.')
     }
-    const matchFormat = reason.match(/must match format \"(\w+)\"/)
+    const matchFormat = reason.match(/must match format "(\w+)"/)
     if (matchFormat) {
       reason = `invalid ${matchFormat[1]}`
     }
@@ -129,6 +129,16 @@ export const errors = {
     }
   },
 
+  idempotencyKeyConflict(operation: string): types.errors.ConflictProblemDetails {
+    return {
+      code: 'resource_conflict' as const,
+      type: `${devUrl}/schemas/errors/ResourceConflict.json`,
+      title: 'Idempotency key conflict',
+      detail: `Idempotency key conflict for operation ${operation}`,
+      status: 409 as const,
+    }
+  },
+
   scheduleConflict(resource: types.core.Resource, key: string): types.errors.ConflictProblemDetails {
     return {
       code: 'resource_conflict' as const,
@@ -145,6 +155,20 @@ export const errors = {
       type: `${devUrl}/schemas/errors/ResourceConflict.json`,
       title: 'Invalid state transition',
       detail: `${resource} cannot transition from ${from} to ${to}`,
+      status: 409 as const,
+    }
+  },
+
+  unexpectedState(
+    resource: types.core.Resource,
+    expected: string,
+    current: string,
+  ): types.errors.ConflictProblemDetails {
+    return {
+      code: 'resource_conflict' as const,
+      type: `${devUrl}/schemas/errors/ResourceConflict.json`,
+      title: 'Unexpected state',
+      detail: `${resource} expected state ${expected}, but is currently in ${current}`,
       status: 409 as const,
     }
   },

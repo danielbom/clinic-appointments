@@ -8,7 +8,7 @@
       "$ref": "#/components/domain/Name"
     },
     "specializationId": {
-      "$ref": "#/components/domain/Uuid"
+      "$ref": "#/components/core/Uuid"
     }
   },
   "required": [

@@ -11,6 +11,7 @@ const (
 type HealthLiveness struct {
 	Status      HealthStatus `json:"status"`
 	Environment string       `json:"environment"`
+	Version     string       `json:"version"`
 	Timestamp   string       `json:"timestamp"`
 }
 
@@ -31,6 +32,7 @@ type HealthDetails struct {
 type HealthCheck struct {
 	Status      HealthStatus  `json:"status"`
 	Environment string        `json:"environment"`
+	Version     string        `json:"version"`
 	Timestamp   string        `json:"timestamp"`
 	Details     HealthDetails `json:"details,omitempty"`
 }

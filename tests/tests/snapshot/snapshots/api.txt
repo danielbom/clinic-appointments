@@ -2,6 +2,7 @@ Request: GET /api/health/live 200
 Response: {
   "status": "UP",
   "environment": "test",
+  "version": "[version]",
   "timestamp": "[temporal]"
 }
 
@@ -9,12 +10,13 @@ Request: GET /api/health/check 200
 Response: {
   "status": "UP",
   "environment": "test",
+  "version": "[version]",
   "timestamp": "[temporal]",
   "details": {
     "database": {
       "status": "UP",
       "latencyMs": "[variable]",
-      "version": "16.15 (Debian 16.15-1.pgdg13+2)",
+      "version": "[version]",
       "maxConnections": 100,
       "openedConnections": 1,
       "schemaVersion": 13
@@ -26,6 +28,7 @@ Request: GET /api/health/ready 200
 Response: {
   "status": "UP",
   "environment": "test",
+  "version": "[version]",
   "timestamp": "[temporal]",
   "details": {
     "database": {
@@ -41,7 +44,10 @@ Response: {
   "message": "Environment: TEST"
 }
 
-Request: GET /api/test/init 200
+Request: POST /api/test/dispatch 200
+Body: {
+  "kind": "INIT"
+}
 Response: "System initialized to be tested"
 
 Request: POST /api/auth/login 200
@@ -1581,343 +1587,7 @@ Response: {
   "items": [
     {
       "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-31",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-30",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-29",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-28",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-27",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-26",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-25",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-24",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-23",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-22",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-21",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-20",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-19",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-18",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-17",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-16",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-15",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-14",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-13",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-12",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-11",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-10",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-09",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-08",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-07",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-06",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-05",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-04",
-      "note": "Serviço realizado para o cliente Customer Test",
-      "quantity": 1,
-      "unitAmount": "1000.00",
-      "chargedAmount": "1000.00",
-      "grossAmount": "1000.00",
-      "discountAmount": "0.00",
-      "taxAmount": "90.91",
-      "netAmount": "909.09"
-    },
-    {
-      "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-03",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-01",
       "note": "Serviço realizado para o cliente Customer Test",
       "quantity": 1,
       "unitAmount": "1000.00",
@@ -1941,7 +1611,343 @@ Response: {
     },
     {
       "type": "APPOINTMENT",
-      "description": "Service Available 2 às 03:00:00 do dia 2030-03-01",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-03",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-04",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-05",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-06",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-07",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-08",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-09",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-10",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-11",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-12",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-13",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-14",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-15",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-16",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-17",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-18",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-19",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-20",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-21",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-22",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-23",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-24",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-25",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-26",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-27",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-28",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-29",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-30",
+      "note": "Serviço realizado para o cliente Customer Test",
+      "quantity": 1,
+      "unitAmount": "1000.00",
+      "chargedAmount": "1000.00",
+      "grossAmount": "1000.00",
+      "discountAmount": "0.00",
+      "taxAmount": "90.91",
+      "netAmount": "909.09"
+    },
+    {
+      "type": "APPOINTMENT",
+      "description": "Service Available 2 às 03:00:00 do dia 2030-03-31",
       "note": "Serviço realizado para o cliente Customer Test",
       "quantity": 1,
       "unitAmount": "1000.00",
@@ -2012,8 +2018,8 @@ Report:
   "api.specializations.update": 1,
   "api.specializations.delete": 2,
   "api.test.stats": 1,
-  "api.test.init": 1,
-  "api.test.debugClaims": 0
+  "api.test.debugClaims": 0,
+  "api.test.dispatch": 1
 }
 
 Request: GET /api/customers 200
@@ -6837,7 +6843,7 @@ Report:
   "api.specializations.update": 1,
   "api.specializations.delete": 2,
   "api.test.stats": 1,
-  "api.test.init": 2,
-  "api.test.debugClaims": 0
+  "api.test.debugClaims": 0,
+  "api.test.dispatch": 2
 }
 

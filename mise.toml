@@ -1,15 +1,20 @@
+[tools]
+bun = "1.4.2"
+go = "1.27.1"
+node = "26"
+
 ###################
 # docker/database #
 ###################
 
 [tasks."docker-database-up"]
 description = "Start PostgreSQL database container"
-run = "docker-compose --project-name appointments up db --detach"
+run = "docker-compose --project-name appointments up db pgadmin --detach"
 dir = "./backend/golang"
 
 [tasks."docker-database-down"]
 description = "Stop and remove PostgreSQL database container"
-run = "docker-compose --project-name appointments down db"
+run = "docker-compose --project-name appointments down db pgadmin"
 dir = "./backend/golang"
 
 #############

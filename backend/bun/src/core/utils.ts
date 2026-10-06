@@ -1,7 +1,6 @@
 import type { RequestAdapter } from '../lib/http-adapter'
-
-import { extractJwtData, isRefreshToken, verifyJWT } from './jwt'
 import { parseUuid } from './id'
+import { extractJwtData, isRefreshToken, verifyJWT } from './jwt'
 
 // request
 export function getAccessTokenFromRequest(req: RequestAdapter) {
@@ -26,21 +25,21 @@ export async function getJwtDataFromRequest(req: RequestAdapter) {
 
 // params
 export function getStringParam(value: any, defaultValue = ''): string {
-  if (typeof value != 'string') return defaultValue
+  if (typeof value !== 'string') return defaultValue
   if (!value) return defaultValue
   return value
 }
 
 export function getIntParam(value: any, defaultValue: number): number {
-  if (typeof value != 'string') return defaultValue
+  if (typeof value !== 'string') return defaultValue
   if (!value) return defaultValue
-  const result = parseInt(value)
-  if (isNaN(result)) return defaultValue
+  const result = parseInt(value, 10)
+  if (Number.isNaN(result)) return defaultValue
   return result
 }
 
 export function isValidDate(d: Date): boolean {
-  return !isNaN(d.getTime())
+  return !Number.isNaN(d.getTime())
 }
 
 export function getDateParam(value: any) {
@@ -61,15 +60,15 @@ const ISO_TIME_PATTERN = /^\d\d:\d\d:\d\d$/
 
 export function parseISODateToUTC(date: string): Date | null {
   if (!ISO_DATE_PATTERN.test(date)) return null
-  const result = new Date(date + 'T00:00:00.000Z')
-  if (isNaN(result.getTime())) return null
+  const result = new Date(`${date}T00:00:00.000Z`)
+  if (Number.isNaN(result.getTime())) return null
   return result
 }
 
 export function parseISOTimeToUTC(time: string): Date | null {
   if (!ISO_TIME_PATTERN.test(time)) return null
   const result = new Date(`2020-01-02T${time}.000Z`)
-  if (isNaN(result.getTime())) return null
+  if (Number.isNaN(result.getTime())) return null
   return result
 }
 
@@ -104,11 +103,11 @@ const BLACKLIST_CPF = [
 ]
 
 export function isValidCpf(cpf: string): boolean {
-  if (cpf.length != 11) {
+  if (cpf.length !== 11) {
     return false
   }
   for (let i = 0; i < cpf.length; i++) {
-    const ch = cpf[i]!
+    const ch = cpf[i] as string
     if (!('0' <= ch && ch <= '9')) {
       return false
     }
@@ -127,10 +126,10 @@ export function isValidCpf(cpf: string): boolean {
   const a9 = cpf.charCodeAt(9) - Z
   const a10 = cpf.charCodeAt(10) - Z
   // prettier-ignore
-  const sum9 = a0*10 + a1*9 + a2*8 + a3*7 + a4*6 + a5*5 + a6*4 + a7*3 + a8*2
+  const sum9 = a0 * 10 + a1 * 9 + a2 * 8 + a3 * 7 + a4 * 6 + a5 * 5 + a6 * 4 + a7 * 3 + a8 * 2
   // prettier-ignore
-  const sum10 = a0*11 + a1*10 + a2*9 + a3*8 + a4*7 + a5*6 + a6*5 + a7*4 + a8*3 + a9*2
-  return ((sum9 * 10) % 11) % 10 == a9 && ((sum10 * 10) % 11) % 10 == a10
+  const sum10 = a0 * 11 + a1 * 10 + a2 * 9 + a3 * 8 + a4 * 7 + a5 * 6 + a6 * 5 + a7 * 4 + a8 * 3 + a9 * 2
+  return ((sum9 * 10) % 11) % 10 === a9 && ((sum10 * 10) % 11) % 10 === a10
 }
 
 // cnpj
@@ -153,7 +152,7 @@ export function isValidCnpj(cnpj: string): boolean {
     return false
   }
   for (let i = 0; i < cnpj.length; i++) {
-    const ch = cnpj[i]!
+    const ch = cnpj[i] as string
     if (!('0' <= ch && ch <= '9')) {
       return false
     }
@@ -174,11 +173,23 @@ export function isValidCnpj(cnpj: string): boolean {
   const a11 = cnpj.charCodeAt(11) - Z
   const a12 = cnpj.charCodeAt(12) - Z
   const a13 = cnpj.charCodeAt(13) - Z
-  // prettier-ignore
-  const sum12 = a0*5 + a1*4 + a2*3 + a3*2 + a4*9 + a5*8 + a6*7 + a7*6 + a8*5 + a9*4 + a10*3 + a11*2
-  // prettier-ignore
-  const sum13 = a0*6 + a1*5 + a2*4 + a3*3 + a4*2 + a5*9 + a6*8 + a7*7 + a8*6 + a9*5 + a10*4 + a11*3 + a12*2
-  return ((sum12 * 10) % 11) % 10 == a12 && ((sum13 * 10) % 11) % 10 == a13
+  const sum12 =
+    a0 * 5 + a1 * 4 + a2 * 3 + a3 * 2 + a4 * 9 + a5 * 8 + a6 * 7 + a7 * 6 + a8 * 5 + a9 * 4 + a10 * 3 + a11 * 2
+  const sum13 =
+    a0 * 6 +
+    a1 * 5 +
+    a2 * 4 +
+    a3 * 3 +
+    a4 * 2 +
+    a5 * 9 +
+    a6 * 8 +
+    a7 * 7 +
+    a8 * 6 +
+    a9 * 5 +
+    a10 * 4 +
+    a11 * 3 +
+    a12 * 2
+  return ((sum12 * 10) % 11) % 10 === a12 && ((sum13 * 10) % 11) % 10 === a13
 }
 
 // email

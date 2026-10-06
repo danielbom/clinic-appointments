@@ -1,0 +1,6 @@
+{
+  "type": "string",
+  "format": "url",
+  "description": "A URL pointing to a web resource.",
+  "example": "https://example.com"
+}

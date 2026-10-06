@@ -1,9 +1,8 @@
-import { getAppConfig, getDatabaseConfig } from './config'
-import { pingDatabase } from './db'
-import type { InfraStatus } from './infra'
-import type * as types from '../http/types'
 import * as queries from '../domain/queries'
+import type * as types from '../http/types'
 import { localCache } from './cache'
+import { getAppConfig, getDatabaseConfig } from './config'
+import type { InfraStatus } from './infra'
 
 async function callPingDatabase() {
   return localCache.getOrLoad({
@@ -11,7 +10,7 @@ async function callPingDatabase() {
     ttl: 5 * 1000,
     timeout: 1000,
     staleTtl: 20 * 1000,
-    task: () => pingDatabase(),
+    task: () => queries.pingDatabase(),
   })
 }
 
@@ -27,7 +26,7 @@ async function callQueryDatabaseInfo({ databaseName }: { databaseName: string })
 }
 
 async function getInfraStatus({ withInfo }: { withInfo: boolean }) {
-  const database = Object.assign({}, await callPingDatabase())
+  const database: InfraStatus = Object.assign({}, await callPingDatabase())
   if (withInfo && database.status === 'UP') {
     const { name: databaseName } = getDatabaseConfig()
     const info = await callQueryDatabaseInfo({ databaseName })
@@ -43,7 +42,7 @@ async function getInfraStatus({ withInfo }: { withInfo: boolean }) {
 
 export async function healthCheck(): Promise<types.schemas.HealthCheck> {
   const timestamp = new Date().toISOString()
-  const { environment } = getAppConfig()
+  const { environment, version } = getAppConfig()
 
   const { required, optional } = await getInfraStatus({ withInfo: true })
   const details = { ...required, ...optional }
@@ -55,18 +54,19 @@ export async function healthCheck(): Promise<types.schemas.HealthCheck> {
   const hasAnyRequiredDegraded = requiredValues.find((it) => it.status === 'DEGRADED')
   const status = hasAnyRequiredDown ? 'DOWN' : hasAnyOptionalDown || hasAnyRequiredDegraded ? 'DEGRADED' : 'UP'
 
-  return { status, environment, timestamp, details }
+  return { status, environment, version, timestamp, details }
 }
 
 export function isAlive(): types.schemas.HealthLiveness {
   const timestamp = new Date().toISOString()
-  const { environment } = getAppConfig()
-  return { status: 'UP', environment, timestamp }
+  const { environment, version } = getAppConfig()
+  const status = 'UP'
+  return { status, environment, version, timestamp }
 }
 
 export async function isReady(): Promise<types.schemas.HealthCheck> {
   const timestamp = new Date().toISOString()
-  const { environment } = getAppConfig()
+  const { environment, version } = getAppConfig()
 
   const { required, optional } = await getInfraStatus({ withInfo: false })
   const details = { ...required, ...optional }
@@ -75,5 +75,5 @@ export async function isReady(): Promise<types.schemas.HealthCheck> {
   const hasAnyRequiredDown = requiredValues.find((it) => it.status === 'DOWN')
   const status = hasAnyRequiredDown ? 'DOWN' : 'UP'
 
-  return { status, environment, timestamp, details }
+  return { status, environment, version, timestamp, details }
 }

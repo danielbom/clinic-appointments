@@ -11,7 +11,7 @@ function generateRoutes(w: Writable) {
   w.write("import resolvers from './resolvers'\n")
   w.write('\n')
   w.write('export const routes = {\n')
-  for (const url in openApiJson.paths) {
+  for (const url of Object.keys(openApiJson.paths).sort()) {
     const bunUrl = url.replaceAll(/\{(\w+)\}/g, ':$1')
     w.write(`  '${bunUrl}': {\n`)
     const path = (openApiJson.paths as any)[url]

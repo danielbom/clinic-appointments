@@ -79,7 +79,7 @@ async function run(w: WriteStr, api: Api, args: Args) {
   await api.health.check()
   await api.health.isReady()
   await api.test.stats()
-  await api.test.init()
+  await api.test.dispatch({ kind: 'INIT' })
 
   await api.auth.login(credentials.admin).then((res) => {
     apiLogin(res.data.accessToken)
@@ -387,7 +387,7 @@ async function run(w: WriteStr, api: Api, args: Args) {
   {
     enableWriteResponse(false)
 
-    await api.test.init()
+    await api.test.dispatch({ kind: 'INIT' })
     state.servicesAvailableIds.length = 0
 
     await api.auth.login(credentials.admin).then((res) => apiLogin(res.data.accessToken))

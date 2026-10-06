@@ -1,10 +1,6 @@
-import type * as types from './types'
-import * as usecases from '../domain/usecases'
-import * as queries from '../domain/queries'
-import * as mutations from '../domain/mutations'
-import * as health from '../core/health'
 import { getAppConfig, getDatabaseConfig } from '../core/config'
-import { replier, type RequestAdapter, type Resolver, type ResponseAdapter } from '../lib/http-adapter'
+import * as health from '../core/health'
+import { verifyJWT } from '../core/jwt'
 import {
   getAccessTokenFromRequest,
   getDateParam,
@@ -14,11 +10,15 @@ import {
   getUuidParam,
   parseISODateToUTC,
 } from '../core/utils'
-import { validations } from './validations'
-import { errors } from './errors/presenter'
-import { mapError } from './errors/domain'
+import * as mutations from '../domain/mutations'
 import { presenter } from '../domain/presenter'
-import { verifyJWT } from '../core/jwt'
+import * as queries from '../domain/queries'
+import * as usecases from '../domain/usecases'
+import { type RequestAdapter, type Resolver, type ResponseAdapter, replier } from '../lib/http-adapter'
+import { mapError } from './errors/domain'
+import { errors } from './errors/presenter'
+import type * as types from './types'
+import { validations } from './validations'
 
 export default {
   health: {
@@ -81,10 +81,11 @@ export default {
 
       // Collect query parameters, path parameters, and request body
       const body = await req.getJsonBody()
-      if (!validations.auth.login.body(body)) {
-        return reply.fail(errors.ajv(validations.auth.login.body.errors![0]!))
+      const valid = validations.auth.login.body(body)
+      if (!valid.ok) {
+        return reply.fail(errors.ajv(valid.errors[0]))
       }
-      const args: types.api.auth.login.body = body
+      const args: types.api.auth.login.body = valid.value
 
       // Validate and execute the usecase
       const result = await mutations.login(args, { accessTokenExpireIn, refreshTokenExpireIn })
@@ -179,10 +180,11 @@ export default {
       }
 
       const body = await req.getJsonBody()
-      if (!validations.appointments.createAppointment.body(body)) {
-        return reply.fail(errors.ajv(validations.appointments.createAppointment.body.errors![0]!))
+      const valid = validations.appointments.createAppointment.body(body)
+      if (!valid.ok) {
+        return reply.fail(errors.ajv(valid.errors[0]))
       }
-      const args: types.api.appointments.createAppointment.body = body
+      const args: types.api.appointments.createAppointment.body = valid.value
 
       // Validate and execute the usecase
       const result = await mutations.createAppointment(args)
@@ -314,10 +316,11 @@ export default {
       }
 
       const body = await req.getJsonBody()
-      if (!validations.appointments.updateAppointment.body(body)) {
-        return reply.fail(errors.ajv(validations.appointments.updateAppointment.body.errors![0]!))
+      const valid = validations.appointments.updateAppointment.body(body)
+      if (!valid.ok) {
+        return reply.fail(errors.ajv(valid.errors[0]))
       }
-      const args: types.api.appointments.updateAppointment.body = body
+      const args: types.api.appointments.updateAppointment.body = valid.value
 
       // Validate and execute the usecase
       const result = await mutations.updateAppointment(id, args)
@@ -436,10 +439,11 @@ export default {
       }
 
       const body = await req.getJsonBody()
-      if (!validations.customers.createCustomer.body(body)) {
-        return reply.fail(errors.ajv(validations.customers.createCustomer.body.errors![0]!))
+      const valid = validations.customers.createCustomer.body(body)
+      if (!valid.ok) {
+        return reply.fail(errors.ajv(valid.errors[0]))
       }
-      const args: types.api.customers.createCustomer.body = body
+      const args: types.api.customers.createCustomer.body = valid.value
 
       // Validate and execute the usecase
       const result = await mutations.createCustomer(args)
@@ -510,10 +514,11 @@ export default {
       }
 
       const body = await req.getJsonBody()
-      if (!validations.customers.updateCustomer.body(body)) {
-        return reply.fail(errors.ajv(validations.customers.updateCustomer.body.errors![0]!))
+      const valid = validations.customers.updateCustomer.body(body)
+      if (!valid.ok) {
+        return reply.fail(errors.ajv(valid.errors[0]))
       }
-      const args: types.api.customers.updateCustomer.body = body
+      const args: types.api.customers.updateCustomer.body = valid.value
 
       // Validate and execute the usecase
       const result = await mutations.updateCustomer(id, args)
@@ -564,10 +569,11 @@ export default {
       }
 
       const body = await req.getJsonBody()
-      if (!validations.invoices.preview.body(body)) {
-        return reply.fail(errors.ajv(validations.invoices.preview.body.errors![0]!))
+      const valid = validations.invoices.preview.body(body)
+      if (!valid.ok) {
+        return reply.fail(errors.ajv(valid.errors[0]))
       }
-      const args: types.api.invoices.preview.body = body
+      const args: types.api.invoices.preview.body = valid.value
 
       // Validate and execute the usecase
       const specialistId = args.specialistId
@@ -623,10 +629,11 @@ export default {
       }
 
       const body = await req.getJsonBody()
-      if (!validations.secretaries.createSecretary.body(body)) {
-        return reply.fail(errors.ajv(validations.secretaries.createSecretary.body.errors![0]!))
+      const valid = validations.secretaries.createSecretary.body(body)
+      if (!valid.ok) {
+        return reply.fail(errors.ajv(valid.errors[0]))
       }
-      const args: types.api.secretaries.createSecretary.body = body
+      const args: types.api.secretaries.createSecretary.body = valid.value
 
       // Validate and execute the usecase
       const result = await mutations.createSecretary(args)
@@ -713,10 +720,11 @@ export default {
       }
 
       const body = await req.getJsonBody()
-      if (!validations.secretaries.updateSecretary.body(body)) {
-        return reply.fail(errors.ajv(validations.secretaries.updateSecretary.body.errors![0]!))
+      const valid = validations.secretaries.updateSecretary.body(body)
+      if (!valid.ok) {
+        return reply.fail(errors.ajv(valid.errors[0]))
       }
-      const args: types.api.secretaries.updateSecretary.body = body
+      const args: types.api.secretaries.updateSecretary.body = valid.value
 
       // Validate and execute the usecase
       const result = await mutations.updateSecretary(id, args)
@@ -786,10 +794,11 @@ export default {
       }
 
       const body = await req.getJsonBody()
-      if (!validations.servicesAvailable.createServiceAvailable.body(body)) {
-        return reply.fail(errors.ajv(validations.servicesAvailable.createServiceAvailable.body.errors![0]!))
+      const valid = validations.servicesAvailable.createServiceAvailable.body(body)
+      if (!valid.ok) {
+        return reply.fail(errors.ajv(valid.errors[0]))
       }
-      const args: types.api.servicesAvailable.createServiceAvailable.body = body
+      const args: types.api.servicesAvailable.createServiceAvailable.body = valid.value
 
       if (!args.specialization && !args.specializationId) {
         return reply.fail(errors.missingValue('body', 'specializationId'))
@@ -844,10 +853,11 @@ export default {
       }
 
       const body = await req.getJsonBody()
-      if (!validations.servicesAvailable.updateServiceAvailable.body(body)) {
-        return reply.fail(errors.ajv(validations.servicesAvailable.updateServiceAvailable.body.errors![0]!))
+      const valid = validations.servicesAvailable.updateServiceAvailable.body(body)
+      if (!valid.ok) {
+        return reply.fail(errors.ajv(valid.errors[0]))
       }
-      const args: types.api.servicesAvailable.updateServiceAvailable.body = body
+      const args: types.api.servicesAvailable.updateServiceAvailable.body = valid.value
 
       // Validate and execute the usecase
       const result = await mutations.updateServiceAvailable(id, args)
@@ -917,10 +927,11 @@ export default {
       }
 
       const body = await req.getJsonBody()
-      if (!validations.services.createService.body(body)) {
-        return reply.fail(errors.ajv(validations.services.createService.body.errors![0]!))
+      const valid = validations.services.createService.body(body)
+      if (!valid.ok) {
+        return reply.fail(errors.ajv(valid.errors[0]))
       }
-      const args: types.api.services.createService.body = body
+      const args: types.api.services.createService.body = valid.value
 
       // Validate and execute the usecase
       const result = await mutations.createService(args)
@@ -991,10 +1002,11 @@ export default {
       }
 
       const body = await req.getJsonBody()
-      if (!validations.services.updateService.body(body)) {
-        return reply.fail(errors.ajv(validations.services.updateService.body.errors![0]!))
+      const valid = validations.services.updateService.body(body)
+      if (!valid.ok) {
+        return reply.fail(errors.ajv(valid.errors[0]))
       }
-      const args: types.api.services.updateService.body = body
+      const args: types.api.services.updateService.body = valid.value
 
       // Validate and execute the usecase
       const result = await mutations.updateService(id, args)
@@ -1082,10 +1094,11 @@ export default {
       }
 
       const body = await req.getJsonBody()
-      if (!validations.specialists.createSpecialist.body(body)) {
-        return reply.fail(errors.ajv(validations.specialists.createSpecialist.body.errors![0]!))
+      const valid = validations.specialists.createSpecialist.body(body)
+      if (!valid.ok) {
+        return reply.fail(errors.ajv(valid.errors[0]))
       }
-      const args: types.api.specialists.createSpecialist.body = body
+      const args: types.api.specialists.createSpecialist.body = valid.value
 
       // Validate and execute the usecase
       const result = await mutations.createSpecialist(args)
@@ -1249,10 +1262,11 @@ export default {
       }
 
       const body = await req.getJsonBody()
-      if (!validations.specialists.updateSpecialist.body(body)) {
-        return reply.fail(errors.ajv(validations.specialists.updateSpecialist.body.errors![0]!))
+      const valid = validations.specialists.updateSpecialist.body(body)
+      if (!valid.ok) {
+        return reply.fail(errors.ajv(valid.errors[0]))
       }
-      const args: types.api.specialists.updateSpecialist.body = body
+      const args: types.api.specialists.updateSpecialist.body = valid.value
 
       // Validate and execute the usecase
       const result = await mutations.updateSpecialist(id, args)
@@ -1315,10 +1329,11 @@ export default {
       }
 
       const body = await req.getJsonBody()
-      if (!validations.specializations.createSpecialization.body(body)) {
-        return reply.fail(errors.ajv(validations.specializations.createSpecialization.body.errors![0]!))
+      const valid = validations.specializations.createSpecialization.body(body)
+      if (!valid.ok) {
+        return reply.fail(errors.ajv(valid.errors[0]))
       }
-      const args: types.api.specializations.createSpecialization.body = body
+      const args: types.api.specializations.createSpecialization.body = valid.value
 
       // Validate and execute the usecase
       const result = await mutations.createSpecialization(args)
@@ -1345,10 +1360,11 @@ export default {
       }
 
       const body = await req.getJsonBody()
-      if (!validations.specializations.updateSpecialization.body(body)) {
-        return reply.fail(errors.ajv(validations.specializations.updateSpecialization.body.errors![0]!))
+      const valid = validations.specializations.updateSpecialization.body(body)
+      if (!valid.ok) {
+        return reply.fail(errors.ajv(valid.errors[0]))
       }
-      const args: types.api.specializations.updateSpecialization.body = body
+      const args: types.api.specializations.updateSpecialization.body = valid.value
 
       // Validate and execute the usecase
       const result = await mutations.updateSpecialization(id, args)
@@ -1386,13 +1402,6 @@ export default {
     },
   },
   test: {
-    async initTest(req: RequestAdapter) {
-      const reply = replier<types.api.test.initTest.responses>(req)
-
-      await mutations.initTest()
-
-      return reply.send(200, 'System initialized to be tested')
-    },
     async statsTest(req: RequestAdapter) {
       const reply = replier<types.api.test.statsTest.responses>(req)
 
@@ -1412,6 +1421,20 @@ export default {
       console.log(token)
 
       return reply.send(200, 'OK')
+    },
+    async testDispatch(req: RequestAdapter) {
+      const reply = replier<types.api.test.testDispatch.responses>(req)
+
+      const body = await req.getJsonBody()
+      const valid = validations.test.testDispatch.body(body)
+      if (!valid.ok) {
+        return reply.fail(errors.ajv(valid.errors[0]))
+      }
+      const args: types.api.test.testDispatch.body = valid.value
+
+      const result = await usecases.testDispatch(args)
+
+      return reply.send(200, result)
     },
   },
 } satisfies Record<string, Record<string, Resolver>>

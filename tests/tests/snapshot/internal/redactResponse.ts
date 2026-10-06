@@ -16,6 +16,7 @@ export function redactResponse(response: AxiosResponse | undefined): any {
     if (newData.timestamp) newData.timestamp = '[temporal]'
     if (typeof newData.latencyMs === 'number') newData.latencyMs = '[variable]'
     if (newData.traceId) newData.traceId = '[trace-id]'
+    if (newData.version) newData.version = '[version]'
     if (newData.instance) {
       for (const match of newData.instance.matchAll(PATH_UUID_REGEX)) {
         newData.instance = newData.instance.replace(match[1], '[uuid]')

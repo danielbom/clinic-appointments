@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gofrs/uuid/v5"
@@ -24,6 +25,13 @@ func DateFromISOString(result *pgtype.Date, isoDate string) error {
 		return err
 	}
 	return result.Scan(dateTime)
+}
+
+func TimeToString(time pgtype.Time) string {
+	seconds := int32(time.Microseconds / 1000000)
+	minutes := seconds / 60
+	hours := minutes / 60
+	return fmt.Sprintf("%02d:%02d:%02d", hours, minutes%60, seconds%60)
 }
 
 func ErrorIsNoRows(err error) bool {

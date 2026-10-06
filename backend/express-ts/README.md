@@ -14,6 +14,7 @@ npx prisma db pull
 # Actually I'm not saving the migrations so you need to it by yourself
 npx prisma generate
 npx prisma migrate dev --name init
+npx prisma migrate deploy
 
 pnpm run start # Prod
 pnpm run dev # Dev

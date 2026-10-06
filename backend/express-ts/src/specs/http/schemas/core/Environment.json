@@ -1,6 +1,6 @@
 {
   "type": "string",
   "description": "Service environment setup",
-  "enum": ["test", "stagging", "development", "production"],
+  "enum": ["test", "staging", "development", "production"],
   "example": "development"
 }

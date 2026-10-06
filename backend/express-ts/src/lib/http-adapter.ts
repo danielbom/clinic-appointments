@@ -1,4 +1,4 @@
-export interface RequestAdapter<State = {}> {
+export interface RequestAdapter<State = object> {
   getId(): string
   getOperationId(): string | null
   getUrl(): URL
@@ -7,8 +7,8 @@ export interface RequestAdapter<State = {}> {
   getPathParam(key: string): string | null
   getQueryParam(key: string): string | null
   getQueryParams(): Record<string, string | undefined>
-  getRawBody(): Promise<string | null>
-  getJsonBody(): Promise<{} | null>
+  getRawBody(): Promise<unknown | null>
+  getJsonBody(): Promise<unknown | null>
   getFromContext<K extends keyof State>(key: K): State[K] | null
   setToContext<K extends keyof State>(key: K, value: State[K]): void
   send(response: ResponseAdapter): any
@@ -16,7 +16,7 @@ export interface RequestAdapter<State = {}> {
 
 export interface ResponseAdapter {
   status: number
-  json?: any
+  json?: unknown
 }
 
 export type Resolver = (req: RequestAdapter) => Promise<ResponseAdapter>

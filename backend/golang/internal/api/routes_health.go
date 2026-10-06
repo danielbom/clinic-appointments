@@ -24,6 +24,7 @@ func (h *api) healthCheck(w http.ResponseWriter, r *http.Request) {
 	// Validate and execute the usecase
 	timestamp := time.Now().UTC().Format(time.RFC3339)
 	environment := env.Get(env.APP_ENVIRONMENT)
+	version := "TODO"
 	status := dtos.HEALTH_UP
 
 	rs := NewRequestState(h.q, r)
@@ -49,6 +50,7 @@ func (h *api) healthCheck(w http.ResponseWriter, r *http.Request) {
 	response := dtos.HealthCheck{
 		Status:      status,
 		Timestamp:   timestamp,
+		Version:     version,
 		Environment: environment,
 		Details: dtos.HealthDetails{
 			Database: database,
@@ -64,12 +66,14 @@ func (h *api) healthLive(w http.ResponseWriter, r *http.Request) {
 	// Validate and execute the usecase
 	timestamp := time.Now().UTC().Format(time.RFC3339)
 	environment := env.Get(env.APP_ENVIRONMENT)
+	version := "TODO"
 	status := dtos.HEALTH_UP
 
 	// Format the response
 	response := dtos.HealthLiveness{
 		Status:      status,
 		Timestamp:   timestamp,
+		Version:     version,
 		Environment: environment,
 	}
 	render.Status(r, http.StatusOK)
@@ -82,6 +86,7 @@ func (h *api) healthReady(w http.ResponseWriter, r *http.Request) {
 	// Validate and execute the usecase
 	timestamp := time.Now().UTC().Format(time.RFC3339)
 	environment := env.Get(env.APP_ENVIRONMENT)
+	version := "TODO"
 	status := dtos.HEALTH_UP
 
 	rs := NewRequestState(h.q, r)
@@ -95,6 +100,7 @@ func (h *api) healthReady(w http.ResponseWriter, r *http.Request) {
 	response := dtos.HealthCheck{
 		Status:      status,
 		Timestamp:   timestamp,
+		Version:     version,
 		Environment: environment,
 		Details: dtos.HealthDetails{
 			Database: database,

@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process'
-import { assertNotNull, assertStringEnum } from '../lib/assertions'
+import { assertInteger, assertNotNull, assertStringEnum } from '../lib/assertions'
 
 const config: Record<string, Record<string, string | number | boolean>> = {}
 
@@ -12,8 +12,8 @@ export function getAppConfig() {
   return registerConfig('app', () => ({
     name: assertNotNull('APPOINTMENTS_NAME', process.env.APPOINTMENTS_NAME),
     environment: assertStringEnum('APPOINTMENTS_ENVIRONMENT', process.env.APPOINTMENTS_ENVIRONMENT, listEnvironments()),
-    version: process.env.APPOINTMENTS_VERSION ?? getCurrentHashCommit(),
-    port: Number(process.env.APPOINTMENTS_PORT || 3000),
+    version: getCurrentHashCommit(),
+    port: assertInteger('APPOINTMENTS_PORT', Number(process.env.APPOINTMENTS_PORT || 3000)),
   }))
 }
 
@@ -46,10 +46,10 @@ export function listConfiguredResources() {
 }
 
 export function listEnvironments() {
-  return ['test', 'stagging', 'development', 'production'] as const
+  return ['test', 'staging', 'development', 'production'] as const
 }
 export function listLogFormat() {
-  return ['pretty', 'json', 'datadog'] as const
+  return ['pretty', 'json', 'text', 'datadog'] as const
 }
 export function listLogLevel() {
   return ['silent', 'trace', 'debug', 'info', 'warn', 'error'] as const
@@ -60,3 +60,9 @@ function getCurrentHashCommit() {
   const stdout = proc.stdout.toString()
   return stdout.slice(stdout.indexOf(' ') + 1, stdout.indexOf('\n'))
 }
+
+// fail fast
+getAppConfig()
+getLogConfig()
+getDatabaseConfig()
+getJwtConfig()

@@ -165,7 +165,7 @@ export class LocalCache {
 
       // Successful load removes any previous failure cooldown.
       this.retryAfter.delete(key)
-    } catch (error) {
+    } catch (_error) {
       // Record failure to avoid immediate retry storms.
       this.setRetryCooldown(key)
     } finally {

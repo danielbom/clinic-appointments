@@ -12,7 +12,7 @@ export namespace core {
 
   /**
    * iso date time
-   * @format date-time
+   * @format datetime
    * @example 2026-05-02T00:00:00.000Z
    */
   export type DateTime = string
@@ -21,7 +21,7 @@ export namespace core {
    * Service environment setup
    * @example development
    */
-  export type Environment = 'test' | 'stagging' | 'development' | 'production'
+  export type Environment = 'test' | 'staging' | 'development' | 'production'
 
   export type HealthDetails = {
     status: core.HealthStatus
@@ -54,6 +54,20 @@ export namespace core {
    * @maxLength 8
    */
   export type Time = string
+
+  /**
+   * A URL pointing to a web resource.
+   * @format url
+   * @example https://example.com
+   */
+  export type Url = string
+
+  /**
+   * @format uuid
+   * @example 019dcd01-5a4a-736f-9407-8e69aa9433bc
+   * @maxLength 36
+   */
+  export type Uuid = string
 }
 
 export namespace domain {
@@ -125,24 +139,17 @@ export namespace domain {
    * @maxLength 36
    */
   export type Role = 'admin' | 'secretary'
-
-  /**
-   * @format uuid
-   * @example 019dcd01-5a4a-736f-9407-8e69aa9433bc
-   * @maxLength 36
-   */
-  export type Uuid = string
 }
 
 export namespace schemas {
   export type Appointment = {
-    id: domain.Uuid
+    id: core.Uuid
     customerName: domain.Name
-    customerId: domain.Uuid
+    customerId: core.Uuid
     serviceName: domain.Name
-    serviceNameId: domain.Uuid
+    serviceNameId: core.Uuid
     specialistName: domain.Name
-    specialistId: domain.Uuid
+    specialistId: core.Uuid
     price: domain.Price
     duration: domain.Duration
     date: core.Date
@@ -151,7 +158,7 @@ export namespace schemas {
   }
 
   export type AppointmentCalendar = {
-    id: domain.Uuid
+    id: core.Uuid
     date: core.Date
     time: core.Time
     specialistName: domain.Name
@@ -171,7 +178,7 @@ export namespace schemas {
   export type AppointmentStatus = number
 
   export type AuthIdentity = {
-    id: domain.Uuid
+    id: core.Uuid
     name: domain.Name
     email: domain.Email
     role: domain.Role
@@ -185,7 +192,7 @@ export namespace schemas {
   export type Count = number
 
   export type Customer = {
-    id: domain.Uuid
+    id: core.Uuid
     name: domain.Name
     email?: domain.Email
     phone: domain.Phone
@@ -196,6 +203,7 @@ export namespace schemas {
   export type HealthCheck = {
     status: core.HealthStatus
     timestamp: core.DateTime
+    version: string
     environment: core.Environment
     details: {
       database: core.HealthDetails
@@ -204,16 +212,17 @@ export namespace schemas {
 
   export type HealthLiveness = {
     status: core.HealthStatus
+    version: string
     timestamp: core.DateTime
     environment: core.Environment
   }
 
   export type Id = {
-    id: domain.Uuid
+    id: core.Uuid
   }
 
   export type Secretary = {
-    id: domain.Uuid
+    id: core.Uuid
     name: domain.Name
     email: domain.Email
     phone: domain.Phone
@@ -223,43 +232,43 @@ export namespace schemas {
   }
 
   export type Service = {
-    id: domain.Uuid
-    serviceNameId: domain.Uuid
-    specialistId: domain.Uuid
+    id: core.Uuid
+    serviceNameId: core.Uuid
+    specialistId: core.Uuid
     price: domain.Price
     duration: domain.Duration
   }
 
   export type ServiceAvailable = {
-    serviceNameId?: domain.Uuid
+    serviceNameId?: core.Uuid
     serviceName?: domain.Name
-    specializationId?: domain.Uuid
+    specializationId?: core.Uuid
     specialization?: domain.Name
   }
 
   export type ServiceEnriched = {
-    id: domain.Uuid
+    id: core.Uuid
     serviceName: domain.Name
-    serviceNameId: domain.Uuid
+    serviceNameId: core.Uuid
     specialistName: domain.Name
-    specialistId: domain.Uuid
+    specialistId: core.Uuid
     specialization: domain.Name
-    specializationId: domain.Uuid
+    specializationId: core.Uuid
     price: domain.Price
     duration: domain.Duration
   }
 
   export type ServiceGroup = {
-    id: domain.Uuid
+    id: core.Uuid
     name: domain.Name
     items: Array<{
-      id: domain.Uuid
+      id: core.Uuid
       name: domain.Name
     }>
   }
 
   export type Specialist = {
-    id: domain.Uuid
+    id: core.Uuid
     name: domain.Name
     email: domain.Email
     phone: domain.Phone
@@ -269,11 +278,11 @@ export namespace schemas {
   }
 
   export type SpecialistAppointment = {
-    id: domain.Uuid
+    id: core.Uuid
     customerName: domain.Name
-    customerId: domain.Uuid
+    customerId: core.Uuid
     serviceName: domain.Name
-    serviceNameId: domain.Uuid
+    serviceNameId: core.Uuid
     price: domain.Price
     duration: domain.Duration
     date: core.Date
@@ -282,16 +291,16 @@ export namespace schemas {
   }
 
   export type SpecialistService = {
-    id: domain.Uuid
-    specializationId: domain.Uuid
+    id: core.Uuid
+    specializationId: core.Uuid
     serviceName: domain.Name
-    serviceNameId: domain.Uuid
+    serviceNameId: core.Uuid
     price: domain.Price
     duration: domain.Duration
   }
 
   export type Specialization = {
-    id: domain.Uuid
+    id: core.Uuid
     name: domain.Name
   }
 }
@@ -312,7 +321,7 @@ export namespace errors {
   export type ConflictProblemDetails = errors.ProblemDetails & {
     code: 'resource_conflict'
     status: 409
-    title: 'Already exists' | 'Schedule conflict' | 'Invalid state transition'
+    title: 'Already exists' | 'Schedule conflict' | 'Idempotency key conflict' | 'Invalid state transition' | 'Unexpected state'
   }
 
   /**
@@ -409,8 +418,8 @@ export namespace errors {
 
 export namespace body {
   export type AppointmentsCreateBody = {
-    customerId: domain.Uuid
-    serviceId: domain.Uuid
+    customerId: core.Uuid
+    serviceId: core.Uuid
     date: core.Date
     time: core.Time
   }
@@ -442,7 +451,7 @@ export namespace body {
   }
 
   export type InvoicesPreview = {
-    specialistId: domain.Uuid
+    specialistId: core.Uuid
     startDate: core.Date
     endDate: core.Date
   }
@@ -470,7 +479,7 @@ export namespace body {
   export type ServiceAvailableCreateBody = {
     name: domain.Name
     specialization?: domain.Name
-    specializationId?: domain.Uuid
+    specializationId?: core.Uuid
   }
 
   export type ServiceAvailableUpdateBody = {
@@ -478,8 +487,8 @@ export namespace body {
   }
 
   export type ServiceCreateBody = {
-    specialistId: domain.Uuid
-    serviceNameId: domain.Uuid
+    specialistId: core.Uuid
+    serviceNameId: core.Uuid
     price: domain.Price
     duration: domain.Duration
   }
@@ -514,7 +523,7 @@ export namespace body {
   }
 
   export type SpecialistsCreateBodyService = {
-    serviceNameId: domain.Uuid
+    serviceNameId: core.Uuid
     price: domain.Price
     duration: domain.Duration
   }
@@ -525,6 +534,10 @@ export namespace body {
 
   export type SpecializationUpdateBody = {
     name: domain.Name
+  }
+
+  export type TestDispatchBody = {
+    kind: 'INIT'
   }
 }
 
@@ -571,39 +584,28 @@ export namespace query {
 export namespace api {
   export namespace appointments {
     /**
-     * @id appointments.listAppointments
-     * @route GET /api/appointments
+     * @id appointments.appointmentCanceled
+     * @route PATCH /api/appointments/{id}/canceled
      * @security BearerAuth
      */
-    export namespace listAppointments {
-      export type query = {
-        page?: query.Page
-        pageSize?: query.PageSize
-        startDate?: query.StartDate
-        endDate?: query.EndDate
-        serviceName?: query.ServiceName
-        specialist?: query.Specialist
-        customer?: query.Customer
-        status?: query.Status
-      }
-
+    export namespace appointmentCanceled {
       export type responses = {
-        200: schemas.Appointment[]
+        200: schemas.Id
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
+        404: errors.NotFoundProblemDetails
+        409: errors.ConflictProblemDetails
       }
     }
 
     /**
-     * @id appointments.createAppointment
-     * @route POST /api/appointments
+     * @id appointments.appointmentRealized
+     * @route PATCH /api/appointments/{id}/realized
      * @security BearerAuth
      */
-    export namespace createAppointment {
-      export type body = body.AppointmentsCreateBody
-
+    export namespace appointmentRealized {
       export type responses = {
-        201: schemas.Id
+        200: schemas.Id
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
@@ -630,6 +632,54 @@ export namespace api {
         200: schemas.Count
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
+      }
+    }
+
+    /**
+     * @id appointments.createAppointment
+     * @route POST /api/appointments
+     * @security BearerAuth
+     */
+    export namespace createAppointment {
+      export type body = body.AppointmentsCreateBody
+
+      export type responses = {
+        201: schemas.Id
+        400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
+        404: errors.NotFoundProblemDetails
+        409: errors.ConflictProblemDetails
+      }
+    }
+
+    /**
+     * @id appointments.deleteAppointment
+     * @route DELETE /api/appointments/{id}
+     * @security BearerAuth
+     */
+    export namespace deleteAppointment {
+      export type responses = {
+        /**
+         * Item deleted successfully
+         */
+        204: any
+        400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
+        404: errors.NotFoundProblemDetails
+      }
+    }
+
+    /**
+     * @id appointments.getAppointmentById
+     * @route GET /api/appointments/{id}
+     * @security BearerAuth
+     */
+    export namespace getAppointmentById {
+      export type responses = {
+        200: schemas.Appointment
+        400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
+        404: errors.NotFoundProblemDetails
       }
     }
 
@@ -670,16 +720,26 @@ export namespace api {
     }
 
     /**
-     * @id appointments.getAppointmentById
-     * @route GET /api/appointments/{id}
+     * @id appointments.listAppointments
+     * @route GET /api/appointments
      * @security BearerAuth
      */
-    export namespace getAppointmentById {
+    export namespace listAppointments {
+      export type query = {
+        page?: query.Page
+        pageSize?: query.PageSize
+        startDate?: query.StartDate
+        endDate?: query.EndDate
+        serviceName?: query.ServiceName
+        specialist?: query.Specialist
+        customer?: query.Customer
+        status?: query.Status
+      }
+
       export type responses = {
-        200: schemas.Appointment
+        200: schemas.Appointment[]
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
-        404: errors.NotFoundProblemDetails
       }
     }
 
@@ -691,53 +751,6 @@ export namespace api {
     export namespace updateAppointment {
       export type body = body.AppointmentsUpdateBody
 
-      export type responses = {
-        200: schemas.Id
-        400: errors.ValidationProblemDetails
-        401: errors.AuthProblemDetails
-        404: errors.NotFoundProblemDetails
-        409: errors.ConflictProblemDetails
-      }
-    }
-
-    /**
-     * @id appointments.deleteAppointment
-     * @route DELETE /api/appointments/{id}
-     * @security BearerAuth
-     */
-    export namespace deleteAppointment {
-      export type responses = {
-        /**
-         * Item deleted successfully
-         */
-        204: any
-        400: errors.ValidationProblemDetails
-        401: errors.AuthProblemDetails
-        404: errors.NotFoundProblemDetails
-      }
-    }
-
-    /**
-     * @id appointments.appointmentRealized
-     * @route PATCH /api/appointments/{id}/realized
-     * @security BearerAuth
-     */
-    export namespace appointmentRealized {
-      export type responses = {
-        200: schemas.Id
-        400: errors.ValidationProblemDetails
-        401: errors.AuthProblemDetails
-        404: errors.NotFoundProblemDetails
-        409: errors.ConflictProblemDetails
-      }
-    }
-
-    /**
-     * @id appointments.appointmentCanceled
-     * @route PATCH /api/appointments/{id}/canceled
-     * @security BearerAuth
-     */
-    export namespace appointmentCanceled {
       export type responses = {
         200: schemas.Id
         400: errors.ValidationProblemDetails
@@ -764,6 +777,19 @@ export namespace api {
     }
 
     /**
+     * @id auth.me
+     * @route GET /api/auth/me
+     * @security BearerAuth
+     */
+    export namespace me {
+      export type responses = {
+        200: schemas.AuthIdentity
+        400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
+      }
+    }
+
+    /**
      * @id auth.refresh
      * @route POST /api/auth/refresh
      * @security BearerAuth
@@ -776,38 +802,23 @@ export namespace api {
         500: errors.InternalProblemDetails
       }
     }
-
-    /**
-     * @id auth.me
-     * @route GET /api/auth/me
-     * @security BearerAuth
-     */
-    export namespace me {
-      export type responses = {
-        200: schemas.AuthIdentity
-        400: errors.ValidationProblemDetails
-        401: errors.AuthProblemDetails
-      }
-    }
   }
 
   export namespace customers {
     /**
-     * @id customers.listCustomers
-     * @route GET /api/customers
+     * @id customers.countCustomers
+     * @route GET /api/customers/count
      * @security BearerAuth
      */
-    export namespace listCustomers {
+    export namespace countCustomers {
       export type query = {
-        page?: query.Page
-        pageSize?: query.PageSize
         name?: query.Name
         cpf?: query.Cpf
         phone?: query.Phone
       }
 
       export type responses = {
-        200: schemas.Customer[]
+        200: schemas.Count
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
       }
@@ -830,21 +841,19 @@ export namespace api {
     }
 
     /**
-     * @id customers.countCustomers
-     * @route GET /api/customers/count
+     * @id customers.deleteCustomer
+     * @route DELETE /api/customers/{id}
      * @security BearerAuth
      */
-    export namespace countCustomers {
-      export type query = {
-        name?: query.Name
-        cpf?: query.Cpf
-        phone?: query.Phone
-      }
-
+    export namespace deleteCustomer {
       export type responses = {
-        200: schemas.Count
+        /**
+         * Item deleted successfully
+         */
+        204: any
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
+        404: errors.NotFoundProblemDetails
       }
     }
 
@@ -863,6 +872,27 @@ export namespace api {
     }
 
     /**
+     * @id customers.listCustomers
+     * @route GET /api/customers
+     * @security BearerAuth
+     */
+    export namespace listCustomers {
+      export type query = {
+        page?: query.Page
+        pageSize?: query.PageSize
+        name?: query.Name
+        cpf?: query.Cpf
+        phone?: query.Phone
+      }
+
+      export type responses = {
+        200: schemas.Customer[]
+        400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
+      }
+    }
+
+    /**
      * @id customers.updateCustomer
      * @route PUT /api/customers/{id}
      * @security BearerAuth
@@ -876,23 +906,6 @@ export namespace api {
         401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
         409: errors.ConflictProblemDetails
-      }
-    }
-
-    /**
-     * @id customers.deleteCustomer
-     * @route DELETE /api/customers/{id}
-     * @security BearerAuth
-     */
-    export namespace deleteCustomer {
-      export type responses = {
-        /**
-         * Item deleted successfully
-         */
-        204: any
-        400: errors.ValidationProblemDetails
-        401: errors.AuthProblemDetails
-        404: errors.NotFoundProblemDetails
       }
     }
   }
@@ -964,14 +977,12 @@ export namespace api {
 
   export namespace secretaries {
     /**
-     * @id secretaries.listSecretaries
-     * @route GET /api/secretaries
+     * @id secretaries.countSecretaries
+     * @route GET /api/secretaries/count
      * @security BearerAuth
      */
-    export namespace listSecretaries {
+    export namespace countSecretaries {
       export type query = {
-        page?: query.Page
-        pageSize?: query.PageSize
         name?: query.Name
         cpf?: query.Cpf
         cnpj?: query.Cnpj
@@ -979,7 +990,7 @@ export namespace api {
       }
 
       export type responses = {
-        200: schemas.Secretary[]
+        200: schemas.Count
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
         403: errors.InvalidAccessProblemDetails
@@ -1007,23 +1018,20 @@ export namespace api {
     }
 
     /**
-     * @id secretaries.countSecretaries
-     * @route GET /api/secretaries/count
+     * @id secretaries.deleteSecretary
+     * @route DELETE /api/secretaries/{id}
      * @security BearerAuth
      */
-    export namespace countSecretaries {
-      export type query = {
-        name?: query.Name
-        cpf?: query.Cpf
-        cnpj?: query.Cnpj
-        phone?: query.Phone
-      }
-
+    export namespace deleteSecretary {
       export type responses = {
-        200: schemas.Count
+        /**
+         * Secretary deleted successfully
+         */
+        204: any
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
         403: errors.InvalidAccessProblemDetails
+        404: errors.NotFoundProblemDetails
       }
     }
 
@@ -1039,6 +1047,29 @@ export namespace api {
         401: errors.AuthProblemDetails
         403: errors.InvalidAccessProblemDetails
         404: errors.NotFoundProblemDetails
+      }
+    }
+
+    /**
+     * @id secretaries.listSecretaries
+     * @route GET /api/secretaries
+     * @security BearerAuth
+     */
+    export namespace listSecretaries {
+      export type query = {
+        page?: query.Page
+        pageSize?: query.PageSize
+        name?: query.Name
+        cpf?: query.Cpf
+        cnpj?: query.Cnpj
+        phone?: query.Phone
+      }
+
+      export type responses = {
+        200: schemas.Secretary[]
+        400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
+        403: errors.InvalidAccessProblemDetails
       }
     }
 
@@ -1062,24 +1093,6 @@ export namespace api {
         409: errors.ConflictProblemDetails
       }
     }
-
-    /**
-     * @id secretaries.deleteSecretary
-     * @route DELETE /api/secretaries/{id}
-     * @security BearerAuth
-     */
-    export namespace deleteSecretary {
-      export type responses = {
-        /**
-         * Secretary deleted successfully
-         */
-        204: any
-        400: errors.ValidationProblemDetails
-        401: errors.AuthProblemDetails
-        403: errors.InvalidAccessProblemDetails
-        404: errors.NotFoundProblemDetails
-      }
-    }
   }
 
   export namespace serviceGroups {
@@ -1097,114 +1110,21 @@ export namespace api {
     }
   }
 
-  export namespace servicesAvailable {
-    /**
-     * @id servicesAvailable.listServicesAvailable
-     * @route GET /api/services-available
-     * @security BearerAuth
-     */
-    export namespace listServicesAvailable {
-      export type query = {
-        page?: query.Page
-        pageSize?: query.PageSize
-      }
-
-      export type responses = {
-        200: schemas.ServiceGroup[]
-        400: errors.ValidationProblemDetails
-        401: errors.AuthProblemDetails
-      }
-    }
-
-    /**
-     * @id servicesAvailable.createServiceAvailable
-     * @route POST /api/services-available
-     * @security BearerAuth
-     */
-    export namespace createServiceAvailable {
-      export type body = body.ServiceAvailableCreateBody
-
-      export type responses = {
-        /**
-         * Service Available created successfully
-         */
-        201: schemas.Id
-        400: errors.ValidationProblemDetails
-        401: errors.AuthProblemDetails
-        404: errors.NotFoundProblemDetails
-        409: errors.ConflictProblemDetails
-      }
-    }
-
-    /**
-     * @id servicesAvailable.getServiceAvailableById
-     * @route GET /api/services-available/{id}
-     * @security BearerAuth
-     */
-    export namespace getServiceAvailableById {
-      export type responses = {
-        200: schemas.ServiceAvailable
-        400: errors.ValidationProblemDetails
-        401: errors.AuthProblemDetails
-        404: errors.NotFoundProblemDetails
-      }
-    }
-
-    /**
-     * @id servicesAvailable.updateServiceAvailable
-     * @route PUT /api/services-available/{id}
-     * @security BearerAuth
-     */
-    export namespace updateServiceAvailable {
-      export type body = body.ServiceAvailableUpdateBody
-
-      export type responses = {
-        /**
-         * Service Available updated successfully
-         */
-        200: schemas.Id
-        400: errors.ValidationProblemDetails
-        401: errors.AuthProblemDetails
-        404: errors.NotFoundProblemDetails
-        409: errors.ConflictProblemDetails
-      }
-    }
-
-    /**
-     * @id servicesAvailable.deleteServiceAvailable
-     * @route DELETE /api/services-available/{id}
-     * @security BearerAuth
-     */
-    export namespace deleteServiceAvailable {
-      export type responses = {
-        /**
-         * Service Available deleted successfully
-         */
-        204: any
-        400: errors.ValidationProblemDetails
-        401: errors.AuthProblemDetails
-        404: errors.NotFoundProblemDetails
-      }
-    }
-  }
-
   export namespace services {
     /**
-     * @id services.listServices
-     * @route GET /api/services
+     * @id services.countServices
+     * @route GET /api/services/count
      * @security BearerAuth
      */
-    export namespace listServices {
+    export namespace countServices {
       export type query = {
-        page?: query.Page
-        pageSize?: query.PageSize
         service?: query.Service
         specialist?: query.Specialist
         specialization?: query.Specialization
       }
 
       export type responses = {
-        200: schemas.ServiceEnriched[]
+        200: schemas.Count
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
       }
@@ -1230,21 +1150,19 @@ export namespace api {
     }
 
     /**
-     * @id services.countServices
-     * @route GET /api/services/count
+     * @id services.deleteService
+     * @route DELETE /api/services/{id}
      * @security BearerAuth
      */
-    export namespace countServices {
-      export type query = {
-        service?: query.Service
-        specialist?: query.Specialist
-        specialization?: query.Specialization
-      }
-
+    export namespace deleteService {
       export type responses = {
-        200: schemas.Count
+        /**
+         * Service deleted successfully
+         */
+        204: any
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
+        404: errors.NotFoundProblemDetails
       }
     }
 
@@ -1259,6 +1177,27 @@ export namespace api {
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
         404: errors.NotFoundProblemDetails
+      }
+    }
+
+    /**
+     * @id services.listServices
+     * @route GET /api/services
+     * @security BearerAuth
+     */
+    export namespace listServices {
+      export type query = {
+        page?: query.Page
+        pageSize?: query.PageSize
+        service?: query.Service
+        specialist?: query.Specialist
+        specialization?: query.Specialization
+      }
+
+      export type responses = {
+        200: schemas.ServiceEnriched[]
+        400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
       }
     }
 
@@ -1280,16 +1219,38 @@ export namespace api {
         404: errors.NotFoundProblemDetails
       }
     }
+  }
 
+  export namespace servicesAvailable {
     /**
-     * @id services.deleteService
-     * @route DELETE /api/services/{id}
+     * @id servicesAvailable.createServiceAvailable
+     * @route POST /api/services-available
      * @security BearerAuth
      */
-    export namespace deleteService {
+    export namespace createServiceAvailable {
+      export type body = body.ServiceAvailableCreateBody
+
       export type responses = {
         /**
-         * Service deleted successfully
+         * Service Available created successfully
+         */
+        201: schemas.Id
+        400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
+        404: errors.NotFoundProblemDetails
+        409: errors.ConflictProblemDetails
+      }
+    }
+
+    /**
+     * @id servicesAvailable.deleteServiceAvailable
+     * @route DELETE /api/services-available/{id}
+     * @security BearerAuth
+     */
+    export namespace deleteServiceAvailable {
+      export type responses = {
+        /**
+         * Service Available deleted successfully
          */
         204: any
         400: errors.ValidationProblemDetails
@@ -1297,18 +1258,68 @@ export namespace api {
         404: errors.NotFoundProblemDetails
       }
     }
+
+    /**
+     * @id servicesAvailable.getServiceAvailableById
+     * @route GET /api/services-available/{id}
+     * @security BearerAuth
+     */
+    export namespace getServiceAvailableById {
+      export type responses = {
+        200: schemas.ServiceAvailable
+        400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
+        404: errors.NotFoundProblemDetails
+      }
+    }
+
+    /**
+     * @id servicesAvailable.listServicesAvailable
+     * @route GET /api/services-available
+     * @security BearerAuth
+     */
+    export namespace listServicesAvailable {
+      export type query = {
+        page?: query.Page
+        pageSize?: query.PageSize
+      }
+
+      export type responses = {
+        200: schemas.ServiceGroup[]
+        400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
+      }
+    }
+
+    /**
+     * @id servicesAvailable.updateServiceAvailable
+     * @route PUT /api/services-available/{id}
+     * @security BearerAuth
+     */
+    export namespace updateServiceAvailable {
+      export type body = body.ServiceAvailableUpdateBody
+
+      export type responses = {
+        /**
+         * Service Available updated successfully
+         */
+        200: schemas.Id
+        400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
+        404: errors.NotFoundProblemDetails
+        409: errors.ConflictProblemDetails
+      }
+    }
   }
 
   export namespace specialists {
     /**
-     * @id specialists.listSpecialists
-     * @route GET /api/specialists
+     * @id specialists.countSpecialists
+     * @route GET /api/specialists/count
      * @security BearerAuth
      */
-    export namespace listSpecialists {
+    export namespace countSpecialists {
       export type query = {
-        page?: query.Page
-        pageSize?: query.PageSize
         name?: query.Name
         cpf?: query.Cpf
         cnpj?: query.Cnpj
@@ -1316,7 +1327,7 @@ export namespace api {
       }
 
       export type responses = {
-        200: schemas.Specialist[]
+        200: schemas.Count
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
       }
@@ -1343,22 +1354,66 @@ export namespace api {
     }
 
     /**
-     * @id specialists.countSpecialists
-     * @route GET /api/specialists/count
+     * @id specialists.deleteSpecialist
+     * @route DELETE /api/specialists/{id}
      * @security BearerAuth
      */
-    export namespace countSpecialists {
+    export namespace deleteSpecialist {
+      export type responses = {
+        /**
+         * Specialist deleted successfully
+         */
+        204: any
+        400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
+        404: errors.NotFoundProblemDetails
+      }
+    }
+
+    /**
+     * @id specialists.getSpecialistAppointments
+     * @route GET /api/specialists/{id}/appointments
+     * @security BearerAuth
+     */
+    export namespace getSpecialistAppointments {
       export type query = {
-        name?: query.Name
-        cpf?: query.Cpf
-        cnpj?: query.Cnpj
-        phone?: query.Phone
+        page?: query.Page
+        pageSize?: query.PageSize
       }
 
       export type responses = {
-        200: schemas.Count
+        200: schemas.SpecialistAppointment[]
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
+        404: errors.NotFoundProblemDetails
+      }
+    }
+
+    /**
+     * @id specialists.getSpecialistById
+     * @route GET /api/specialists/{id}
+     * @security BearerAuth
+     */
+    export namespace getSpecialistById {
+      export type responses = {
+        200: schemas.Specialist
+        400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
+        404: errors.NotFoundProblemDetails
+      }
+    }
+
+    /**
+     * @id specialists.getSpecialistService
+     * @route GET /api/specialists/{id}/services/{service_id}
+     * @security BearerAuth
+     */
+    export namespace getSpecialistService {
+      export type responses = {
+        200: schemas.Service
+        400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
+        404: errors.NotFoundProblemDetails
       }
     }
 
@@ -1391,49 +1446,24 @@ export namespace api {
     }
 
     /**
-     * @id specialists.getSpecialistAppointments
-     * @route GET /api/specialists/{id}/appointments
+     * @id specialists.listSpecialists
+     * @route GET /api/specialists
      * @security BearerAuth
      */
-    export namespace getSpecialistAppointments {
+    export namespace listSpecialists {
       export type query = {
         page?: query.Page
         pageSize?: query.PageSize
+        name?: query.Name
+        cpf?: query.Cpf
+        cnpj?: query.Cnpj
+        phone?: query.Phone
       }
 
       export type responses = {
-        200: schemas.SpecialistAppointment[]
+        200: schemas.Specialist[]
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
-        404: errors.NotFoundProblemDetails
-      }
-    }
-
-    /**
-     * @id specialists.getSpecialistService
-     * @route GET /api/specialists/{id}/services/{service_id}
-     * @security BearerAuth
-     */
-    export namespace getSpecialistService {
-      export type responses = {
-        200: schemas.Service
-        400: errors.ValidationProblemDetails
-        401: errors.AuthProblemDetails
-        404: errors.NotFoundProblemDetails
-      }
-    }
-
-    /**
-     * @id specialists.getSpecialistById
-     * @route GET /api/specialists/{id}
-     * @security BearerAuth
-     */
-    export namespace getSpecialistById {
-      export type responses = {
-        200: schemas.Specialist
-        400: errors.ValidationProblemDetails
-        401: errors.AuthProblemDetails
-        404: errors.NotFoundProblemDetails
       }
     }
 
@@ -1456,39 +1486,9 @@ export namespace api {
         409: errors.ConflictProblemDetails
       }
     }
-
-    /**
-     * @id specialists.deleteSpecialist
-     * @route DELETE /api/specialists/{id}
-     * @security BearerAuth
-     */
-    export namespace deleteSpecialist {
-      export type responses = {
-        /**
-         * Specialist deleted successfully
-         */
-        204: any
-        400: errors.ValidationProblemDetails
-        401: errors.AuthProblemDetails
-        404: errors.NotFoundProblemDetails
-      }
-    }
   }
 
   export namespace specializations {
-    /**
-     * @id specializations.listSpecializations
-     * @route GET /api/specializations
-     * @security BearerAuth
-     */
-    export namespace listSpecializations {
-      export type responses = {
-        200: schemas.Specialization[]
-        400: errors.ValidationProblemDetails
-        401: errors.AuthProblemDetails
-      }
-    }
-
     /**
      * @id specializations.createSpecialization
      * @route POST /api/specializations
@@ -1505,6 +1505,36 @@ export namespace api {
         400: errors.ValidationProblemDetails
         401: errors.AuthProblemDetails
         409: errors.ConflictProblemDetails
+      }
+    }
+
+    /**
+     * @id specializations.deleteSpecialization
+     * @route DELETE /api/specializations/{id}
+     * @security BearerAuth
+     */
+    export namespace deleteSpecialization {
+      export type responses = {
+        /**
+         * Specialization deleted successfully
+         */
+        204: any
+        400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
+        404: errors.NotFoundProblemDetails
+      }
+    }
+
+    /**
+     * @id specializations.listSpecializations
+     * @route GET /api/specializations
+     * @security BearerAuth
+     */
+    export namespace listSpecializations {
+      export type responses = {
+        200: schemas.Specialization[]
+        400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
       }
     }
 
@@ -1527,32 +1557,16 @@ export namespace api {
         409: errors.ConflictProblemDetails
       }
     }
-
-    /**
-     * @id specializations.deleteSpecialization
-     * @route DELETE /api/specializations/{id}
-     * @security BearerAuth
-     */
-    export namespace deleteSpecialization {
-      export type responses = {
-        /**
-         * Specialization deleted successfully
-         */
-        204: any
-        400: errors.ValidationProblemDetails
-        401: errors.AuthProblemDetails
-        404: errors.NotFoundProblemDetails
-      }
-    }
   }
 
   export namespace test {
     /**
      * Available only in TEST environments
-     * @id test.initTest
-     * @route GET /api/test/init
+     * @id test.debugClaimsTest
+     * @route GET /api/test/debug-claims
+     * @security BearerAuth
      */
-    export namespace initTest {
+    export namespace debugClaimsTest {
       export type responses = {
         200: any
       }
@@ -1570,14 +1584,20 @@ export namespace api {
     }
 
     /**
-     * Available only in TEST environments
-     * @id test.debugClaimsTest
-     * @route GET /api/test/debug-claims
-     * @security BearerAuth
+     * ???
+     * @id test.testDispatch
+     * @route POST /api/test/dispatch
      */
-    export namespace debugClaimsTest {
+    export namespace testDispatch {
+      export type body = body.TestDispatchBody
+
       export type responses = {
+        /**
+         * Action dispatched successfully
+         */
         200: any
+        400: errors.ValidationProblemDetails
+        401: errors.AuthProblemDetails
       }
     }
   }

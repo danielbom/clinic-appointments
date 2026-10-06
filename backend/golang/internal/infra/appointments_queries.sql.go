@@ -499,6 +499,77 @@ func (q *Queries) ListAppointmentsCalendarCount(ctx context.Context, arg ListApp
 	return items, nil
 }
 
+const listAppointmentsRealized = `-- name: ListAppointmentsRealized :many
+SELECT "a"."id", "a"."price", "a"."duration", "a"."date", "a"."time", "a"."status", "a"."notified_at", "a"."notified_by",
+  "a"."specialist_id",
+  "a"."customer_id", "c"."name" AS "customer_name",
+  "a"."service_name_id", "sn"."name" AS "service_name"
+FROM "appointments" "a"
+JOIN "customers" "c" ON "a"."customer_id" = "c"."id"
+JOIN "service_names" "sn" ON "a"."service_name_id" = "sn"."id"
+WHERE "a"."specialist_id" = $1
+  AND "a"."date" >= $2
+  AND "a"."date" <= $3
+  AND "a"."status" = 2
+ORDER BY "a"."date" ASC, "a"."time" ASC
+`
+
+type ListAppointmentsRealizedParams struct {
+	SpecialistId pgtype.UUID
+	StartDate    pgtype.Date
+	EndDate      pgtype.Date
+}
+
+type ListAppointmentsRealizedRow struct {
+	ID            pgtype.UUID
+	Price         int32
+	Duration      int32
+	Date          pgtype.Date
+	Time          pgtype.Time
+	Status        int32
+	NotifiedAt    pgtype.Timestamptz
+	NotifiedBy    pgtype.UUID
+	SpecialistID  pgtype.UUID
+	CustomerID    pgtype.UUID
+	CustomerName  string
+	ServiceNameID pgtype.UUID
+	ServiceName   string
+}
+
+func (q *Queries) ListAppointmentsRealized(ctx context.Context, arg ListAppointmentsRealizedParams) ([]ListAppointmentsRealizedRow, error) {
+	rows, err := q.db.Query(ctx, listAppointmentsRealized, arg.SpecialistId, arg.StartDate, arg.EndDate)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListAppointmentsRealizedRow
+	for rows.Next() {
+		var i ListAppointmentsRealizedRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Price,
+			&i.Duration,
+			&i.Date,
+			&i.Time,
+			&i.Status,
+			&i.NotifiedAt,
+			&i.NotifiedBy,
+			&i.SpecialistID,
+			&i.CustomerID,
+			&i.CustomerName,
+			&i.ServiceNameID,
+			&i.ServiceName,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateAppointment = `-- name: UpdateAppointment :one
 UPDATE "appointments"
 SET

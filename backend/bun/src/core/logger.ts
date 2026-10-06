@@ -32,6 +32,20 @@ function buildLogger() {
         },
       })
     }
+    case 'text': {
+      return pino({
+        level: log.level,
+        transport: {
+          target: 'pino-pretty',
+          options: {
+            colorize: true,
+            translateTime: 'HH:MM:ss',
+            ignore: 'pid,hostname',
+            singleLine: true,
+          },
+        },
+      })
+    }
     case 'json': {
       return pino({
         level: log.level,

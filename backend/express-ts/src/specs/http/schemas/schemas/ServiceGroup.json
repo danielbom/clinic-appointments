@@ -2,7 +2,7 @@
   "type": "object",
   "properties": {
     "id": {
-      "$ref": "#/components/domain/Uuid"
+      "$ref": "#/components/core/Uuid"
     },
     "name": {
       "$ref": "#/components/domain/Name"
@@ -13,7 +13,7 @@
         "type": "object",
         "properties": {
           "id": {
-            "$ref": "#/components/domain/Uuid"
+            "$ref": "#/components/core/Uuid"
           },
           "name": {
             "$ref": "#/components/domain/Name"

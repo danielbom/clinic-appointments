@@ -1,7 +1,6 @@
 import { PrismaPg } from '@prisma/adapter-pg'
 import { PrismaClient } from '../prisma/client'
 import { getDatabaseConfig } from './config'
-import type { InfraStatus } from './infra'
 
 const config = getDatabaseConfig()
 const adapter = new PrismaPg({
@@ -16,18 +15,4 @@ export type Transaction = typeof db.$transaction extends (tx: (tx: infer Tx) => 
 
 export async function closeDb(): Promise<void> {
   await db.$disconnect()
-}
-
-export async function pingDatabase(): Promise<InfraStatus> {
-  const startTime = Date.now()
-  let status: InfraStatus['status'] = 'DOWN'
-  try {
-    await db.$queryRaw`SELECT 1`
-    status = 'UP'
-  } catch {
-    // nop
-  }
-  const latencyMs = Date.now() - startTime
-  status = status === 'UP' && latencyMs > 500 ? 'DEGRADED' : status
-  return { status, latencyMs }
 }

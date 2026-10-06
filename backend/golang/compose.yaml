@@ -49,18 +49,18 @@ services:
   #     - "6432:6432"
 
   # optional
-  # pgadmin:
-  #   image: dpage/pgadmin4
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - db
-  #   ports:
-  #     - 8081:80
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: admin@admin.com
-  #     PGADMIN_DEFAULT_PASSWORD: password
-  #   volumes:
-  #     - pgadmin:/var/lib/pgadmin
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    depends_on:
+      - db
+    ports:
+      - 8081:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    volumes:
+      - pgadmin:/var/lib/pgadmin
 
 volumes:
   db:

@@ -48,10 +48,10 @@ export function collectQueries() {
   const queries: Queries = {}
   for (const name in openApiJson.components.query) {
     const query = (openApiJson.components.query as any)[name]
-    const ref = '#/components/query/' + name
+    const ref = `#/components/query/${name}`
     queries[ref] = {
       key: query.name,
-      type: 'query.' + name,
+      type: `query.${name}`,
     }
   }
   return queries
@@ -63,7 +63,8 @@ export function createQuerySchema(queries: Queries, query: { $ref: string }[]) {
     properties: {} as Record<string, any>,
   }
   for (const param of query) {
-    const query = queries[param.$ref]!
+    const query = queries[param.$ref]
+    if (!query) throw new Error(`query ${param.$ref} not found`)
     schema.properties[query.key] = { $ref: param.$ref }
   }
   return schema

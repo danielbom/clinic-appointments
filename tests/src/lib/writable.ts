@@ -24,6 +24,8 @@ export class WriteCombined implements Writable {
   constructor(private writes: Writable[]) {}
 
   write(text: string): void {
-    this.writes.forEach((w) => w.write(text))
+    this.writes.forEach((w) => {
+      w.write(text)
+    })
   }
 }

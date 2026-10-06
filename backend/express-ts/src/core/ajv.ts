@@ -1,4 +1,6 @@
-import Ajv from 'ajv'
+import Ajv, { type ErrorObject } from 'ajv'
+import { Path } from '../lib/path'
+import { isUuid } from './id'
 import {
   isValidCnpj,
   isValidCpf,
@@ -8,23 +10,8 @@ import {
   isValidPhone,
   onlyDigits,
 } from './utils'
-import { Path } from '../lib/path'
-
-import { isUuid } from './id'
 
 export const ajv = new Ajv({})
-
-const SCHEMAS_DIR = Path.from(import.meta.dirname)
-  .parent()
-  .append('public/schemas')
-
-for (const component of ['core', 'domain', 'body', 'schemas']) {
-  for (const file of SCHEMAS_DIR.append(component).listDir()) {
-    const content = file.readText()
-    const schema = JSON.parse(content)
-    ajv.addSchema(schema)
-  }
-}
 
 ajv.addFormat('email', {
   type: 'string',
@@ -48,7 +35,7 @@ ajv.addFormat('time', {
 
 ajv.addFormat('datetime', {
   type: 'string',
-  validate: (data) => !isNaN(new Date(data).getTime()),
+  validate: (data) => !Number.isNaN(new Date(data).getTime()),
 })
 
 ajv.addFormat('phone', {
@@ -70,3 +57,28 @@ ajv.addFormat('integer', {
   type: 'number',
   validate: (data) => Number.isInteger(data),
 })
+
+export function compile<T>(schema: { $ref: string }) {
+  const v = ajv.compile<T>(schema)
+  function validate(data: unknown): { ok: true; value: T } | { ok: false; errors: [ErrorObject, ...ErrorObject[]] } {
+    const valid = v(data)
+    if (valid) {
+      return { ok: true, value: data }
+    } else {
+      return { ok: false, errors: v.errors as [ErrorObject, ...ErrorObject[]] }
+    }
+  }
+  return validate
+}
+
+const SCHEMAS_DIR = Path.from(import.meta.dirname)
+  .parent()
+  .append('public/schemas')
+
+for (const component of ['core', 'domain', 'body', 'schemas']) {
+  for (const file of SCHEMAS_DIR.append(component).listDir()) {
+    const content = file.readText()
+    const schema = JSON.parse(content)
+    ajv.addSchema(schema)
+  }
+}

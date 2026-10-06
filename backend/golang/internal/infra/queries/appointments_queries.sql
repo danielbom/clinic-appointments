@@ -125,3 +125,17 @@ LIMIT 1;
 -- name: DeleteAppointment :execrows
 DELETE FROM "appointments"
 WHERE "id" = sqlc.arg('appointmentId');
+
+-- name: ListAppointmentsRealized :many
+SELECT "a"."id", "a"."price", "a"."duration", "a"."date", "a"."time", "a"."status", "a"."notified_at", "a"."notified_by",
+  "a"."specialist_id",
+  "a"."customer_id", "c"."name" AS "customer_name",
+  "a"."service_name_id", "sn"."name" AS "service_name"
+FROM "appointments" "a"
+JOIN "customers" "c" ON "a"."customer_id" = "c"."id"
+JOIN "service_names" "sn" ON "a"."service_name_id" = "sn"."id"
+WHERE "a"."specialist_id" = sqlc.arg('specialistId')
+  AND "a"."date" >= sqlc.arg('startDate')
+  AND "a"."date" <= sqlc.arg('endDate')
+  AND "a"."status" = 2
+ORDER BY "a"."date" ASC, "a"."time" ASC;

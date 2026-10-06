@@ -19,9 +19,13 @@ func TimeToString(time pgtype.Time) string {
 }
 
 func DateToString(date pgtype.Date) string {
-	return date.Time.Format("2006-01-02")
+	return date.Time.Format(time.DateOnly)
 }
 
 func DateTimeToISO(date time.Time) string {
 	return date.Format(time.RFC3339)
+}
+
+func TimeToISO(date time.Time) string {
+	return date.Format(time.TimeOnly)
 }

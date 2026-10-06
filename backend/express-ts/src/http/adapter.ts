@@ -1,8 +1,7 @@
 import type { Request, Response } from 'express'
-
-import type { RequestAdapter, ResponseAdapter } from '../lib/http-adapter'
-import { requestLogger } from '../core/logger'
 import { generateId } from '../core/id'
+import { requestLogger } from '../core/logger'
+import type { RequestAdapter, ResponseAdapter } from '../lib/http-adapter'
 
 type State = {
   id: string
@@ -71,7 +70,7 @@ export class ExpressRequestAdapter implements RequestAdapter<State> {
     return (this.req as any).rawBody ?? null
   }
 
-  async getJsonBody(): Promise<{} | null> {
+  async getJsonBody(): Promise<unknown | null> {
     return this.req.body ?? null
   }
 
@@ -83,11 +82,11 @@ export class ExpressRequestAdapter implements RequestAdapter<State> {
     this.state[key] = value
   }
 
-  send(response: ResponseAdapter): any {
+  send(response: ResponseAdapter): void {
     for (const header in this.headers) {
-      this.res.setHeader(header, this.headers[header]!)
+      this.res.setHeader(header, this.headers[header] as string)
     }
-    return this.res.status(response.status).json(response.json)
+    this.res.status(response.status).json(response.json)
   }
 }
 

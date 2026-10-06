@@ -8,34 +8,34 @@ export const routes = {
     GET: h(resolvers.appointments.listAppointments),
     POST: h(resolvers.appointments.createAppointment),
   },
-  '/api/appointments/count': {
-    GET: h(resolvers.appointments.countAppointments),
-  },
   '/api/appointments/calendar': {
     GET: h(resolvers.appointments.getAppointmentsCalendar),
   },
   '/api/appointments/calendar/count': {
     GET: h(resolvers.appointments.getAppointmentsCalendarCount),
   },
+  '/api/appointments/count': {
+    GET: h(resolvers.appointments.countAppointments),
+  },
   '/api/appointments/:id': {
     GET: h(resolvers.appointments.getAppointmentById),
     PATCH: h(resolvers.appointments.updateAppointment),
     DELETE: h(resolvers.appointments.deleteAppointment),
   },
-  '/api/appointments/:id/realized': {
-    PATCH: h(resolvers.appointments.appointmentRealized),
-  },
   '/api/appointments/:id/canceled': {
     PATCH: h(resolvers.appointments.appointmentCanceled),
+  },
+  '/api/appointments/:id/realized': {
+    PATCH: h(resolvers.appointments.appointmentRealized),
   },
   '/api/auth/login': {
     POST: h(resolvers.auth.login),
   },
-  '/api/auth/refresh': {
-    POST: h(resolvers.auth.refresh),
-  },
   '/api/auth/me': {
     GET: h(resolvers.auth.me),
+  },
+  '/api/auth/refresh': {
+    POST: h(resolvers.auth.refresh),
   },
   '/api/customers': {
     GET: h(resolvers.customers.listCustomers),
@@ -76,6 +76,10 @@ export const routes = {
   '/api/service-groups': {
     GET: h(resolvers.serviceGroups.listServiceGroups),
   },
+  '/api/services': {
+    GET: h(resolvers.services.listServices),
+    POST: h(resolvers.services.createService),
+  },
   '/api/services-available': {
     GET: h(resolvers.servicesAvailable.listServicesAvailable),
     POST: h(resolvers.servicesAvailable.createServiceAvailable),
@@ -84,10 +88,6 @@ export const routes = {
     GET: h(resolvers.servicesAvailable.getServiceAvailableById),
     PUT: h(resolvers.servicesAvailable.updateServiceAvailable),
     DELETE: h(resolvers.servicesAvailable.deleteServiceAvailable),
-  },
-  '/api/services': {
-    GET: h(resolvers.services.listServices),
-    POST: h(resolvers.services.createService),
   },
   '/api/services/count': {
     GET: h(resolvers.services.countServices),
@@ -104,22 +104,22 @@ export const routes = {
   '/api/specialists/count': {
     GET: h(resolvers.specialists.countSpecialists),
   },
-  '/api/specialists/:id/services': {
-    GET: h(resolvers.specialists.getSpecialistServices),
-  },
-  '/api/specialists/:id/specializations': {
-    GET: h(resolvers.specialists.getSpecialistSpecializations),
-  },
-  '/api/specialists/:id/appointments': {
-    GET: h(resolvers.specialists.getSpecialistAppointments),
-  },
-  '/api/specialists/:id/services/:service_id': {
-    GET: h(resolvers.specialists.getSpecialistService),
-  },
   '/api/specialists/:id': {
     GET: h(resolvers.specialists.getSpecialistById),
     PUT: h(resolvers.specialists.updateSpecialist),
     DELETE: h(resolvers.specialists.deleteSpecialist),
+  },
+  '/api/specialists/:id/appointments': {
+    GET: h(resolvers.specialists.getSpecialistAppointments),
+  },
+  '/api/specialists/:id/services': {
+    GET: h(resolvers.specialists.getSpecialistServices),
+  },
+  '/api/specialists/:id/services/:service_id': {
+    GET: h(resolvers.specialists.getSpecialistService),
+  },
+  '/api/specialists/:id/specializations': {
+    GET: h(resolvers.specialists.getSpecialistSpecializations),
   },
   '/api/specializations': {
     GET: h(resolvers.specializations.listSpecializations),
@@ -129,13 +129,13 @@ export const routes = {
     PUT: h(resolvers.specializations.updateSpecialization),
     DELETE: h(resolvers.specializations.deleteSpecialization),
   },
-  '/api/test/init': {
-    GET: h(resolvers.test.initTest),
+  '/api/test/debug-claims': {
+    GET: h(resolvers.test.debugClaimsTest),
+  },
+  '/api/test/dispatch': {
+    POST: h(resolvers.test.testDispatch),
   },
   '/api/test/stats': {
     GET: h(resolvers.test.statsTest),
-  },
-  '/api/test/debug-claims': {
-    GET: h(resolvers.test.debugClaimsTest),
   },
 } satisfies Bun.Serve.Options<any, any>['routes']

@@ -1,5 +1,5 @@
 import path from 'node:path'
-import { WriteStr, type Writable } from '../../lib/writable'
+import { type Writable, WriteStr } from '../../lib/writable'
 import { BUNDLE_PATH, ROUTES_PATH } from './_config'
 
 function generateRoutes(w: Writable) {

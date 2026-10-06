@@ -2,7 +2,7 @@
   "type": "object",
   "properties": {
     "specialistId": {
-      "$ref": "#/components/domain/Uuid"
+      "$ref": "#/components/core/Uuid"
     },
     "startDate": {
       "$ref": "#/components/core/Date"

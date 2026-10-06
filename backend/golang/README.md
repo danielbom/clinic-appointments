@@ -117,6 +117,8 @@ air
 # Use the following script to run a command with .env loaded
 # go run ./cmd/wenv/main.go
 
+go install github.com/jackc/tern/v2@latest
+
 go run ./cmd/wenv/main.go tern init ./internal/infra/migrations
 go run ./cmd/wenv/main.go tern new      --migrations ./internal/infra/migrations/ create_users_table
 go run ./cmd/wenv/main.go tern status   --migrations ./internal/infra/migrations/ --config ./internal/infra/migrations/tern.conf

@@ -1,0 +1,14 @@
+{
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["INIT"]
+        }
+      },
+      "required": ["kind"]
+    }
+  ]
+}

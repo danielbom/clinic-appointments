@@ -24,7 +24,9 @@
           "enum": [
             "Already exists",
             "Schedule conflict",
-            "Invalid state transition"
+            "Idempotency key conflict",
+            "Invalid state transition",
+            "Unexpected state"
           ]
         }
       },

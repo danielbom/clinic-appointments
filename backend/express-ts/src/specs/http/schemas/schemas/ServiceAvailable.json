@@ -2,13 +2,13 @@
   "type": "object",
   "properties": {
     "serviceNameId": {
-      "$ref": "#/components/domain/Uuid"
+      "$ref": "#/components/core/Uuid"
     },
     "serviceName": {
       "$ref": "#/components/domain/Name"
     },
     "specializationId": {
-      "$ref": "#/components/domain/Uuid"
+      "$ref": "#/components/core/Uuid"
     },
     "specialization": {
       "$ref": "#/components/domain/Name"

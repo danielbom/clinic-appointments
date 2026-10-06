@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
     // Environment setup & latest features
-    "lib": [
-      "ESNext"
-    ],
+    "lib": ["ESNext"],
     "target": "ESNext",
     "module": "Preserve",
     "moduleDetection": "force",
@@ -25,10 +23,6 @@
     "noUnusedParameters": true, // previous: false
     "noPropertyAccessFromIndexSignature": false
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "src/public"
-  ]
+  "include": ["src"],
+  "exclude": ["src/public"]
 }

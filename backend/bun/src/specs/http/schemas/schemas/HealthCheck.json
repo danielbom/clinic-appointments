@@ -3,6 +3,7 @@
   "properties": {
     "status": { "$ref": "#/components/core/HealthStatus" },
     "timestamp": { "$ref": "#/components/core/DateTime" },
+    "version": { "type": "string" },
     "environment": { "$ref": "#/components/core/Environment" },
     "details": {
       "type": "object",
@@ -12,5 +13,5 @@
       "required": ["database"]
     }
   },
-  "required": ["status", "environment", "timestamp", "details"]
+  "required": ["status", "environment", "version", "timestamp", "details"]
 }

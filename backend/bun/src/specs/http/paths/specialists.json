@@ -319,7 +319,7 @@
           "in": "path",
           "required": true,
           "schema": {
-            "$ref": "#/components/domain/Uuid"
+            "$ref": "#/components/core/Uuid"
           }
         }
       ],

@@ -1,6 +1,7 @@
 /node_modules
 /tmp
 .env*
+!.env.example
 
 src/validators
 src/prisma

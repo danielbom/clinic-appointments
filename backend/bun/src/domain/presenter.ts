@@ -1,8 +1,7 @@
-import * as types from '../http/types'
-import type { Calendar, CalendarCount, Identity, ServiceEnriched } from './queries'
-
+import type * as types from '../http/types'
 import type * as models from '../prisma/models'
 import { AppointmentStatus } from './enums'
+import type { Calendar, CalendarCount, Identity, ServiceEnriched } from './queries'
 
 export function getDatePart(isodate: string): string {
   return isodate.slice(0, 10)

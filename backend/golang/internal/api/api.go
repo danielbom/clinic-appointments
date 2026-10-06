@@ -120,9 +120,11 @@ func NewApi(pool *pgxpool.Pool, auth *jwtauth.JWTAuth) http.Handler {
 	r.With(h.JWT).Put("/api/services-available/{id}", h.updateServiceAvailable)
 	r.With(h.JWT).Delete("/api/services-available/{id}", h.deleteServiceAvailable)
 
+	r.With(h.JWT).Post("/api/invoices/preview", h.prepareInvoice)
+
 	if env.Get(env.APP_ENVIRONMENT) == "test" {
 		r.Get("/api/test/stats", h.getTestStats)
-		r.Get("/api/test/init", h.testInit)
+		r.Post("/api/test/dispatch", h.testDispatch)
 	}
 
 	r.Get("/api/swagger/*", httpSwagger.Handler(

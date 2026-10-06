@@ -2,16 +2,16 @@
   "type": "object",
   "properties": {
     "id": {
-      "$ref": "#/components/domain/Uuid"
+      "$ref": "#/components/core/Uuid"
     },
     "specializationId": {
-      "$ref": "#/components/domain/Uuid"
+      "$ref": "#/components/core/Uuid"
     },
     "serviceName": {
       "$ref": "#/components/domain/Name"
     },
     "serviceNameId": {
-      "$ref": "#/components/domain/Uuid"
+      "$ref": "#/components/core/Uuid"
     },
     "price": {
       "$ref": "#/components/domain/Price"

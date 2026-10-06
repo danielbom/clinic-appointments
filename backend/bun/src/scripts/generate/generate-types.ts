@@ -1,7 +1,7 @@
-import { type Writable, WriteStr } from '../../lib/writable'
-import { collectApi, collectQueries, createQuerySchema } from './_internal'
-import { BUNDLE_PATH, TYPES_PATH } from './_config'
 import path from 'node:path'
+import { type Writable, WriteStr } from '../../lib/writable'
+import { BUNDLE_PATH, TYPES_PATH } from './_config'
+import { collectApi, collectQueries, createQuerySchema } from './_internal'
 
 function formatRef(ref: string) {
   return ref.replace('#/components/', '').replace('/', '.')
@@ -119,7 +119,7 @@ function generateType(w: Writable, ident: string, item: any) {
       w.write(`{\n`)
       for (const prop in item.properties) {
         const value = (item.properties as any)[prop]
-        generateDocs(w, ident + '  ', value)
+        generateDocs(w, `${ident}  `, value)
         w.write(ident)
         w.write(`  ${prop}`)
         if (required.includes(prop)) {
@@ -127,7 +127,7 @@ function generateType(w: Writable, ident: string, item: any) {
         } else {
           w.write(`?: `)
         }
-        generateType(w, ident + '  ', value)
+        generateType(w, `${ident}  `, value)
         w.write('\n')
       }
       if (item.additionalProperties) {
@@ -191,6 +191,16 @@ function generateRootType(w: Writable, name: string, item: any) {
       generateType(w, '  ', subItem)
       count++
     }
+  } else if (item.oneOf) {
+    w.write(`  export type ${name} = `)
+    let count = 0
+    for (const subItem of item.oneOf) {
+      if (count > 0) {
+        w.write(' | ')
+      }
+      generateType(w, '  ', subItem)
+      count++
+    }
   } else {
     w.write(`  export type ${name} = any`)
   }
@@ -199,7 +209,7 @@ function generateRootType(w: Writable, name: string, item: any) {
 function generateNamespace(w: Writable, openApiJson: any, component: any) {
   let count = 0
   w.write(`export namespace ${component} {\n`)
-  for (const key in openApiJson.components[component]) {
+  for (const key of Object.keys(openApiJson.components[component]).sort()) {
     if (count > 0) {
       w.write('\n')
     }
@@ -219,8 +229,9 @@ function generateSwaggerTypesApi(w: Writable) {
 
   let count = 0
   w.write('export namespace api {\n')
-  for (const resource in api) {
-    const route = api[resource]!
+  for (const resource of Object.keys(api).sort()) {
+    const route = api[resource]
+    if (!route) throw new Error(`route ${resource} not found`)
 
     if (count > 0) {
       w.write('\n')
@@ -228,8 +239,10 @@ function generateSwaggerTypesApi(w: Writable) {
 
     let countResource = 0
     w.write(`  export namespace ${resource} {\n`)
-    for (const action in route.actions) {
-      const endpoint = route.actions[action]!
+    for (const action of Object.keys(route.actions).sort()) {
+      const endpoint = route.actions[action]
+      if (!endpoint) throw new Error(`endpoint ${resource}.${action} not found`)
+
       if (countResource > 0) {
         w.write('\n')
       }
@@ -275,7 +288,7 @@ function generateSwaggerTypesApi(w: Writable) {
         const schema = response?.content?.['application/json']?.schema
         if (response.description) {
           w.write('        /**\n')
-          w.write('         * ' + response.description + '\n')
+          w.write(`         * ${response.description}\n`)
           w.write('         */\n')
         }
         if (schema) {

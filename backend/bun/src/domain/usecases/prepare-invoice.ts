@@ -1,8 +1,8 @@
-import * as queries from './queries'
-import type { Res } from '../lib/res'
-import type { NotFoundError } from '../http/errors/domain'
-import { getDatePart, getTimePart } from './presenter'
 import { Decimal } from '@prisma/client/runtime/client'
+import type { NotFoundError } from '../../http/errors/domain'
+import type { Res } from '../../lib/res'
+import { getDatePart, getTimePart } from '../presenter'
+import * as queries from '../queries'
 
 const APPOINTMENT_TAX_RATE = '0.1'
 const APPOINTMENT_DISCOUNT_RATE = '0'

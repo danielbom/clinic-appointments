@@ -1,13 +1,12 @@
 import {
-  COMPONENT_GROUPS,
   BUNDLE_PATH,
+  COMPONENT_GROUPS,
+  PUBLIC_SCHEMAS_DIR,
   SPEC_BASE,
   SPEC_PATHS_DIR,
   SPEC_SCHEMAS_DIR,
-  PUBLIC_SCHEMAS_DIR,
 } from './_config'
-import { refToSchemaId } from './_internal'
-import { getSchemaId } from './_internal'
+import { getSchemaId, refToSchemaId } from './_internal'
 
 function readSchemaFiles(bucket: string) {
   const result: Record<string, any> = {}
@@ -40,7 +39,8 @@ export function prettyJsonStringify(root: any) {
           const totalSize =
             ident +
             items.reduce((totalSize, item) => {
-              return totalSize + item[0]!.length + (totalSize > 0 ? 2 : 0)
+              const itemSize = item[0]?.length ?? 0
+              return totalSize + itemSize + (totalSize > 0 ? 2 : 0)
             }, 0)
           if (totalSize < NOWRAP_SIZE || typeof json[0] === 'string') {
             // all array in a single line
@@ -49,10 +49,13 @@ export function prettyJsonStringify(root: any) {
           // each item in a single line
           const parts: string[] = []
           parts.push('[\n')
-          items.forEach((tokens, index) =>
-            parts.push(' '.repeat(ident + 2) + tokens?.join('???') + (index - 1 === items.length ? '' : ',') + '\n'),
-          )
-          parts.push(' '.repeat(ident) + ']')
+          items.forEach((tokens, index) => {
+            const identation = ' '.repeat(ident + 2)
+            const line = tokens?.join('???') ?? ''
+            const comma = index - 1 === items.length ? '' : ','
+            parts.push(`${identation}${line}${comma}\n`)
+          })
+          parts.push(`${' '.repeat(ident)}]`)
           return [parts.join('')]
         }
         const entries = Object.entries(json)
@@ -61,7 +64,8 @@ export function prettyJsonStringify(root: any) {
         const totalSize =
           ident +
           entries.reduce((totalSize, entry) => {
-            return totalSize + entry[0].length + 2 + entry[1][0]!.length + (totalSize > 0 ? 2 : 0)
+            const valueSize = entry[1][0]?.length ?? 0
+            return totalSize + entry[0].length + 2 + valueSize + (totalSize > 0 ? 2 : 0)
           }, 0)
         if (totalSize < NOWRAP_SIZE) {
           // all array in a single line
@@ -69,12 +73,13 @@ export function prettyJsonStringify(root: any) {
         }
         const parts: string[] = []
         parts.push('{\n')
-        entries.forEach(([key, tokens], index) =>
-          parts.push(
-            ' '.repeat(ident + 2) + `${key}: ${tokens?.join('???')}` + (index - 1 === entries.length ? '' : ',') + '\n',
-          ),
-        )
-        parts.push(' '.repeat(ident) + '}')
+        entries.forEach(([key, tokens], index) => {
+          const identation = ' '.repeat(ident + 2)
+          const line = tokens?.join('???') ?? ''
+          const comma = index - 1 === entries.length ? '' : ','
+          parts.push(`${identation}${key}: ${line}${comma}\n`)
+        })
+        parts.push(`${' '.repeat(ident)}}`)
         return [parts.join('')]
       }
     }

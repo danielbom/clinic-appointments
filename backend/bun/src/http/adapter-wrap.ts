@@ -1,7 +1,7 @@
-import { replier, type Resolver } from '../lib/http-adapter'
+import { generateId } from '../core/id'
+import { type Resolver, replier } from '../lib/http-adapter'
 import { withAdapter } from './adapter'
 import { errors } from './errors/presenter'
-import { generateId } from '../core/id'
 import resolvers from './resolvers'
 
 for (const resource in resolvers) {
@@ -13,7 +13,7 @@ for (const resource in resolvers) {
 
 function wrapResolver(operationId: string, resolver: Resolver) {
   return withAdapter(async (request) => {
-    const requestId = generateId()
+    const requestId = request.getHeader('x-request-id') ?? generateId()
     const reply = replier(request)
     request.setToContext('operationId', operationId)
     request.setHeader('x-operation-id', operationId)

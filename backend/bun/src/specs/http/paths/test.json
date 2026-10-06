@@ -1,15 +1,4 @@
 {
-  "/api/test/init": {
-    "get": {
-      "operationId": "test.initTest",
-      "summary": "Init tests",
-      "tags": ["Test"],
-      "description": "Available only in TEST environments",
-      "responses": {
-        "200": {}
-      }
-    }
-  },
   "/api/test/stats": {
     "get": {
       "operationId": "test.statsTest",
@@ -30,6 +19,52 @@
       "description": "Available only in TEST environments",
       "responses": {
         "200": {}
+      }
+    }
+  },
+  "/api/test/dispatch": {
+    "post": {
+      "operationId": "test.testDispatch",
+      "summary": "Dispatch test action",
+      "tags": ["Test"],
+      "description": "Available only in TEST environments. Dispatches a specified action for testing purposes.",
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/body/TestDispatchBody"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Action dispatched successfully",
+          "content": {
+            "application/json": {
+              "schema": {}
+            }
+          }
+        },
+        "400": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/ValidationProblemDetails"
+              }
+            }
+          }
+        },
+        "401": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/errors/AuthProblemDetails"
+              }
+            }
+          }
+        }
       }
     }
   }

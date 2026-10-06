@@ -1,18 +1,18 @@
 import 'dotenv/config'
-import openApiJson from '../public/api/openapi.json' with { type: 'json' }
-import swaggerUI from 'swagger-ui-express'
-import express, { Router } from 'express'
-import type { NextFunction, Request, Response } from 'express'
 import path from 'node:path'
 import cors from 'cors'
+import type { NextFunction, Request, Response } from 'express'
+import express, { Router } from 'express'
 import helmet from 'helmet'
+import swaggerUI from 'swagger-ui-express'
 import { getAppConfig } from '../core/config'
-import { errors } from './errors/presenter'
-import { replier } from '../lib/http-adapter'
-import { routes } from './routes'
-import { ExpressRequestAdapter } from './adapter'
 import { logger } from '../core/logger'
+import { replier } from '../lib/http-adapter'
+import openApiJson from '../public/api/openapi.json' with { type: 'json' }
+import { ExpressRequestAdapter } from './adapter'
+import { errors } from './errors/presenter'
 import { logRequest } from './middlewares'
+import { routes } from './routes'
 
 export function createServer() {
   const server = express()
@@ -40,8 +40,8 @@ export function createServer() {
       express.json({
         type: 'application/json',
         verify: (req, _res, buf) => {
-          if (req.url && req.url.includes('/webhooks/')) {
-            ;(req as any).rawBody = buf.toString('utf8')
+          if (req.url?.includes('/webhooks/')) {
+            ;(req as any).rawBody = buf
           }
         },
       }),
@@ -69,17 +69,19 @@ export function createServer() {
 }
 
 export function startWebServer() {
-  const app = getAppConfig()
+  const { port, name, environment, version } = getAppConfig()
   const server = createServer()
 
-  server.listen(app.port, () => {
-    logger.info(`App     ${app.name}`)
-    logger.info(`Env     ${app.environment}`)
-    logger.info(`Server  http://localhost:${app.port}`)
-    logger.info(`API     http://localhost:${app.port}/api`)
-    logger.info(`Docs    http://localhost:${app.port}/api/docs`)
-    logger.info(`Redoc   http://localhost:${app.port}/api/redoc`)
-    logger.info(`Auth    http://localhost:${app.port}/api/auth`)
-    logger.info(`Health  http://localhost:${app.port}/api/health/check`)
+  return server.listen(port, (error) => {
+    if (error) return logger.error(error)
+    logger.info(`App     ${name}`)
+    logger.info(`Env     ${environment}`)
+    logger.info(`Version ${version}`)
+    logger.info(`Server  http://localhost:${port}`)
+    logger.info(`API     http://localhost:${port}/api`)
+    logger.info(`Docs    http://localhost:${port}/api/docs`)
+    logger.info(`Redoc   http://localhost:${port}/api/redoc`)
+    logger.info(`Auth    http://localhost:${port}/api/auth`)
+    logger.info(`Health  http://localhost:${port}/api/health/check`)
   })
 }

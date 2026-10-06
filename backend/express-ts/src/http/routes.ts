@@ -61,6 +61,6 @@ routes.get('/api/specializations', h(resolvers.specializations.listSpecializatio
 routes.post('/api/specializations', h(resolvers.specializations.createSpecialization))
 routes.put('/api/specializations/:id', h(resolvers.specializations.updateSpecialization))
 routes.delete('/api/specializations/:id', h(resolvers.specializations.deleteSpecialization))
-routes.get('/api/test/init', h(resolvers.test.initTest))
 routes.get('/api/test/stats', h(resolvers.test.statsTest))
 routes.get('/api/test/debug-claims', h(resolvers.test.debugClaimsTest))
+routes.post('/api/test/dispatch', h(resolvers.test.testDispatch))
